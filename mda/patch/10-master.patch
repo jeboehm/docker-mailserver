@@ -7,8 +7,8 @@
 -  #unix_listener /var/spool/postfix/private/auth {
 -  #  mode = 0666
 -  #}
-+  unix_listener /run/postfixauth {
-+    mode = 0666
++  inet_listener {
++    port = 9000
 +  }
  
    # Auth process is run as this user.
