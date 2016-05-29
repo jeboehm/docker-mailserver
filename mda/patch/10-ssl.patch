@@ -1,0 +1,11 @@
+--- /etc/dovecot/conf.d/10-ssl.conf
++++ /etc/dovecot/conf.d/10-ssl.conf
+@@ -3,7 +3,7 @@
+ ##
+ 
+ # SSL/TLS support: yes, no, required. <doc/wiki/SSL.txt>
+-#ssl = yes
++ssl = yes
+ 
+ # PEM encoded X.509 SSL/TLS certificate and private key. They're opened before
+ # dropping root privileges, so keep the key file unreadable by anyone but

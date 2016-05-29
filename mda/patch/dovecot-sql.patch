@@ -1,0 +1,30 @@
+--- /etc/dovecot/dovecot-sql.conf.ext
++++ /etc/dovecot/dovecot-sql.conf.ext
+@@ -68,14 +68,14 @@
+ #   connect = host=sql.example.com dbname=virtual user=virtual password=blarg
+ #   connect = /etc/dovecot/authdb.sqlite
+ #
+-#connect =
++connect = host=#dbhost# dbname=#dbname# user=#dbuser# password=#dbpassword#
+ 
+ # Default password scheme.
+ #
+ # List of supported schemes is in
+ # http://wiki2.dovecot.org/Authentication/PasswordSchemes
+ #
+-#default_pass_scheme = MD5
++default_pass_scheme = SHA256-CRYPT
+ 
+ # passdb query to retrieve the password. It can return fields:
+ #   password - The user's password. This field must be returned.
+@@ -104,9 +104,7 @@
+ #   password_query = SELECT userid AS user, pw AS password \
+ #     FROM users WHERE userid = '%u' AND active = 'Y'
+ #
+-#password_query = \
+-#  SELECT username, domain, password \
+-#  FROM users WHERE username = '%n' AND domain = '%d'
++password_query = SELECT email as user, password FROM virtual_users WHERE email='%u';
+ 
+ # userdb query to retrieve the user information. It can return fields:
+ #   uid - System UID (overrides mail_uid setting)

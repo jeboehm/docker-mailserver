@@ -1,0 +1,15 @@
+--- /etc/dovecot/conf.d/10-master.conf
++++ /etc/dovecot/conf.d/10-master.conf
+@@ -93,9 +93,9 @@
+   }
+ 
+   # Postfix smtp-auth
+-  #unix_listener /var/spool/postfix/private/auth {
+-  #  mode = 0666
+-  #}
++  unix_listener /run/postfixauth {
++    mode = 0666
++  }
+ 
+   # Auth process is run as this user.
+   #user = $default_internal_user
