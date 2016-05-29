@@ -17,6 +17,9 @@ RUN touch /etc/postfix/mysql-virtual-mailbox-domains.cf /etc/postfix/mysql-virtu
     postconf myhostname=$MAILNAME && \
     postconf mynetworks="$MYNETWORKS" && \
     postconf smtputf8_enable=no && \
+    postconf virtual_transport=lmtp:mda:9001 && \
+    postconf smtpd_sasl_path=inet:mda:9000 && \
+    postconf smtpd_sasl_type=dovecot && \
     chgrp postfix /etc/postfix/mysql-*.cf && \
     chmod u=rw,g=r,o= /etc/postfix/mysql-*.cf
 
