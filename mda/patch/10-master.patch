@@ -1,12 +1,25 @@
 --- /etc/dovecot/conf.d/10-master.conf
 +++ /etc/dovecot/conf.d/10-master.conf
-@@ -93,9 +93,9 @@
+@@ -51,11 +51,9 @@
    }
  
-   # Postfix smtp-auth
--  #unix_listener /var/spool/postfix/private/auth {
--  #  mode = 0666
+   # Create inet listener only if you can't use the above UNIX socket
+-  #inet_listener lmtp {
+-    # Avoid making LMTP visible for the entire internet
+-    #address =
+-    #port = 
 -  #}
++  inet_listener lmtp {
++    port = 9001 
++  }
+ }
+ 
+ service imap {
+@@ -96,6 +94,10 @@
+   #unix_listener /var/spool/postfix/private/auth {
+   #  mode = 0666
+   #}
++
 +  inet_listener {
 +    port = 9000
 +  }

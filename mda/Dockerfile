@@ -12,7 +12,7 @@ RUN adduser -h /var/vmail -u 5000 -D vmail
 ADD patch/ /patch
 ADD install.sh /install.sh
 
-EXPOSE 9000 143 110 993 995
+EXPOSE 9000 9001 143 110 993 995
 VOLUME /var/vmail
 
 CMD ["/install.sh"]
