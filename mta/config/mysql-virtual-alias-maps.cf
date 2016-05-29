@@ -1,0 +1,5 @@
+user = #user#
+password = #password#
+hosts = #hosts#
+dbname = #dbname#
+query = SELECT destination FROM virtual_aliases WHERE source='%s'
