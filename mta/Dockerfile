@@ -6,7 +6,7 @@ ENV MYNETWORKS 172.17.0.0/16 127.0.0.0/8
 ENV MYSQL_HOST db
 ENV MYSQL_USER root
 ENV MYSQL_PASSWORD changeme
-ENV MYSQL_DBNAME mailserver
+ENV MYSQL_DATABASE mailserver
 
 RUN apk --no-cache add postfix-mysql postfix rsyslog
 RUN touch /etc/postfix/mysql-virtual-mailbox-domains.cf /etc/postfix/mysql-virtual-mailbox-maps.cf \
