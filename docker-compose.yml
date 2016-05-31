@@ -2,17 +2,17 @@ version: '2'
 
 services:
   db:
-    image: mysql:5.5
+    image: jeboehm/mailserver-db:latest
+    build: ./db
     restart: on-failure:50
     env_file: .env
     volumes:
-      - ./db/dumps:/docker-entrypoint-initdb.d:ro
       - data-db:/var/lib/mysql
     ports:
       - "127.0.0.1:3307:3306"
 
   mta:
-    image: jeboehm/postfix:latest
+    image: jeboehm/mailserver-mta:latest
     build: ./mta
     restart: on-failure:50
     env_file: .env
@@ -23,7 +23,7 @@ services:
       - "127.0.0.1:25:25"
 
   mda:
-    image: jeboehm/dovecot:latest
+    image: jeboehm/mailserver-mda:latest
     build: ./mda
     restart: on-failure:50
     env_file: .env
