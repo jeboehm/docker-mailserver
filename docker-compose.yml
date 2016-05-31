@@ -1,0 +1,43 @@
+version: '2'
+
+services:
+  db:
+    image: mysql:5.5
+    restart: on-failure:50
+    env_file: .env
+    volumes:
+      - ./db/dumps:/docker-entrypoint-initdb.d:ro
+      - data-db:/var/lib/mysql
+    ports:
+      - "127.0.0.1:3307:3306"
+
+  mta:
+    image: jeboehm/postfix:latest
+    build: ./mta
+    restart: on-failure:50
+    env_file: .env
+    links:
+      - db
+      - mda
+    ports:
+      - "127.0.0.1:25:25"
+
+  mda:
+    image: jeboehm/dovecot:latest
+    build: ./mda
+    restart: on-failure:50
+    env_file: .env
+    volumes:
+      - data-mail:/var/vmail
+    links:
+      - db
+    ports:
+      - "127.0.0.1:110:110"
+      - "127.0.0.1:143:143"
+
+volumes:
+  data-db:
+    driver: local
+
+  data-mail:
+    driver: local
