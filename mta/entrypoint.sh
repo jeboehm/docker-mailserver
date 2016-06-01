@@ -2,6 +2,9 @@
 
 cd /config
 
+postconf myhostname="${MAILNAME}"
+postconf mynetworks="${MYNETWORKS}"
+
 for file in $(ls -1)
 do
           cat ${file} | sed \
@@ -11,6 +14,7 @@ do
             -e "s/#user#/${MYSQL_USER}/g" > /etc/postfix/${file}
 done
 
+echo "Starting MTA..."
 rsyslogd
 postfix start
 

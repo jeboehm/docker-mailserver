@@ -1,5 +1,7 @@
 #!/bin/sh
 
+tar -xf config.tar
+
 cd /patch
 for patch in $(ls -1)
 do
@@ -14,3 +16,6 @@ done
 
 chown root:root /etc/dovecot/dovecot-sql.conf.ext
 chmod go= /etc/dovecot/dovecot-sql.conf.ext
+
+echo "Starting MDA..."
+dovecot -F

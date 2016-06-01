@@ -4,7 +4,7 @@ services:
   db:
     image: jeboehm/mailserver-db:latest
     build: ./db
-    restart: on-failure:50
+    restart: on-failure:5
     env_file: .env
     volumes:
       - data-db:/var/lib/mysql
@@ -14,8 +14,10 @@ services:
   mta:
     image: jeboehm/mailserver-mta:latest
     build: ./mta
-    restart: on-failure:50
+    restart: on-failure:5
     env_file: .env
+    tmpfs:
+      - /var/log
     links:
       - db
       - mda
@@ -25,8 +27,10 @@ services:
   mda:
     image: jeboehm/mailserver-mda:latest
     build: ./mda
-    restart: on-failure:50
+    restart: on-failure:5
     env_file: .env
+    tmpfs:
+      - /etc/dovecot
     volumes:
       - data-mail:/var/vmail
     links:

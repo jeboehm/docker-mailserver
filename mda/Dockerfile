@@ -8,12 +8,12 @@ ENV MYSQL_DATABASE mailserver
 
 RUN apk --no-cache add dovecot dovecot-mysql
 RUN adduser -h /var/vmail -u 5000 -D vmail
+RUN tar -cf /config.tar /etc/dovecot/
 
 ADD patch/ /patch
-ADD install.sh /install.sh
+ADD entrypoint.sh /entrypoint.sh
 
 EXPOSE 9000 9001 143 110 993 995
 VOLUME /var/vmail
 
-CMD ["/install.sh"]
-CMD ["dovecot", "-F"]
+CMD ["/entrypoint.sh"]

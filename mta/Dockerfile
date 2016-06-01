@@ -14,8 +14,6 @@ RUN touch /etc/postfix/mysql-virtual-mailbox-domains.cf /etc/postfix/mysql-virtu
     postconf virtual_mailbox_domains=mysql:/etc/postfix/mysql-virtual-mailbox-domains.cf && \
     postconf virtual_mailbox_maps=mysql:/etc/postfix/mysql-virtual-mailbox-maps.cf && \
     postconf virtual_alias_maps=mysql:/etc/postfix/mysql-virtual-alias-maps.cf,mysql:/etc/postfix/mysql-email2email.cf && \
-    postconf myhostname=$MAILNAME && \
-    postconf mynetworks="$MYNETWORKS" && \
     postconf smtputf8_enable=no && \
     postconf virtual_transport=lmtp:mda:9001 && \
     postconf smtpd_sasl_path=inet:mda:9000 && \
