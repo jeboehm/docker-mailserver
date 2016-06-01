@@ -23,4 +23,5 @@ script:
  - docker-compose version
  - ./bin/test.sh build
  - ./bin/test.sh up -d
+ - sleep 10
  - curl http://localhost:8888/
