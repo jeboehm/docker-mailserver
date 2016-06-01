@@ -21,5 +21,6 @@ install:
 script:
  - docker version
  - docker-compose version
- - docker-compose build
- - docker-compose up -d
+ - ./bin/test.sh build
+ - ./bin/test.sh up -d
+ - curl http://localhost:8888/

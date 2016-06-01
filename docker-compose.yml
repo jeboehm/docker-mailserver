@@ -8,8 +8,6 @@ services:
     env_file: .env
     volumes:
       - data-db:/var/lib/mysql
-    ports:
-      - "127.0.0.1:3307:3306"
 
   mta:
     image: jeboehm/mailserver-mta:latest
@@ -21,8 +19,6 @@ services:
     links:
       - db
       - mda
-    ports:
-      - "127.0.0.1:25:25"
 
   mda:
     image: jeboehm/mailserver-mda:latest
@@ -35,9 +31,6 @@ services:
       - data-mail:/var/vmail
     links:
       - db
-    ports:
-      - "127.0.0.1:110:110"
-      - "127.0.0.1:143:143"
 
 volumes:
   data-db:
