@@ -6,8 +6,12 @@ if ! [ -r $LOCKFILE ]
 then
 	echo "Initialising database."
 
-	sed -i /scripts/pre-exec.d/init.sql -e "s/##db##/${MYSQL_DATABASE}/g"
-	/usr/bin/mysqld --user=mysql --bootstrap --verbose=0 < /scripts/pre-exec.d/init.sql
+	/usr/bin/mysqld --skip-grant-tables --user=mysql --console &
+	sleep 10
+	cat /scripts/pre-exec.d/init.sql | mysql -u root --host=127.0.0.1 ${MYSQL_DATABASE}
+	killall mysqld
+	sleep 5
+
 	touch $LOCKFILE
 
 	echo "Database initialised. Exit."
