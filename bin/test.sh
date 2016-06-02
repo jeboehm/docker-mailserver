@@ -12,7 +12,6 @@ cd $DIR/../
 
 docker-compose \
   -f docker-compose.yml \
-  -f docker-compose.public.yml \
-  -f docker-compose.manager.yml \
-  -f docker-compose.manager-public.yml \
+  -f docker-compose.production.yml \
+  -f docker-compose.test.yml \
   $*

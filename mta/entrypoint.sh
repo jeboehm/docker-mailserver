@@ -15,7 +15,10 @@ do
 done
 
 echo "Starting MTA..."
+
+touch /var/log/maillog
 rsyslogd
 postfix start
+newaliases
 
 tail -f /var/log/maillog

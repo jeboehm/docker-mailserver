@@ -19,6 +19,8 @@ services:
     links:
       - db
       - mda
+    volumes:
+      - data-tls:/media/tls:ro
 
   mda:
     image: jeboehm/mailserver-mda:latest
@@ -29,6 +31,15 @@ services:
       - /etc/dovecot
     volumes:
       - data-mail:/var/vmail
+      - data-tls:/media/tls:rw
+    links:
+      - db
+
+  manager:
+    image: jeboehm/mailserver-manager:latest
+    build: ./manager
+    restart: on-failure:5
+    env_file: .env
     links:
       - db
 
@@ -37,4 +48,7 @@ volumes:
     driver: local
 
   data-mail:
+    driver: local
+
+  data-tls:
     driver: local
