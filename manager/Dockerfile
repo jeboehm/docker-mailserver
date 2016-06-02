@@ -5,7 +5,6 @@ ENV MYSQL_HOST db
 ENV MYSQL_DATABASE mailserver
 ENV MYSQL_USER mailserver
 ENV MYSQL_PASSWORD changeme
-ENV MYSQL_ROOT_PASSWORD changeme
 
 WORKDIR /usr/src/manager
 RUN docker-php-ext-install mysqli
