@@ -10,8 +10,6 @@ fi
 
 cd $DIR/../
 
-
-
 docker-compose \
   -f docker-compose.yml \
   -f docker-compose.public.yml \
