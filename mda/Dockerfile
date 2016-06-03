@@ -10,7 +10,7 @@ ENV POSTMASTER postmaster@example.com
 
 RUN apk --no-cache add dovecot dovecot-mysql rsyslog \
     && adduser -h /var/vmail -u 5000 -D vmail \
-    && rm /etc/ssl/dovecot/server.key \
+    && rm -rf /etc/ssl/dovecot/ \
     && tar -cf /config.tar /etc/dovecot/
 
 ADD patch/ /patch

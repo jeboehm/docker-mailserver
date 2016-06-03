@@ -12,3 +12,4 @@ services:
       - mta
       - mda
       - manager
+    command: [echo, ok]
