@@ -25,3 +25,4 @@ script:
  - ./bin/test.sh up -d
  - sleep 50
  - curl http://localhost:8888/
+ - test/run-tests.sh
