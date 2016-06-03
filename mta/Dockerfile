@@ -21,8 +21,8 @@ RUN apk --no-cache add postfix-mysql postfix rsyslog && \
     postconf smtpd_sasl_auth_enable=yes && \
     postconf smtpd_tls_security_level=may && \
     postconf smtpd_tls_auth_only=yes && \
-    postconf smtpd_tls_cert_file=/etc/ssl/certs/mailserver.pem && \
-    postconf smtpd_tls_key_file=/etc/ssl/private/mailserver.pem && \
+    postconf smtpd_tls_cert_file=/media/tls/mailserver.crt && \
+    postconf smtpd_tls_key_file=/media/tls/mailserver.key && \
     chgrp postfix /etc/postfix/mysql-*.cf && \
     chmod u=rw,g=r,o= /etc/postfix/mysql-*.cf
 
