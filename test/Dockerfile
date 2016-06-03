@@ -7,7 +7,7 @@ ENV MYSQL_PASSWORD changeme
 ENV MYSQL_DATABASE mailserver
 ENV SWAKSURL http://www.jetmore.org/john/code/swaks/files/swaks-20130209.0/swaks
 
-RUN apk --no-cache add curl mariadb-client openssl perl \
+RUN apk --no-cache add curl mariadb-client openssl perl perl-net-ssleay \
     && curl -SLk ${SWAKSURL} -o swaks \
     && chmod +x swaks \
     && mv swaks /usr/bin
