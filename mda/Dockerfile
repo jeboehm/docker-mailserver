@@ -8,10 +8,10 @@ ENV MYSQL_DATABASE mailserver
 ENV MAILNAME mail.example.com
 ENV POSTMASTER postmaster@example.com
 
-RUN apk --no-cache add dovecot dovecot-mysql rsyslog
-RUN adduser -h /var/vmail -u 5000 -D vmail
-RUN rm /etc/ssl/dovecot/server.key
-RUN tar -cf /config.tar /etc/dovecot/
+RUN apk --no-cache add dovecot dovecot-mysql rsyslog \
+    && adduser -h /var/vmail -u 5000 -D vmail \
+    && rm /etc/ssl/dovecot/server.key \
+    && tar -cf /config.tar /etc/dovecot/
 
 ADD patch/ /patch
 ADD entrypoint.sh /entrypoint.sh

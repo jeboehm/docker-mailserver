@@ -1,9 +1,13 @@
-FROM alpine:edge
+FROM alpine:3.3
 MAINTAINER Jeffrey Boehm "jeff@ressourcenkonflikt.de"
 
 ENV MYSQL_HOST db
 ENV MYSQL_USER root
 ENV MYSQL_PASSWORD changeme
 ENV MYSQL_DATABASE mailserver
+ENV SWAKSURL http://www.jetmore.org/john/code/swaks/files/swaks-20130209.0/swaks
 
-RUN apk --no-cache add curl swaks mariadb-client openssl
+RUN apk --no-cache add curl mariadb-client openssl perl \
+    && curl -SLk ${SWAKSURL} -o swaks \
+    && chmod +x swaks \
+    && mv swaks /usr/bin

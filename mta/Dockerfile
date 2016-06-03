@@ -8,8 +8,8 @@ ENV MYSQL_USER root
 ENV MYSQL_PASSWORD changeme
 ENV MYSQL_DATABASE mailserver
 
-RUN apk --no-cache add postfix-mysql postfix rsyslog
-RUN touch /etc/postfix/mysql-virtual-mailbox-domains.cf /etc/postfix/mysql-virtual-mailbox-maps.cf \
+RUN apk --no-cache add postfix-mysql postfix rsyslog && \
+    touch /etc/postfix/mysql-virtual-mailbox-domains.cf /etc/postfix/mysql-virtual-mailbox-maps.cf \
     /etc/postfix/mysql-virtual-alias-maps.cf /etc/postfix/mysql-email2email.cf && \
     postconf virtual_mailbox_domains=mysql:/etc/postfix/mysql-virtual-mailbox-domains.cf && \
     postconf virtual_mailbox_maps=mysql:/etc/postfix/mysql-virtual-mailbox-maps.cf && \
