@@ -1,15 +1,10 @@
 version: '2'
 
 services:
-  manager:
-    ports:
-      - "0.0.0.0:8888:80"
-
   test:
     build: ./test
     links:
       - db
-      - mta
+      - mta:example.com
       - mda
       - manager
-    command: [echo, ok]

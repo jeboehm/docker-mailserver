@@ -22,7 +22,6 @@ script:
  - docker version
  - docker-compose version
  - ./bin/test.sh build
- - ./bin/test.sh up -d
- - sleep 50
- - curl http://localhost:8888/
- - test/run-tests.sh
+ - ./bin/production.sh up -d
+ - sleep 60
+ - ./bin/test.sh run test /opt/test/run-tests.sh
