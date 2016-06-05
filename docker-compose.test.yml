@@ -8,3 +8,5 @@ services:
       - mta:example.com
       - mda
       - manager
+    volumes:
+      - data-mail:/var/vmail:ro
