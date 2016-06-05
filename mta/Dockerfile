@@ -23,6 +23,10 @@ RUN apk --no-cache add postfix-mysql postfix rsyslog && \
     postconf smtpd_tls_auth_only=yes && \
     postconf smtpd_tls_cert_file=/media/tls/mailserver.crt && \
     postconf smtpd_tls_key_file=/media/tls/mailserver.key && \
+    postconf soft_bounce=no && \
+    postconf message_size_limit=50000000 && \
+    postconf mailbox_size_limit=0 && \
+    postconf recipient_delimiter=- && \
     chgrp postfix /etc/postfix/mysql-*.cf && \
     chmod u=rw,g=r,o= /etc/postfix/mysql-*.cf
 
