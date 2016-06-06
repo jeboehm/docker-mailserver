@@ -1,4 +1,4 @@
-FROM alpine:3.3
+FROM alpine:3.4
 MAINTAINER Jeffrey Boehm "jeff@ressourcenkonflikt.de"
 
 ENV MYSQL_HOST db
@@ -8,7 +8,7 @@ ENV MYSQL_DATABASE mailserver
 ENV MAILNAME mail.example.com
 ENV POSTMASTER postmaster@example.com
 
-RUN apk --no-cache add dovecot dovecot-mysql rsyslog \
+RUN apk --no-cache add dovecot dovecot-mysql rsyslog dovecot-pigeonhole-plugin \
     && adduser -h /var/vmail -u 5000 -D vmail \
     && rm -rf /etc/ssl/dovecot/ \
     && tar -cf /config.tar /etc/dovecot/
