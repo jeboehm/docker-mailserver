@@ -8,6 +8,6 @@ postfix start
 
 for test in *.sh
 do
-  [[ -e "${test}" ]] || break
+  if ! [ -e "${test}" ]; then break; fi
   "./${test}"
 done

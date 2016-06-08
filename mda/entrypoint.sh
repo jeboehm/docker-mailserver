@@ -5,7 +5,7 @@ cd /patch || exit
 
 for patch in *.patch
 do
-        [[ -e "${patch}" ]] || break
+        if ! [ -e "${patch}" ]; then break; fi
 	sed -i "${patch}" \
 		-e "s/#dbname#/${MYSQL_DATABASE}/g" \
 		-e "s/#dbhost#/${MYSQL_HOST}/g" \
