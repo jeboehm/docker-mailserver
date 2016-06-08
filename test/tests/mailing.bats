@@ -10,7 +10,7 @@
 }
 
 @test "send mail with smtp authentification" {
-  swaks --to jeff.dockermailservertest@ressourcenkonflikt.de --from admin@example.com -a -au admin@example.com -ap changeme -s example.com -tls
+  swaks --to admin@example.com --from admin@example.com -a -au admin@example.com -ap changeme -s example.com -tls
   [ "$?" -eq 0 ]
 }
 
