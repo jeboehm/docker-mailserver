@@ -2,11 +2,12 @@
 
 DIR="$(cd "$(dirname "$0")" && pwd)"
 
-cd ${DIR}/tests
+cd "${DIR}/tests" || exit
 
 postfix start
 
-for test in $(ls -1)
+for test in *.sh
 do
-  ./${test}
+  [[ -e "${test}" ]] || break
+  "./${test}"
 done
