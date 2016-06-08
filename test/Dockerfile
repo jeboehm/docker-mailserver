@@ -12,4 +12,5 @@ RUN apk --no-cache add curl mariadb-client openssl perl perl-net-ssleay postfix 
     && chmod +x swaks \
     && mv swaks /usr/bin
 
-COPY run-tests.sh tests /opt/test/
+COPY run-tests.sh /opt/test/
+COPY tests/ /opt/test/tests/
