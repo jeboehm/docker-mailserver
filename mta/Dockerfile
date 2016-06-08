@@ -1,12 +1,12 @@
 FROM alpine:3.4
 MAINTAINER Jeffrey Boehm "jeff@ressourcenkonflikt.de"
 
-ENV MAILNAME mail.example.com
-ENV MYNETWORKS 172.17.0.0/16 127.0.0.0/8
-ENV MYSQL_HOST db
-ENV MYSQL_USER root
-ENV MYSQL_PASSWORD changeme
-ENV MYSQL_DATABASE mailserver
+ENV MAILNAME=mail.example.com
+    MYNETWORKS=172.17.0.0/16\ 127.0.0.0/8
+    MYSQL_HOST=db
+    MYSQL_USER=root
+    MYSQL_PASSWORD=changeme
+    MYSQL_DATABASE=mailserver
 
 RUN apk --no-cache add postfix-mysql postfix rsyslog && \
     touch /etc/postfix/mysql-virtual-mailbox-domains.cf /etc/postfix/mysql-virtual-mailbox-maps.cf \
@@ -30,8 +30,8 @@ RUN apk --no-cache add postfix-mysql postfix rsyslog && \
     chgrp postfix /etc/postfix/mysql-*.cf && \
     chmod u=rw,g=r,o= /etc/postfix/mysql-*.cf
 
-ADD config/ /config
-ADD entrypoint.sh /entrypoint.sh
+COPY config/ /config/
+COPY entrypoint.sh /entrypoint.sh
 
 EXPOSE 25
 VOLUME /var/spool/postfix
