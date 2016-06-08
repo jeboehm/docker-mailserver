@@ -1,0 +1,20 @@
+#!/usr/bin/env bats
+@test "connection to imaps" {
+  true | openssl s_client -showcerts -connect mda:993
+  [ "$?" -eq 0 ]
+}
+
+@test "connection to pop3s" {
+  true | openssl s_client -showcerts -connect mda:995
+  [ "$?" -eq 0 ]
+}
+
+@test "connection to pop3 with starttls" {
+  true | openssl s_client -showcerts -connect mda:110 -starttls pop3
+  [ "$?" -eq 0 ]
+}
+
+@test "connection to imap with starttls" {
+  true | openssl s_client -showcerts -connect mda:143 -starttls imap
+  [ "$?" -eq 0 ]
+}
