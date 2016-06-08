@@ -1,9 +1,9 @@
 FROM php:7.0-alpine
 MAINTAINER Jeffrey Boehm "jeff@ressourcenkonflikt.de"
 
-ENV MYSQL_HOST=db
-    MYSQL_DATABASE=mailserver
-    MYSQL_USER=mailserver
+ENV MYSQL_HOST=db \
+    MYSQL_DATABASE=mailserver \
+    MYSQL_USER=mailserver \
     MYSQL_PASSWORD=changeme
 
 WORKDIR /usr/src/manager

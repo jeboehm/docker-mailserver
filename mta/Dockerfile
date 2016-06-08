@@ -1,11 +1,11 @@
 FROM alpine:3.4
 MAINTAINER Jeffrey Boehm "jeff@ressourcenkonflikt.de"
 
-ENV MAILNAME=mail.example.com
-    MYNETWORKS=172.17.0.0/16\ 127.0.0.0/8
-    MYSQL_HOST=db
-    MYSQL_USER=root
-    MYSQL_PASSWORD=changeme
+ENV MAILNAME=mail.example.com \
+    MYNETWORKS=172.17.0.0/16\ 127.0.0.0/8 \
+    MYSQL_HOST=db \
+    MYSQL_USER=root \
+    MYSQL_PASSWORD=changeme \
     MYSQL_DATABASE=mailserver
 
 RUN apk --no-cache add postfix-mysql postfix rsyslog && \

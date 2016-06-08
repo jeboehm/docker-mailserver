@@ -1,11 +1,11 @@
 FROM alpine:3.4
 MAINTAINER Jeffrey Boehm "jeff@ressourcenkonflikt.de"
 
-ENV MYSQL_HOST=db
-    MYSQL_USER=root
-    MYSQL_PASSWORD=changeme
-    MYSQL_DATABASE=mailserver
-    MAILNAME=mail.example.com
+ENV MYSQL_HOST=db \
+    MYSQL_USER=root \
+    MYSQL_PASSWORD=changeme \
+    MYSQL_DATABASE=mailserver \
+    MAILNAME=mail.example.com \
     POSTMASTER=postmaster@example.com
 
 RUN apk --no-cache add dovecot dovecot-mysql rsyslog dovecot-pigeonhole-plugin \

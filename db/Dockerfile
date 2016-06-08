@@ -1,9 +1,9 @@
 FROM k0st/alpine-mariadb
 MAINTAINER Jeffrey Boehm "jeff@ressourcenkonflikt.de"
 
-ENV MYSQL_DATABASE=mailserver
-    MYSQL_USER=mailserver
-    MYSQL_PASSWORD=changeme
+ENV MYSQL_DATABASE=mailserver \
+    MYSQL_USER=mailserver \
+    MYSQL_PASSWORD=changeme \
     MYSQL_ROOT_PASSWORD=changeme
 
 COPY init.sh init.sql /scripts/pre-exec.d/
