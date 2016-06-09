@@ -10,6 +10,7 @@
 # Erstellt am: 2016-06-01 21:11:41 +0000
 # ************************************************************
 
+use mailserver;
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;

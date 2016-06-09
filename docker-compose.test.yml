@@ -10,3 +10,4 @@ services:
       - manager
     volumes:
       - data-mail:/var/vmail:ro
+    env_file: .env
