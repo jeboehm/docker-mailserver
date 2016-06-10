@@ -8,9 +8,9 @@ if [[ "$DIR" != */bin ]]; then
     exit 1
 fi
 
-cd $DIR/../
+cd "${DIR}/../" || exit
 
 docker-compose \
   -f docker-compose.yml \
   -f docker-compose.production.yml \
-  $*
+  "$@"

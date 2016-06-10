@@ -1,17 +1,19 @@
 #!/bin/sh
 
-cd /config
+cd /config || exit
 
 postconf myhostname="${MAILNAME}"
 postconf mynetworks="${MYNETWORKS}"
 
-for file in $(ls -1)
+for file in *.cf
 do
-          cat ${file} | sed \
+          if ! [ -e "${file}" ]; then break; fi
+          sed \
             -e "s/#dbname#/${MYSQL_DATABASE}/g" \
             -e "s/#hosts#/${MYSQL_HOST}/g" \
             -e "s/#password#/${MYSQL_PASSWORD}/g" \
-            -e "s/#user#/${MYSQL_USER}/g" > /etc/postfix/${file}
+            -e "s/#user#/${MYSQL_USER}/g" \
+            "${file}" > "/etc/postfix/${file}"
 done
 
 echo "Starting MTA..."

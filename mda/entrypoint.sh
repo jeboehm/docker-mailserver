@@ -1,11 +1,12 @@
 #!/bin/sh
 
 tar -xf config.tar
-cd /patch
+cd /patch || exit
 
-for patch in $(ls -1)
+for patch in *.patch
 do
-	sed -i ${patch} \
+        if ! [ -e "${patch}" ]; then break; fi
+	sed -i "${patch}" \
 		-e "s/#dbname#/${MYSQL_DATABASE}/g" \
 		-e "s/#dbhost#/${MYSQL_HOST}/g" \
 		-e "s/#dbpassword#/${MYSQL_PASSWORD}/g" \
@@ -13,7 +14,7 @@ do
 		-e "s/#postmaster#/${POSTMASTER}/g" \
 		-e "s/#mailname#/${MAILNAME}/g"
 
-	patch -p0 < $patch
+	patch -p0 < "${patch}"
 done
 
 chown root:root /etc/dovecot/dovecot-sql.conf.ext

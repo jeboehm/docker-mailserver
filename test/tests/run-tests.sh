@@ -2,11 +2,8 @@
 
 DIR="$(cd "$(dirname "$0")" && pwd)"
 
-cd ${DIR}/tests
+cd "${DIR}" || exit
 
 postfix start
 
-for test in $(ls -1)
-do
-  ./${test}
-done
+bats *.bats

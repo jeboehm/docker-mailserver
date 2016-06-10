@@ -1,10 +1,9 @@
-FROM k0st/alpine-mariadb
+FROM mysql:5.7
 MAINTAINER Jeffrey Boehm "jeff@ressourcenkonflikt.de"
 
-ENV MYSQL_DATABASE mailserver
-ENV MYSQL_USER mailserver
-ENV MYSQL_PASSWORD changeme
-ENV MYSQL_ROOT_PASSWORD changeme
+ENV MYSQL_DATABASE=mailserver \
+    MYSQL_USER=mailserver \
+    MYSQL_PASSWORD=changeme \
+    MYSQL_ROOT_PASSWORD=changeme
 
-ADD init.sql /scripts/pre-exec.d/init.sql
-ADD init.sh /scripts/pre-exec.d/init.sh
+COPY init.sql /docker-entrypoint-initdb.d/
