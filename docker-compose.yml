@@ -29,6 +29,7 @@ services:
     env_file: .env
     tmpfs:
       - /etc/dovecot
+      - /var/log
     volumes:
       - data-mail:/var/vmail
       - data-tls:/media/tls:rw
