@@ -10,7 +10,15 @@ fi
 
 cd "${DIR}/../" || exit
 
+if [ -r docker-compose.override.yml ]
+then
+    ADDITIONAL="-f docker-compose.override.yml"
+else
+    ADDITIONAL=""
+fi
+
 docker-compose \
   -f docker-compose.yml \
   -f docker-compose.production.yml \
+  ${ADDITIONAL} \
   "$@"
