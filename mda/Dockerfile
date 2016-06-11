@@ -8,7 +8,7 @@ ENV MYSQL_HOST=db \
     MAILNAME=mail.example.com \
     POSTMASTER=postmaster@example.com
 
-RUN apk --no-cache add dovecot dovecot-mysql rsyslog dovecot-pigeonhole-plugin \
+RUN apk --no-cache add dovecot dovecot-mysql dovecot-pigeonhole-plugin \
     && adduser -h /var/vmail -u 5000 -D vmail \
     && rm -rf /etc/ssl/dovecot/
 

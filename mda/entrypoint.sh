@@ -6,15 +6,17 @@ cd /patch || exit
 for patch in *.patch
 do
         if ! [ -e "${patch}" ]; then break; fi
-	sed -i "${patch}" \
+	sed "${patch}" \
 		-e "s/#dbname#/${MYSQL_DATABASE}/g" \
 		-e "s/#dbhost#/${MYSQL_HOST}/g" \
 		-e "s/#dbpassword#/${MYSQL_PASSWORD}/g" \
 		-e "s/#dbuser#/${MYSQL_USER}/g" \
 		-e "s/#postmaster#/${POSTMASTER}/g" \
-		-e "s/#mailname#/${MAILNAME}/g"
+		-e "s/#mailname#/${MAILNAME}/g" \
+                > "/tmp/${patch}"
 
-	patch -p0 < "${patch}"
+	patch -p0 < "/tmp/${patch}"
+        rm "/tmp/${patch}"
 done
 
 chown root:root /etc/dovecot/dovecot-sql.conf.ext
@@ -27,8 +29,4 @@ fi
 
 echo "Starting MDA..."
 
-touch /var/log/maillog
-rsyslogd
-dovecot
-
-tail -f /var/log/maillog
+dovecot -F
