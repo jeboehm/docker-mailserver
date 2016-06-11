@@ -2,6 +2,7 @@ version: '2'
 
 services:
   test:
+    image: jeboehm/mailserver-test
     build: ./test
     links:
       - db

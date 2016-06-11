@@ -6,6 +6,8 @@ services:
     build: ./db
     restart: on-failure:5
     env_file: .env
+    tmpfs:
+      - /var/log
     volumes:
       - data-db:/var/lib/mysql
 
@@ -27,8 +29,12 @@ services:
     build: ./mda
     restart: on-failure:5
     env_file: .env
+    read_only: true
     tmpfs:
       - /etc/dovecot
+      - /run
+      - /var/lib/dovecot
+      - /tmp
     volumes:
       - data-mail:/var/vmail
       - data-tls:/media/tls:rw
