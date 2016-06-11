@@ -16,8 +16,6 @@ services:
     build: ./mta
     restart: on-failure:5
     env_file: .env
-    tmpfs:
-      - /var/log
     links:
       - db
       - mda
