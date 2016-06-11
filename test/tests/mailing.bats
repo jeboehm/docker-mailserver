@@ -23,3 +23,14 @@
   files="$(ls -1 /var/vmail/example.com/admin/Maildir/new/ | wc -l)"
   [ "$files" -gt 0 ]
 }
+
+@test "send junk mail to local address" {
+  swaks --to admin@example.com --data sample-spam-flagged.txt
+  [ "$?" -eq 0 ]
+}
+
+@test "check junk mail in junk folder (sieve rule is working)" {
+  sleep 3
+  files="$(ls -1 /var/vmail/example.com/admin/Maildir/.Junk/new/ | wc -l)"
+  [ "$files" -gt 0 ]
+}
