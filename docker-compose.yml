@@ -30,7 +30,6 @@ services:
     read_only: true
     tmpfs:
       - /etc/dovecot
-      - /var/log
       - /run
       - /var/lib/dovecot
       - /tmp
