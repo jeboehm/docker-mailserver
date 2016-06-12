@@ -1,0 +1,9 @@
+--- /etc/dovecot/conf.d/20-lmtp.conf
++++ /etc/dovecot/conf.d/20-lmtp.conf
+@@ -22,5 +22,5 @@
+ 
+ protocol lmtp {
+   # Space separated list of plugins to load (default is global mail_plugins).
+-  #mail_plugins = $mail_plugins
++  mail_plugins = $mail_plugins sieve
+ }

@@ -18,3 +18,8 @@
   true | openssl s_client -showcerts -connect mda:143 -starttls imap
   [ "$?" -eq 0 ]
 }
+
+@test "connection to smtp with starttls" {
+  true | openssl s_client -showcerts -connect mta:25 -starttls smtp
+  [ "$?" -eq 0 ]
+}
