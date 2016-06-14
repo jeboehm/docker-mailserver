@@ -47,6 +47,33 @@ services:
     links:
       - db
 
+  webmail:
+    image: jeboehm/mailserver-webmail:latest
+    build: ./webmail
+    restart: on-failure:5
+    env_file: .env
+    read_only: true
+    tmpfs:
+      - /var/www/html/temp
+      - /var/www/html/logs
+    links:
+      - db
+      - mda
+      - mta
+
+  web:
+    image: jeboehm/mailserver-web:latest
+    build: ./web
+    restart: on-failure:5
+    env_file: .env
+#    read_only: true
+    tmpfs:
+      - /var/cache/nginx
+      - /var/run
+    links:
+      - webmail
+      - manager
+
 volumes:
   data-db:
     driver: local
