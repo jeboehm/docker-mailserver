@@ -39,13 +39,18 @@ services:
     links:
       - db
 
-  manager:
-    image: jeboehm/mailserver-manager:latest
-    build: ./manager
+  web:
+    image: jeboehm/mailserver-web:latest
+    build: ./web
     restart: on-failure:5
     env_file: .env
+    tmpfs:
+      - /var/www/html/webmail/temp
+      - /var/www/html/webmail/logs
     links:
       - db
+      - mda
+      - mta
 
 volumes:
   data-db:

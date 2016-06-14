@@ -12,13 +12,9 @@ RUN apk --no-cache add dovecot dovecot-mysql dovecot-pigeonhole-plugin \
     && adduser -h /var/vmail -u 5000 -D vmail \
     && rm -rf /etc/ssl/dovecot/
 
-COPY sieve/spam-to-folder.sieve /etc/dovecot/sieve-after/
+COPY rootfs/ /
 RUN sievec /etc/dovecot/sieve-after/spam-to-folder.sieve && \
-    tar -cf /config.tar /etc/dovecot/
-
-COPY patch/ /patch/
-COPY entrypoint.sh /entrypoint.sh
-COPY scripts/ /usr/local/bin/
+    tar -cf /config.tar etc/dovecot/
 
 EXPOSE 9000 9001 4190 143 110 993 995
 VOLUME /var/vmail

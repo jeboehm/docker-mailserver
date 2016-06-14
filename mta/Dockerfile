@@ -30,8 +30,7 @@ RUN apk --no-cache add postfix-mysql postfix && \
     chgrp postfix /etc/postfix/mysql-*.cf && \
     chmod u=rw,g=r,o= /etc/postfix/mysql-*.cf
 
-COPY config/ /config/
-COPY entrypoint.sh /entrypoint.sh
+COPY rootfs/ /
 
 EXPOSE 25
 VOLUME /var/spool/postfix

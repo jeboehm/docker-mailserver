@@ -17,4 +17,4 @@ RUN apk --no-cache add curl mariadb-client openssl perl perl-net-ssleay postfix 
     && rm -rf /bats-$BATSVERSION \
     && postconf smtputf8_enable=no
 
-COPY tests/ /opt/tests/
+COPY rootfs/ /
