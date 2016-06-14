@@ -6,5 +6,5 @@ ENV MYSQL_DATABASE=mailserver \
     MYSQL_PASSWORD=changeme \
     MYSQL_ROOT_PASSWORD=changeme
 
-COPY init.sql /docker-entrypoint-initdb.d/
+COPY rootfs/ /
 RUN rm -rf /var/log/*
