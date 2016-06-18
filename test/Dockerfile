@@ -9,9 +9,8 @@ ENV MYSQL_HOST=db \
     BATSVERSION=0.4.0
 
 RUN apk --no-cache add curl mariadb-client openssl perl perl-net-ssleay postfix bash \
-    && curl -SLk ${SWAKSURL} -o swaks \
-    && chmod +x swaks \
-    && mv swaks /usr/bin \
+    && wget -q -O /usr/local/bin/swaks ${SWAKSURL} \
+    && chmod +x /usr/local/bin/swaks \
     && wget -q -O- https://github.com/sstephenson/bats/archive/v$BATSVERSION.tar.gz | tar -xzv \
     && ./bats-$BATSVERSION/install.sh /usr/local \
     && rm -rf /bats-$BATSVERSION \
