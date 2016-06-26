@@ -19,6 +19,7 @@ services:
     links:
       - db
       - mda
+      - spamassassin
     volumes:
       - data-tls:/media/tls:ro
 
@@ -51,6 +52,16 @@ services:
       - db
       - mda
       - mta
+
+  spamassassin:
+    image: jeboehm/mailserver-spamassassin:latest
+    build: ./spamassassin
+    restart: on-failure:5
+    read_only: true
+    tmpfs:
+      - /etc/mail/spamassassin/sa-update-keys
+      - /run
+      - /tmp
 
 volumes:
   data-db:

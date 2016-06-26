@@ -1,0 +1,3 @@
+use_bayes 1
+bayes_auto_learn 1
+bayes_path /var/lib/spamassassin/.spamassassin/bayes
