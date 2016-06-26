@@ -17,3 +17,5 @@ RUN apk --no-cache add curl mariadb-client openssl perl perl-net-ssleay postfix 
     && postconf smtputf8_enable=no
 
 COPY rootfs/ /
+
+CMD ["sh"]
