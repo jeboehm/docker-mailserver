@@ -25,4 +25,4 @@ script:
  - ./bin/production.sh up -d
  - sleep 60
  - ./bin/test.sh run test /opt/tests/run-tests.sh
- - docker-compose logs
+ - ./bin/production.sh logs
