@@ -10,7 +10,7 @@
 -    #port = 
 -  #}
 +  inet_listener lmtp {
-+    port = 9001 
++    port = 2003
 +  }
  }
  

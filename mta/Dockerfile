@@ -16,6 +16,7 @@ RUN apk --no-cache add postfix-mysql postfix && \
     postconf virtual_alias_maps=mysql:/etc/postfix/mysql-virtual-alias-maps.cf,mysql:/etc/postfix/mysql-email2email.cf && \
     postconf smtputf8_enable=no && \
     postconf virtual_transport=lmtp:mda:9001 && \
+    postconf virtual_transport=lmtp:mda:2003 && \
     postconf smtpd_sasl_path=inet:mda:9000 && \
     postconf smtpd_sasl_type=dovecot && \
     postconf smtpd_sasl_auth_enable=yes && \

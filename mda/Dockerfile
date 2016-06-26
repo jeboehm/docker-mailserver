@@ -16,7 +16,7 @@ COPY rootfs/ /
 RUN sievec /etc/dovecot/sieve-after/spam-to-folder.sieve && \
     tar -cf /config.tar etc/dovecot/
 
-EXPOSE 9000 9001 4190 143 110 993 995
+EXPOSE 2003 9000 4190 143 110 993 995
 VOLUME /var/vmail
 
 CMD ["/entrypoint.sh"]
