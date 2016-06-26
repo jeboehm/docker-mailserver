@@ -28,6 +28,7 @@ RUN apk --no-cache add postfix-mysql postfix && \
     postconf message_size_limit=50000000 && \
     postconf mailbox_size_limit=0 && \
     postconf recipient_delimiter=- && \
+    postconf mynetworks="$MYNETWORKS" && \
     chgrp postfix /etc/postfix/mysql-*.cf && \
     chmod u=rw,g=r,o= /etc/postfix/mysql-*.cf
 
