@@ -6,8 +6,9 @@ services:
     build: ./db
     restart: on-failure:5
     env_file: .env
+    read_only: true
     tmpfs:
-      - /var/log
+      - /tmp
     volumes:
       - data-db:/var/lib/mysql
 
