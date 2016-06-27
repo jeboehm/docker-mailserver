@@ -15,7 +15,10 @@ RUN apk --no-cache add postfix-mysql postfix && \
     postconf virtual_mailbox_maps=mysql:/etc/postfix/mysql-virtual-mailbox-maps.cf && \
     postconf virtual_alias_maps=mysql:/etc/postfix/mysql-virtual-alias-maps.cf,mysql:/etc/postfix/mysql-email2email.cf && \
     postconf smtputf8_enable=no && \
-    postconf virtual_transport=lmtp:mda:9001 && \
+    postconf smtpd_milters=inet:spamassassin:9999 && \
+    postconf milter_protocol=6 && \
+    postconf milter_connect_macros="i j {daemon_name} v {if_name} _" && \
+    postconf virtual_transport=lmtp:mda:2003 && \
     postconf smtpd_sasl_path=inet:mda:9000 && \
     postconf smtpd_sasl_type=dovecot && \
     postconf smtpd_sasl_auth_enable=yes && \
@@ -27,6 +30,7 @@ RUN apk --no-cache add postfix-mysql postfix && \
     postconf message_size_limit=50000000 && \
     postconf mailbox_size_limit=0 && \
     postconf recipient_delimiter=- && \
+    postconf mynetworks="$MYNETWORKS" && \
     chgrp postfix /etc/postfix/mysql-*.cf && \
     chmod u=rw,g=r,o= /etc/postfix/mysql-*.cf
 

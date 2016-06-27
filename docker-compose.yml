@@ -6,8 +6,9 @@ services:
     build: ./db
     restart: on-failure:5
     env_file: .env
+    read_only: true
     tmpfs:
-      - /var/log
+      - /tmp
     volumes:
       - data-db:/var/lib/mysql
 
@@ -19,6 +20,7 @@ services:
     links:
       - db
       - mda
+      - spamassassin
     volumes:
       - data-tls:/media/tls:ro
 
@@ -51,6 +53,16 @@ services:
       - db
       - mda
       - mta
+
+  spamassassin:
+    image: jeboehm/mailserver-spamassassin:latest
+    build: ./spamassassin
+    restart: on-failure:5
+    read_only: true
+    tmpfs:
+      - /etc/mail/spamassassin/sa-update-keys
+      - /run
+      - /tmp
 
 volumes:
   data-db:

@@ -14,3 +14,23 @@
  
  # If user is over quota, return with temporary failure instead of
  # bouncing the mail.
+@@ -18,7 +18,7 @@
+ #sendmail_path = /usr/sbin/sendmail
+
+ # If non-empty, send mails via this SMTP host[:port] instead of sendmail.
+-#submission_host =
++submission_host = mta
+
+ # Subject: header to use for rejection mails. You can use the same variables
+ # as for rejection_reason below.
+@@ -40,7 +40,9 @@
+ #lda_mailbox_autocreate = no
+
+ # Should automatically created mailboxes be also automatically subscribed?
+-#lda_mailbox_autosubscribe = no
++lda_mailbox_autosubscribe = yes
++
++recipient_delimiter = -
+
+ protocol lda {
+   # Space separated list of plugins to load (default is global mail_plugins).

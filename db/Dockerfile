@@ -7,4 +7,4 @@ ENV MYSQL_DATABASE=mailserver \
     MYSQL_ROOT_PASSWORD=changeme
 
 COPY rootfs/ /
-RUN rm -rf /var/log/*
+VOLUME /run/mysqld

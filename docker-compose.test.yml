@@ -11,4 +11,5 @@ services:
       - web
     volumes:
       - data-mail:/var/vmail:ro
+      - data-tls:/media/tls:ro
     env_file: .env
