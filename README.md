@@ -7,15 +7,15 @@ Docker Mailserver based on the famous [ISPMail guide](https://workaround.org/isp
 
 Services
 --------
-| Service                | Address                   |
-| ---------------------- | ------------------------- |
-| POP3 (starttls needed) | 127.0.0.1:110             |
-| POP3S                  | 127.0.0.1:995             |
-| IMAP (starttls needed) | 127.0.0.1:143             |
-| IMAPS                  | 127.0.0.1:993             |
-| SMTP (starttls needed) | 127.0.0.1:25              |
-| Management Interface   | http://127.0.0.1/manager/ |
-| Webmail                | http://127.0.0.1/webmail/ |
+| Service                | Address                      |
+| ---------------------- | ---------------------------- |
+| POP3 (starttls needed) | 127.0.0.1:110                |
+| POP3S                  | 127.0.0.1:995                |
+| IMAP (starttls needed) | 127.0.0.1:143                |
+| IMAPS                  | 127.0.0.1:993                |
+| SMTP (starttls needed) | 127.0.0.1:25                 |
+| Management Interface   | http://127.0.0.1:81/manager/ |
+| Webmail                | http://127.0.0.1:81/webmail/ |
 
 Accounts
 --------
