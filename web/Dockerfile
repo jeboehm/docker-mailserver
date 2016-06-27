@@ -8,7 +8,7 @@ ENV MYSQL_HOST=db \
     MANAGER_URL=http://www.grs-service.ch/pub/grs_mgr_v3-03_jessie_with_php7_setup.tgz \
     WEBMAIL_URL=http://github.com/roundcube/roundcubemail/releases/download/1.2.0/roundcubemail-1.2.0.tar.gz
 
-RUN docker-php-ext-install mysqli pdo_mysql \
+RUN docker-php-ext-install mysqli pdo_mysql zip \
     && apt-get update && apt-get install --no-install-recommends -y wget
 
 WORKDIR /var/www/html/manager
