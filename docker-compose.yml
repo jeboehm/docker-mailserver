@@ -46,9 +46,13 @@ services:
     build: ./web
     restart: on-failure:5
     env_file: .env
+    read_only: true
     tmpfs:
       - /var/www/html/webmail/temp
       - /var/www/html/webmail/logs
+      - /run/apache2
+      - /run/lock/apache2
+      - /tmp
     links:
       - db
       - mda
