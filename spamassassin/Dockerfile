@@ -5,6 +5,8 @@ RUN apt-get update && \
     apt-get install -y --no-install-recommends \
     supervisor \
     spamassassin \
+    pyzor \
+    razor \
     spamass-milter && \
     rm -rf /var/lib/apt/lists/* \
     adduser spamass-milter debian-spamd

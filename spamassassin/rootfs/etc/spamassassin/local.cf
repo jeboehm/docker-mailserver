@@ -1,3 +1,9 @@
 use_bayes 1
 bayes_auto_learn 1
 bayes_path /var/lib/spamassassin/.spamassassin/bayes
+
+use_pyzor 1
+pyzor_options --homedir /var/lib/spamassassin/.pyzor
+
+use_razor2 1
+razor_config /var/lib/spamassassin/.razor/razor-agent.conf
