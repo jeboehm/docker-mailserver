@@ -64,7 +64,6 @@ services:
     restart: on-failure:5
     read_only: true
     tmpfs:
-      - /etc/mail/spamassassin/sa-update-keys
       - /run
       - /tmp
 
