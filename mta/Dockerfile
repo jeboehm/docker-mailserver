@@ -12,6 +12,8 @@ ENV MAILNAME=mail.example.com \
 RUN apk --no-cache add \
       postfix-mysql \
       postfix \
+      postgrey \
+      perl-netaddr-ip \
       supervisor && \
     postconf virtual_mailbox_domains=mysql:/etc/postfix/mysql-virtual-mailbox-domains.cf && \
     postconf virtual_mailbox_maps=mysql:/etc/postfix/mysql-virtual-mailbox-maps.cf && \
