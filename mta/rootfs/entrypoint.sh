@@ -16,7 +16,6 @@ done
 
 echo "Starting MTA..."
 
-postfix start
-newaliases
 
-busybox syslogd -n -O /dev/stdout -S
+newaliases
+/usr/bin/supervisord

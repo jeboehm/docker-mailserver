@@ -8,7 +8,10 @@ ENV MAILNAME=mail.example.com \
     MYSQL_PASSWORD=changeme \
     MYSQL_DATABASE=mailserver
 
-RUN apk --no-cache add postfix-mysql postfix && \
+RUN apk --no-cache add \
+      postfix-mysql \
+      postfix \
+      supervisor && \
     touch /etc/postfix/mysql-virtual-mailbox-domains.cf /etc/postfix/mysql-virtual-mailbox-maps.cf \
     /etc/postfix/mysql-virtual-alias-maps.cf /etc/postfix/mysql-email2email.cf && \
     postconf virtual_mailbox_domains=mysql:/etc/postfix/mysql-virtual-mailbox-domains.cf && \
