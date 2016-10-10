@@ -14,6 +14,8 @@ cd "${DIR}/../" || exit
 
 PROD="./bin/production.sh"
 TEST="./bin/test.sh"
+rm -f .env
+cp .env.dist .env
 
 $TEST build
 $PROD up -d
