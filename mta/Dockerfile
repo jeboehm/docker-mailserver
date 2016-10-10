@@ -6,7 +6,8 @@ ENV MAILNAME=mail.example.com \
     MYSQL_HOST=db \
     MYSQL_USER=root \
     MYSQL_PASSWORD=changeme \
-    MYSQL_DATABASE=mailserver
+    MYSQL_DATABASE=mailserver \
+    GREYLISTING_ENABLED=true
 
 RUN apk --no-cache add \
       postfix-mysql \
