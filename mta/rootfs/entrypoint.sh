@@ -14,7 +14,7 @@ do
         "${file}"
 done
 
-if [ ${GREYLISTING_ENABLED} == "true" ]
+if [ "${GREYLISTING_ENABLED}" == "true" ]
 then
   postconf smtpd_recipient_restrictions="permit_mynetworks permit_sasl_authenticated reject_unauth_destination check_policy_service inet:127.0.0.1:10023"
 else
