@@ -10,7 +10,7 @@ do_update() {
 }
 
 do_reload() {
-  kill -1 $(cat $PIDFILE)
+  kill -1 $(cat ${PIDFILE})
 }
 
 if [ "$1" = "--startup" ]
@@ -23,7 +23,7 @@ sleep 60
 
 while true
 do
-  if ! [ -r $PIDFILE ]
+  if ! [ -r ${PIDFILE} ]
   then
       "spamd not running. Exit."
       exit 1
