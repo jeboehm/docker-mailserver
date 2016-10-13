@@ -26,6 +26,12 @@ Accounts
 You can create or edit accounts via the management interface (see above).
 Passwords can also be edited via webmail.
 
+Spam filters
+------------
+By default, spam is filtered by Spamassassin with Razor and Pyzor installed additionally.
+If you want to, you can enable [greylisting](https://en.wikipedia.org/wiki/Greylisting) by setting the `GREYLISTING_ENABLED` variable in the `.env` file to true.
+Finally recreate the mta container.
+
 Installation
 ------------
 - Clone this repository at first. The command `bin/production.sh` is a wrapper for [docker-compose](https://docs.docker.com/compose/).

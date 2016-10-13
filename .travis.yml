@@ -12,14 +12,7 @@ before_install:
  - chmod +x docker-compose
  - sudo mv docker-compose /usr/local/bin
 
-install:
- - cp .env.dist .env
-
 script:
  - docker version
  - docker-compose version
- - ./bin/test.sh build
- - ./bin/production.sh up -d
- - sleep 60
- - ./bin/test.sh run --rm test /opt/tests/run-tests.sh
- - ./bin/production.sh logs
+ - ./.travis/run-tests.sh

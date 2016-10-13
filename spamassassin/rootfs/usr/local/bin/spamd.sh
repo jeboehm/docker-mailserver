@@ -20,16 +20,16 @@ pyzor_discover() {
 }
 
 razor_setup() {
-  if [ -d $RAZOR_HOME ]
+  if [ -d ${RAZOR_HOME} ]
   then
     return 0
   fi
 
-  mkdir $RAZOR_HOME
+  mkdir ${RAZOR_HOME}
 
-  razor-admin -home=$RAZOR_HOME -register
-  razor-admin -home=$RAZOR_HOME -create
-  razor-admin -home=$RAZOR_HOME -discover
+  razor-admin -home=${RAZOR_HOME} -register
+  razor-admin -home=${RAZOR_HOME} -create
+  razor-admin -home=${RAZOR_HOME} -discover
 }
 
 create_homedir
