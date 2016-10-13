@@ -17,6 +17,11 @@ done
 if [ "${GREYLISTING_ENABLED}" == "true" ]
 then
   postconf smtpd_recipient_restrictions="permit_mynetworks permit_sasl_authenticated reject_unauth_destination check_policy_service inet:127.0.0.1:10023"
+
+  if [ "${TEST_MODE}" == "true" ]
+  then
+    postconf mynetworks="127.0.0.0/8"
+  fi
 else
   rm -f /etc/supervisor.d/postgrey.ini
 fi
