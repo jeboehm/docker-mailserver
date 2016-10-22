@@ -1,25 +1,19 @@
 #!/bin/sh
 
-tar -xf config.tar
-cd /patch || exit
-
-for patch in *.patch
+for file in /etc/dovecot/rw/*
 do
-    if ! [ -e "${patch}" ]; then break; fi
-    sed "${patch}" \
+    if ! [ -e "${file}" ]; then break; fi
+    sed -i "${file}" \
         -e "s/#dbname#/${MYSQL_DATABASE}/g" \
         -e "s/#dbhost#/${MYSQL_HOST}/g" \
         -e "s/#dbpassword#/${MYSQL_PASSWORD}/g" \
         -e "s/#dbuser#/${MYSQL_USER}/g" \
         -e "s/#postmaster#/${POSTMASTER}/g" \
-        -e "s/#mailname#/${MAILNAME}/g" > "/tmp/${patch}"
-
-    patch -p0 < "/tmp/${patch}"
-    rm "/tmp/${patch}"
+        -e "s/#mailname#/${MAILNAME}/g"
 done
 
-chown root:root /etc/dovecot/dovecot-sql.conf.ext
-chmod go= /etc/dovecot/dovecot-sql.conf.ext
+chown root:root /etc/dovecot/rw/dovecot-sql.conf.ext
+chmod go= /etc/dovecot/rw/dovecot-sql.conf.ext
 
 if ! [ -r /media/tls/mailserver.crt ]
 then

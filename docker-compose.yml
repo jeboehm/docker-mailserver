@@ -31,10 +31,8 @@ services:
     env_file: .env
     read_only: true
     tmpfs:
-      - /etc/dovecot
       - /run
       - /var/lib/dovecot
-      - /tmp
     volumes:
       - data-mail:/var/vmail
       - data-tls:/media/tls:rw
