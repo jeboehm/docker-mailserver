@@ -1,0 +1,8 @@
+driver = mysql
+connect = host=#dbhost# dbname=#dbname# user=#dbuser# password=#dbpassword#
+default_pass_scheme = SHA256-CRYPT
+password_query = SELECT email as user, password FROM virtual_users WHERE email='%u';
+#user_query = \
+#  SELECT home, uid, gid \
+#  FROM users WHERE username = '%n' AND domain = '%d'
+#iterate_query = SELECT username AS user FROM users
