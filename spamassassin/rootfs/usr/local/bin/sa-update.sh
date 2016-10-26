@@ -25,7 +25,7 @@ while true
 do
   if ! [ -r ${PIDFILE} ]
   then
-      "spamd not running. Exit."
+      echo "spamd not running. Exit."
       exit 1
   fi
 
