@@ -45,11 +45,20 @@
 
 @test "send junk mail to local address" {
     swaks --to admin@example.com --data sample-spam.txt
-    sleep 3
     [ "$?" -eq 0 ]
 }
 
 @test "check junk mail in junk folder (sieve rule is working)" {
+    if [ "$GREYLISTING_ENABLED" == "true" ]
+    then
+      echo "Waiting for greylisting"
+      sleep 60
+      postqueue -f
+      sleep 3
+    else
+      sleep 5
+    fi
+
     files="$(ls -1 /var/vmail/example.com/admin/Maildir/.Junk/new/ | wc -l)"
     [ "$files" -gt 0 ]
 }
