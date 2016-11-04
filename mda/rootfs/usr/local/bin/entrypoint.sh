@@ -22,4 +22,4 @@ fi
 
 echo "Starting MDA..."
 
-dovecot -F
+/usr/sbin/dovecot -F

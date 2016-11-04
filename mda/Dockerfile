@@ -20,4 +20,4 @@ RUN sievec /etc/dovecot/sieve-after/spam-to-folder.sieve
 EXPOSE 2003 9000 4190 143 110 993 995
 VOLUME ["/var/vmail", "/etc/dovecot/rw"]
 
-CMD ["/entrypoint.sh"]
+CMD ["/usr/local/bin/entrypoint.sh"]
