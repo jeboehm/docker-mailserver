@@ -1,9 +1,10 @@
 #!/bin/sh
+export MAIL_CONFIG="/etc/postfix/rw"
 
 postconf myhostname="${MAILNAME}"
 postconf mynetworks="${MYNETWORKS}"
 
-for file in /etc/postfix/mysql-*.cf
+for file in /etc/postfix/rw/mysql-*.cf
 do
     if ! [ -e "${file}" ]; then break; fi
     sed -i \
@@ -24,5 +25,4 @@ then
   fi
 fi
 
-newaliases
 /usr/bin/supervisord
