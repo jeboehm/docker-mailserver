@@ -22,8 +22,6 @@ then
   then
     postconf mynetworks="127.0.0.0/8"
   fi
-else
-  rm -f /etc/supervisor.d/postgrey.ini
 fi
 
 newaliases
