@@ -25,4 +25,5 @@ then
   fi
 fi
 
+unset MAIL_CONFIG
 /usr/bin/supervisord
