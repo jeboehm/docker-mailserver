@@ -15,7 +15,7 @@ cd "${DIR}/../" || exit
 PROD="./bin/production.sh"
 TEST="./bin/test.sh"
 
-run() {
+run_tests() {
   $TEST down -v
   $TEST build
   $PROD up -d
@@ -27,9 +27,4 @@ run() {
 rm -f .env
 cp .env.dist .env
 
-run
-
-echo "TEST_MODE=true" >> .env
-echo "GREYLISTING_ENABLED=true" >> .env
-
-run
+run_tests

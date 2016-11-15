@@ -7,7 +7,8 @@ ENV MAILNAME=mail.example.com \
     MYSQL_USER=root \
     MYSQL_PASSWORD=changeme \
     MYSQL_DATABASE=mailserver \
-    GREYLISTING_ENABLED=true
+    GREYLISTING_ENABLED=true \
+    GREYLISTING_DELAY=50
 
 RUN apk --no-cache add \
       postfix-mysql \
@@ -34,11 +35,14 @@ RUN apk --no-cache add \
     postconf message_size_limit=50000000 && \
     postconf mailbox_size_limit=0 && \
     postconf recipient_delimiter=- && \
-    postconf mynetworks="$MYNETWORKS"
+    postconf mynetworks="$MYNETWORKS" && \
+    newaliases && \
+    rm -rf /var/run && \
+    ln -sf /tmp /var/run
 
 COPY rootfs/ /
 
 EXPOSE 25
-VOLUME /var/spool/postfix
+VOLUME ["/var/spool/postfix"]
 
 CMD ["/entrypoint.sh"]
