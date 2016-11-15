@@ -45,9 +45,14 @@
     [ "$result" -eq 1 ]
 }
 
-@test "count mails in junk via imap" {
-    result="$(imap-tester test:count mda 993 admin@example.com changeme Junk)"
-    [ "$result" -eq 1 ]
+@test "count mails in inbox via imaps" {
+    result="$(imap-tester test:count mda 993 admin@example.com changeme INBOX)"
+    [ "$result" -eq 3 ]
+}
+
+@test "count mails in inbox via pop3" {
+    result="$(imap-tester test:count mda 110 admin@example.com changeme INBOX)"
+    [ "$result" -eq 3 ]
 }
 
 @test "count mails in inbox via pop3s" {
