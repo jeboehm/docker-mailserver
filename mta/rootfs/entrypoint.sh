@@ -1,10 +1,8 @@
 #!/bin/sh
-export MAIL_CONFIG="/etc/postfix/rw"
-
 postconf myhostname="${MAILNAME}"
 postconf mynetworks="${MYNETWORKS}"
 
-for file in /etc/postfix/rw/mysql-*.cf
+for file in /etc/postfix/mysql-*.cf
 do
     if ! [ -e "${file}" ]; then break; fi
     sed -i \
@@ -18,12 +16,6 @@ done
 if [ "${GREYLISTING_ENABLED}" == "true" ]
 then
   postconf smtpd_recipient_restrictions="permit_mynetworks permit_sasl_authenticated reject_unauth_destination check_policy_service inet:127.0.0.1:10023"
-
-  if [ "${TEST_MODE}" == "true" ]
-  then
-    postconf mynetworks="127.0.0.0/8"
-  fi
 fi
 
-unset MAIL_CONFIG
 /usr/bin/supervisord

@@ -16,9 +16,9 @@ RUN apk --no-cache add \
       postgrey \
       perl-netaddr-ip \
       supervisor && \
-    postconf virtual_mailbox_domains=mysql:/etc/postfix/rw/mysql-virtual-mailbox-domains.cf && \
-    postconf virtual_mailbox_maps=mysql:/etc/postfix/rw/mysql-virtual-mailbox-maps.cf && \
-    postconf virtual_alias_maps=mysql:/etc/postfix/rw/mysql-virtual-alias-maps.cf,mysql:/etc/postfix/rw/mysql-email2email.cf && \
+    postconf virtual_mailbox_domains=mysql:/etc/postfix/mysql-virtual-mailbox-domains.cf && \
+    postconf virtual_mailbox_maps=mysql:/etc/postfix/mysql-virtual-mailbox-maps.cf && \
+    postconf virtual_alias_maps=mysql:/etc/postfix/mysql-virtual-alias-maps.cf,mysql:/etc/postfix/mysql-email2email.cf && \
     postconf smtputf8_enable=no && \
     postconf smtpd_milters=inet:spamassassin:9999 && \
     postconf milter_protocol=6 && \
@@ -37,16 +37,12 @@ RUN apk --no-cache add \
     postconf recipient_delimiter=- && \
     postconf mynetworks="$MYNETWORKS" && \
     newaliases && \
-    mkdir /etc/postfix/rw && \
-    mv /etc/postfix/main.cf /etc/postfix/rw/main.cf && \
-    ln -sf /etc/postfix/rw/main.cf /etc/postfix/main.cf && \
-    rm -rf /var/run /var/lib/postfix && \
-    ln -sf /tmp /var/run && \
-    ln -sf /tmp /var/lib/postfix
+    rm -rf /var/run && \
+    ln -sf /tmp /var/run
 
 COPY rootfs/ /
 
 EXPOSE 25
-VOLUME ["/var/spool/postfix", "/etc/postfix/rw"]
+VOLUME ["/var/spool/postfix"]
 
 CMD ["/entrypoint.sh"]
