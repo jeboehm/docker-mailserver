@@ -14,13 +14,10 @@
     [ "$?" -eq 0 ]
 }
 
-@test "maildir exists" {
-    sleep 5
-    ls -lh /var/vmail/example.com/admin/Maildir/new/
-    [ "$?" -eq 0 ]
-}
-
 @test "maildir contains files" {
+    postqueue -f
+    sleep 10
+
     files="$(ls -1 /var/vmail/example.com/admin/Maildir/new/ | wc -l)"
     [ "$files" -eq 3 ]
 }
@@ -31,9 +28,11 @@
 }
 
 @test "check junk mail in junk folder (sieve rule is working)" {
-    sleep 5
+    postqueue -f
+    sleep 10
+
     files="$(ls -1 /var/vmail/example.com/admin/Maildir/.Junk/new/ | wc -l)"
-    [ "$files" -gt 0 ]
+    [ "$files" -eq 1 ]
 }
 
 @test "count mails in inbox via imap" {
