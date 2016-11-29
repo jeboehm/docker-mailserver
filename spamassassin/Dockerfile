@@ -8,8 +8,7 @@ RUN apt-get update && \
     pyzor \
     razor \
     spamass-milter && \
-    rm -rf /var/lib/apt/lists/* \
-    adduser spamass-milter debian-spamd
+    rm -rf /var/lib/apt/lists/*
 
 COPY rootfs/ /
 
