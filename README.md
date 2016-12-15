@@ -29,9 +29,15 @@ Passwords can also be edited via webmail.
 Spam filters
 ------------
 By default, spam is filtered by Spamassassin with Razor and Pyzor installed additionally.
-If you want to, you can enable [greylisting](https://en.wikipedia.org/wiki/Greylisting) by setting the `GREYLISTING_ENABLED` variable in the `.env` file to true. Now recreate the mta container.
 
-Please note that greylisting is not covered by the integration tests. So this feature should be considered as experimental.
+| Method                                                        | Variable            | Status       |
+| ------------------------------------------------------------- | ------------------- | ------------ |
+| Spamassassin                                                  | -                   | -            |
+| Razor / Pyzor                                                 | -                   | -            |
+| Greylisting                                                   | GREYLISTING_ENABLED | experimental |
+| Mime Header Checks (bat, com, exe, dll, vbs, docm, doc, dzip) | FILTER_MIME         | experimental |
+
+Experimental filter methods are not covered by integration tests.
 
 Installation
 ------------
