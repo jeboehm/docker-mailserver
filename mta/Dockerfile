@@ -8,7 +8,8 @@ ENV MAILNAME=mail.example.com \
     MYSQL_PASSWORD=changeme \
     MYSQL_DATABASE=mailserver \
     GREYLISTING_ENABLED=true \
-    GREYLISTING_DELAY=50
+    GREYLISTING_DELAY=50 \
+    FILTER_MIME=false
 
 RUN apk --no-cache add \
       postfix-mysql \
