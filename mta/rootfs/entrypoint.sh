@@ -20,7 +20,7 @@ fi
 
 if [ "${FILTER_MIME}" == "true" ]
 then
-  postconf mime_header_checks = regexp:/etc/postfix/mime_header_checks
+  postconf mime_header_checks=regexp:/etc/postfix/mime_header_checks
 fi
 
 /usr/bin/supervisord
