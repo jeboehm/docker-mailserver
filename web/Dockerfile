@@ -6,7 +6,7 @@ ENV MYSQL_HOST=db \
     MYSQL_USER=mailserver \
     MYSQL_PASSWORD=changeme \
     MANAGER_URL=http://www.grs-service.ch/pub/grs_mgr_v3-03_jessie_with_php7_setup.tgz \
-    WEBMAIL_URL=http://github.com/roundcube/roundcubemail/releases/download/1.2.0/roundcubemail-1.2.0.tar.gz
+    WEBMAIL_URL=http://github.com/roundcube/roundcubemail/releases/download/1.2.3/roundcubemail-1.2.3.tar.gz
 
 RUN apk --no-cache add \
       nginx \
