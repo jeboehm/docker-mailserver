@@ -47,8 +47,6 @@ services:
     env_file: .env
     read_only: true
     tmpfs:
-      - /var/www/html/webmail/temp
-      - /var/www/html/webmail/logs
       - /tmp
     links:
       - db

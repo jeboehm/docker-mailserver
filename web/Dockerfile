@@ -6,7 +6,7 @@ ENV MYSQL_HOST=db \
     MYSQL_USER=mailserver \
     MYSQL_PASSWORD=changeme \
     MANAGER_URL=http://www.grs-service.ch/pub/grs_mgr_v3-03_jessie_with_php7_setup.tgz \
-    WEBMAIL_URL=https://github.com/roundcube/roundcubemail/releases/download/1.2.3/roundcubemail-1.2.3.tar.gz
+    WEBMAIL_URL=https://github.com/roundcube/roundcubemail/releases/download/1.2.3/roundcubemail-1.2.3-complete.tar.gz
 
 WORKDIR /var/www/html/manager
 RUN wget -q -O- $MANAGER_URL | tar -zx \
@@ -15,9 +15,7 @@ RUN wget -q -O- $MANAGER_URL | tar -zx \
 
 WORKDIR /var/www/html/webmail
 RUN wget -q -O- $WEBMAIL_URL | tar --strip 1 -zx \
-    && chmod 777 logs temp \
-    && pear install mail_mime mail_mimedecode net_smtp net_idna2-beta auth_sasl net_sieve crypt_gpg \
-    && rm -rf installer/
+    && rm -rf installer/ temp/ logs/
 
 WORKDIR /var/www/html
 COPY rootfs/ /
