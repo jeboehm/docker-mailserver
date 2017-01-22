@@ -1,5 +1,10 @@
 <?php
 $config = [];
+$config['debug_level'] = 0;
+$config['smtp_log'] = false;
+$config['log_dir'] = '/tmp/';
+$config['temp_dir'] = '/tmp/';
+$config['imap_cache'] = 'apc';
 $config['db_dsnw'] = sprintf(
     'mysql://%s:%s@%s/%s',
     getenv('MYSQL_USER'),
@@ -21,8 +26,6 @@ $config['plugins'] = [
     'managesieve',
     'password',
 ];
-$config['skin'] = 'larry';
-$config['session_lifetime'] = 60;
 $config['skin_logo'] = './ispmail-logo.png';
 $config['imap_conn_options'] = [
     'ssl' => [

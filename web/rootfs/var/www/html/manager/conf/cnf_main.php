@@ -14,4 +14,3 @@
 	$app_useraccess  = 1;
 	$grs_debugmode  = 0;			// DebugMode
 	$grs_debuginfo  = array();		// Debuginfo
-?>
