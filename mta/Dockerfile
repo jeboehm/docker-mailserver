@@ -1,4 +1,4 @@
-FROM alpine:3.4
+FROM alpine:3.6
 MAINTAINER Jeffrey Boehm "jeff@ressourcenkonflikt.de"
 
 ENV MAILNAME=mail.example.com \

@@ -10,12 +10,14 @@ pull:
 	$(compose-production) pull
 
 .PHONY: test
-test: env clear-test build
+test: run-test logs
+
+.PHONY: run-test
+run-test: env clear-test build
 	$(compose-test) build
 	$(compose-production) up -d
 	sleep 60
 	$(compose-test) run --rm test /opt/tests/run-tests.sh
-	$(compose-production) logs
 
 .PHONY: clear-test
 clear-test:
@@ -25,3 +27,7 @@ clear-test:
 env:
 	rm -f .env
 	cp .env.dist .env
+
+.PHONY: logs
+logs:
+	$(compose-production) logs
