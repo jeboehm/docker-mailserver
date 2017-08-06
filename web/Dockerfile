@@ -6,7 +6,14 @@ ENV MYSQL_HOST=db \
     MYSQL_USER=mailserver \
     MYSQL_PASSWORD=changeme \
     MANAGER_URL=http://www.grs-service.ch/pub/grs_mgr_v3-03_jessie_with_php7_setup.tgz \
-    WEBMAIL_URL=https://github.com/roundcube/roundcubemail/releases/download/1.2.3/roundcubemail-1.2.3-complete.tar.gz
+    WEBMAIL_URL=https://github.com/roundcube/roundcubemail/releases/download/1.2.3/roundcubemail-1.2.3-complete.tar.gz \
+    DOCKERIZE_VERSION=v0.5.0 \
+    MTA_HOST=mta \
+    MDA_HOST=mda
+
+RUN wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-alpine-linux-amd64-$DOCKERIZE_VERSION.tar.gz && \
+    tar -C /usr/local/bin -xzvf dockerize-alpine-linux-amd64-$DOCKERIZE_VERSION.tar.gz && \
+    rm dockerize-alpine-linux-amd64-$DOCKERIZE_VERSION.tar.gz
 
 WORKDIR /var/www/html/manager
 RUN wget -q -O- $MANAGER_URL | tar -zx \
@@ -20,4 +27,4 @@ RUN wget -q -O- $WEBMAIL_URL | tar --strip 1 -zx \
 WORKDIR /var/www/html
 COPY rootfs/ /
 
-CMD ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf"]
+CMD ["/usr/local/bin/entrypoint.sh"]
