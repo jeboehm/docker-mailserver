@@ -1,5 +1,5 @@
 #!/bin/sh
-if ! [ -r /media/tls/mailserver.crt ]
+if ! [ -r ${SSL_CERT} ]
 then
     /usr/local/bin/create_tls.sh
 fi

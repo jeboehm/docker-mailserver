@@ -17,12 +17,6 @@ services:
     build: ./mta
     restart: on-failure:5
     env_file: .env
-    tmpfs:
-      - /tmp
-    links:
-      - db
-      - mda
-      - spamassassin
     volumes:
       - data-tls:/media/tls:ro
 

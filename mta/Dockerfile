@@ -13,7 +13,9 @@ ENV MAILNAME=mail.example.com \
     DOCKERIZE_VERSION=v0.5.0 \
     SPAMASSASSIN_HOST=spamassassin \
     MDA_HOST=mda \
-    MTA_HOST=mta
+    MTA_HOST=mta \
+    SSL_CERT=/media/tls/mailserver.crt \
+    SSL_KEY=/media/tls/mailserver.key
 
 RUN apk --no-cache add \
       openssl \
@@ -35,8 +37,8 @@ RUN apk --no-cache add \
     postconf smtpd_sasl_auth_enable=yes && \
     postconf smtpd_tls_security_level=may && \
     postconf smtpd_tls_auth_only=yes && \
-    postconf smtpd_tls_cert_file=/media/tls/mailserver.crt && \
-    postconf smtpd_tls_key_file=/media/tls/mailserver.key && \
+    postconf smtpd_tls_cert_file=${SSL_CERT} && \
+    postconf smtpd_tls_key_file=${SSL_KEY} && \
     postconf soft_bounce=no && \
     postconf message_size_limit=50000000 && \
     postconf mailbox_size_limit=0 && \
