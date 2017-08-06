@@ -19,6 +19,7 @@ services:
     env_file: .env
     volumes:
       - data-tls:/media/tls:ro
+    mem_limit: 128M
 
   mda:
     image: jeboehm/mailserver-mda:latest
