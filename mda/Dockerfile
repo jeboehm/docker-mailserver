@@ -10,7 +10,9 @@ ENV MYSQL_HOST=db \
     DOCKERIZE_VERSION=v0.5.0 \
     SUBMISSION_HOST=mta \
     ENABLE_POP3=true \
-    ENABLE_IMAP=true
+    ENABLE_IMAP=true \
+    SSL_CERT=/media/tls/mailserver.crt \
+    SSL_KEY=/media/tls/mailserver.key
 
 RUN apk --no-cache add \
          dovecot \

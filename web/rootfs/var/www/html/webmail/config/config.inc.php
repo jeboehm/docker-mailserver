@@ -12,12 +12,12 @@ $config['db_dsnw'] = sprintf(
     getenv('MYSQL_HOST'),
     getenv('MYSQL_DATABASE')
 );
-$config['default_host'] = 'tls://mda';
-$config['smtp_server'] = 'tls://mta';
+$config['default_host'] = 'tls://' . getenv('MDA_HOST');
+$config['smtp_server'] = 'tls://' . getenv('MTA_HOST');
 $config['smtp_port'] = 25;
 $config['smtp_user'] = '%u';
 $config['smtp_pass'] = '%p';
-$config['support_url'] = 'https://github.com/jeboehm/docker-mailserver';
+$config['support_url'] = getenv('SUPPORT_URL');
 $config['product_name'] = 'Webmail';
 $config['des_key'] = 'rcmail-!24ByteDESkey*Str';
 $config['plugins'] = [

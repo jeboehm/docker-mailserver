@@ -20,7 +20,6 @@ up: build
 run-test: env clean build
 	$(compose-test) build
 	$(compose-production) up -d
-	sleep 60
 	$(compose-test) run --rm test /opt/tests/run-tests.sh
 
 .PHONY: clean
@@ -34,4 +33,7 @@ env:
 
 .PHONY: logs
 logs:
-	$(compose-production) logs
+	$(compose-production) logs mta
+	$(compose-production) logs mda
+	$(compose-production) logs web
+	$(compose-production) logs db
