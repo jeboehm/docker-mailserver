@@ -8,7 +8,9 @@ ENV MYSQL_HOST=db \
     MAILNAME=mail.example.com \
     POSTMASTER=postmaster@example.com \
     DOCKERIZE_VERSION=v0.5.0 \
-    SUBMISSION_HOST=mta
+    SUBMISSION_HOST=mta \
+    ENABLE_POP3=true \
+    ENABLE_IMAP=true
 
 RUN apk --no-cache add \
          dovecot \
