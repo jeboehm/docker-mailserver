@@ -9,7 +9,8 @@ ENV MYSQL_HOST=db \
     WEBMAIL_URL=https://github.com/roundcube/roundcubemail/releases/download/1.2.4/roundcubemail-1.2.4-complete.tar.gz \
     DOCKERIZE_VERSION=v0.5.0 \
     MTA_HOST=mta \
-    MDA_HOST=mda
+    MDA_HOST=mda \
+    SUPPORT_URL=https://github.com/jeboehm/docker-mailserver
 
 RUN wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-alpine-linux-amd64-$DOCKERIZE_VERSION.tar.gz && \
     tar -C /usr/local/bin -xzvf dockerize-alpine-linux-amd64-$DOCKERIZE_VERSION.tar.gz && \
