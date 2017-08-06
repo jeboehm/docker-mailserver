@@ -6,4 +6,10 @@ cd "${DIR}" || exit
 
 postfix start
 
-bats *.bats
+dockerize \
+  -wait tcp://${MYSQL_HOST}:3306 \
+  -wait tcp://example.com:25 \
+  -wait tcp://web:80 \
+  -wait tcp://mda:143 \
+  -timeout 60s \
+  bats *.bats

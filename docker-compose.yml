@@ -6,9 +6,6 @@ services:
     build: ./db
     restart: on-failure:5
     env_file: .env
-    read_only: true
-    tmpfs:
-      - /tmp
     volumes:
       - data-db:/var/lib/mysql
 
@@ -36,22 +33,11 @@ services:
     build: ./web
     restart: on-failure:5
     env_file: .env
-    read_only: true
-    tmpfs:
-      - /tmp
-    links:
-      - db
-      - mda
-      - mta
 
   spamassassin:
     image: jeboehm/mailserver-spamassassin:latest
     build: ./spamassassin
     restart: on-failure:5
-    read_only: true
-    tmpfs:
-      - /run
-      - /tmp
 
 volumes:
   data-db:
