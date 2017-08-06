@@ -9,9 +9,14 @@ ENV MAILNAME=mail.example.com \
     MYSQL_DATABASE=mailserver \
     GREYLISTING_ENABLED=true \
     GREYLISTING_DELAY=50 \
-    FILTER_MIME=false
+    FILTER_MIME=false \
+    DOCKERIZE_VERSION=v0.5.0 \
+    SPAMASSASSIN_HOST=spamassassin \
+    MDA_HOST=mda \
+    MTA_HOST=mta
 
 RUN apk --no-cache add \
+      openssl \
       postfix-mysql \
       postfix \
       postgrey \
@@ -21,11 +26,11 @@ RUN apk --no-cache add \
     postconf virtual_mailbox_maps=mysql:/etc/postfix/mysql-virtual-mailbox-maps.cf && \
     postconf virtual_alias_maps=mysql:/etc/postfix/mysql-virtual-alias-maps.cf,mysql:/etc/postfix/mysql-email2email.cf && \
     postconf smtputf8_enable=no && \
-    postconf smtpd_milters=inet:spamassassin:9999 && \
+    postconf smtpd_milters=inet:${SPAMASSASSIN_HOST}:9999 && \
     postconf milter_protocol=6 && \
     postconf milter_connect_macros="i j {daemon_name} v {if_name} _" && \
-    postconf virtual_transport=lmtp:mda:2003 && \
-    postconf smtpd_sasl_path=inet:mda:9000 && \
+    postconf virtual_transport=lmtp:${MDA_HOST}:2003 && \
+    postconf smtpd_sasl_path=inet:${MDA_HOST}:9000 && \
     postconf smtpd_sasl_type=dovecot && \
     postconf smtpd_sasl_auth_enable=yes && \
     postconf smtpd_tls_security_level=may && \
@@ -38,8 +43,10 @@ RUN apk --no-cache add \
     postconf recipient_delimiter=- && \
     postconf mynetworks="$MYNETWORKS" && \
     newaliases && \
-    rm -rf /var/run && \
-    ln -sf /tmp /var/run
+    wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-alpine-linux-amd64-$DOCKERIZE_VERSION.tar.gz && \
+    tar -C /usr/local/bin -xzvf dockerize-alpine-linux-amd64-$DOCKERIZE_VERSION.tar.gz && \
+    rm dockerize-alpine-linux-amd64-$DOCKERIZE_VERSION.tar.gz
+
 
 COPY rootfs/ /
 

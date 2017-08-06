@@ -1,0 +1,5 @@
+user = {{ .Env.MYSQL_USER }}
+password = {{ .Env.MYSQL_PASSWORD }}
+hosts = {{ .Env.MYSQL_HOST }}
+dbname = {{ .Env.MYSQL_DATABASE }}
+query = SELECT 1 FROM virtual_users WHERE email='%s'

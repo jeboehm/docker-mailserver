@@ -1,5 +1,0 @@
-user = #user#
-password = #password#
-hosts = #hosts#
-dbname = #dbname#
-query = SELECT 1 FROM virtual_users WHERE email='%s'
