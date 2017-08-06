@@ -47,10 +47,9 @@ RUN apk --no-cache add \
     tar -C /usr/local/bin -xzvf dockerize-alpine-linux-amd64-$DOCKERIZE_VERSION.tar.gz && \
     rm dockerize-alpine-linux-amd64-$DOCKERIZE_VERSION.tar.gz
 
-
 COPY rootfs/ /
 
 EXPOSE 25
 VOLUME ["/var/spool/postfix"]
 
-CMD ["/entrypoint.sh"]
+CMD ["/usr/local/bin/entrypoint.sh"]
