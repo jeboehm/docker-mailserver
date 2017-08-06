@@ -1,4 +1,4 @@
-FROM alpine:3.4
+FROM alpine:3.6
 MAINTAINER Jeffrey Boehm "jeff@ressourcenkonflikt.de"
 
 ENV MYSQL_HOST=db \
@@ -11,6 +11,7 @@ ENV MYSQL_HOST=db \
 
 RUN apk --no-cache add \
       bash \
+      bats \
       curl \
       mariadb-client \
       openssl \
@@ -21,12 +22,10 @@ RUN apk --no-cache add \
       php5-imap \
     && wget -q -O /usr/local/bin/swaks ${SWAKSURL} \
     && chmod +x /usr/local/bin/swaks \
-    && wget -q -O- https://github.com/sstephenson/bats/archive/v$BATSVERSION.tar.gz | tar -xzv \
-    && ./bats-$BATSVERSION/install.sh /usr/local \
     && wget -q -O /usr/local/bin/imap-tester https://github.com/jeboehm/imap-tester/releases/download/v$IMAPTESTERVERSION/imap-tester.phar \
     && chmod +x /usr/local/bin/imap-tester \
-    && rm -rf /bats-$BATSVERSION \
-    && postconf smtputf8_enable=no
+    && postconf smtputf8_enable=no \
+    && ln -s /usr/bin/php5 /usr/bin/php
 
 COPY rootfs/ /
 
