@@ -1,8 +1,8 @@
-postmaster_address = #postmaster#
-hostname = #mailname#
+postmaster_address = {{ .Env.POSTMASTER }}
+hostname = {{ .Env.MAILNAME }}
 #quota_full_tempfail = no
 #sendmail_path = /usr/sbin/sendmail
-submission_host = mta
+submission_host = {{ .Env.SUBMISSION_HOST }}
 #rejection_subject = Rejected: %s
 #rejection_reason = Your message to <%t> was automatically rejected:%n%r
 #recipient_delimiter = +

@@ -12,15 +12,19 @@ pull:
 .PHONY: test
 test: run-test logs
 
+.PHONY: up
+up: build
+	$(compose-production) up
+
 .PHONY: run-test
-run-test: env clear-test build
+run-test: env clean build
 	$(compose-test) build
 	$(compose-production) up -d
 	sleep 60
 	$(compose-test) run --rm test /opt/tests/run-tests.sh
 
-.PHONY: clear-test
-clear-test:
+.PHONY: clean
+clean:
 	$(compose-test) down -v
 
 .PHONY: env

@@ -3,7 +3,12 @@
 #default_vsz_limit = 256M
 #default_login_user = dovenull
 #default_internal_user = dovecot
+protocols = lmtp
 
+{{ $enable_pop3 := eq (or ($.Env.ENABLE_POP3) "") "true" }}
+{{ $enable_imap := eq (or ($.Env.ENABLE_IMAP) "") "true" }}
+
+{{ if $enable_imap }}
 service imap-login {
   inet_listener imap {
     #port = 143
@@ -19,6 +24,15 @@ service imap-login {
   #vsz_limit = $default_vsz_limit
 }
 
+service imap {
+  #vsz_limit = $default_vsz_limit
+  #process_limit = 1024
+}
+
+protocols = $protocols imap
+{{ end }}
+
+{{ if $enable_pop3 }}
 service pop3-login {
   inet_listener pop3 {
     #port = 110
@@ -30,6 +44,13 @@ service pop3-login {
   }
 }
 
+service pop3 {
+  #process_limit = 1024
+}
+
+protocols = $protocols pop3
+{{ end }}
+
 service lmtp {
   unix_listener lmtp {
     #mode = 0666
@@ -38,15 +59,6 @@ service lmtp {
   inet_listener lmtp {
     port = 2003
   }
-}
-
-service imap {
-  #vsz_limit = $default_vsz_limit
-  #process_limit = 1024
-}
-
-service pop3 {
-  #process_limit = 1024
 }
 
 service auth {
