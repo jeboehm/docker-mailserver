@@ -1,12 +1,9 @@
 #!/bin/sh
-
-PIDFILE="/run/spamd.pid"
+PIDFILE="${SA_HOME}/spamd.pid"
 
 do_update() {
-  start-stop-daemon \
-    --chuid debian-spamd:debian-spamd --start \
-    --exec /usr/bin/sa-update -- \
-    --gpghomedir /var/lib/spamassassin/sa-update-keys 2>&1
+  /usr/bin/sa-update \
+    --gpghomedir ${SA_HOME}/sa-update-keys 2>&1
 }
 
 do_reload() {

@@ -33,11 +33,13 @@ services:
     build: ./web
     restart: on-failure:5
     env_file: .env
+    mem_limit: 128M
 
   spamassassin:
     image: jeboehm/mailserver-spamassassin:latest
     build: ./spamassassin
     restart: on-failure:5
+    mem_limit: 192M
 
 volumes:
   data-db:

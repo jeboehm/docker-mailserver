@@ -1,19 +1,48 @@
-FROM debian:jessie
+FROM alpine:3.6
 MAINTAINER Jeffrey Boehm "jeff@ressourcenkonflikt.de"
 
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-    supervisor \
-    spamassassin \
-    pyzor \
-    razor \
-    spamass-milter && \
-    rm -rf /var/lib/apt/lists/*
+ENV SPAMASS_USER=spamass \
+    SPAMASS_GROUP=spamass \
+    SPAMASS_CONF=/var/lib/spamassassin \
+    SA_HOME=/var/lib/spamassassin/.spamassassin
+
+RUN apk --no-cache add \
+      libgcc \
+      libmilter-dev \
+      libstdc++ \
+      openssl \
+      perl-mail-spf \
+      python3 \
+      razor \
+      spamassassin \
+      spamassassin-client \
+      supervisor \
+      wget && \
+    apk --no-cache add --virtual .fetch-deps \
+          autoconf \
+          automake \
+          build-base && \
+    pip3 install \
+      pyzor && \
+    wget https://github.com/andybalholm/spamass-milter/archive/master.tar.gz && \
+    tar -xvf master.tar.gz && \
+      cd spamass-milter-master && \
+      ./autogen.sh && \
+      make && \
+      make install && \
+      cd / && \
+    rm -rf spamass-milter-master master.tar.gz && \
+    apk del .fetch-deps && \
+    addgroup -S ${SPAMASS_GROUP} && \
+    adduser -D ${SPAMASS_USER} -G ${SPAMASS_GROUP} && \
+    chgrp ${SPAMASS_GROUP} ${SPAMASS_CONF} && \
+    chmod 775 ${SPAMASS_CONF}
+
+USER ${SPAMASS_USER}
+VOLUME ["${SPAMASS_CONF}"]
 
 COPY rootfs/ /
 
 EXPOSE 9999
-
-VOLUME /var/lib/spamassassin
 
 CMD ["/usr/bin/supervisord"]
