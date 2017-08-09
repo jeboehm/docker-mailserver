@@ -37,3 +37,4 @@ logs:
 	$(compose-production) logs mda
 	$(compose-production) logs web
 	$(compose-production) logs db
+	$(compose-production) logs spamassassin
