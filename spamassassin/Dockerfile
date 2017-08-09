@@ -4,7 +4,8 @@ MAINTAINER Jeffrey Boehm "jeff@ressourcenkonflikt.de"
 ENV SPAMASS_USER=spamass \
     SPAMASS_GROUP=spamass \
     SPAMASS_CONF=/var/lib/spamassassin \
-    SA_HOME=/var/lib/spamassassin/.spamassassin
+    SA_HOME=/var/lib/spamassassin/.spamassassin \
+    SA_PORT=1783
 
 RUN apk --no-cache add \
       libgcc \
@@ -45,4 +46,5 @@ COPY rootfs/ /
 
 EXPOSE 9999
 
+HEALTHCHECK CMD spamc -K -p ${SA_PORT} || exit 1
 CMD ["/usr/bin/supervisord"]

@@ -9,4 +9,4 @@ echo "Starting spamassassin.."
     --max-children 5 \
     --helper-home-dir=${SA_HOME} \
     --nouser-config \
-    --listen 127.0.0.1:1783
+    --listen 127.0.0.1:${SA_PORT}
