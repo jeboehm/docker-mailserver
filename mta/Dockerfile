@@ -9,6 +9,7 @@ ENV MAILNAME=mail.example.com \
     MYSQL_DATABASE=mailserver \
     GREYLISTING_ENABLED=true \
     GREYLISTING_DELAY=50 \
+    DISCARD_DSN=true \
     FILTER_MIME=false \
     DOCKERIZE_VERSION=v0.5.0 \
     SPAMASSASSIN_HOST=spamassassin \
