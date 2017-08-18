@@ -12,6 +12,11 @@ then
   postconf mime_header_checks=regexp:/etc/postfix/mime_header_checks
 fi
 
+if [ "${DISCARD_DSN}" == "true" ]
+then
+  postconf "smtpd_discard_ehlo_keywords=silent-discard, dsn"
+fi
+
 dockerize \
   -template /etc/postfix/mysql-email2email.cf.templ:/etc/postfix/mysql-email2email.cf \
   -template /etc/postfix/mysql-virtual-alias-maps.cf.templ:/etc/postfix/mysql-virtual-alias-maps.cf \
