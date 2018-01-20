@@ -1,5 +1,5 @@
 FROM alpine:3.6
-MAINTAINER Jeffrey Boehm "jeff@ressourcenkonflikt.de"
+LABEL maintainer="jeff@ressourcenkonflikt.de"
 
 ENV SPAMASS_USER=spamass \
     SPAMASS_GROUP=spamass \

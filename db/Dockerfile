@@ -1,5 +1,5 @@
 FROM mysql:5.7
-MAINTAINER Jeffrey Boehm "jeff@ressourcenkonflikt.de"
+LABEL maintainer="jeff@ressourcenkonflikt.de"
 
 ENV MYSQL_DATABASE=mailserver \
     MYSQL_USER=mailserver \
