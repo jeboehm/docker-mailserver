@@ -1,4 +1,8 @@
+ARG ROUNDCUBE_VER=latest
 ARG PHP_VER=7.1
+
+FROM roundcube/roundcubemail:${ROUNDCUBE_VER} AS roundcube
+
 FROM jeboehm/php-nginx-base:${PHP_VER}
 LABEL maintainer="jeff@ressourcenkonflikt.de"
 
@@ -7,7 +11,6 @@ ENV MYSQL_HOST=db \
     MYSQL_USER=mailserver \
     MYSQL_PASSWORD=changeme \
     MANAGER_URL=http://www.grs-service.ch/pub/grs_mgr_v3-03_jessie_with_php7_setup.tgz \
-    WEBMAIL_URL=https://github.com/roundcube/roundcubemail/releases/download/1.2.4/roundcubemail-1.2.4-complete.tar.gz \
     DOCKERIZE_VERSION=v0.5.0 \
     MTA_HOST=mta \
     MDA_HOST=mda \
@@ -22,9 +25,7 @@ RUN wget -q -O- $MANAGER_URL | tar -zx \
     && rm -rf conf/cnf_main_template.php install/ install.php \
     && ln -s login.php index.php
 
-WORKDIR /var/www/html/webmail
-RUN wget -q -O- $WEBMAIL_URL | tar --strip 1 -zx \
-    && rm -rf installer/ temp/ logs/
+COPY --from=roundcube /usr/src/roundcubemail/ /var/www/html/webmail/
 
 WORKDIR /var/www/html
 COPY rootfs/ /

@@ -19,7 +19,6 @@ $config['smtp_user'] = '%u';
 $config['smtp_pass'] = '%p';
 $config['support_url'] = getenv('SUPPORT_URL');
 $config['product_name'] = 'Webmail';
-$config['des_key'] = 'rcmail-!24ByteDESkey*Str';
 $config['plugins'] = [
     'archive',
     'zipdownload',
