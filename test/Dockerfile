@@ -1,6 +1,6 @@
 FROM jwilder/dockerize:0.6.0 AS dockerize
 
-FROM alpine:3.6
+FROM alpine:3.7
 LABEL maintainer="jeff@ressourcenkonflikt.de"
 
 ENV MYSQL_HOST=db \
