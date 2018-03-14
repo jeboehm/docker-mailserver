@@ -18,7 +18,6 @@ RUN apk --no-cache add \
          dovecot \
          dovecot-mysql \
          dovecot-pigeonhole-plugin \
-         openssl \
     && adduser -h /var/vmail -u 5000 -D vmail \
     && rm -rf /etc/ssl/dovecot \
     && wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-alpine-linux-amd64-$DOCKERIZE_VERSION.tar.gz \

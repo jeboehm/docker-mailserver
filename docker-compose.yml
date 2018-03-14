@@ -1,6 +1,14 @@
 version: '2'
 
 services:
+  ssl:
+    image: jeboehm/mailserver-ssl:latest
+    build: ./ssl
+    env_file: .env
+    volumes:
+      - data-tls:/media/tls:rw
+    mem_limit: 32M
+
   db:
     image: jeboehm/mailserver-db:latest
     build: ./db
@@ -25,7 +33,7 @@ services:
     env_file: .env
     volumes:
       - data-mail:/var/vmail
-      - data-tls:/media/tls:rw
+      - data-tls:/media/tls:ro
     mem_limit: 128M
 
   web:

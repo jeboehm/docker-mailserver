@@ -33,6 +33,7 @@ env:
 
 .PHONY: logs
 logs:
+	$(compose-production) logs ssl
 	$(compose-production) logs mta
 	$(compose-production) logs mda
 	$(compose-production) logs web

@@ -25,4 +25,6 @@ dockerize \
   -wait tcp://${MYSQL_HOST}:3306 \
   -wait tcp://${MDA_HOST}:2003 \
   -wait tcp://${SPAMASSASSIN_HOST}:9999 \
+  -wait file://${SSL_CERT} \
+  -wait file://${SSL_KEY} \
   /usr/bin/supervisord
