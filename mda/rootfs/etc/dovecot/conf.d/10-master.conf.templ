@@ -1,8 +1,3 @@
-#default_process_limit = 100
-#default_client_limit = 1000
-#default_vsz_limit = 256M
-#default_login_user = dovenull
-#default_internal_user = dovecot
 protocols = lmtp
 
 {{ $enable_pop3 := eq (or ($.Env.ENABLE_POP3) "") "true" }}
@@ -18,15 +13,9 @@ service imap-login {
     #port = 993
     #ssl = yes
   }
-
-  #service_count = 1
-  #process_min_avail = 0
-  #vsz_limit = $default_vsz_limit
 }
 
 service imap {
-  #vsz_limit = $default_vsz_limit
-  #process_limit = 1024
 }
 
 protocols = $protocols imap
@@ -45,48 +34,22 @@ service pop3-login {
 }
 
 service pop3 {
-  #process_limit = 1024
 }
 
 protocols = $protocols pop3
 {{ end }}
 
 service lmtp {
-  unix_listener lmtp {
-    #mode = 0666
-  }
-
   inet_listener lmtp {
     port = 2003
   }
 }
 
 service auth {
-  unix_listener auth-userdb {
-    #mode = 0666
-    #user =
-    #group =
-  }
-
-  #unix_listener /var/spool/postfix/private/auth {
-  #  mode = 0666
-  #}
-
   inet_listener {
     port = 9000
   }
-
-  #user = $default_internal_user
 }
 
 service auth-worker {
-  #user = root
-}
-
-service dict {
-  unix_listener dict {
-    #mode = 0600
-    #user =
-    #group =
-  }
 }
