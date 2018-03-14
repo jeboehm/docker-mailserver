@@ -43,11 +43,12 @@ services:
     env_file: .env
     mem_limit: 128M
 
-  spamassassin:
-    image: jeboehm/mailserver-spamassassin:latest
-    build: ./spamassassin
+  spam:
+    image: jeboehm/mailserver-spam:latest
+    build: ./spam
     restart: on-failure:5
-    mem_limit: 192M
+    env_file: .env
+    mem_limit: 128M
 
 volumes:
   data-db:

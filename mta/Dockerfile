@@ -9,11 +9,9 @@ ENV MAILNAME=mail.example.com \
     MYSQL_USER=root \
     MYSQL_PASSWORD=changeme \
     MYSQL_DATABASE=mailserver \
-    GREYLISTING_ENABLED=true \
-    GREYLISTING_DELAY=50 \
     DISCARD_DSN=true \
     FILTER_MIME=false \
-    SPAMASSASSIN_HOST=spamassassin \
+    RSPAMD_HOST=spam \
     MDA_HOST=mda \
     MTA_HOST=mta \
     SSL_CERT=/media/tls/mailserver.crt \
@@ -22,16 +20,15 @@ ENV MAILNAME=mail.example.com \
 RUN apk --no-cache add \
       postfix-mysql \
       postfix \
-      postgrey \
-      perl-netaddr-ip \
       supervisor && \
     postconf virtual_mailbox_domains=mysql:/etc/postfix/mysql-virtual-mailbox-domains.cf && \
     postconf virtual_mailbox_maps=mysql:/etc/postfix/mysql-virtual-mailbox-maps.cf && \
     postconf virtual_alias_maps=mysql:/etc/postfix/mysql-virtual-alias-maps.cf,mysql:/etc/postfix/mysql-email2email.cf && \
     postconf smtputf8_enable=no && \
-    postconf smtpd_milters=inet:${SPAMASSASSIN_HOST}:9999 && \
+    postconf smtpd_milters=inet:${RSPAMD_HOST}:11332 && \
+    postconf non_smtpd_milters=inet:${RSPAMD_HOST}:11332 && \
     postconf milter_protocol=6 && \
-    postconf milter_connect_macros="i j {daemon_name} v {if_name} _" && \
+    postconf milter_mail_macros="i {mail_addr} {client_addr} {client_name} {auth_authen}" && \
     postconf virtual_transport=lmtp:${MDA_HOST}:2003 && \
     postconf smtpd_sasl_path=inet:${MDA_HOST}:9000 && \
     postconf smtpd_sasl_type=dovecot && \

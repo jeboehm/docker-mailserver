@@ -2,11 +2,6 @@
 postconf myhostname="${MAILNAME}"
 postconf mynetworks="${MYNETWORKS}"
 
-if [ "${GREYLISTING_ENABLED}" == "true" ]
-then
-  postconf smtpd_recipient_restrictions="permit_mynetworks permit_sasl_authenticated reject_unauth_destination check_policy_service inet:127.0.0.1:10023"
-fi
-
 if [ "${FILTER_MIME}" == "true" ]
 then
   postconf mime_header_checks=regexp:/etc/postfix/mime_header_checks
@@ -24,7 +19,7 @@ dockerize \
   -template /etc/postfix/mysql-virtual-mailbox-maps.cf.templ:/etc/postfix/mysql-virtual-mailbox-maps.cf \
   -wait tcp://${MYSQL_HOST}:3306 \
   -wait tcp://${MDA_HOST}:2003 \
-  -wait tcp://${SPAMASSASSIN_HOST}:9999 \
+  -wait tcp://${RSPAMD_HOST}:11332 \
   -wait file://${SSL_CERT} \
   -wait file://${SSL_KEY} \
   /usr/bin/supervisord
