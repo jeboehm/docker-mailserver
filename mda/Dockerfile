@@ -1,3 +1,5 @@
+FROM jwilder/dockerize:0.6.0 AS dockerize
+
 FROM alpine:3.6
 LABEL maintainer="jeff@ressourcenkonflikt.de"
 
@@ -7,7 +9,6 @@ ENV MYSQL_HOST=db \
     MYSQL_DATABASE=mailserver \
     MAILNAME=mail.example.com \
     POSTMASTER=postmaster@example.com \
-    DOCKERIZE_VERSION=v0.5.0 \
     SUBMISSION_HOST=mta \
     ENABLE_POP3=true \
     ENABLE_IMAP=true \
@@ -19,11 +20,9 @@ RUN apk --no-cache add \
          dovecot-mysql \
          dovecot-pigeonhole-plugin \
     && adduser -h /var/vmail -u 5000 -D vmail \
-    && rm -rf /etc/ssl/dovecot \
-    && wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-alpine-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
-    && tar -C /usr/local/bin -xzvf dockerize-alpine-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
-    && rm dockerize-alpine-linux-amd64-$DOCKERIZE_VERSION.tar.gz
+    && rm -rf /etc/ssl/dovecot
 
+COPY --from=dockerize /usr/local/bin/dockerize /usr/local/bin
 COPY rootfs/ /
 RUN sievec /etc/dovecot/sieve-after/spam-to-folder.sieve
 

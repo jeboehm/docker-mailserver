@@ -1,3 +1,5 @@
+FROM jwilder/dockerize:0.6.0 AS dockerize
+
 FROM alpine:3.6
 LABEL maintainer="jeff@ressourcenkonflikt.de"
 
@@ -11,7 +13,6 @@ ENV MAILNAME=mail.example.com \
     GREYLISTING_DELAY=50 \
     DISCARD_DSN=true \
     FILTER_MIME=false \
-    DOCKERIZE_VERSION=v0.5.0 \
     SPAMASSASSIN_HOST=spamassassin \
     MDA_HOST=mda \
     MTA_HOST=mta \
@@ -19,7 +20,6 @@ ENV MAILNAME=mail.example.com \
     SSL_KEY=/media/tls/mailserver.key
 
 RUN apk --no-cache add \
-      openssl \
       postfix-mysql \
       postfix \
       postgrey \
@@ -45,11 +45,9 @@ RUN apk --no-cache add \
     postconf mailbox_size_limit=0 && \
     postconf recipient_delimiter=- && \
     postconf mynetworks="$MYNETWORKS" && \
-    newaliases && \
-    wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-alpine-linux-amd64-$DOCKERIZE_VERSION.tar.gz && \
-    tar -C /usr/local/bin -xzvf dockerize-alpine-linux-amd64-$DOCKERIZE_VERSION.tar.gz && \
-    rm dockerize-alpine-linux-amd64-$DOCKERIZE_VERSION.tar.gz
+    newaliases
 
+COPY --from=dockerize /usr/local/bin/dockerize /usr/local/bin
 COPY rootfs/ /
 
 EXPOSE 25
