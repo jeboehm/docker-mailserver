@@ -3,15 +3,6 @@ passdb {
   args = /etc/dovecot/dovecot-sql.conf.ext
 }
 
-#userdb {
-#  driver = prefetch
-#}
-
-#userdb {
-#  driver = sql
-#  args = /etc/dovecot/dovecot-sql.conf.ext
-#}
-
 userdb {
   driver = static
   args = uid=vmail gid=vmail home=/var/vmail/%d/%n
