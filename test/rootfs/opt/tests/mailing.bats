@@ -22,27 +22,35 @@
     [ "$files" -eq 3 ]
 }
 
-@test "send junk mail to local address" {
+@test "send gtube mail to local address" {
     swaks --to admin@example.com --data /usr/share/gtube.txt
     [ "$?" -eq 0 ]
 }
 
-@test "check junk mail in junk folder (sieve rule is working)" {
+@test "check gtube mail is rejected" {
     postqueue -f
     sleep 10
 
     files="$(ls -1 /var/vmail/example.com/admin/Maildir/.Junk/new/ | wc -l)"
-    [ "$files" -eq 1 ]
+    [ "$files" -eq 0 ]
+}
+
+@test "send junk mail to local address" {
+    swaks --to admin@example.com --data /usr/share/junk.txt
+    [ "$?" -eq 0 ]
+}
+
+@test "count mails in junk via imap (sieve rule is working)" {
+    postqueue -f
+    sleep 10
+
+    result="$(imap-tester test:count mda 143 admin@example.com changeme Junk)"
+    [ "$result" -eq 1 ]
 }
 
 @test "count mails in inbox via imap" {
     result="$(imap-tester test:count mda 143 admin@example.com changeme INBOX)"
     [ "$result" -eq 3 ]
-}
-
-@test "count mails in junk via imap" {
-    result="$(imap-tester test:count mda 143 admin@example.com changeme Junk)"
-    [ "$result" -eq 1 ]
 }
 
 @test "count mails in inbox via imaps" {
