@@ -26,9 +26,10 @@ RUN apk --no-cache add \
     && wget -q -O /usr/local/bin/imap-tester https://github.com/jeboehm/imap-tester/releases/download/v$IMAPTESTERVERSION/imap-tester.phar \
     && chmod +x /usr/local/bin/imap-tester \
     && postconf smtputf8_enable=no \
-    && ln -s /usr/bin/php5 /usr/bin/php
+    && ln -s /usr/bin/php5 /usr/bin/php \
+    && wget -q -O /usr/share/gtube.txt http://spamassassin.apache.org/gtube/gtube.txt
 
 COPY --from=dockerize /usr/local/bin/dockerize /usr/local/bin
 COPY rootfs/ /
 
-CMD ["sh"]
+CMD ["/opt/tests/run-tests.sh"]

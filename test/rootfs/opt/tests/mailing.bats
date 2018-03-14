@@ -23,7 +23,7 @@
 }
 
 @test "send junk mail to local address" {
-    swaks --to admin@example.com --data sample-spam.txt
+    swaks --to admin@example.com --data /usr/share/gtube.txt
     [ "$?" -eq 0 ]
 }
 
