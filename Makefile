@@ -20,7 +20,7 @@ up: build
 run-test: env clean build
 	$(compose-test) build
 	$(compose-production) up -d
-	$(compose-test) run --rm test /opt/tests/run-tests.sh
+	$(compose-test) run --rm test
 
 .PHONY: clean
 clean:
