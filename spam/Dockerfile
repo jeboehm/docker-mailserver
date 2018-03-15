@@ -1,5 +1,6 @@
 FROM alpine:3.7
 LABEL maintainer="jeff@ressourcenkonflikt.de"
+LABEL vendor="https://github.com/jeboehm/docker-mailserver"
 
 RUN apk --no-cache add \
       rspamd \
