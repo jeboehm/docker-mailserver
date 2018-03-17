@@ -33,9 +33,9 @@ env:
 
 .PHONY: logs
 logs:
+	$(compose-production) logs db
 	$(compose-production) logs ssl
 	$(compose-production) logs mta
 	$(compose-production) logs mda
+	$(compose-production) logs filter
 	$(compose-production) logs web
-	$(compose-production) logs db
-	$(compose-production) logs spam

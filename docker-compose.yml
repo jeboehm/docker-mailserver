@@ -43,9 +43,9 @@ services:
     env_file: .env
     mem_limit: 128M
 
-  spam:
-    image: jeboehm/mailserver-spam:latest
-    build: ./spam
+  filter:
+    image: jeboehm/mailserver-filter:latest
+    build: ./filter
     restart: on-failure:5
     env_file: .env
     mem_limit: 128M
