@@ -1,4 +1,6 @@
 #!/bin/sh
+set -e
+
 dockerize \
   -wait tcp://${MYSQL_HOST}:3306 \
   -timeout 30s \
