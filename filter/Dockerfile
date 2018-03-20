@@ -4,6 +4,7 @@ LABEL vendor="https://github.com/jeboehm/docker-mailserver"
 
 RUN apk --no-cache add \
       rspamd \
+      rspamd-client \
       rspamd-proxy && \
     mkdir /run/rspamd && \
     chown -R rspamd /run/rspamd /var/lib/rspamd
