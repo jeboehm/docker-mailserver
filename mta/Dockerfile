@@ -10,7 +10,6 @@ ENV MAILNAME=mail.example.com \
     MYSQL_USER=root \
     MYSQL_PASSWORD=changeme \
     MYSQL_DATABASE=mailserver \
-    DISCARD_DSN=true \
     FILTER_MIME=false \
     RSPAMD_HOST=filter \
     MDA_HOST=mda \
@@ -38,6 +37,7 @@ RUN apk --no-cache add \
     postconf smtpd_tls_auth_only=yes && \
     postconf smtpd_tls_cert_file=${SSL_CERT} && \
     postconf smtpd_tls_key_file=${SSL_KEY} && \
+    postconf smtpd_discard_ehlo_keywords="silent-discard, dsn" && \
     postconf soft_bounce=no && \
     postconf message_size_limit=50000000 && \
     postconf mailbox_size_limit=0 && \
