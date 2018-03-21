@@ -1,6 +1,6 @@
 #!/usr/bin/env bats
 @test "http connection to manager web interface" {
-    curl http://web/manager/ | grep "Mail-Manager Login"
+    curl -i http://web/manager/ | grep "Secured Area"
     [ "$?" -eq 0 ]
 }
 
