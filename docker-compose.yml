@@ -48,6 +48,8 @@ services:
     build: ./filter
     restart: on-failure:5
     env_file: .env
+    volumes:
+      - data-filter:/var/lib/rspamd
     mem_limit: 128M
 
 volumes:
@@ -58,4 +60,7 @@ volumes:
     driver: local
 
   data-tls:
+    driver: local
+
+  data-filter:
     driver: local
