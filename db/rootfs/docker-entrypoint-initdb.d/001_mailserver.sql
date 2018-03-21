@@ -7,72 +7,102 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 
-# Export von Tabelle virtual_aliases
+# Export von Tabelle mail_aliases
 # ------------------------------------------------------------
 
-CREATE TABLE `virtual_aliases` (
+DROP TABLE IF EXISTS `mail_aliases`;
+
+CREATE TABLE `mail_aliases` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `domain_id` int(11) NOT NULL,
-  `source` varchar(100) NOT NULL,
-  `destination` varchar(100) NOT NULL,
+  `domain_id` int(11) DEFAULT NULL,
+  `name` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `destination` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `domain_id` (`domain_id`),
-  CONSTRAINT `virtual_aliases_ibfk_1` FOREIGN KEY (`domain_id`) REFERENCES `virtual_domains` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  UNIQUE KEY `alias_idx` (`domain_id`,`name`,`destination`),
+  KEY `IDX_85AF3A56115F0EE5` (`domain_id`),
+  CONSTRAINT `FK_5F12BB39115F0EE5` FOREIGN KEY (`domain_id`) REFERENCES `mail_domains` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
-LOCK TABLES `virtual_aliases` WRITE;
-/*!40000 ALTER TABLE `virtual_aliases` DISABLE KEYS */;
+LOCK TABLES `mail_aliases` WRITE;
+/*!40000 ALTER TABLE `mail_aliases` DISABLE KEYS */;
 
-INSERT INTO `virtual_aliases` (`id`, `domain_id`, `source`, `destination`)
+INSERT INTO `mail_aliases` (`id`, `domain_id`, `name`, `destination`)
 VALUES
-	(1,1,'admin@example.com','admin@example.com');
+	(1,1,'admin','admin@example.com');
 
-/*!40000 ALTER TABLE `virtual_aliases` ENABLE KEYS */;
+/*!40000 ALTER TABLE `mail_aliases` ENABLE KEYS */;
 UNLOCK TABLES;
 
 
-# Export von Tabelle virtual_domains
+# Export von Tabelle mail_domains
 # ------------------------------------------------------------
 
-CREATE TABLE `virtual_domains` (
+DROP TABLE IF EXISTS `mail_domains`;
+
+CREATE TABLE `mail_domains` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(50) NOT NULL,
-  PRIMARY KEY (`id`)
+  `name` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `UNIQ_56C63EF25E237E06` (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-LOCK TABLES `virtual_domains` WRITE;
-/*!40000 ALTER TABLE `virtual_domains` DISABLE KEYS */;
+LOCK TABLES `mail_domains` WRITE;
+/*!40000 ALTER TABLE `mail_domains` DISABLE KEYS */;
 
-INSERT INTO `virtual_domains` (`id`, `name`)
+INSERT INTO `mail_domains` (`id`, `name`)
 VALUES
 	(1,'example.com');
 
-/*!40000 ALTER TABLE `virtual_domains` ENABLE KEYS */;
+/*!40000 ALTER TABLE `mail_domains` ENABLE KEYS */;
 UNLOCK TABLES;
 
 
-# Export von Tabelle virtual_users
+# Export von Tabelle mail_users
 # ------------------------------------------------------------
 
-CREATE TABLE `virtual_users` (
+DROP TABLE IF EXISTS `mail_users`;
+
+CREATE TABLE `mail_users` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `domain_id` int(11) NOT NULL,
-  `email` varchar(100) NOT NULL,
-  `password` varchar(150) NOT NULL,
+  `domain_id` int(11) DEFAULT NULL,
+  `name` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `password` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `email` (`email`),
-  KEY `domain_id` (`domain_id`),
-  CONSTRAINT `virtual_users_ibfk_1` FOREIGN KEY (`domain_id`) REFERENCES `virtual_domains` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  UNIQUE KEY `user_idx` (`name`,`domain_id`),
+  KEY `IDX_20400786115F0EE5` (`domain_id`),
+  CONSTRAINT `FK_1483A5E9115F0EE5` FOREIGN KEY (`domain_id`) REFERENCES `mail_domains` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
-LOCK TABLES `virtual_users` WRITE;
-/*!40000 ALTER TABLE `virtual_users` DISABLE KEYS */;
+LOCK TABLES `mail_users` WRITE;
+/*!40000 ALTER TABLE `mail_users` DISABLE KEYS */;
 
-INSERT INTO `virtual_users` (`id`, `domain_id`, `email`, `password`)
+INSERT INTO `mail_users` (`id`, `domain_id`, `name`, `password`)
 VALUES
-	(1,1,'admin@example.com','$5$rounds=5000$buS8AUYLR937.LsZ$evgq1GkFfLNTlIChhF6yvBB5ny1IEEHWy/ah8pO5zCA');
+	(1,1,'admin','$5$rounds=5000$buS8AUYLR937.LsZ$evgq1GkFfLNTlIChhF6yvBB5ny1IEEHWy/ah8pO5zCA');
 
-/*!40000 ALTER TABLE `virtual_users` ENABLE KEYS */;
+/*!40000 ALTER TABLE `mail_users` ENABLE KEYS */;
+UNLOCK TABLES;
+
+
+# Export von Tabelle migration_versions
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `migration_versions`;
+
+CREATE TABLE `migration_versions` (
+  `version` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  PRIMARY KEY (`version`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+LOCK TABLES `migration_versions` WRITE;
+/*!40000 ALTER TABLE `migration_versions` DISABLE KEYS */;
+
+INSERT INTO `migration_versions` (`version`)
+VALUES
+	('20180320164351'),
+	('20180320171339');
+
+/*!40000 ALTER TABLE `migration_versions` ENABLE KEYS */;
 UNLOCK TABLES;
 
 
