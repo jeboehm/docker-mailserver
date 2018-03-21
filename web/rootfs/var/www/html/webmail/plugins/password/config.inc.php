@@ -20,7 +20,7 @@ $config['password_db_dsn'] = sprintf(
     getenv('MYSQL_HOST'),
     getenv('MYSQL_DATABASE')
 );
-$config['password_query'] = "UPDATE virtual_users SET password=CONCAT('{SHA256-CRYPT}', ENCRYPT (%p, CONCAT('$5$', SUBSTRING(SHA(RAND()), -16)))) WHERE email=%u;";
+$config['password_query'] = "UPDATE mail_users JOIN mail_domains ON mail_users.domain_id = mail_domains.id SET password=CONCAT('{SHA256-CRYPT}', ENCRYPT (%p, CONCAT('$5$', SUBSTRING(SHA(RAND()), -16)))) WHERE CONCAT(mail_users.name, '@', mail_domains.name)=%u;";
 $config['password_crypt_hash'] = 'md5';
 $config['password_idn_ascii'] = false;
 $config['password_dovecotpw_with_method'] = false;

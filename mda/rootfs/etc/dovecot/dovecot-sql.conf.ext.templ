@@ -1,8 +1,4 @@
 driver = mysql
 connect = host={{ .Env.MYSQL_HOST }} dbname={{ .Env.MYSQL_DATABASE }} user={{ .Env.MYSQL_USER }} password={{ .Env.MYSQL_PASSWORD }}
 default_pass_scheme = SHA256-CRYPT
-password_query = SELECT email as user, password FROM virtual_users WHERE email='%u';
-#user_query = \
-#  SELECT home, uid, gid \
-#  FROM users WHERE username = '%n' AND domain = '%d'
-#iterate_query = SELECT username AS user FROM users
+password_query = SELECT CONCAT(mail_users.name, '@', mail_domains.name) as user, password FROM mail_users JOIN mail_domains ON mail_users.domain_id = mail_domains.id HAVING user='%u';

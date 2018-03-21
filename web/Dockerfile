@@ -1,5 +1,8 @@
 ARG ROUNDCUBE_VER=latest
-ARG PHP_VER=7.1
+ARG ADMIN_VER=latest
+ARG PHP_VER=7.2
+
+FROM jeboehm/mailserver-admin:${ADMIN_VER} AS admin
 
 FROM jwilder/dockerize:0.6.0 AS dockerize
 
@@ -13,21 +16,19 @@ ENV MYSQL_HOST=db \
     MYSQL_DATABASE=mailserver \
     MYSQL_USER=mailserver \
     MYSQL_PASSWORD=changeme \
-    MANAGER_URL=http://www.grs-service.ch/pub/grs_mgr_v3-03_jessie_with_php7_setup.tgz \
     MTA_HOST=mta \
     MDA_HOST=mda \
-    SUPPORT_URL=https://github.com/jeboehm/docker-mailserver
+    SUPPORT_URL=https://github.com/jeboehm/docker-mailserver \
+    APP_ENV=prod \
+    TRUSTED_PROXIES=172.16.0.0/12 \
+    ADMIN_USERS="admin@example.com"
 
-WORKDIR /var/www/html/manager
-RUN wget -q -O- $MANAGER_URL | tar -zx \
-    && rm -rf conf/cnf_main_template.php install/ install.php \
-    && ln -s login.php index.php
-
+COPY --from=admin /var/www/html/ /opt/manager/
 COPY --from=roundcube /usr/src/roundcubemail/ /var/www/html/webmail/
-
-WORKDIR /var/www/html
-
 COPY --from=dockerize /usr/local/bin/dockerize /usr/local/bin
 COPY rootfs/ /
+
+RUN ln -s /opt/manager/public /var/www/html/manager && \
+    chown -R www-data /opt/manager/var/cache/ /opt/manager/var/log/
 
 CMD ["/usr/local/bin/entrypoint.sh"]
