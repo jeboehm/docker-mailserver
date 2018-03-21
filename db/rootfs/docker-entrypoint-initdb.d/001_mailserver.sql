@@ -28,7 +28,7 @@ LOCK TABLES `mail_aliases` WRITE;
 
 INSERT INTO `mail_aliases` (`id`, `domain_id`, `name`, `destination`)
 VALUES
-	(1,1,'admin','admin@example.com');
+	(1,1,'foo','admin@example.com');
 
 /*!40000 ALTER TABLE `mail_aliases` ENABLE KEYS */;
 UNLOCK TABLES;

@@ -14,12 +14,17 @@
     [ "$?" -eq 0 ]
 }
 
+@test "send mail to local alias" {
+    swaks --to foo@example.com
+    [ "$?" -eq 0 ]
+}
+
 @test "maildir contains files" {
     postqueue -f
     sleep 10
 
     files="$(ls -1 /var/vmail/example.com/admin/Maildir/new/ | wc -l)"
-    [ "$files" -eq 3 ]
+    [ "$files" -eq 4 ]
 }
 
 @test "send gtube mail to local address" {
@@ -50,20 +55,20 @@
 
 @test "count mails in inbox via imap" {
     result="$(imap-tester test:count mda 143 admin@example.com changeme INBOX)"
-    [ "$result" -eq 3 ]
+    [ "$result" -eq 4 ]
 }
 
 @test "count mails in inbox via imaps" {
     result="$(imap-tester test:count mda 993 admin@example.com changeme INBOX)"
-    [ "$result" -eq 3 ]
+    [ "$result" -eq 4 ]
 }
 
 @test "count mails in inbox via pop3" {
     result="$(imap-tester test:count mda 110 admin@example.com changeme INBOX)"
-    [ "$result" -eq 3 ]
+    [ "$result" -eq 4 ]
 }
 
 @test "count mails in inbox via pop3s" {
     result="$(imap-tester test:count mda 995 admin@example.com changeme INBOX)"
-    [ "$result" -eq 3 ]
+    [ "$result" -eq 4 ]
 }
