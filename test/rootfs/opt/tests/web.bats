@@ -1,6 +1,6 @@
 #!/usr/bin/env bats
 @test "http connection to manager web interface" {
-    curl -i http://web/manager/ | grep "Secured Area"
+    curl http://web/manager/ | grep "Redirecting to"
     [ "$?" -eq 0 ]
 }
 
