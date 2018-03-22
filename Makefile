@@ -3,7 +3,7 @@ compose-test       = bin/test.sh
 
 .PHONY: build
 build:
-	$(compose-production) build
+	$(compose-production) build --pull
 
 .PHONY: pull
 pull:
