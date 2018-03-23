@@ -1,6 +1,6 @@
 #!/usr/bin/env bats
 @test "http connection to manager web interface" {
-    curl http://web/manager/ | grep "Redirecting to"
+    curl -L http://web/manager/ | grep "Email address"
     [ "$?" -eq 0 ]
 }
 
