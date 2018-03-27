@@ -41,7 +41,7 @@ Installation
 - Clone this repository at first. The command `bin/production.sh` is a wrapper for [docker-compose](https://docs.docker.com/compose/).
   It loads the needed configuration files for using the mailserver in production mode.
 - Copy the file `.env.dist` to `.env` and change the variables in it to fit your needs.
-  They're described later in this file.
+  They're described in this file later.
 - Run `bin/production.sh pull` to obtain the images.
 - `bin/production.sh up -d` creates and starts the containers.
 
