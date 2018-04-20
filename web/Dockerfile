@@ -29,6 +29,10 @@ COPY --from=dockerize /usr/local/bin/dockerize /usr/local/bin
 COPY rootfs/ /
 
 RUN ln -s /opt/manager/public /var/www/html/manager && \
-    chown -R www-data /opt/manager/var/cache/ /opt/manager/var/log/
+    chown -R www-data \
+        /opt/manager/var/cache/ \ 
+        /opt/manager/var/log/ \
+        /var/www/html/webmail/temp/ \
+        /var/www/html/webmail/logs/
 
 CMD ["/usr/local/bin/entrypoint.sh"]
