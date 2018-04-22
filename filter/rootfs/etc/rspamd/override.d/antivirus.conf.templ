@@ -1,0 +1,11 @@
+{{ $filter_virus := eq (or ($.Env.FILTER_VIRUS) "") "true" }}
+
+{{ if $filter_virus }}
+clamav {
+ attachments_only = false;
+ symbol = "CLAM_VIRUS";
+ type = "clamav";
+ action = "reject";
+ servers = "virus:3310";
+}
+{{ end }}

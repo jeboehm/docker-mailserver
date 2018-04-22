@@ -28,7 +28,8 @@ RUN apk --no-cache add \
     && chmod +x /usr/local/bin/imap-tester \
     && postconf smtputf8_enable=no \
     && ln -s /usr/bin/php5 /usr/bin/php \
-    && wget -q -O /usr/share/gtube.txt http://spamassassin.apache.org/gtube/gtube.txt
+    && wget -q -O /usr/share/gtube.txt http://spamassassin.apache.org/gtube/gtube.txt \
+    && wget -q -O /usr/share/eicar.com https://secure.eicar.org/eicar.com
 
 COPY --from=dockerize /usr/local/bin/dockerize /usr/local/bin
 COPY rootfs/ /
