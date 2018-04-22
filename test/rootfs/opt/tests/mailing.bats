@@ -27,17 +27,14 @@
     [ "$files" -eq 4 ]
 }
 
-@test "send gtube mail to local address" {
-    swaks --to admin@example.com --data /usr/share/gtube.txt
-    [ "$?" -eq 0 ]
+@test "send gtube mail is rejected" {
+    run swaks --to admin@example.com --data /usr/share/gtube.txt -s mta
+    [ "$status" -eq 26 ]
 }
 
-@test "check gtube mail is rejected" {
-    postqueue -f
-    sleep 10
-
-    files="$(ls -1 /var/vmail/example.com/admin/Maildir/.Junk/new/ | wc -l)"
-    [ "$files" -eq 0 ]
+@test "virus is rejected" {
+    run swaks --to admin@example.com --attach - --server mta < /usr/share/eicar.com
+    [ "$status" -eq 26 ]
 }
 
 @test "send junk mail to local address" {

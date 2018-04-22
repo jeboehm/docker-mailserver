@@ -52,6 +52,12 @@ services:
       - data-filter:/var/lib/rspamd
     mem_limit: 128M
 
+  virus:
+    image: jeboehm/mailserver-virus:latest
+    build: ./virus
+    env_file: .env
+    mem_limit: 512M
+
 volumes:
   data-db:
     driver: local
