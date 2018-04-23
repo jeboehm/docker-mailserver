@@ -16,3 +16,6 @@ script:
  - docker version
  - docker-compose version
  - make test
+
+after_failure:
+ - make logs
