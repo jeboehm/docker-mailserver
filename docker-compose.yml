@@ -50,6 +50,8 @@ services:
     env_file: .env
     volumes:
       - data-filter:/var/lib/rspamd
+    links:
+      - virus:virus.local
     mem_limit: 128M
 
   virus:
