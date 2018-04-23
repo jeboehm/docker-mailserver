@@ -4,7 +4,8 @@ FROM alpine:3.7
 LABEL maintainer="jeff@ressourcenkonflikt.de"
 LABEL vendor="https://github.com/jeboehm/docker-mailserver"
 
-ENV FILTER_VIRUS=false
+ENV FILTER_VIRUS=false \
+    FILTER_VIRUS_HOST=virus.local
 
 RUN apk --no-cache add \
       rspamd \
