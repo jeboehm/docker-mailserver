@@ -38,4 +38,5 @@ logs:
 	$(compose-production) logs mta
 	$(compose-production) logs mda
 	$(compose-production) logs filter
+	$(compose-production) logs virus
 	$(compose-production) logs web
