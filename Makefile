@@ -17,7 +17,7 @@ up: build
 	$(compose-production) up
 
 .PHONY: run-test
-run-test: env clean build
+run-test: .env clean build
 	$(compose-test) build
 	$(compose-production) up -d
 	$(compose-test) run --rm test
@@ -26,8 +26,7 @@ run-test: env clean build
 clean:
 	$(compose-test) down -v
 
-.PHONY: env
-env:
+.env:
 	rm -f .env
 	cp .env.dist .env
 
