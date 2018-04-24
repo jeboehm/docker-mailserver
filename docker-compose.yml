@@ -30,6 +30,10 @@ services:
     env_file: .env
     volumes:
       - data-tls:/media/tls:ro
+      # For using external certificates uncomment the following lines
+      # and change the path on the left side of the :
+      #- /home/user/certs/mail.example.com.crt:/media/tls/mailserver.crt:ro
+      #- /home/user/certs/mail.example.com.key:/media/tls/mailserver.key:ro
     mem_limit: 128M
 
   # The Mail Delivery Agent (Dovecot) is responsible for storing
@@ -43,6 +47,10 @@ services:
     volumes:
       - data-mail:/var/vmail
       - data-tls:/media/tls:ro
+      # For using external certificates uncomment the following lines
+      # and change the path on the left side of the :
+      #- /home/user/certs/mail.example.com.crt:/media/tls/mailserver.crt:ro
+      #- /home/user/certs/mail.example.com.key:/media/tls/mailserver.key:ro
     mem_limit: 128M
 
   # The admin (mailserver-admin) and webmail (roundcube) interfaces
