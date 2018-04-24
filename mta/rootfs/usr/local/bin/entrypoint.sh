@@ -17,4 +17,5 @@ dockerize \
   -wait tcp://${RSPAMD_HOST}:11332 \
   -wait file://${SSL_CERT} \
   -wait file://${SSL_KEY} \
+  -timeout ${WAITSTART_TIMEOUT} \
   /usr/bin/supervisord

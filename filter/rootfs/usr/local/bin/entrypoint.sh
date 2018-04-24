@@ -9,4 +9,5 @@ fi
 dockerize \
   -template /etc/rspamd/override.d/antivirus.conf.templ:/etc/rspamd/override.d/antivirus.conf \
   ${FILTER_VIRUS_ARGS} \
+  -timeout ${WAITSTART_TIMEOUT} \
   /usr/sbin/rspamd -c /etc/rspamd/rspamd.conf -f

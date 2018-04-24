@@ -10,6 +10,7 @@ ENV MYSQL_HOST=db \
     MYSQL_DATABASE=mailserver \
     SWAKSURL=https://www.jetmore.org/john/code/swaks/files/swaks-20130209.0/swaks \
     IMAPTESTERVERSION=0.1.1 \
+    WAITSTART_TIMEOUT=1m
 
 RUN apk --no-cache add \
       bash \

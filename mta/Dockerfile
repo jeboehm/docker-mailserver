@@ -15,7 +15,8 @@ ENV MAILNAME=mail.example.com \
     MDA_HOST=mda \
     MTA_HOST=mta \
     SSL_CERT=/media/tls/mailserver.crt \
-    SSL_KEY=/media/tls/mailserver.key
+    SSL_KEY=/media/tls/mailserver.key \
+    WAITSTART_TIMEOUT=1m
 
 RUN apk --no-cache add \
       postfix-mysql \
