@@ -74,6 +74,15 @@ services:
     build: ./virus
     restart: on-failure:5
     env_file: .env
+  
+  # Optional service: extend ClamAV (used in the virus service)
+  # by downloading additional databases provided by different
+  # companys. Run it regulary.
+  #virus_unof_sig_updater:
+  #  build: ./virus/unofficial-sigs
+  #  env_file: .env
+  #  volumes_from:
+  #    - virus
 
 volumes:
   data-db:
