@@ -1,6 +1,8 @@
 version: '2'
 
 services:
+  # Creates self signed tls certificates. Remove if you
+  # use your own.
   ssl:
     image: jeboehm/mailserver-ssl:latest
     build: ./ssl
@@ -9,6 +11,8 @@ services:
       - data-tls:/media/tls:rw
     mem_limit: 32M
 
+  # Responsible for storing users and their aliases. Remove
+  # if you already have a MySQL server.
   db:
     image: jeboehm/mailserver-db:latest
     build: ./db
@@ -17,6 +21,8 @@ services:
     volumes:
       - data-db:/var/lib/mysql
 
+  # The Mail Transfer Agent (Postfix) receives incoming mail
+  # on TCP port 25.
   mta:
     image: jeboehm/mailserver-mta:latest
     build: ./mta
@@ -26,6 +32,9 @@ services:
       - data-tls:/media/tls:ro
     mem_limit: 128M
 
+  # The Mail Delivery Agent (Dovecot) is responsible for storing
+  # incoming mail into a users mailbox and also delivers them
+  # via POP3 or IMAP4.
   mda:
     image: jeboehm/mailserver-mda:latest
     build: ./mda
@@ -36,6 +45,8 @@ services:
       - data-tls:/media/tls:ro
     mem_limit: 128M
 
+  # The admin (mailserver-admin) and webmail (roundcube) interfaces
+  # live here. Can be removed if not needed.
   web:
     image: jeboehm/mailserver-web:latest
     build: ./web
@@ -43,6 +54,8 @@ services:
     env_file: .env
     mem_limit: 128M
 
+  # Incoming spam is (hopefully) filtered by rspamd which runs
+  # in this service.
   filter:
     image: jeboehm/mailserver-filter:latest
     build: ./filter
@@ -54,6 +67,8 @@ services:
       - virus:virus.local
     mem_limit: 128M
 
+  # Incoming viruses or malware is detected and rejected by
+  # this service. Can be removed if FILTER_VIRUS is set to false.
   virus:
     image: jeboehm/mailserver-virus:latest
     build: ./virus
