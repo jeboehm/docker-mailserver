@@ -6,4 +6,5 @@ dockerize \
   -wait tcp://${MYSQL_HOST}:3306 \
   -wait file://${SSL_CERT} \
   -wait file://${SSL_KEY} \
+  -timeout ${WAITSTART_TIMEOUT} \
   /usr/sbin/dovecot -F

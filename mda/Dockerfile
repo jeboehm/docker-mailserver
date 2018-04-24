@@ -14,7 +14,8 @@ ENV MYSQL_HOST=db \
     ENABLE_POP3=true \
     ENABLE_IMAP=true \
     SSL_CERT=/media/tls/mailserver.crt \
-    SSL_KEY=/media/tls/mailserver.key
+    SSL_KEY=/media/tls/mailserver.key \
+    WAITSTART_TIMEOUT=1m
 
 RUN apk --no-cache add \
          dovecot \

@@ -11,5 +11,5 @@ dockerize \
   -wait tcp://example.com:25 \
   -wait tcp://web:80 \
   -wait tcp://mda:143 \
-  -timeout 60s \
+  -timeout ${WAITSTART_TIMEOUT} \
   bats *.bats

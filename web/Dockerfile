@@ -21,7 +21,8 @@ ENV MYSQL_HOST=db \
     SUPPORT_URL=https://github.com/jeboehm/docker-mailserver \
     APP_ENV=prod \
     TRUSTED_PROXIES=172.16.0.0/12 \
-    ADMIN_USERS="admin@example.com"
+    ADMIN_USERS="admin@example.com" \
+    WAITSTART_TIMEOUT=1m
 
 COPY --from=admin /var/www/html/ /opt/manager/
 COPY --from=roundcube /usr/src/roundcubemail/ /var/www/html/webmail/

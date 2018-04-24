@@ -5,7 +5,8 @@ LABEL maintainer="jeff@ressourcenkonflikt.de"
 LABEL vendor="https://github.com/jeboehm/docker-mailserver"
 
 ENV FILTER_VIRUS=false \
-    FILTER_VIRUS_HOST=virus.local
+    FILTER_VIRUS_HOST=virus.local \
+    WAITSTART_TIMEOUT=1m
 
 RUN apk --no-cache add \
       rspamd \
