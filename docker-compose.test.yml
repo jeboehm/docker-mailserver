@@ -12,4 +12,6 @@ services:
     volumes:
       - data-mail:/var/vmail:ro
       - data-tls:/media/tls:ro
+      # For development
+      #- ./test/rootfs/opt/tests:/opt/tests:ro
     env_file: .env
