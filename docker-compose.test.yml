@@ -4,12 +4,9 @@ services:
   test:
     image: jeboehm/mailserver-test
     build: ./test
-    links:
-      - db
-      - mta:example.com
-      - mda
-      - web
     volumes:
       - data-mail:/var/vmail:ro
       - data-tls:/media/tls:ro
+      # For development
+      #- ./test/rootfs/usr/share/tests:/usr/share/tests:ro
     env_file: .env
