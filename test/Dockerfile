@@ -8,8 +8,6 @@ ENV MYSQL_HOST=db \
     MYSQL_USER=root \
     MYSQL_PASSWORD=changeme \
     MYSQL_DATABASE=mailserver \
-    SWAKSURL=https://www.jetmore.org/john/code/swaks/files/swaks-20130209.0/swaks \
-    IMAPTESTERVERSION=0.1.1 \
     WAITSTART_TIMEOUT=1m
 
 RUN apk --no-cache add \
@@ -20,19 +18,20 @@ RUN apk --no-cache add \
       openssl \
       perl \
       perl-net-ssleay \
-      postfix \
       php5 \
       php5-imap \
-    && wget -q -O /usr/local/bin/swaks ${SWAKSURL} \
+    && adduser -u 5000 -s /bin/sh -D tester \
+    && wget -q -O /usr/local/bin/swaks https://www.jetmore.org/john/code/swaks/files/swaks-20130209.0/swaks \
     && chmod +x /usr/local/bin/swaks \
-    && wget -q -O /usr/local/bin/imap-tester https://github.com/jeboehm/imap-tester/releases/download/v$IMAPTESTERVERSION/imap-tester.phar \
+    && wget -q -O /usr/local/bin/imap-tester https://github.com/jeboehm/imap-tester/releases/download/v0.1.1/imap-tester.phar \
     && chmod +x /usr/local/bin/imap-tester \
-    && postconf smtputf8_enable=no \
     && ln -s /usr/bin/php5 /usr/bin/php \
-    && wget -q -O /usr/share/gtube.txt https://spamassassin.apache.org/gtube/gtube.txt \
-    && wget -q -O /usr/share/eicar.com https://secure.eicar.org/eicar.com
+    && mkdir -p /usr/share/tests/resources/ \
+    && wget -q -O /usr/share/tests/resources/gtube.txt https://spamassassin.apache.org/gtube/gtube.txt \
+    && wget -q -O /usr/share/tests/resources/eicar.com https://secure.eicar.org/eicar.com
 
 COPY --from=dockerize /usr/local/bin/dockerize /usr/local/bin
 COPY rootfs/ /
 
-CMD ["/opt/tests/run-tests.sh"]
+USER tester
+CMD ["/usr/local/bin/run-tests.sh"]

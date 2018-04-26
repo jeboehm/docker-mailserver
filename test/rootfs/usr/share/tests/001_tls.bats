@@ -1,4 +1,5 @@
 #!/usr/bin/env bats
+
 @test "certificates were created" {
     [ -f /media/tls/mailserver.crt ]
 }
