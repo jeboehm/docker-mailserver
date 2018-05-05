@@ -9,6 +9,7 @@ ENV FILTER_VIRUS=false \
     WAITSTART_TIMEOUT=1m
 
 RUN apk --no-cache add \
+      openssl \
       rspamd \
       rspamd-client \
       rspamd-proxy && \
@@ -18,8 +19,10 @@ RUN apk --no-cache add \
       /run/rspamd \
       /var/lib/rspamd \
       /etc/rspamd/override.d/antivirus.conf && \
-    wget -O /usr/share/rspamd/bayes.spam.sqlite http://rspamd.com/rspamd_statistics/bayes.spam.sqlite && \
-    wget -O /usr/share/rspamd/bayes.ham.sqlite http://rspamd.com/rspamd_statistics/bayes.ham.sqlite
+    wget -O /usr/share/rspamd/bayes.spam.sqlite https://rspamd.com/rspamd_statistics/bayes.spam.sqlite && \
+    wget -O /usr/share/rspamd/bayes.ham.sqlite https://rspamd.com/rspamd_statistics/bayes.ham.sqlite && \
+    apk --no-cache del \
+      openssl
 
 COPY --from=dockerize /usr/local/bin/dockerize /usr/local/bin
 COPY rootfs/ /
