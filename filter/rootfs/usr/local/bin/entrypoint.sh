@@ -6,6 +6,16 @@ then
     FILTER_VIRUS_ARGS="-wait tcp://${FILTER_VIRUS_HOST}:3310"
 fi
 
+if ! [ -f /var/lib/rspamd/bayes.spam.sqlite ]
+then
+    cp /usr/share/rspamd/bayes.spam.sqlite /var/lib/rspamd/bayes.spam.sqlite
+fi
+
+if ! [ -f /var/lib/rspamd/bayes.ham.sqlite ]
+then
+    cp /usr/share/rspamd/bayes.ham.sqlite /var/lib/rspamd/bayes.ham.sqlite
+fi
+
 dockerize \
   -template /etc/rspamd/override.d/antivirus.conf.templ:/etc/rspamd/override.d/antivirus.conf \
   ${FILTER_VIRUS_ARGS} \
