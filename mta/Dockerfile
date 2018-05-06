@@ -41,7 +41,7 @@ RUN apk --no-cache add \
     postconf smtpd_tls_key_file=${SSL_KEY} && \
     postconf smtpd_discard_ehlo_keywords="silent-discard, dsn" && \
     postconf soft_bounce=no && \
-    postconf message_size_limit=50000000 && \
+    postconf message_size_limit=52428800 && \
     postconf mailbox_size_limit=0 && \
     postconf recipient_delimiter=- && \
     postconf mynetworks="$MYNETWORKS" && \
