@@ -45,6 +45,11 @@ RUN apk --no-cache add \
     postconf mailbox_size_limit=0 && \
     postconf recipient_delimiter=- && \
     postconf mynetworks="$MYNETWORKS" && \
+    postconf maximal_queue_lifetime=1h && \
+    postconf bounce_queue_lifetime=1h && \
+    postconf maximal_backoff_time=15m && \
+    postconf minimal_backoff_time=5m && \
+    postconf queue_run_delay=5m && \
     newaliases
 
 COPY --from=dockerize /usr/local/bin/dockerize /usr/local/bin
