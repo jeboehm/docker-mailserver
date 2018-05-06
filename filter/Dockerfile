@@ -10,7 +10,7 @@ ENV FILTER_VIRUS=false \
 
 RUN apk --no-cache add \
       rspamd \
-      rspamd-client \
+      rspamd-controller \
       rspamd-proxy && \
     mkdir /run/rspamd && \
     touch /etc/rspamd/override.d/antivirus.conf && \
@@ -22,7 +22,7 @@ RUN apk --no-cache add \
 COPY --from=dockerize /usr/local/bin/dockerize /usr/local/bin
 COPY rootfs/ /
 
-EXPOSE 11332
+EXPOSE 11332 11334
 USER rspamd
 
 VOLUME ["/var/lib/rspamd"]

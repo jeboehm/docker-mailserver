@@ -21,12 +21,20 @@ RUN apk --no-cache add \
          dovecot \
          dovecot-mysql \
          dovecot-pigeonhole-plugin \
-    && adduser -h /var/vmail -u 5000 -D vmail \
-    && rm -rf /etc/ssl/dovecot
+         rspamd-client && \
+    adduser -h /var/vmail -u 5000 -D vmail && \
+    rm -rf \
+        /etc/ssl/dovecot \
+        /etc/rspamd \
+        /usr/sbin/rspamd \
+        /usr/bin/rspamadm
 
 COPY --from=dockerize /usr/local/bin/dockerize /usr/local/bin
 COPY rootfs/ /
-RUN sievec /etc/dovecot/sieve-after/spam-to-folder.sieve
+
+RUN sievec /etc/dovecot/sieve/global/spam-to-folder.sieve && \
+    sievec /etc/dovecot/sieve/global/learn-ham.sieve && \
+    sievec /etc/dovecot/sieve/global/learn-spam.sieve
 
 EXPOSE 2003 9000 4190 143 110 993 995
 VOLUME ["/var/vmail"]
