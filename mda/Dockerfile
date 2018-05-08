@@ -15,7 +15,8 @@ ENV MYSQL_HOST=db \
     ENABLE_IMAP=true \
     SSL_CERT=/media/tls/mailserver.crt \
     SSL_KEY=/media/tls/mailserver.key \
-    WAITSTART_TIMEOUT=1m
+    WAITSTART_TIMEOUT=1m \
+    RSPAMC_TIMEOUT=60
 
 RUN apk --no-cache add \
          dovecot \
