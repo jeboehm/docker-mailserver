@@ -11,6 +11,7 @@ ENV FILTER_VIRUS=false \
 RUN apk --no-cache add \
       openssl \
       rspamd \
+      rspamd-client \
       rspamd-controller \
       rspamd-proxy && \
     mkdir /run/rspamd && \
@@ -31,4 +32,6 @@ EXPOSE 11332 11334
 USER rspamd
 
 VOLUME ["/var/lib/rspamd"]
+
+HEALTHCHECK CMD rspamc stat || exit 1
 CMD ["/usr/local/bin/entrypoint.sh"]
