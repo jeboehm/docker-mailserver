@@ -1,2 +1,4 @@
 bind_socket = "*:11334";
+secure_ip = "127.0.0.1";
+secure_ip = "::1";
 secure_ip = "172.16.0.0/12";
