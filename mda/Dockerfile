@@ -18,16 +18,12 @@ ENV MYSQL_HOST=db \
     WAITSTART_TIMEOUT=1m
 
 RUN apk --no-cache add \
+         curl \
          dovecot \
          dovecot-mysql \
-         dovecot-pigeonhole-plugin \
-         rspamd-client && \
+         dovecot-pigeonhole-plugin && \
     adduser -h /var/vmail -u 5000 -D vmail && \
-    rm -rf \
-        /etc/ssl/dovecot \
-        /etc/rspamd \
-        /usr/sbin/rspamd \
-        /usr/bin/rspamadm
+    rm -rf /etc/ssl/dovecot
 
 COPY --from=dockerize /usr/local/bin/dockerize /usr/local/bin
 COPY rootfs/ /

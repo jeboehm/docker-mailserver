@@ -1,3 +1,5 @@
 #!/bin/sh
 
-rspamc -t 60 -h filter "$@"
+ACTION=${1}
+
+curl --data-binary @- http://filter:11334/${ACTION}
