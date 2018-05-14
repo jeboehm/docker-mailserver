@@ -6,7 +6,8 @@ LABEL vendor="https://github.com/jeboehm/docker-mailserver"
 
 ENV FILTER_VIRUS=false \
     FILTER_VIRUS_HOST=virus.local \
-    WAITSTART_TIMEOUT=1m
+    WAITSTART_TIMEOUT=1m \
+    CONTROLLER_PASSWORD=changeme
 
 RUN apk --no-cache add \
       openssl \
@@ -15,11 +16,14 @@ RUN apk --no-cache add \
       rspamd-controller \
       rspamd-proxy && \
     mkdir /run/rspamd && \
-    touch /etc/rspamd/local.d/antivirus.conf && \
+    touch \
+      /etc/rspamd/local.d/antivirus.conf \
+      /etc/rspamd/local.d/worker-controller.inc && \
     chown -R rspamd \
       /run/rspamd \
       /var/lib/rspamd \
-      /etc/rspamd/local.d/antivirus.conf && \
+      /etc/rspamd/local.d/antivirus.conf \
+      /etc/rspamd/local.d/worker-controller.inc && \
     wget -O /usr/share/rspamd/bayes.spam.sqlite https://rspamd.com/rspamd_statistics/bayes.spam.sqlite && \
     wget -O /usr/share/rspamd/bayes.ham.sqlite https://rspamd.com/rspamd_statistics/bayes.ham.sqlite && \
     apk --no-cache del \
