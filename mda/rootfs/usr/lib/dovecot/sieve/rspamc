@@ -2,4 +2,4 @@
 
 ACTION=${1}
 
-curl -q --data-binary @- http://filter:11334/${ACTION}
+curl -q -s --connect-timeout 60 --data-binary @- http://filter:11334/${ACTION}
