@@ -31,7 +31,7 @@ services:
     volumes:
       - data-tls:/media/tls:ro
       # For using external certificates uncomment the following lines
-      # and change the path on the left side of the :
+      # and change the path on the left side of the colon.
       #- /home/user/certs/mail.example.com.crt:/media/tls/mailserver.crt:ro
       #- /home/user/certs/mail.example.com.key:/media/tls/mailserver.key:ro
     mem_limit: 128M
@@ -61,6 +61,9 @@ services:
     restart: on-failure:5
     env_file: .env
     mem_limit: 128M
+    # For use with jwilder/nginx-proxy.
+    #environment:
+    #  - VIRTUAL_HOST=mail.example.com
 
   # Incoming spam is (hopefully) filtered by rspamd which runs
   # in this service.
@@ -74,6 +77,10 @@ services:
     links:
       - virus:virus.local
     mem_limit: 128M
+    # For use with jwilder/nginx-proxy.
+    #environment:
+    #  - VIRTUAL_HOST=rspamd.example.com
+    #  - VIRTUAL_PORT=11334
 
   # Incoming viruses or malware is detected and rejected by
   # this service. Can be removed if FILTER_VIRUS is set to false.
