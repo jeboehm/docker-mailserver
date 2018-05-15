@@ -9,3 +9,8 @@
     curl http://web/webmail/ | grep "ispmail-logo"
     [ "$?" -eq 0 ]
 }
+
+@test "http connection to rspamd interface" {
+    curl http://web/rspamd/ | grep "Rspamd Web Interface"
+    [ "$?" -eq 0 ]
+}

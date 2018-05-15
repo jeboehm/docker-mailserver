@@ -18,6 +18,7 @@ ENV MYSQL_HOST=db \
     MYSQL_PASSWORD=changeme \
     MTA_HOST=mta \
     MDA_HOST=mda \
+    FILTER_HOST=filter \
     SUPPORT_URL=https://github.com/jeboehm/docker-mailserver \
     APP_ENV=prod \
     TRUSTED_PROXIES=172.16.0.0/12 \
