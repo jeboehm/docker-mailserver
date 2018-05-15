@@ -2,7 +2,6 @@ version: '3'
 
 services:
   test:
-    image: jeboehm/mailserver-test
     build: ./test
     volumes:
       - data-mail:/var/vmail:ro
