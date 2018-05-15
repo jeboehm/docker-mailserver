@@ -1,30 +1,19 @@
-compose-production = bin/production.sh
-compose-test       = bin/test.sh
+COMPOSE_PRODUCTION = bin/production.sh
+COMPOSE_TEST       = bin/test.sh
 
 .PHONY: build
 build:
-	$(compose-production) build --pull
-
-.PHONY: pull
-pull:
-	$(compose-production) pull
+	$(COMPOSE_PRODUCTION) build --pull
 
 .PHONY: test
-test: run-test logs
-
-.PHONY: up
-up: build
-	$(compose-production) up
-
-.PHONY: run-test
-run-test: .env clean build
-	$(compose-test) build
-	$(compose-production) up -d
-	$(compose-test) run --rm test
+test: .env clean build
+	$(COMPOSE_TEST) build
+	$(COMPOSE_PRODUCTION) up -d
+	$(COMPOSE_TEST) run --rm test
 
 .PHONY: clean
 clean:
-	$(compose-test) down -v
+	$(COMPOSE_TEST) down -v
 
 .env:
 	rm -f .env
@@ -32,10 +21,10 @@ clean:
 
 .PHONY: logs
 logs:
-	$(compose-production) logs db
-	$(compose-production) logs ssl
-	$(compose-production) logs mta
-	$(compose-production) logs mda
-	$(compose-production) logs filter
-	$(compose-production) logs virus
-	$(compose-production) logs web
+	$(COMPOSE_PRODUCTION) logs db
+	$(COMPOSE_PRODUCTION) logs ssl
+	$(COMPOSE_PRODUCTION) logs mta
+	$(COMPOSE_PRODUCTION) logs mda
+	$(COMPOSE_PRODUCTION) logs filter
+	$(COMPOSE_PRODUCTION) logs virus
+	$(COMPOSE_PRODUCTION) logs web
