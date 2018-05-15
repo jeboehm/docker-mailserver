@@ -18,10 +18,11 @@ fi
 
 if [ "${CONTROLLER_PASSWORD}" == "changeme" ]
 then
-    CONTROLLER_PASSWORD="q1"
+    # q1 is disabled in rspamd.
+    export CONTROLLER_PASSWORD_ENC="q1"
+else
+    export CONTROLLER_PASSWORD_ENC=`rspamadm pw -e -p ${CONTROLLER_PASSWORD}`
 fi
-
-export CONTROLLER_PASSWORD_ENC=`rspamadm pw -e -p ${CONTROLLER_PASSWORD}`
 
 dockerize \
   -template /etc/rspamd/local.d/antivirus.conf.templ:/etc/rspamd/local.d/antivirus.conf \
