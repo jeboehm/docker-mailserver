@@ -1,4 +1,4 @@
-version: '2'
+version: '3'
 
 services:
   # Creates self signed tls certificates. Remove if you
@@ -9,7 +9,6 @@ services:
     env_file: .env
     volumes:
       - data-tls:/media/tls:rw
-    mem_limit: 32M
 
   # Responsible for storing users and their aliases. Remove
   # if you already have a MySQL server.
@@ -34,7 +33,6 @@ services:
       # and change the path on the left side of the colon.
       #- /home/user/certs/mail.example.com.crt:/media/tls/mailserver.crt:ro
       #- /home/user/certs/mail.example.com.key:/media/tls/mailserver.key:ro
-    mem_limit: 128M
 
   # The Mail Delivery Agent (Dovecot) is responsible for storing
   # incoming mail into a users mailbox and also delivers them
@@ -51,7 +49,6 @@ services:
       # and change the path on the left side of the :
       #- /home/user/certs/mail.example.com.crt:/media/tls/mailserver.crt:ro
       #- /home/user/certs/mail.example.com.key:/media/tls/mailserver.key:ro
-    mem_limit: 128M
 
   # The admin (mailserver-admin) and webmail (roundcube) interfaces
   # live here. Can be removed if not needed.
@@ -60,7 +57,6 @@ services:
     build: ./web
     restart: on-failure:5
     env_file: .env
-    mem_limit: 128M
     # For use with jwilder/nginx-proxy.
     #environment:
     #  - VIRTUAL_HOST=mail.example.com
@@ -76,7 +72,6 @@ services:
       - data-filter:/var/lib/rspamd
     links:
       - virus:virus.local
-    mem_limit: 128M
     # For use with jwilder/nginx-proxy.
     #environment:
     #  - VIRTUAL_HOST=rspamd.example.com
