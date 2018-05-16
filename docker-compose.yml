@@ -46,7 +46,7 @@ services:
       - data-mail:/var/vmail
       - data-tls:/media/tls:ro
       # For using external certificates uncomment the following lines
-      # and change the path on the left side of the :
+      # and change the path on the left side of the colon.
       #- /home/user/certs/mail.example.com.crt:/media/tls/mailserver.crt:ro
       #- /home/user/certs/mail.example.com.key:/media/tls/mailserver.key:ro
 
@@ -72,10 +72,6 @@ services:
       - data-filter:/var/lib/rspamd
     links:
       - virus:virus.local
-    # For use with jwilder/nginx-proxy.
-    #environment:
-    #  - VIRTUAL_HOST=rspamd.example.com
-    #  - VIRTUAL_PORT=11334
 
   # Incoming viruses or malware is detected and rejected by
   # this service. Can be removed if FILTER_VIRUS is set to false.
@@ -89,7 +85,7 @@ services:
   # by downloading additional databases provided by different
   # companys. Run it regulary.
   #virus_unof_sig_updater:
-  #  build: ./virus/unofficial-sigs
+  #  build: ./virus/contrib/unofficial-sigs
   #  env_file: .env
   #  volumes_from:
   #    - virus

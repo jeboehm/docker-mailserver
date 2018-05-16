@@ -11,5 +11,6 @@ dockerize \
 dockerize \
   -wait tcp://${MDA_HOST}:143 \
   -wait tcp://${MTA_HOST}:25 \
+  -wait tcp://${FILTER_HOST}:11334 \
   -timeout ${WAITSTART_TIMEOUT} \
   /usr/bin/supervisord

@@ -17,6 +17,7 @@ Services
 | SMTP (starttls needed) | 127.0.0.1:25                 |
 | Management Interface   | http://127.0.0.1:81/manager/ |
 | Webmail                | http://127.0.0.1:81/webmail/ |
+| Rspamd Webinterface    | http://127.0.0.1:81/rspamd/  |
 
 Accounts
 --------
