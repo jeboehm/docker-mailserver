@@ -85,7 +85,7 @@ services:
   # by downloading additional databases provided by different
   # companys. Run it regulary.
   #virus_unof_sig_updater:
-  #  build: ./virus/unofficial-sigs
+  #  build: ./virus/contrib/unofficial-sigs
   #  env_file: .env
   #  volumes_from:
   #    - virus
