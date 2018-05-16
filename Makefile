@@ -31,7 +31,6 @@ logs:
 
 .PHONY: ci
 ci: test unofficial-sigs
-	docker run --rm virus_unof_sig_updater
 
 .PHONY: unofficial-sigs
 unofficial-sigs:
