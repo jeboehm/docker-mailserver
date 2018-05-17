@@ -35,4 +35,5 @@ RUN sievec /etc/dovecot/sieve/global/spam-to-folder.sieve && \
 EXPOSE 2003 9000 4190 143 110 993 995
 VOLUME ["/var/vmail"]
 
+HEALTHCHECK CMD echo "? LOGOUT" | nc 127.0.0.1 143 | grep "Dovecot ready."
 CMD ["/usr/local/bin/entrypoint.sh"]
