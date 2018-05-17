@@ -14,13 +14,13 @@ RUN apk --no-cache add \
       bash \
       bats \
       curl \
+      docker \
       mariadb-client \
       openssl \
       perl \
       perl-net-ssleay \
       php5 \
       php5-imap \
-    && adduser -u 5000 -s /bin/sh -D tester \
     && wget -q -O /usr/local/bin/swaks https://www.jetmore.org/john/code/swaks/files/swaks-20130209.0/swaks \
     && chmod +x /usr/local/bin/swaks \
     && wget -q -O /usr/local/bin/imap-tester https://github.com/jeboehm/imap-tester/releases/download/v0.1.1/imap-tester.phar \
@@ -33,5 +33,4 @@ RUN apk --no-cache add \
 COPY --from=dockerize /usr/local/bin/dockerize /usr/local/bin
 COPY rootfs/ /
 
-USER tester
 CMD ["/usr/local/bin/run-tests.sh"]
