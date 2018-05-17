@@ -37,4 +37,5 @@ RUN ln -s /opt/manager/public /var/www/html/manager && \
         /var/www/html/webmail/temp/ \
         /var/www/html/webmail/logs/
 
+HEALTHCHECK CMD curl -s http://127.0.0.1/ | grep docker-mailserver
 CMD ["/usr/local/bin/entrypoint.sh"]
