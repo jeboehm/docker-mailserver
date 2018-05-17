@@ -37,5 +37,5 @@ USER rspamd
 
 VOLUME ["/var/lib/rspamd"]
 
-HEALTHCHECK CMD rspamc stat || exit 1
+HEALTHCHECK CMD wget -O- -T 10 http://127.0.0.1:11334/stat
 CMD ["/usr/local/bin/entrypoint.sh"]
