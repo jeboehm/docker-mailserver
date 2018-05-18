@@ -10,3 +10,10 @@ services:
       # For development
       #- ./test/rootfs/usr/share/tests:/usr/share/tests:ro
     env_file: .env
+
+  # For development
+  #web:
+  #  volumes:
+  #    - ./web/rootfs/etc/nginx/sites-enabled/10-docker.conf:/etc/nginx/sites-enabled/10-docker.conf:ro
+  #  ports:
+  #    - "0.0.0.0:81:80"
