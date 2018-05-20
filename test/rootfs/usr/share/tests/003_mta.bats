@@ -56,7 +56,7 @@
 }
 
 @test "send gtube mail is rejected" {
-    run swaks -s mta --to admin@example.com --data /usr/share/tests/resources/gtube.txt
+    run swaks -s mta --to admin@example.com --data /usr/share/fixtures/gtube.txt
     [ "$status" -eq 26 ]
 }
 
@@ -65,6 +65,6 @@
         skip
     fi
 
-    run swaks -s mta --to admin@example.com --attach - < /usr/share/tests/resources/eicar.com
+    run swaks -s mta --to admin@example.com --attach - < /usr/share/fixtures/eicar.com
     [ "$status" -eq 26 ]
 }
