@@ -26,9 +26,9 @@ RUN apk --no-cache add \
     && wget -q -O /usr/local/bin/imap-tester https://github.com/jeboehm/imap-tester/releases/download/v0.1.1/imap-tester.phar \
     && chmod +x /usr/local/bin/imap-tester \
     && ln -s /usr/bin/php5 /usr/bin/php \
-    && mkdir -p /usr/share/tests/resources/ \
-    && wget -q -O /usr/share/tests/resources/gtube.txt https://spamassassin.apache.org/gtube/gtube.txt \
-    && wget -q -O /usr/share/tests/resources/eicar.com https://secure.eicar.org/eicar.com
+    && mkdir -p /usr/share/fixtures \
+    && wget -q -O /usr/share/fixtures/gtube.txt https://spamassassin.apache.org/gtube/gtube.txt \
+    && wget -q -O /usr/share/fixtures/eicar.com https://secure.eicar.org/eicar.com
 
 COPY --from=dockerize /usr/local/bin/dockerize /usr/local/bin
 COPY rootfs/ /
