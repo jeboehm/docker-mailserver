@@ -19,3 +19,9 @@
     result="$(imap-tester test:count mda 995 admin@example.com changeme INBOX)"
     [ "$result" -gt 3 ]
 }
+
+@test "mails are owned by vmail" {
+    run find /var/vmail/example.com/ -not -user 5000
+    [ "$status" -eq 0 ]
+    [ "$output" = "" ]
+}
