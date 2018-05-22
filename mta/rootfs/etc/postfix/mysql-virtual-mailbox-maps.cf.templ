@@ -2,4 +2,4 @@ user = {{ .Env.MYSQL_USER }}
 password = {{ .Env.MYSQL_PASSWORD }}
 hosts = {{ .Env.MYSQL_HOST }}
 dbname = {{ .Env.MYSQL_DATABASE }}
-query = SELECT 1 FROM mail_users JOIN mail_domains ON mail_users.domain_id = mail_domains.id WHERE CONCAT(mail_users.name, '@', mail_domains.name)='%s'
+query = SELECT 1 FROM mail_users JOIN mail_domains ON mail_users.domain_id = mail_domains.id WHERE mail_users.name = '%u' AND mail_domains.name = '%d' AND enabled = 1

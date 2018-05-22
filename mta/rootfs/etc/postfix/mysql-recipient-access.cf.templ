@@ -1,0 +1,5 @@
+user = {{ .Env.MYSQL_USER }}
+password = {{ .Env.MYSQL_PASSWORD }}
+hosts = {{ .Env.MYSQL_HOST }}
+dbname = {{ .Env.MYSQL_DATABASE }}
+query = SELECT IF(send_only = true, 'REJECT', 'OK') AS access FROM mail_users JOIN mail_domains ON mail_users.domain_id = mail_domains.id WHERE mail_users.name = '%u' AND mail_domains.name = '%d' and enabled = true;

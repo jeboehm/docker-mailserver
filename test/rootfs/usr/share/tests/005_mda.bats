@@ -19,6 +19,25 @@
     run imap-tester test:count mda 995 admin@example.com changeme INBOX
     [ "$output" -gt 3 ]
 }
+
+@test "imap login to send only mailbox is not possible" {
+    run imap-tester test:count mda 143 sendonly@example.com test1234 INBOX
+    [ "$status" -eq 1 ]
+}
+
+@test "pop3 login to send only mailbox is not possible" {
+    run imap-tester test:count mda 110 sendonly@example.com test1234 INBOX
+    [ "$status" -eq 1 ]
+}
+
+@test "pop3 login to quota mailbox is possible" {
+    run imap-tester test:count mda 110 quota@example.com test1234 INBOX
+    [ "$status" -eq 0 ]
+}
+
+@test "imap login to quota mailbox is possible" {
+    run imap-tester test:count mda 143 quota@example.com test1234 INBOX
+    [ "$status" -eq 0 ]
 }
 
 @test "mails are owned by vmail" {

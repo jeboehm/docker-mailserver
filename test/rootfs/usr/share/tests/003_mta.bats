@@ -25,6 +25,12 @@
     [ "$status" -eq 0 ]
 }
 
+@test "send mail with too big attachment to quota user" {
+    dd if=/dev/urandom of=/tmp/bigfile bs=1M count=5
+    run swaks -s mta --to quota@example.com --body "$BATS_TEST_DESCRIPTION" --attach /tmp/bigfile
+    [ "$status" -eq 0 ]
+}
+
 @test "maildir was created" {
     sleep 10 # MTA + MDA need some time. :)
     [ -d /var/vmail/example.com/admin/Maildir/new/ ]
@@ -55,9 +61,19 @@
     [ "$status" -eq 0 ]
 }
 
+@test "mail with too big attachment is not found" {
+    run grep -r "send mail with too big attachment to quota user" /var/vmail/example.com/admin/Maildir/
+    [ "$status" -ne 0 ]
+}
+
 @test "send gtube mail is rejected" {
     run swaks -s mta --to admin@example.com --data /usr/share/fixtures/gtube.txt
     [ "$status" -eq 26 ]
+}
+
+@test "mail to send only mailbox is rejected" {
+    run swaks -s mta --to sendonly@example.com --body "$BATS_TEST_DESCRIPTION"
+    [ "$status" -eq 24 ]
 }
 
 @test "virus is rejected" {
