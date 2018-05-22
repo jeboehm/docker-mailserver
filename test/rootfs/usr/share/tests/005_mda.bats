@@ -40,6 +40,16 @@
     [ "$status" -eq 0 ]
 }
 
+@test "pop3 login to disabled mailbox is not possible" {
+    run imap-tester test:count mda 110 disabled@example.com test1234 INBOX
+    [ "$status" -eq 1 ]
+}
+
+@test "imap login to disabled mailbox is not possible" {
+    run imap-tester test:count mda 143 disabled@example.com test1234 INBOX
+    [ "$status" -eq 1 ]
+}
+
 @test "mails are owned by vmail" {
     run find /var/vmail/example.com/ -not -user 5000
     [ "$status" -eq 0 ]
