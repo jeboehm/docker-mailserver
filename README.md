@@ -145,7 +145,7 @@ docker run \
 2. Remove the virus service by deleting the entire block in `docker-compose.yml`.
 
 ### Use advanced malware signatures
-1. Uncomment the `` definition in `docker-compose.yml`:
+1. Uncomment the `virus_unof_sig_updater` definition in `docker-compose.yml`:
    ```
     virus_unof_sig_updater:
       build: ./virus/contrib/unofficial-sigs
@@ -153,8 +153,8 @@ docker run \
       volumes_from:
         - virus
    ```
-2. Start up docker-compose. The image will be build.
-3. Add `docker-compose run virus_unof_sig_updater` regulary (e.g. by adding a cronjob).
+2. Run `docker-compose build virus_unof_sig_updater` to build the image.
+3. Run `docker-compose up virus_unof_sig_updater` regulary (e.g. by adding a cronjob).
 
 Technical details
 =================
