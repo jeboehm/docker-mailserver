@@ -3,12 +3,10 @@ COMPOSE_TEST       = bin/test.sh
 
 .PHONY: build
 build:
-	$(COMPOSE_PRODUCTION) build --pull
+	$(COMPOSE_TEST) build --pull
 
 .PHONY: test
-test: .env clean build
-	$(COMPOSE_TEST) build
-	$(COMPOSE_PRODUCTION) up -d
+test: .env clean build up fixtures
 	$(COMPOSE_TEST) run --rm test
 
 .PHONY: clean
@@ -28,6 +26,15 @@ logs:
 	$(COMPOSE_PRODUCTION) logs filter
 	$(COMPOSE_PRODUCTION) logs virus
 	$(COMPOSE_PRODUCTION) logs web
+
+.PHONY: up
+up:
+	$(COMPOSE_PRODUCTION) up -d
+
+.PHONY: fixtures
+fixtures:
+	$(COMPOSE_PRODUCTION) run --rm web /usr/local/bin/fixtures.sh /opt/manager/bin/console user:add --password=test1234 --sendonly sendonly example.com
+	$(COMPOSE_PRODUCTION) run --rm web /usr/local/bin/fixtures.sh /opt/manager/bin/console user:add --password=test1234 --quota=1 quota example.com
 
 .PHONY: ci
 ci: test unofficial-sigs
