@@ -2,4 +2,4 @@ user = {{ .Env.MYSQL_USER }}
 password = {{ .Env.MYSQL_PASSWORD }}
 hosts = {{ .Env.MYSQL_HOST }}
 dbname = {{ .Env.MYSQL_DATABASE }}
-query = SELECT destination FROM mail_aliases JOIN mail_domains ON mail_aliases.domain_id = mail_domains.id WHERE CONCAT(mail_aliases.name, '@', mail_domains.name)='%s'
+query = SELECT destination FROM mail_aliases JOIN mail_domains ON mail_aliases.domain_id = mail_domains.id WHERE CONCAT(mail_aliases.name, '@', mail_domains.name) = '%s'

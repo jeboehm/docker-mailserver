@@ -15,6 +15,11 @@
     [ "$status" -eq 0 ]
 }
 
+@test "send mail from disabled account with smtp authentification" {
+    run swaks -s mta --to admin@example.com --from disabled@example.com -a -au disabled@example.com -ap test1234 -tls --body "$BATS_TEST_DESCRIPTION"
+    [ "$status" -eq 28 ]
+}
+
 @test "send mail to local alias" {
     run swaks -s mta --to foo@example.com --body "$BATS_TEST_DESCRIPTION"
     [ "$status" -eq 0 ]
@@ -28,6 +33,11 @@
 @test "send mail with too big attachment to quota user" {
     dd if=/dev/urandom of=/tmp/bigfile bs=1M count=5
     run swaks -s mta --to quota@example.com --body "$BATS_TEST_DESCRIPTION" --attach /tmp/bigfile
+    [ "$status" -eq 0 ]
+}
+
+@test "send mail to disabled user" {
+    run swaks -s mta --to disabled@example.com --body "$BATS_TEST_DESCRIPTION"
     [ "$status" -eq 0 ]
 }
 
@@ -62,8 +72,13 @@
 }
 
 @test "mail with too big attachment is not found" {
-    run grep -r "send mail with too big attachment to quota user" /var/vmail/example.com/admin/Maildir/
+    run grep -r "send mail with too big attachment to quota user" /var/vmail/example.com/quota/Maildir/
     [ "$status" -ne 0 ]
+}
+
+@test "mail to disabled user is stored anyway" {
+    run grep -r "send mail to disabled user" /var/vmail/example.com/disabled/Maildir/
+    [ "$status" -eq 0 ]
 }
 
 @test "send gtube mail is rejected" {
@@ -73,6 +88,11 @@
 
 @test "mail to send only mailbox is rejected" {
     run swaks -s mta --to sendonly@example.com --body "$BATS_TEST_DESCRIPTION"
+    [ "$status" -eq 24 ]
+}
+
+@test "mail to send disabled and only mailbox is rejected anyway" {
+    run swaks -s mta --to disabledsendonly@example.com --body "$BATS_TEST_DESCRIPTION"
     [ "$status" -eq 24 ]
 }
 
