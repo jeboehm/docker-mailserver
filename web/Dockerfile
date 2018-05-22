@@ -1,5 +1,5 @@
 ARG ROUNDCUBE_VER=1.3.4
-ARG ADMIN_VER=1.3.1
+ARG ADMIN_VER=1.3.2
 ARG PHP_VER=7.2
 
 FROM jeboehm/mailserver-admin:${ADMIN_VER} AS admin

@@ -3,7 +3,7 @@ COMPOSE_TEST       = bin/test.sh
 
 .PHONY: build
 build:
-	$(COMPOSE_TEST) build --pull
+	$(COMPOSE_TEST) build
 
 .PHONY: test
 test: .env clean build up fixtures
@@ -33,8 +33,9 @@ up:
 
 .PHONY: fixtures
 fixtures:
-	$(COMPOSE_PRODUCTION) run --rm web /usr/local/bin/fixtures.sh /opt/manager/bin/console user:add --password=test1234 --sendonly sendonly example.com
-	$(COMPOSE_PRODUCTION) run --rm web /usr/local/bin/fixtures.sh /opt/manager/bin/console user:add --password=test1234 --quota=1 quota example.com
+	$(COMPOSE_PRODUCTION) run --rm web /usr/local/bin/fixtures.sh /opt/manager/bin/console user:add --password=test1234 --enable --sendonly sendonly example.com
+	$(COMPOSE_PRODUCTION) run --rm web /usr/local/bin/fixtures.sh /opt/manager/bin/console user:add --password=test1234 --enable --quota=1 quota example.com
+	$(COMPOSE_PRODUCTION) run --rm web /usr/local/bin/fixtures.sh /opt/manager/bin/console user:add --password=test1234 disabled example.com
 
 .PHONY: ci
 ci: test unofficial-sigs
