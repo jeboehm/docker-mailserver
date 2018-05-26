@@ -23,17 +23,6 @@ CREATE TABLE `mail_aliases` (
   CONSTRAINT `FK_5F12BB39115F0EE5` FOREIGN KEY (`domain_id`) REFERENCES `mail_domains` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
-LOCK TABLES `mail_aliases` WRITE;
-/*!40000 ALTER TABLE `mail_aliases` DISABLE KEYS */;
-
-INSERT INTO `mail_aliases` (`id`, `domain_id`, `name`, `destination`)
-VALUES
-	(1,1,'foo','admin@example.com');
-
-/*!40000 ALTER TABLE `mail_aliases` ENABLE KEYS */;
-UNLOCK TABLES;
-
-
 # Export von Tabelle mail_domains
 # ------------------------------------------------------------
 
