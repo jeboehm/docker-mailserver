@@ -35,17 +35,6 @@ CREATE TABLE `mail_domains` (
   UNIQUE KEY `UNIQ_56C63EF25E237E06` (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-LOCK TABLES `mail_domains` WRITE;
-/*!40000 ALTER TABLE `mail_domains` DISABLE KEYS */;
-
-INSERT INTO `mail_domains` (`id`, `name`)
-VALUES
-	(1,'example.com');
-
-/*!40000 ALTER TABLE `mail_domains` ENABLE KEYS */;
-UNLOCK TABLES;
-
-
 # Export von Tabelle mail_users
 # ------------------------------------------------------------
 
@@ -61,17 +50,6 @@ CREATE TABLE `mail_users` (
   KEY `IDX_20400786115F0EE5` (`domain_id`),
   CONSTRAINT `FK_1483A5E9115F0EE5` FOREIGN KEY (`domain_id`) REFERENCES `mail_domains` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-
-LOCK TABLES `mail_users` WRITE;
-/*!40000 ALTER TABLE `mail_users` DISABLE KEYS */;
-
-INSERT INTO `mail_users` (`id`, `domain_id`, `name`, `password`)
-VALUES
-	(1,1,'admin','$5$rounds=5000$buS8AUYLR937.LsZ$evgq1GkFfLNTlIChhF6yvBB5ny1IEEHWy/ah8pO5zCA');
-
-/*!40000 ALTER TABLE `mail_users` ENABLE KEYS */;
-UNLOCK TABLES;
-
 
 # Export von Tabelle migration_versions
 # ------------------------------------------------------------
