@@ -122,6 +122,9 @@ You can do so by executing for example ```docker network connect mail_default my
 2. Change the variable to the (sub-) domain you want to use.
 3. Remove the `web` service port definition from `docker-compose.production.yml`.
 
+Be aware that nginx-proxy needs to be connected to your mail network, since docker-compose creates a new one
+for each project. You can do so by executing for example ```docker network connect mail_default nginx-proxy```.
+
 ### Use autoheal to restart unhealthy containers
 Autoheal is a Docker image that automatically restarts containers that are marked unhealthy.
 docker-mailserver tests itself regulary by using the healthcheck feature of Docker. When a test
