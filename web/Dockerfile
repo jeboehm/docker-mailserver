@@ -1,5 +1,5 @@
 ARG ROUNDCUBE_VER=1.3.4
-ARG ADMIN_VER=1.3.3
+ARG ADMIN_VER=1.3.5
 ARG PHP_VER=7.2
 
 FROM jeboehm/mailserver-admin:${ADMIN_VER} AS admin
@@ -22,7 +22,6 @@ ENV MYSQL_HOST=db \
     SUPPORT_URL=https://github.com/jeboehm/docker-mailserver \
     APP_ENV=prod \
     TRUSTED_PROXIES=172.16.0.0/12 \
-    ADMIN_USERS="admin@example.com" \
     WAITSTART_TIMEOUT=1m
 
 COPY --from=admin /var/www/html/ /opt/manager/

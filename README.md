@@ -32,10 +32,9 @@ Installation (basic setup)
 3. Run ```bin/production.sh pull``` to download the images.
 4. Run ```bin/production.sh up -d``` to start the services.
 5. After a few seconds you can access the services listed in the paragraph [Services](#Services).
-6. Login to the management interface with username `admin@example.com` and password `changeme`.
-7. Create a first domain and add an mail account to it. Set it as an admin account.
-8. Now you can login to the management interface with your new account credentials. The example.com domain
-   can be safely deleted.
+6. Create your first email address and an admin user by running ```bin/production.sh run --rm web /usr/local/bin/setup.sh```.
+   The wizard will ask you a few questions to set everything up.
+8. Now you can login to the management interface with your new account credentials.
 
 Configuration
 -------------
@@ -49,7 +48,6 @@ All configuration options can be found in the `.env` file in the root folder of 
 | FILTER_VIRUS        | Discard mails with virus or malware files attached (see [Filters](#Filters)) |
 | ENABLE_IMAP         | Enable IMAP4 support                                                         |
 | ENABLE_POP3         | Enable POP3 support                                                          |
-| ADMIN_USERS         | Mail addresses of users that are allowed to use the manager                  |
 | CONTROLLER_PASSWORD | Password for accessing the rspamd web interface                              |
 
 Services
@@ -64,15 +62,6 @@ Services
 | Management Interface   | http://127.0.0.1:81/manager/ |
 | Webmail                | http://127.0.0.1:81/webmail/ |
 | Rspamd Webinterface    | http://127.0.0.1:81/rspamd/  |
-
-Default accounts
-----------------
-| Username          | Password |
-| ----------------- | -------- |
-| admin@example.com | changeme |
-
-You can create or edit accounts via the management interface (see above).
-Passwords can also be edited via webmail. 
 
 Installation (advanced setup)
 -----------------------------
