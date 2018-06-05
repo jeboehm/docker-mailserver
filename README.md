@@ -26,13 +26,13 @@ Usage
 
 Installation (basic setup)
 --------------------------
-1. ```git clone git@github.com:jeboehm/docker-mailserver.git```
+1. Run ```git clone git@github.com:jeboehm/docker-mailserver.git```
 2. Copy the file `.env.dist` to `.env` and change the variables in it according to your needs.
    The variables are described in the [next paragraph](#Configuration).
 3. Run ```bin/production.sh pull``` to download the images.
 4. Run ```bin/production.sh up -d``` to start the services.
 5. After a few seconds you can access the services listed in the paragraph [Services](#Services).
-6. Create your first email address and an admin user by running ```bin/production.sh run --rm web /usr/local/bin/setup.sh```.
+6. Create your first email address and an admin user by running ```bin/production.sh run --rm web setup.sh```.
    The wizard will ask you a few questions to set everything up.
 8. Now you can login to the management interface with your new account credentials.
 
@@ -119,7 +119,7 @@ Autoheal is a Docker image that automatically restarts containers that are marke
 docker-mailserver tests itself regulary by using the healthcheck feature of Docker. When a test
 fails, the container state changes to unhealthy.
 
-You can integrate Autoheal in your setup by uncommenting the `autoheal`
+You can integrate Autoheal into your setup by uncommenting the `autoheal`
 service definition in `docker-compose.yml`.
 
 ### Disable malware scanning
