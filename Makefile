@@ -47,3 +47,7 @@ ci: test unofficial-sigs
 .PHONY: unofficial-sigs
 unofficial-sigs:
 	cd virus/contrib/unofficial-sigs; docker build -t virus_unof_sig_updater .
+
+.PHONY: setup
+setup:
+	$(COMPOSE_PRODUCTION) run --rm web /usr/local/bin/setup.sh
