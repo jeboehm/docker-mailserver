@@ -11,7 +11,7 @@ test: .env clean build up fixtures
 
 .PHONY: clean
 clean:
-	$(COMPOSE_TEST) down -v
+	$(COMPOSE_TEST) down -v --remove-orphans
 
 .env:
 	rm -f .env
