@@ -119,18 +119,8 @@ Autoheal is a Docker image that automatically restarts containers that are marke
 docker-mailserver tests itself regulary by using the healthcheck feature of Docker. When a test
 fails, the container state changes to unhealthy.
 
-You can create and start the Autoheal container by running the following command:
-
-```
-docker run \
-	-d --name autoheal \
-	-e AUTOHEAL_CONTAINER_LABEL=all \
-	-v /var/run/docker.sock:/var/run/docker.sock:ro \
-	-m 32M \
-	--restart=always \
-	--net=none \
-	willfarrell/autoheal
-```
+You can integrate Autoheal in your setup by uncommenting the `autoheal`
+service definition in `docker-compose.yml`.
 
 ### Disable malware scanning
 1. Set the `FILTER_VIRUS` variable in `.env` file to `FALSE`.
