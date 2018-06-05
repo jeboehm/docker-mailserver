@@ -81,6 +81,17 @@ services:
     restart: on-failure:5
     env_file: .env
   
+  # If you want unhealthy containers to be restarted automatically
+  # just uncomment the following lines.
+  #autoheal:
+  #  image: willfarrell/autoheal:latest
+  #  restart: always
+  #  networks: []
+  #  volumes:
+  #    - /var/run/docker.sock:/var/run/docker.sock:ro
+  #  environment:
+  #    - AUTOHEAL_CONTAINER_LABEL=de.ressourcenkonflikt.docker-mailserver.autoheal
+
   # Optional service: extend ClamAV (used in the virus service)
   # by downloading additional databases provided by different
   # companys. Run it regulary.

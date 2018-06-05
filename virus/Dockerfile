@@ -1,6 +1,7 @@
 FROM alpine:3.7
 LABEL maintainer="jeff@ressourcenkonflikt.de"
 LABEL vendor="https://github.com/jeboehm/docker-mailserver"
+LABEL de.ressourcenkonflikt.docker-mailserver.autoheal="true"
 
 ENV FILTER_VIRUS=true
 

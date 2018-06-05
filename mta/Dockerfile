@@ -3,6 +3,7 @@ FROM jwilder/dockerize:0.6.0 AS dockerize
 FROM alpine:3.7
 LABEL maintainer="jeff@ressourcenkonflikt.de"
 LABEL vendor="https://github.com/jeboehm/docker-mailserver"
+LABEL de.ressourcenkonflikt.docker-mailserver.autoheal="true"
 
 ENV MAILNAME=mail.example.com \
     MYNETWORKS=127.0.0.0/8\ 10.0.0.0/8\ 172.16.0.0/12\ 192.168.0.0/16 \
