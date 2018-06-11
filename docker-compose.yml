@@ -80,6 +80,8 @@ services:
     build: ./virus
     restart: on-failure:5
     env_file: .env
+    volumes:
+      - data-virusdb:/var/lib/clamav
   
   # If you want unhealthy containers to be restarted automatically
   # just uncomment the following lines.
@@ -98,8 +100,8 @@ services:
   #virus_unof_sig_updater:
   #  build: ./virus/contrib/unofficial-sigs
   #  env_file: .env
-  #  volumes_from:
-  #    - virus
+  #  volumes:
+  #    - data-virusdb:/var/lib/clamav
 
 volumes:
   data-db:
