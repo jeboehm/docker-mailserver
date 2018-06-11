@@ -105,13 +105,7 @@ services:
 
 volumes:
   data-db:
-    driver: local
-
   data-mail:
-    driver: local
-
   data-tls:
-    driver: local
-
   data-filter:
-    driver: local
+  data-virusdb:
