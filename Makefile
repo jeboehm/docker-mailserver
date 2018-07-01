@@ -1,6 +1,12 @@
 COMPOSE_PRODUCTION = bin/production.sh
 COMPOSE_TEST       = bin/test.sh
 
+.PHONY: ci
+ci: test unofficial-sigs lint logs clean
+
+.PHONY: prod
+prod: up
+
 .PHONY: build
 build:
 	$(COMPOSE_TEST) build
@@ -14,7 +20,6 @@ clean:
 	$(COMPOSE_TEST) down -v --remove-orphans
 
 .env:
-	rm -f .env
 	cp .env.dist .env
 
 .PHONY: logs
@@ -28,7 +33,7 @@ logs:
 	$(COMPOSE_PRODUCTION) logs web
 
 .PHONY: up
-up:
+up: .env
 	$(COMPOSE_PRODUCTION) up -d
 
 .PHONY: fixtures
@@ -41,9 +46,6 @@ fixtures:
 	$(COMPOSE_PRODUCTION) run --rm web /usr/local/bin/fixtures.sh /opt/manager/bin/console user:add --password=test1234 --sendonly disabledsendonly example.com
 	$(COMPOSE_PRODUCTION) run --rm web /usr/local/bin/fixtures.sh /opt/manager/bin/console alias:add foo@example.com admin@example.com
 
-.PHONY: ci
-ci: test unofficial-sigs
-
 .PHONY: unofficial-sigs
 unofficial-sigs:
 	cd virus/contrib/unofficial-sigs; docker build -t virus_unof_sig_updater .
@@ -51,3 +53,7 @@ unofficial-sigs:
 .PHONY: setup
 setup:
 	$(COMPOSE_PRODUCTION) run --rm web /usr/local/bin/setup.sh
+
+.PHONY: lint
+lint:
+	.ci/bin/dockerfile_lint.sh
