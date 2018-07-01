@@ -1,13 +1,6 @@
 #!/bin/sh
 IGNORE_RULES="DL3018"
-
 DIR="$(cd "$(dirname "$0")" && pwd)"
-
-if [ "$DIR" != */bin ]
-then
-    echo "Could not detect working directory."
-    exit 1
-fi
 
 cd $DIR/../../
 
