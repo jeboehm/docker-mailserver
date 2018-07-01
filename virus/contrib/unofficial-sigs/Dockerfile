@@ -2,6 +2,7 @@ FROM alpine:3.7
 LABEL maintainer="jeff@ressourcenkonflikt.de"
 LABEL vendor="https://github.com/jeboehm/docker-mailserver"
 
+# hadolint ignore=DL3003
 RUN apk --no-cache add \
         bash \
         bind-tools \
