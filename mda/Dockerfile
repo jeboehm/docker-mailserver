@@ -1,6 +1,6 @@
 FROM jwilder/dockerize:0.6.0 AS dockerize
 
-FROM alpine:3.7
+FROM alpine:3.8
 LABEL maintainer="jeff@ressourcenkonflikt.de"
 LABEL vendor="https://github.com/jeboehm/docker-mailserver"
 LABEL de.ressourcenkonflikt.docker-mailserver.autoheal="true"
