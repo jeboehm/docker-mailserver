@@ -31,8 +31,8 @@ services:
       - data-tls:/media/tls:ro
       # For using external certificates uncomment the following lines
       # and change the path on the left side of the colon.
-      #- /home/user/certs/mail.example.com.crt:/media/tls/mailserver.crt:ro
-      #- /home/user/certs/mail.example.com.key:/media/tls/mailserver.key:ro
+      # - /home/user/certs/mail.example.com.crt:/media/tls/mailserver.crt:ro
+      # - /home/user/certs/mail.example.com.key:/media/tls/mailserver.key:ro
 
   # The Mail Delivery Agent (Dovecot) is responsible for storing
   # incoming mail into a users mailbox and also delivers them
@@ -47,8 +47,8 @@ services:
       - data-tls:/media/tls:ro
       # For using external certificates uncomment the following lines
       # and change the path on the left side of the colon.
-      #- /home/user/certs/mail.example.com.crt:/media/tls/mailserver.crt:ro
-      #- /home/user/certs/mail.example.com.key:/media/tls/mailserver.key:ro
+      # - /home/user/certs/mail.example.com.crt:/media/tls/mailserver.crt:ro
+      # - /home/user/certs/mail.example.com.key:/media/tls/mailserver.key:ro
 
   # The admin (mailserver-admin) and webmail (roundcube) interfaces
   # live here. Can be removed if not needed.
@@ -58,8 +58,8 @@ services:
     restart: on-failure:5
     env_file: .env
     # For use with jwilder/nginx-proxy.
-    #environment:
-    #  - VIRTUAL_HOST=mail.example.com
+    # environment:
+    #   - VIRTUAL_HOST=mail.example.com
 
   # Incoming spam is (hopefully) filtered by rspamd which runs
   # in this service.
@@ -82,26 +82,26 @@ services:
     env_file: .env
     volumes:
       - data-virusdb:/var/lib/clamav
-  
+
   # If you want unhealthy containers to be restarted automatically
   # just uncomment the following lines.
-  #autoheal:
-  #  image: willfarrell/autoheal:latest
-  #  restart: always
-  #  networks: []
-  #  volumes:
-  #    - /var/run/docker.sock:/var/run/docker.sock:ro
-  #  environment:
-  #    - AUTOHEAL_CONTAINER_LABEL=de.ressourcenkonflikt.docker-mailserver.autoheal
+  # autoheal:
+  #   image: willfarrell/autoheal:latest
+  #   restart: always
+  #   networks: []
+  #   volumes:
+  #     - /var/run/docker.sock:/var/run/docker.sock:ro
+  #   environment:
+  #     - AUTOHEAL_CONTAINER_LABEL=de.ressourcenkonflikt.docker-mailserver.autoheal
 
   # Optional service: extend ClamAV (used in the virus service)
   # by downloading additional databases provided by different
   # companys. Run it regulary.
-  #virus_unof_sig_updater:
-  #  build: ./virus/contrib/unofficial-sigs
-  #  env_file: .env
-  #  volumes:
-  #    - data-virusdb:/var/lib/clamav
+  # virus_unof_sig_updater:
+  #   build: ./virus/contrib/unofficial-sigs
+  #   env_file: .env
+  #   volumes:
+  #     - data-virusdb:/var/lib/clamav
 
 volumes:
   data-db:

@@ -57,3 +57,4 @@ setup:
 .PHONY: lint
 lint:
 	.ci/bin/dockerfile_lint.sh
+	.ci/bin/yamllint.sh
