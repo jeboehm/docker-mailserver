@@ -19,13 +19,14 @@ RUN apk --no-cache add \
       openssl \
       perl \
       perl-net-ssleay \
-      php5 \
-      php5-imap \
+      php7 \
+      php7-imap \
+      php7-intl \
+      php7-iconv \
     && wget -q -O /usr/local/bin/swaks https://www.jetmore.org/john/code/swaks/files/swaks-20130209.0/swaks \
     && chmod +x /usr/local/bin/swaks \
-    && wget -q -O /usr/local/bin/imap-tester https://github.com/jeboehm/imap-tester/releases/download/v0.1.1/imap-tester.phar \
+    && wget -q -O /usr/local/bin/imap-tester https://github.com/jeboehm/imap-tester/releases/download/v0.2/imap-tester.phar \
     && chmod +x /usr/local/bin/imap-tester \
-    && ln -s /usr/bin/php5 /usr/bin/php \
     && mkdir -p /usr/share/fixtures \
     && wget -q -O /usr/share/fixtures/gtube.txt https://spamassassin.apache.org/gtube/gtube.txt \
     && wget -q -O /usr/share/fixtures/eicar.com https://secure.eicar.org/eicar.com
