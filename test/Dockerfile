@@ -10,6 +10,9 @@ ENV MYSQL_HOST=db \
     MYSQL_DATABASE=mailserver \
     WAITSTART_TIMEOUT=1m
 
+RUN apk add --no-cache --repository http://dl-3.alpinelinux.org/alpine/edge/testing gnu-libiconv
+ENV LD_PRELOAD=/usr/lib/preloadable_libiconv.so
+
 RUN apk --no-cache add \
       bash \
       bats \
@@ -21,11 +24,12 @@ RUN apk --no-cache add \
       perl-net-ssleay \
       php7 \
       php7-imap \
-      php7-intl \
+      php7-phar \
       php7-iconv \
+      php7-openssl \
     && wget -q -O /usr/local/bin/swaks https://www.jetmore.org/john/code/swaks/files/swaks-20130209.0/swaks \
     && chmod +x /usr/local/bin/swaks \
-    && wget -q -O /usr/local/bin/imap-tester https://github.com/jeboehm/imap-tester/releases/download/v0.2/imap-tester.phar \
+    && wget -q -O /usr/local/bin/imap-tester https://github.com/jeboehm/imap-tester/releases/download/v0.2.1/imap-tester.phar \
     && chmod +x /usr/local/bin/imap-tester \
     && mkdir -p /usr/share/fixtures \
     && wget -q -O /usr/share/fixtures/gtube.txt https://spamassassin.apache.org/gtube/gtube.txt \
