@@ -8,14 +8,14 @@ env:
     - DOCKER_COMPOSE_VERSION=1.21.1
 
 before_install:
- - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
- - chmod +x docker-compose
- - sudo mv docker-compose /usr/local/bin
+  - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
+  - chmod +x docker-compose
+  - sudo mv docker-compose /usr/local/bin
 
 script:
- - docker version
- - docker-compose version
- - make ci
+  - docker version
+  - docker-compose version
+  - make ci
 
 after_failure:
- - make logs clean
+  - make logs clean

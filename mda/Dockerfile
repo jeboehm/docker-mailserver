@@ -1,6 +1,6 @@
 FROM jwilder/dockerize:0.6.0 AS dockerize
 
-FROM alpine:3.7
+FROM alpine:3.8
 LABEL maintainer="jeff@ressourcenkonflikt.de"
 LABEL vendor="https://github.com/jeboehm/docker-mailserver"
 LABEL de.ressourcenkonflikt.docker-mailserver.autoheal="true"
@@ -24,7 +24,8 @@ RUN apk --no-cache add \
          dovecot-mysql \
          dovecot-pigeonhole-plugin && \
     adduser -h /var/vmail -u 5000 -D vmail && \
-    rm -rf /etc/ssl/dovecot
+    rm -rf /etc/ssl/dovecot && \
+    openssl dhparam -out /etc/dovecot/dh.pem 4096
 
 COPY --from=dockerize /usr/local/bin/dockerize /usr/local/bin
 COPY rootfs/ /
