@@ -10,7 +10,8 @@ ENV MYSQL_HOST=db \
     MYSQL_DATABASE=mailserver \
     WAITSTART_TIMEOUT=1m
 
-RUN apk add --no-cache --repository http://dl-3.alpinelinux.org/alpine/edge/testing gnu-libiconv
+# Iconv fix: https://github.com/docker-library/php/issues/240#issuecomment-305038173
+RUN apk add --no-cache --repository http://dl-cdn.alpinelinux.org/alpine/edge/community/ gnu-libiconv
 ENV LD_PRELOAD=/usr/lib/preloadable_libiconv.so
 
 RUN apk --no-cache add \
