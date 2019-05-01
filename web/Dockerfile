@@ -1,4 +1,4 @@
-ARG ROUNDCUBE_VER=1.3.4
+ARG ROUNDCUBE_VER=1.3.8-fpm
 ARG ADMIN_VER=1.3.5
 ARG PHP_VER=7.2
 
@@ -32,7 +32,7 @@ COPY rootfs/ /
 
 RUN ln -s /opt/manager/public /var/www/html/manager && \
     chown -R www-data \
-        /opt/manager/var/cache/ \ 
+        /opt/manager/var/cache/ \
         /opt/manager/var/log/ \
         /var/www/html/webmail/temp/ \
         /var/www/html/webmail/logs/
