@@ -2,7 +2,7 @@
 
 {{ if $filter_virus }}
 clamav {
- attachments_only = false;
+ scan_mime_parts = false;
  symbol = "CLAM_VIRUS";
  type = "clamav";
  action = "reject";
