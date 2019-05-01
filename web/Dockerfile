@@ -1,10 +1,11 @@
 ARG ROUNDCUBE_VER=1.3.8-fpm
 ARG ADMIN_VER=1.3.5
 ARG PHP_VER=7.2
+ARG DOCKERIZE_VER=0.6.0
 
 FROM jeboehm/mailserver-admin:${ADMIN_VER} AS admin
 
-FROM jwilder/dockerize:0.6.0 AS dockerize
+FROM jwilder/dockerize:${DOCKERIZE_VER} AS dockerize
 
 FROM roundcube/roundcubemail:${ROUNDCUBE_VER} AS roundcube
 

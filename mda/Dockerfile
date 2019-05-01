@@ -1,6 +1,9 @@
-FROM jwilder/dockerize:0.6.0 AS dockerize
+ARG DOCKERIZE_VER=0.6.0
+ARG ALPINE_VER=3.9
 
-FROM alpine:3.8
+FROM jwilder/dockerize:${DOCKERIZE_VER} AS dockerize
+
+FROM alpine:${ALPINE_VER}
 LABEL maintainer="jeff@ressourcenkonflikt.de"
 LABEL vendor="https://github.com/jeboehm/docker-mailserver"
 LABEL de.ressourcenkonflikt.docker-mailserver.autoheal="true"
@@ -21,8 +24,10 @@ ENV MYSQL_HOST=db \
 RUN apk --no-cache add \
          curl \
          dovecot \
+         dovecot-lmtpd \
          dovecot-mysql \
-         dovecot-pigeonhole-plugin && \
+         dovecot-pigeonhole-plugin \
+         dovecot-pop3d && \
     adduser -h /var/vmail -u 5000 -D vmail && \
     rm -rf /etc/ssl/dovecot && \
     openssl dhparam -out /etc/dovecot/dh.pem 4096
