@@ -30,7 +30,7 @@ RUN apk --no-cache add \
          dovecot-pop3d && \
     adduser -h /var/vmail -u 5000 -D vmail && \
     rm -rf /etc/ssl/dovecot && \
-    openssl dhparam -out /etc/dovecot/dh.pem 4096
+    openssl dhparam -out /etc/dovecot/dh.pem 2048
 
 COPY --from=dockerize /usr/local/bin/dockerize /usr/local/bin
 COPY rootfs/ /
