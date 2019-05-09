@@ -20,6 +20,16 @@
     [ "$status" -eq 28 ]
 }
 
+@test "send mail to mda with smtp authentification (submission service)" {
+    run swaks -s mda --port 587 --to admin@example.com --from admin@example.com -a -au admin@example.com -ap changeme -tls --body "$BATS_TEST_DESCRIPTION"
+    [ "$status" -eq 0 ]
+}
+
+@test "send mail to mda from disabled account with smtp authentification (submission service)" {
+    run swaks -s mda --port 587 --to admin@example.com --from disabled@example.com -a -au disabled@example.com -ap test1234 -tls --body "$BATS_TEST_DESCRIPTION"
+    [ "$status" -eq 28 ]
+}
+
 @test "send mail to local alias" {
     run swaks -s mta --to foo@example.com --body "$BATS_TEST_DESCRIPTION"
     [ "$status" -eq 0 ]
@@ -63,6 +73,11 @@
 
 @test "mail to local address with extension is stored" {
     run grep -r "send mail to local address with extension" /var/vmail/example.com/admin/Maildir/
+    [ "$status" -eq 0 ]
+}
+
+@test "mail to mda with smtp authentification (submission service) is stored" {
+    run grep -r "send mail to mda with smtp authentification (submission service)" /var/vmail/example.com/admin/Maildir/
     [ "$status" -eq 0 ]
 }
 

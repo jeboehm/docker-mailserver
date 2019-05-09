@@ -27,7 +27,8 @@ RUN apk --no-cache add \
          dovecot-lmtpd \
          dovecot-mysql \
          dovecot-pigeonhole-plugin \
-         dovecot-pop3d && \
+         dovecot-pop3d \
+         dovecot-submissiond && \
     adduser -h /var/vmail -u 5000 -D vmail && \
     rm -rf /etc/ssl/dovecot && \
     openssl dhparam -out /etc/dovecot/dh.pem 2048
