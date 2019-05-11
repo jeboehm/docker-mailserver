@@ -10,14 +10,19 @@
     [ "$status" -eq 0 ]
 }
 
-@test "send mail with smtp authentification" {
-    run swaks -s mta --to admin@example.com --from admin@example.com -a -au admin@example.com -ap changeme -tls --body "$BATS_TEST_DESCRIPTION"
+@test "authentification on smtp should fail" {
+    run swaks -s mta --to admin@example.com --from disabled@example.com -a -au disabled@example.com -ap test1234 -tls --body "$BATS_TEST_DESCRIPTION"
+    [ "$status" -eq 28 ]
+}
+
+@test "send mail to mda with smtp authentification (submission service)" {
+    run swaks -s mda --port 587 --to admin@example.com --from admin@example.com -a -au admin@example.com -ap changeme -tls --body "$BATS_TEST_DESCRIPTION"
     [ "$status" -eq 0 ]
 }
 
-@test "send mail from disabled account with smtp authentification" {
-    run swaks -s mta --to admin@example.com --from disabled@example.com -a -au disabled@example.com -ap test1234 -tls --body "$BATS_TEST_DESCRIPTION"
-    [ "$status" -eq 28 ]
+@test "send mail to mda with smtp authentification, with address extension (submission service)" {
+    run swaks -s mda --port 587 --to admin@example.com --from admin-extension@example.com -a -au admin@example.com -ap changeme -tls --body "$BATS_TEST_DESCRIPTION"
+    [ "$status" -eq 0 ]
 }
 
 @test "send mail to local alias" {
@@ -56,13 +61,18 @@
     [ "$status" -eq 0 ]
 }
 
-@test "mail with smtp authentification is stored" {
-    run grep -r "send mail with smtp authentification" /var/vmail/example.com/admin/Maildir/
+@test "mail to local address with extension is stored" {
+    run grep -r "send mail to local address with extension" /var/vmail/example.com/admin/Maildir/
     [ "$status" -eq 0 ]
 }
 
-@test "mail to local address with extension is stored" {
-    run grep -r "send mail to local address with extension" /var/vmail/example.com/admin/Maildir/
+@test "mail to mda with smtp authentification (submission service) is stored" {
+    run grep -r "send mail to mda with smtp authentification (submission service)" /var/vmail/example.com/admin/Maildir/
+    [ "$status" -eq 0 ]
+}
+
+@test "send mail to mda with smtp authentification, with address extension (submission service) is stored" {
+    run grep -r "send mail to mda with smtp authentification, with address extension (submission service)" /var/vmail/example.com/admin/Maildir/
     [ "$status" -eq 0 ]
 }
 

@@ -1,4 +1,4 @@
-protocols = lmtp
+protocols = lmtp submission
 
 {{ $enable_pop3 := eq (or ($.Env.ENABLE_POP3) "") "true" }}
 {{ $enable_imap := eq (or ($.Env.ENABLE_IMAP) "") "true" }}
@@ -39,17 +39,18 @@ service pop3 {
 protocols = $protocols pop3
 {{ end }}
 
+service submission-login {
+  inet_listener submission {
+    #port = 587
+  }
+}
+
+service submission {
+  #process_limit = 1024
+}
+
 service lmtp {
   inet_listener lmtp {
     port = 2003
   }
-}
-
-service auth {
-  inet_listener {
-    port = 9000
-  }
-}
-
-service auth-worker {
 }

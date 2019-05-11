@@ -9,7 +9,7 @@ All images are based on [Alpine Linux](https://alpinelinux.org) and are so small
 Features
 --------
 - POP3, IMAP, SMTP with user authentification
-- TLS support
+- TLS enforced
 - Webmail interface
 - Server-side mail filtering, rule configuration via web frontend
 - Spam- and malware filter
@@ -20,6 +20,7 @@ Features
 - IMAP, POP3 and malware filters can be disabled if they are not used
 - Permanent self testing by Docker's healthcheck feature
 - Developed with high quality assurance standards
+- Address extension (-)
 
 Usage
 =====
@@ -52,16 +53,17 @@ All configuration options can be found in the `.env` file in the root folder of 
 
 Services
 --------
-| Service                | Address                      |
-| ---------------------- | ---------------------------- |
-| POP3 (starttls needed) | 127.0.0.1:110                |
-| POP3S                  | 127.0.0.1:995                |
-| IMAP (starttls needed) | 127.0.0.1:143                |
-| IMAPS                  | 127.0.0.1:993                |
-| SMTP (starttls needed) | 127.0.0.1:25                 |
-| Management Interface   | http://127.0.0.1:81/manager/ |
-| Webmail                | http://127.0.0.1:81/webmail/ |
-| Rspamd Webinterface    | http://127.0.0.1:81/rspamd/  |
+| Service                           | Address                      |
+| --------------------------------- | ---------------------------- |
+| POP3 (starttls needed)            | 127.0.0.1:110                |
+| POP3S                             | 127.0.0.1:995                |
+| IMAP (starttls needed)            | 127.0.0.1:143                |
+| IMAPS                             | 127.0.0.1:993                |
+| SMTP                              | 127.0.0.1:25                 |
+| Mail Submission (starttls needed) | 127.0.0.1:587                |
+| Management Interface              | http://127.0.0.1:81/manager/ |
+| Webmail                           | http://127.0.0.1:81/webmail/ |
+| Rspamd Webinterface               | http://127.0.0.1:81/rspamd/  |
 
 Installation (advanced setup)
 -----------------------------
@@ -168,6 +170,12 @@ The startup script will load it automatically.
 
 If you need further assistance, check the [docker-compose](https://docs.docker.com/compose/) manual.
 
+Local address extension
+-----------------------
+Local address extension allows you to extend your email address with a string that does not need to be known by docker-mailserver.
+If you add a ```-``` (minus) to your email address you can insert any combination of words or numbers to create unique addresses.
+You are even able to create Sieve rules with these addresses.
+
 Component overview
 ------------------
 | Servicename | Software                    | Description                                               |
@@ -180,3 +188,8 @@ Component overview
 | test        | Bats                        | Runs integration tests, only used for developing          |
 | virus       | ClamAV                      | Virus filter                                              |
 | web         | Roundcube, mailserver-admin | Provides an management interface and webmail tool         |
+
+Upgrading from 2.x
+==================
+Version 3.0 will change mail submission from port 25 (smtp) to port 587. You need to add another port binding
+to ```docker-compose.production.yml``` and your mail clients have to be reconfigured.
