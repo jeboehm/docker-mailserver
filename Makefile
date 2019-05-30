@@ -2,7 +2,7 @@ COMPOSE_PRODUCTION = bin/production.sh
 COMPOSE_TEST       = bin/test.sh
 
 .PHONY: ci
-ci: test unofficial-sigs lint logs clean
+ci: pull test unofficial-sigs lint logs clean
 
 .PHONY: prod
 prod: up
@@ -10,6 +10,10 @@ prod: up
 .PHONY: build
 build:
 	$(COMPOSE_TEST) build
+
+.PHONY: pull
+pull:
+	$(COMPOSE_PRODUCTION) pull
 
 .PHONY: test
 test: .env clean build up fixtures
