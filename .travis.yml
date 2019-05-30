@@ -6,31 +6,22 @@ services:
 env:
   global:
     - DOCKER_COMPOSE_VERSION=1.21.1
-    - MYSQL_DATABASE=mailserver
-    - MYSQL_USER=mailserver
-    - MYSQL_PASSWORD=changeme
-    - MYSQL_ROOT_PASSWORD=changeme
-    - MAILNAME=mail.example.com
-    - POSTMASTER=postmaster@example.com
-    - FILTER_MIME=false
-    - ENABLE_IMAP=true
-    - ENABLE_POP3=true
-    - CONTROLLER_PASSWORD=changeme
-    - WAITSTART_TIMEOUT=2m
 
   matrix:
-    - FILTER_VIRUS=false
-    - FILTER_VIRUS=true
+    - BUILD_CASE=virus_disabled
+    - BUILD_CASE=virus_enabled
 
 before_install:
   - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
   - chmod +x docker-compose
   - sudo mv docker-compose /usr/local/bin
-  - touch .env
+  - cp .env.dist .env
+  - cat .ci/matrix/${BUILD_CASE}.env >> .env
 
 script:
   - docker version
   - docker-compose version
+  - cat .env
   - make ci
 
 after_failure:
