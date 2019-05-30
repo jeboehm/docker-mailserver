@@ -27,4 +27,4 @@ script:
   - make ci
 
 after_failure:
-  - make logs clean
+  - make logs
