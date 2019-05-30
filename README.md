@@ -127,6 +127,7 @@ service definition in `docker-compose.yml`.
 ### Disable malware scanning
 1. Set the `FILTER_VIRUS` variable in `.env` file to `FALSE`.
 2. Remove the virus service by deleting the entire block in `docker-compose.yml`.
+3. Restart the environment.
 
 ### Use advanced malware signatures
 1. Uncomment the `virus_unof_sig_updater` definition in `docker-compose.yml`:
@@ -139,6 +140,10 @@ service definition in `docker-compose.yml`.
    ```
 2. Run `docker-compose build virus_unof_sig_updater` to build the image.
 3. Run `docker-compose up virus_unof_sig_updater` regulary (e.g. by adding a cronjob).
+
+### Forward outgoing mails to a external relay
+1. Set the `RELAYHOST` variable in `.env` from false to the address of your relay, e.g. `RELAYHOST=[yourmta.example]:25`.
+2. Restart the environment.
 
 Technical details
 =================
