@@ -10,6 +10,7 @@ env:
   matrix:
     - BUILD_CASE=virus_disabled
     - BUILD_CASE=virus_enabled
+    - BUILD_CASE=relayhost
 
 before_install:
   - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
@@ -22,6 +23,7 @@ script:
   - docker version
   - docker-compose version
   - cat .env
+  - if [ -x .ci/matrix/${BUILD_CASE}/test.sh ]; then .ci/matrix/${BUILD_CASE}/test.sh; fi
   - make ci
 
 after_failure:

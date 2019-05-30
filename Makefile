@@ -16,7 +16,7 @@ pull:
 	$(COMPOSE_PRODUCTION) pull
 
 .PHONY: test
-test: .env clean build up fixtures
+test: .env build up fixtures
 	$(COMPOSE_TEST) run --rm test
 
 .PHONY: clean
