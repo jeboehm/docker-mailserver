@@ -18,6 +18,7 @@ ENV MAILNAME=mail.example.com \
     RSPAMD_HOST=filter \
     MDA_HOST=mda \
     MTA_HOST=mta \
+    RELAYHOST=false \
     SSL_CERT=/media/tls/mailserver.crt \
     SSL_KEY=/media/tls/mailserver.key \
     WAITSTART_TIMEOUT=1m

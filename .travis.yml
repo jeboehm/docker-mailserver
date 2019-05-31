@@ -7,15 +7,24 @@ env:
   global:
     - DOCKER_COMPOSE_VERSION=1.21.1
 
+  matrix:
+    - BUILD_CASE=virus_disabled
+    - BUILD_CASE=virus_enabled
+    - BUILD_CASE=relayhost
+
 before_install:
   - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
   - chmod +x docker-compose
   - sudo mv docker-compose /usr/local/bin
+  - cp .env.dist .env
+  - cat .ci/matrix/${BUILD_CASE}.env >> .env
 
 script:
   - docker version
   - docker-compose version
+  - cat .env
+  - if [ -x .ci/matrix/${BUILD_CASE}/test.sh ]; then .ci/matrix/${BUILD_CASE}/test.sh; fi
   - make ci
 
 after_failure:
-  - make logs clean
+  - make logs

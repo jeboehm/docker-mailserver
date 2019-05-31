@@ -22,6 +22,7 @@ RUN apk --no-cache add \
       bats \
       curl \
       docker \
+      jq \
       mariadb-client \
       openssl \
       perl \
