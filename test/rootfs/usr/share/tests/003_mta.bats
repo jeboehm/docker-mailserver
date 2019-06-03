@@ -10,7 +10,7 @@
     [ "$status" -eq 0 ]
 }
 
-@test "authentification on smtp should fail" {
+@test "authentification on smtp with disabled account should fail" {
     run swaks -s mta --to admin@example.com --from disabled@example.com -a -au disabled@example.com -ap test1234 -tls --body "$BATS_TEST_DESCRIPTION"
     [ "$status" -eq 28 ]
 }
@@ -101,7 +101,7 @@
     [ "$status" -eq 24 ]
 }
 
-@test "mail to send disabled and only mailbox is rejected anyway" {
+@test "mail to disabled and send only mailbox is rejected anyway" {
     run swaks -s mta --to disabledsendonly@example.com --body "$BATS_TEST_DESCRIPTION"
     [ "$status" -eq 24 ]
 }
