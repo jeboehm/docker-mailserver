@@ -15,6 +15,11 @@
     [ "$status" -eq 28 ]
 }
 
+@test "authentification on smtp with disabled and send only account should fail" {
+    run swaks -s mta --to admin@example.com --from disabledsendonly@example.com -a -au disabled@example.com -ap test1234 -tls --body "$BATS_TEST_DESCRIPTION"
+    [ "$status" -eq 28 ]
+}
+
 @test "send mail to mda with smtp authentification (submission service)" {
     run swaks -s mda --port 587 --to admin@example.com --from admin@example.com -a -au admin@example.com -ap changeme -tls --body "$BATS_TEST_DESCRIPTION"
     [ "$status" -eq 0 ]
