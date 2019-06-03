@@ -10,8 +10,13 @@
     [ "$status" -eq 0 ]
 }
 
-@test "authentification on smtp should fail" {
+@test "authentification on smtp with disabled account should fail" {
     run swaks -s mta --to admin@example.com --from disabled@example.com -a -au disabled@example.com -ap test1234 -tls --body "$BATS_TEST_DESCRIPTION"
+    [ "$status" -eq 28 ]
+}
+
+@test "authentification on smtp with disabled and send only account should fail" {
+    run swaks -s mta --to admin@example.com --from disabledsendonly@example.com -a -au disabled@example.com -ap test1234 -tls --body "$BATS_TEST_DESCRIPTION"
     [ "$status" -eq 28 ]
 }
 
@@ -22,6 +27,11 @@
 
 @test "send mail to mda with smtp authentification, with address extension (submission service)" {
     run swaks -s mda --port 587 --to admin@example.com --from admin-extension@example.com -a -au admin@example.com -ap changeme -tls --body "$BATS_TEST_DESCRIPTION"
+    [ "$status" -eq 0 ]
+}
+
+@test "send mail to mda from sendonly account with smtp authentification (submission service)" {
+    run swaks -s mda --port 587 --to admin@example.com --from sendonly@example.com -a -au sendonly@example.com -ap test1234 -tls --body "$BATS_TEST_DESCRIPTION"
     [ "$status" -eq 0 ]
 }
 
@@ -76,6 +86,11 @@
     [ "$status" -eq 0 ]
 }
 
+@test "send mail to mda from sendonly account with smtp authentification (submission service) is stored" {
+    run grep -r "send mail to mda from sendonly account with smtp authentification (submission service)" /var/vmail/example.com/admin/Maildir/
+    [ "$status" -eq 0 ]
+}
+
 @test "junk mail is assorted to the junk folder" {
     run grep -r "send junk mail to local address" /var/vmail/example.com/admin/Maildir/.Junk/
     [ "$status" -eq 0 ]
@@ -101,7 +116,7 @@
     [ "$status" -eq 24 ]
 }
 
-@test "mail to send disabled and only mailbox is rejected anyway" {
+@test "mail to disabled and send only mailbox is rejected anyway" {
     run swaks -s mta --to disabledsendonly@example.com --body "$BATS_TEST_DESCRIPTION"
     [ "$status" -eq 24 ]
 }
