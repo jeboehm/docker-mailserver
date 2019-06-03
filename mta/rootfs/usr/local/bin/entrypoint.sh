@@ -1,10 +1,17 @@
 #!/bin/sh
+set -e
+
 postconf myhostname="${MAILNAME}"
 postconf mynetworks="${MYNETWORKS}"
 
 if [ "${FILTER_MIME}" == "true" ]
 then
   postconf mime_header_checks=regexp:/etc/postfix/mime_header_checks
+fi
+
+if [ "${RELAYHOST}" != "false" ]
+then
+  postconf relayhost=${RELAYHOST}
 fi
 
 dockerize \
