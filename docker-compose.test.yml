@@ -6,6 +6,7 @@ services:
     volumes:
       - data-mail:/var/vmail:ro
       - data-tls:/media/tls:ro
+      - data-dkim:/media/dkim:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
       # For development
       # - ./test/rootfs/usr/share/tests:/usr/share/tests:ro

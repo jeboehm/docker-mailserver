@@ -23,11 +23,12 @@ RUN apk --no-cache add \
         cp -r config /etc/clamav-unofficial-sigs && \
         mkdir /var/lib/clamav-unofficial-sigs && \
         chown clamav /var/lib/clamav-unofficial-sigs && \
-        cp /etc/clamav-unofficial-sigs/os.ubuntu.conf /etc/clamav-unofficial-sigs/os.conf && \
+        cp /etc/clamav-unofficial-sigs/os/os.ubuntu.conf /etc/clamav-unofficial-sigs/os.conf && \
         echo "user_configuration_complete=\"yes\"" >> /etc/clamav-unofficial-sigs/user.conf && \
         echo "logging_enabled=\"no\"" >> /etc/clamav-unofficial-sigs/user.conf && \
         echo "enable_random=\"no\"" >> /etc/clamav-unofficial-sigs/user.conf && \
-    rm -rf /tmp/* /var/log/*
+        echo "reload_dbs=\"no\"" >> /etc/clamav-unofficial-sigs/user.conf && \
+    rm -rf /tmp/* /var/log/* /etc/clamav-unofficial-sigs/os/
 
 USER clamav
 
