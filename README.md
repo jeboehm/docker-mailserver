@@ -8,6 +8,7 @@ All images are based on [Alpine Linux](https://alpinelinux.org) and are so small
 
 Features
 --------
+
 - POP3, IMAP, SMTP with user authentification
 - TLS enforced
 - Webmail interface
@@ -23,14 +24,12 @@ Features
 - Developed with high quality assurance standards
 - Address extension (-)
 
-Usage
-=====
-
 Installation (basic setup)
 --------------------------
+
 1. Run ```git clone git@github.com:jeboehm/docker-mailserver.git```
 2. Copy the file `.env.dist` to `.env` and change the variables in it according to your needs.
-   The variables are described in the [next paragraph](#Configuration).
+   The variables are described in the [Wiki](https://github.com/jeboehm/docker-mailserver/wiki/Configuration-variables).
 3. Run ```bin/production.sh pull``` to download the images.
 4. Run ```bin/production.sh up -d``` to start the services.
 5. After a few seconds you can access the services listed in the paragraph [Services](#Services).
@@ -38,22 +37,33 @@ Installation (basic setup)
    The wizard will ask you a few questions to set everything up.
 8. Now you can login to the management interface with your new account credentials.
 
-Configuration
+Documentation
 -------------
-All configuration options can be found in the `.env` file in the root folder of docker mailserver.
 
-| Variable            | Description                                                                  |
-| ------------------- | ---------------------------------------------------------------------------- |
-| MAILNAME            | Should match your reverse DNS record                                         |
-| POSTMASTER          | Mail address of the system's administrator                                   |
-| FILTER_MIME         | Discard mails with suspicious files attached (see [Filters](#Filters))       |
-| FILTER_VIRUS        | Discard mails with virus or malware files attached (see [Filters](#Filters)) |
-| ENABLE_IMAP         | Enable IMAP4 support                                                         |
-| ENABLE_POP3         | Enable POP3 support                                                          |
-| CONTROLLER_PASSWORD | Password for accessing the rspamd web interface                              |
+- [Configuration](https://github.com/jeboehm/docker-mailserver/wiki/Configuration-variables)
+- Advanced setup:
+  - [Use own TLS certficates](https://github.com/jeboehm/docker-mailserver/wiki/Howto:-Use-Your-Own-TLS-Certificates)
+  - [Use another MySQL instance](https://github.com/jeboehm/docker-mailserver/wiki/Howto:-Use-Another-MySQL-Instance)
+  - [Use the web service behind nginx-proxy](https://github.com/jeboehm/docker-mailserver/wiki/Howto:-Use-The-Web-Service-Behind-nginx-proxy)
+  - [Container health monitoring](https://github.com/jeboehm/docker-mailserver/wiki/Howto:-Container-Health-Monitoring)
+  - [Disable malware scanning](https://github.com/jeboehm/docker-mailserver/wiki/Howto:-Disable-Malware-Scanning)
+  - [Advanced malware signatures](https://github.com/jeboehm/docker-mailserver/wiki/Howto:-Advanced-Malware-Signatures)
+  - [Use an external mail relay](https://github.com/jeboehm/docker-mailserver/wiki/Howto:-Use-External-Mail-Relay-For-Sending-Mails)
+  - [Add plugins to Roundcube](https://github.com/jeboehm/docker-mailserver/wiki/Howto:-Add-Plugins-To-Roundcube-Webmail)
+- Features:
+  - [Local address extension](https://github.com/jeboehm/docker-mailserver/wiki/Feature:-Local-Address-Extension)
+  - [Sender policy framework, SPF](https://github.com/jeboehm/docker-mailserver/wiki/Feature:-Sender-Policy-Framework-(SPF))
+  - [DKIM](https://github.com/jeboehm/docker-mailserver/wiki/Feature:-DKIM)
+- Technical details:
+  - [Data storage](https://github.com/jeboehm/docker-mailserver/wiki/Info:-Volume-Management-(Where-Is-My-Data%3F))
+  - [Filtering](https://github.com/jeboehm/docker-mailserver/wiki/Info:-Mail-Filtering)
+  - [Component overview](https://github.com/jeboehm/docker-mailserver/wiki/Info:-Component-Overview)
+  - [DockerHub images](https://github.com/jeboehm/docker-mailserver/wiki/Info:-Images-On-DockerHub)
+- [Upgrading](https://github.com/jeboehm/docker-mailserver/wiki/Upgrading)
 
 Services
 --------
+
 | Service                           | Address                      |
 | --------------------------------- | ---------------------------- |
 | POP3 (starttls needed)            | 127.0.0.1:110                |
@@ -65,149 +75,3 @@ Services
 | Management Interface              | http://127.0.0.1:81/manager/ |
 | Webmail                           | http://127.0.0.1:81/webmail/ |
 | Rspamd Webinterface               | http://127.0.0.1:81/rspamd/  |
-
-Installation (advanced setup)
------------------------------
-This paragraph describes different advanced configuration scenarios. It requires some knowledge
-about docker-compose.
-
-### Use your own TLS certificates
-1. Remove the `ssl` service from `docker-compose.yml`, by removing the entire block.
-2. Uncomment the volume notations in the `mta` and `mda` blocks, delete the data-tls mounts:
-   ```
-    mta:
-      image: jeboehm/mailserver-mta:latest
-      ...
-      volumes:
-        - /home/user/certs/mail.example.com.crt:/media/tls/mailserver.crt:ro
-        - /home/user/certs/mail.example.com.key:/media/tls/mailserver.key:ro
-
-    mda:
-      image: jeboehm/mailserver-mda:latest
-      ...
-      volumes:
-        - data-mail:/var/vmail
-        - /home/user/certs/mail.example.com.crt:/media/tls/mailserver.crt:ro
-        - /home/user/certs/mail.example.com.key:/media/tls/mailserver.key:ro
-   ```
-3. Delete the `data-tls` volume from the volumes section by removing the entire block.
-
-### Use an already running MySQL instance
-1. Remove the `db` service from `docker-compose.yml`, by removing the entire block.
-2. Remove the `MYSQL_ROOT_PASSWORD` variable from the `.env` file.
-3. Add a `MYSQL_HOST` variable to the `.env` file, change it so that it points to your MySQL host, `127.0.0.1` for example.
-4. Change `MYSQL_DATABASE`, `MYSQL_USER`, `MYSQL_PASSWORD` so they matches your credentials.
-5. Import the both `.sql` files in `db/rootfs/docker-entrypoint-initdb.d`.
-
-If your MySQL instance also runs in Docker, be aware that it needs to be connected to your mail network, since docker-compose creates a new one for each project.
-You can do so by executing for example ```docker network connect mail_default mysql```.
-
-### Use the web service behind nginx-proxy
-1. Uncomment the environment variable VIRTUAL_HOST from `docker-compose.yml`:
-   ```
-    web:
-      image: jeboehm/mailserver-web:latest
-      ...
-      environment:
-        - VIRTUAL_HOST=mail.example.com
-   ```
-2. Change the variable to the (sub-) domain you want to use.
-3. Remove the `web` service port definition from `docker-compose.production.yml`.
-
-Be aware that nginx-proxy needs to be connected to your mail network, since docker-compose creates a new one
-for each project. You can do so by executing for example ```docker network connect mail_default nginx-proxy```.
-
-### Use autoheal to restart unhealthy containers
-Autoheal is a Docker image that automatically restarts containers that are marked unhealthy.
-docker-mailserver tests itself regulary by using the healthcheck feature of Docker. When a test
-fails, the container state changes to unhealthy.
-
-You can integrate Autoheal into your setup by uncommenting the `autoheal`
-service definition in `docker-compose.yml`.
-
-### Disable malware scanning
-1. Set the `FILTER_VIRUS` variable in `.env` file to `FALSE`.
-2. Remove the virus service by deleting the entire block in `docker-compose.yml`.
-3. Restart the environment.
-
-### Use advanced malware signatures
-1. Uncomment the `virus_unof_sig_updater` definition in `docker-compose.yml`:
-   ```
-    virus_unof_sig_updater:
-      build: ./virus/contrib/unofficial-sigs
-      env_file: .env
-      volumes_from:
-        - virus
-   ```
-2. Run `docker-compose build virus_unof_sig_updater` to build the image.
-3. Run `docker-compose up virus_unof_sig_updater` regulary (e.g. by adding a cronjob).
-
-### Forward outgoing mails to an external relay
-1. Set the `RELAYHOST` variable in `.env` from false to the address of your relay, e.g. `RELAYHOST=[yourmta.example]:25`.
-2. Restart the environment.
-
-Technical details
-=================
-Filters
-------------
-By default, spam is filtered by [rspamd](https://rspamd.com/).
-
-| Method                                                               | Variable            |
-| -------------------------------------------------------------------- | ------------------- |
-| rspamd                                                               | -                   |
-| ClamAV virus & malware filtering                                     | FILTER_VIRUS        |
-| Block attachments by type (bat, com, exe, dll, vbs, docm, doc, dzip) | FILTER_MIME         |
-
-Volume Management (Where are my files?)
----------------------------------------
-Docker manages the data volumes. The first startup creates four volumes, named data-db, -mail, -tls and -filter.
-Run `docker volume inspect <name>` to get their real path in the filesystem.
-
-TLS certificates
-----------------
-The TLS certificate is stored in the data-tls volume. Obtain its path by running `docker volume inspect`
-and replace the autogenerated certificate with a real one. You can also mount a certificate directly by uncommenting
-the relevant lines in docker-compose.yml.
-
-SPF
----
-An SPF record is a type of Domain Name Service (DNS) record that identifies which mail servers are permitted to send
-email on behalf of your domain.
-
-docker-mailserver checks incoming mails for valid SPF records. See [this page](https://www.spfwizard.net/) for a guide
-for setting up your own domains for SPF.
-
-DKIM
-----
-docker-mailserver supports mail signing with DKIM keys. DKIM can be configured using the management interface.
-
-Override container configuration
---------------------------------
-Container configurations can be overridden by creating the file `docker-compose.override.yml` in the root folder.
-The startup script will load it automatically.
-
-If you need further assistance, check the [docker-compose](https://docs.docker.com/compose/) manual.
-
-Local address extension
------------------------
-Local address extension allows you to extend your email address with a string that does not need to be known by docker-mailserver.
-If you add a ```-``` (minus) to your email address you can insert any combination of words or numbers to create unique addresses.
-You are even able to create Sieve rules with these addresses.
-
-Component overview
-------------------
-| Servicename | Software                    | Description                                               |
-| ----------- | --------------------------- | --------------------------------------------------------- |
-| db          | MySQL                       | Datastorage for webmail and mail users and their aliases  |
-| filter      | rspamd                      | Spam filtering and greylisting                            |
-| mda         | Dovecot                     | Provides IMAP and POP3, handles incoming mail with sieve  |
-| mta         | Postfix                     | Transfers incoming and outgoing mail                      |
-| ssl         | openssl                     | Creates a self signed certificate if none is provided     |
-| test        | Bats                        | Runs integration tests, only used for developing          |
-| virus       | ClamAV                      | Virus filter                                              |
-| web         | Roundcube, mailserver-admin | Provides an management interface and webmail tool         |
-
-Upgrading from 2.x
-==================
-Version 3.0 will change mail submission from port 25 (smtp) to port 587. You need to add another port binding
-to ```docker-compose.production.yml``` and your mail clients have to be reconfigured.
