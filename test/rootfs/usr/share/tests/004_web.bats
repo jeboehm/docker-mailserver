@@ -6,7 +6,7 @@
 }
 
 @test "http connection to webmail interface" {
-    curl http://web/webmail/ | grep "ispmail-logo"
+    curl http://web/webmail/ | grep "jeboehm"
     [ "$?" -eq 0 ]
 }
 

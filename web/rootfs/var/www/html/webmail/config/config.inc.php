@@ -1,6 +1,5 @@
 <?php
 $config = [];
-$config['debug_level'] = 0;
 $config['smtp_log'] = false;
 $config['log_dir'] = '/tmp/';
 $config['temp_dir'] = '/tmp/';
@@ -18,14 +17,12 @@ $config['smtp_port'] = 587;
 $config['smtp_user'] = '%u';
 $config['smtp_pass'] = '%p';
 $config['support_url'] = getenv('SUPPORT_URL');
-$config['product_name'] = 'Webmail';
 $config['plugins'] = [
     'archive',
     'zipdownload',
     'managesieve',
     'password',
 ];
-$config['skin_logo'] = './ispmail-logo.png';
 $config['imap_conn_options'] = [
     'ssl' => [
         'verify_peer'       => false,
