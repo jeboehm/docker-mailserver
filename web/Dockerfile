@@ -8,7 +8,7 @@ FROM roundcube/roundcubemail:${ROUNDCUBE_VER} AS roundcube
 
 FROM jeboehm/php-nginx-base:${PHP_VER}
 
-ARG ADMIN_VER=1.4.1
+ARG ADMIN_VER=1.5.2
 
 LABEL maintainer="jeff@ressourcenkonflikt.de"
 LABEL vendor="https://github.com/jeboehm/docker-mailserver"
@@ -46,5 +46,5 @@ RUN ln -s /opt/manager/public /var/www/html/manager && \
         /var/www/html/webmail/logs/
 
 WORKDIR /var/www/html
-HEALTHCHECK CMD curl -s http://127.0.0.1/ | grep docker-mailserver
+HEALTHCHECK CMD curl -s http://127.0.0.1/login | grep docker-mailserver
 CMD ["/usr/local/bin/entrypoint.sh"]

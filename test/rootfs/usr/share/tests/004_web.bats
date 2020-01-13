@@ -1,7 +1,7 @@
 #!/usr/bin/env bats
 
 @test "http connection to manager web interface" {
-    curl -L http://web/manager/ | grep "Email address"
+    curl -L http://web/manager/ | grep "Username"
     [ "$?" -eq 0 ]
 }
 

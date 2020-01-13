@@ -28,3 +28,4 @@ script:
 
 after_failure:
   - make logs
+  - docker ps -a
