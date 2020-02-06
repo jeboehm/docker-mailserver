@@ -37,6 +37,21 @@ Installation (basic setup)
    The wizard will ask you a few questions to set everything up.
 8. Now you can login to the management interface with your new account credentials.
 
+Screenshots
+-----------
+
+### Manage users
+
+![User overview](https://raw.githubusercontent.com/jeboehm/mailserver-admin/master/.github/screenshots/user.png)
+
+### Manage aliases
+
+![Alias overview](https://raw.githubusercontent.com/jeboehm/mailserver-admin/master/.github/screenshots/alias.png)
+
+### DKIM setup
+
+![DKIM setup](https://raw.githubusercontent.com/jeboehm/mailserver-admin/master/.github/screenshots/dkim_edit.png)
+
 Documentation
 -------------
 
