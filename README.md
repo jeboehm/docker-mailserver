@@ -75,6 +75,7 @@ Documentation
   - [Component overview](https://github.com/jeboehm/docker-mailserver/wiki/Info:-Component-Overview)
   - [DockerHub images](https://github.com/jeboehm/docker-mailserver/wiki/Info:-Images-On-DockerHub)
 - [Upgrading](https://github.com/jeboehm/docker-mailserver/wiki/Upgrading)
+- [Troubleshooting](https://github.com/jeboehm/docker-mailserver/wiki/Troubleshooting)
 
 Services
 --------
