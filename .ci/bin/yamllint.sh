@@ -3,9 +3,8 @@ DIR="$(cd "$(dirname "$0")" && pwd)"
 
 cd $DIR/../../
 
-FILES=$(find . -type f -name \*.yml)
+FILES=$(find . -type f -name \*.yml | grep -v .github/workflows)
 HASERRORS=false
-IGNORE=""
 
 for file in $FILES
 do

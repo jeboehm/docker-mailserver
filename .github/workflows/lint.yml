@@ -1,0 +1,15 @@
+name: Lint YAMLs and Dockerfiles
+
+on:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+        
+      - name: Run linter
+        run: |
+          make lint

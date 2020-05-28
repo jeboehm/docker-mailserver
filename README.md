@@ -4,7 +4,11 @@ docker-mailserver
 Docker Mailserver based on the famous [ISPMail guide](https://workaround.org/ispmail/).
 All images are based on [Alpine Linux](https://alpinelinux.org) and are so small as possible.
 
-[![Build Status](https://travis-ci.org/jeboehm/docker-mailserver.svg?branch=master)](https://travis-ci.org/jeboehm/docker-mailserver)
+Build status
+------------
+![Lint YAMLs and Dockerfiles](https://github.com/jeboehm/docker-mailserver/workflows/Lint%20YAMLs%20and%20Dockerfiles/badge.svg)
+![Integration Tests](https://github.com/jeboehm/docker-mailserver/workflows/Integration%20Tests/badge.svg)
+![Build unofficial-sigs](https://github.com/jeboehm/docker-mailserver/workflows/Build%20unofficial-sigs/badge.svg)
 
 Features
 --------

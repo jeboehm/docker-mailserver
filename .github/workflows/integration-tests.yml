@@ -1,0 +1,35 @@
+name: Integration Tests
+
+on:
+  pull_request:
+
+jobs:
+  # Run tests.
+  # See also https://docs.docker.com/docker-hub/builds/automated-testing/
+  test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        BUILD_CASE: [virus_disabled, virus_enabled, relayhost]
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Prepare environment
+        run: |
+          cp .env.dist .env
+          cat .ci/matrix/${{ matrix.BUILD_CASE }}.env >> .env
+        
+      - name: Run tests
+        run: |
+          if [ -x ".ci/matrix/${{ matrix.BUILD_CASE }}/test.sh" ]; then
+            .ci/matrix/${{ matrix.BUILD_CASE }}/test.sh
+          fi
+          make ci
+
+      - name: Collect logs
+        if: failure()
+        run: |
+          make logs
+          docker ps -a
