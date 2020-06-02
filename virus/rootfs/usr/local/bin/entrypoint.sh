@@ -6,5 +6,5 @@ then
     exit 0
 fi
 
-/usr/bin/freshclam -d -l /dev/stdout
+/usr/bin/freshclam -d -l /dev/stdout &
 /usr/sbin/clamd
