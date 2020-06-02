@@ -38,6 +38,7 @@ RUN apk --no-cache add \
     postconf milter_mail_macros="i {mail_addr} {client_addr} {client_name} {auth_authen}" && \
     postconf milter_default_action=accept && \
     postconf virtual_transport="lmtp:${MDA_HOST}:2003" && \
+    postconf smtp_tls_security_level=may && \
     postconf smtpd_tls_security_level=may && \
     postconf smtpd_tls_auth_only=yes && \
     postconf smtpd_tls_cert_file="${SSL_CERT}" && \
