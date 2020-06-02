@@ -7,6 +7,10 @@ assignees: ''
 
 ---
 
+☺️ Please check the troubleshooting page before opening a new issue. ☺️
+
+https://github.com/jeboehm/docker-mailserver/wiki/Troubleshooting
+
 **Describe the bug**
 A clear and concise description of what the bug is.
 
