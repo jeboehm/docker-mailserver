@@ -1,4 +1,4 @@
-ARG ROUNDCUBE_VER=1.4.1-fpm
+ARG ROUNDCUBE_VER=1.4.x-fpm
 ARG PHP_VER=7.4
 ARG DOCKERIZE_VER=0.6.0
 
@@ -8,7 +8,7 @@ FROM roundcube/roundcubemail:${ROUNDCUBE_VER} AS roundcube
 
 FROM jeboehm/php-nginx-base:${PHP_VER}
 
-ARG ADMIN_VER=1.5.2
+ARG ADMIN_VER=1.5.3
 
 LABEL maintainer="jeff@ressourcenkonflikt.de"
 LABEL vendor="https://github.com/jeboehm/docker-mailserver"
