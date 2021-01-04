@@ -28,8 +28,6 @@ RUN apk --no-cache add \
       /var/lib/rspamd \
       /etc/rspamd/local.d/antivirus.conf \
       /etc/rspamd/local.d/worker-controller.inc && \
-    wget -O /usr/share/rspamd/bayes.spam.sqlite https://rspamd.com/rspamd_statistics/bayes.spam.sqlite && \
-    wget -O /usr/share/rspamd/bayes.ham.sqlite https://rspamd.com/rspamd_statistics/bayes.ham.sqlite && \
     apk --no-cache del \
       openssl
 
