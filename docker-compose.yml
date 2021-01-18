@@ -87,8 +87,11 @@ services:
       - data-virusdb:/var/lib/clamav
 
   redis:
-    image: redis
+    image: redis:alpine
     restart: on-failure:5
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - data-redis:/data
 
   # If you want unhealthy containers to be restarted automatically
   # just uncomment the following lines.
@@ -117,3 +120,4 @@ volumes:
   data-tls:
   data-filter:
   data-virusdb:
+  data-redis:
