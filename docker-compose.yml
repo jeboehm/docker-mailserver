@@ -86,6 +86,10 @@ services:
     volumes:
       - data-virusdb:/var/lib/clamav
 
+  redis:
+    image: redis
+    restart: on-failure:5
+
   # If you want unhealthy containers to be restarted automatically
   # just uncomment the following lines.
   # autoheal:
