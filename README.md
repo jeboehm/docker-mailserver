@@ -13,7 +13,7 @@ Build status
 Features
 --------
 
-- POP3, IMAP, SMTP with user authentification
+- POP3, IMAP, SMTP with user authentication
 - TLS enforced
 - Webmail interface
 - Server-side mail filtering, rule configuration via web frontend
