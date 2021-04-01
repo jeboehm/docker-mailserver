@@ -21,7 +21,8 @@ ENV MAILNAME=mail.example.com \
     RELAYHOST=false \
     SSL_CERT=/media/tls/mailserver.crt \
     SSL_KEY=/media/tls/mailserver.key \
-    WAITSTART_TIMEOUT=1m
+    WAITSTART_TIMEOUT=1m \
+    RECIPIENT_DELIMITER=-
 
 RUN apk --no-cache add \
       postfix-mysql \
@@ -47,7 +48,7 @@ RUN apk --no-cache add \
     postconf soft_bounce=no && \
     postconf message_size_limit=52428800 && \
     postconf mailbox_size_limit=0 && \
-    postconf recipient_delimiter=- && \
+    postconf recipient_delimiter="$RECIPIENT_DELIMITER" && \
     postconf mynetworks="$MYNETWORKS" && \
     postconf maximal_queue_lifetime=1h && \
     postconf bounce_queue_lifetime=1h && \
