@@ -3,6 +3,7 @@ set -e
 
 postconf myhostname="${MAILNAME}"
 postconf mynetworks="${MYNETWORKS}"
+postconf recipient_delimiter="${RECIPIENT_DELIMITER}"
 
 if [ "${FILTER_MIME}" == "true" ]
 then
