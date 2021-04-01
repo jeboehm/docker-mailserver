@@ -36,7 +36,8 @@ WORKDIR /opt/manager
 RUN wget -O /tmp/admin.tar.gz -q https://github.com/jeboehm/mailserver-admin/archive/${ADMIN_VER}.tar.gz && \
     tar -xf /tmp/admin.tar.gz -C /opt/manager --strip=1 && \
     rm /tmp/admin.tar.gz && \
-    composer install --no-dev -o
+    composer install --no-dev -o && \
+    rm -f /etc/nginx/conf.d/realip.conf
 
 RUN ln -s /opt/manager/public /var/www/html/manager && \
     chown -R www-data \
