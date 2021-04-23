@@ -8,7 +8,7 @@ FROM roundcube/roundcubemail:${ROUNDCUBE_VER} AS roundcube
 
 FROM jeboehm/php-nginx-base:${PHP_VER}
 
-ARG ADMIN_VER=1.6.2
+ARG ADMIN_VER=1.6.3
 
 LABEL maintainer="jeff@ressourcenkonflikt.de"
 LABEL vendor="https://github.com/jeboehm/docker-mailserver"
