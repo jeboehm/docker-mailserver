@@ -1,5 +1,5 @@
 #!/bin/sh
-IGNORE_RULES="DL3018"
+IGNORE_RULES="DL3018 DL3059"
 DIR="$(cd "$(dirname "$0")" && pwd)"
 
 cd $DIR/../../
