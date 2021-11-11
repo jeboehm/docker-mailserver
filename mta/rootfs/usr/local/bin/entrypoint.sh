@@ -4,6 +4,8 @@ set -e
 postconf myhostname="${MAILNAME}"
 postconf mynetworks="${MYNETWORKS}"
 postconf recipient_delimiter="${RECIPIENT_DELIMITER}"
+postconf smtpd_milters="inet:${RSPAMD_HOST}:11332"
+postconf non_smtpd_milters="inet:${RSPAMD_HOST}:11332"
 
 if [ "${FILTER_MIME}" == "true" ]
 then
