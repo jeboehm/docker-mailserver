@@ -1,5 +1,5 @@
 ARG DOCKERIZE_VER=0.6.0
-ARG ALPINE_VER=3.12
+ARG ALPINE_VER=3.15
 
 FROM jwilder/dockerize:${DOCKERIZE_VER} AS dockerize
 
@@ -29,6 +29,7 @@ RUN apk --no-cache add \
          dovecot-mysql \
          dovecot-pigeonhole-plugin \
          dovecot-pop3d \
+         dovecot-fts-xapian \
          dovecot-submissiond && \
     adduser -h /var/vmail -u 5000 -D vmail && \
     rm -rf /etc/ssl/dovecot && \
