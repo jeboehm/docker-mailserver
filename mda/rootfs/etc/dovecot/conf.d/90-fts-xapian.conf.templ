@@ -4,8 +4,6 @@
 
 {{ if $enable_fts }}
 
-mail_plugins = $mail_plugins fts fts_xapian
-
 plugin {
     fts = xapian
     fts_xapian = {{ $fts_args }}
