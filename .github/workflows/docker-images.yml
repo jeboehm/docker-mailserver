@@ -17,6 +17,10 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
+      - name: Prepare environment
+        run: |
+          cp .env.dist .env
+
       - name: Build and push images
         run: |
           make images
