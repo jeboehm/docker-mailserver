@@ -17,8 +17,8 @@ fi
 dockerize \
   -template /etc/rspamd/local.d/antivirus.conf.templ:/etc/rspamd/local.d/antivirus.conf \
   -template /etc/rspamd/local.d/worker-controller.inc.templ:/etc/rspamd/local.d/worker-controller.inc \
-  -template /etc/rspamd/override.d/redis.templ:/etc/rspamd/override.d/redis.conf \
-  -template /etc/rspamd/local.d/classifier-bayes.templ:/etc/rspamd/local.d/classifier-bayes.conf \
+  -template /etc/rspamd/override.d/redis.conf.templ:/etc/rspamd/override.d/redis.conf \
+  -template /etc/rspamd/local.d/classifier-bayes.conf.templ:/etc/rspamd/local.d/classifier-bayes.conf \
   ${FILTER_VIRUS_ARGS} \
   -timeout ${WAITSTART_TIMEOUT} \
   /usr/sbin/rspamd -c /etc/rspamd/rspamd.conf -f
