@@ -10,6 +10,7 @@ LABEL de.ressourcenkonflikt.docker-mailserver.autoheal="true"
 
 ENV FILTER_VIRUS=false \
     FILTER_VIRUS_HOST=virus.local \
+    REDIS_HOST=redis \
     WAITSTART_TIMEOUT=1m \
     CONTROLLER_PASSWORD=changeme
 
