@@ -8,7 +8,7 @@
 
 @test "Virus container is not running when filtering is disabled" {
     if [ ${FILTER_VIRUS} = "true" ]; then
-        echo '# Filtering is disabled, skipping test' >&3
+        echo '# Filtering is enabled, skipping test' >&3
         skip
     fi
 

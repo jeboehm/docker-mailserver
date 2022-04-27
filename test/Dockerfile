@@ -1,5 +1,5 @@
 ARG DOCKERIZE_VER=0.6.0
-ARG ALPINE_VER=3.12
+ARG ALPINE_VER=3.15
 
 FROM jwilder/dockerize:${DOCKERIZE_VER} AS dockerize
 FROM alpine:${ALPINE_VER}
@@ -28,6 +28,8 @@ RUN apk --no-cache add \
       perl \
       perl-net-ssleay \
       php7 \
+      php7-mbstring \
+      php7-iconv \
       php7-imap \
       php7-phar \
       php7-iconv \
