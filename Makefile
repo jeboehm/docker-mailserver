@@ -63,3 +63,8 @@ setup:
 lint:
 	.ci/bin/dockerfile_lint.sh
 	.ci/bin/yamllint.sh
+
+.PHONY: images
+images:
+	$(COMPOSE_PRODUCTION) build
+	$(COMPOSE_PRODUCTION) push
