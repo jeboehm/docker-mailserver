@@ -33,7 +33,7 @@ dockerize \
   -wait tcp://${FILTER_HOST}:11334 \
   -wait file:///media/dkim/ \
   -timeout ${WAITSTART_TIMEOUT} \
-  -template /etc/nginx/sites_enabled/10-docker.templ:/etc/nginx/sites_enabled/10-docker.conf
+  -template /etc/nginx/sites-enabled/10-docker.conf.templ:/etc/nginx/sites-enabled/10-docker.conf
 
 manager_init
 roundcube_init
