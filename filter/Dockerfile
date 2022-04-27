@@ -1,5 +1,5 @@
 ARG DOCKERIZE_VER=0.6.0
-ARG ALPINE_VER=3.12
+ARG ALPINE_VER=3.15
 
 FROM jwilder/dockerize:${DOCKERIZE_VER} AS dockerize
 FROM alpine:${ALPINE_VER}
@@ -10,6 +10,7 @@ LABEL de.ressourcenkonflikt.docker-mailserver.autoheal="true"
 
 ENV FILTER_VIRUS=false \
     FILTER_VIRUS_HOST=virus.local \
+    REDIS_HOST=redis \
     WAITSTART_TIMEOUT=1m \
     CONTROLLER_PASSWORD=changeme
 
@@ -22,11 +23,15 @@ RUN apk --no-cache add \
     mkdir /run/rspamd && \
     touch \
       /etc/rspamd/local.d/antivirus.conf \
+      /etc/rspamd/local.d/classifier-bayes.conf \
+      /etc/rspamd/override.d/redis.conf \
       /etc/rspamd/local.d/worker-controller.inc && \
     chown -R rspamd \
       /run/rspamd \
       /var/lib/rspamd \
       /etc/rspamd/local.d/antivirus.conf \
+      /etc/rspamd/local.d/classifier-bayes.conf \
+      /etc/rspamd/override.d/redis.conf \
       /etc/rspamd/local.d/worker-controller.inc && \
     apk --no-cache del \
       openssl

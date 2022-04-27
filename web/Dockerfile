@@ -1,4 +1,4 @@
-ARG ROUNDCUBE_VER=1.4.x-fpm
+ARG ROUNDCUBE_VER=1.5.x-fpm
 ARG PHP_VER=7.4
 ARG DOCKERIZE_VER=0.6.0
 
@@ -21,6 +21,7 @@ ENV MYSQL_HOST=db \
     MTA_HOST=mta \
     MDA_HOST=mda \
     FILTER_HOST=filter \
+    WEB_HOST=web \
     SUPPORT_URL=https://github.com/jeboehm/docker-mailserver \
     APP_ENV=prod \
     TRUSTED_PROXIES=172.16.0.0/12 \

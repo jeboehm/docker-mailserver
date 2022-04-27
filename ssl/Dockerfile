@@ -1,4 +1,4 @@
-ARG ALPINE_VER=3.12
+ARG ALPINE_VER=3.15
 
 FROM alpine:${ALPINE_VER}
 
@@ -9,7 +9,7 @@ ENV SSL_CERT=/media/tls/mailserver.crt \
     SSL_KEY=/media/tls/mailserver.key \
     SSL_CSR=/media/tls/mailserver.csr \
     SSL_SUBJ_COUNTRY=DE \
-    SSL_SUBJ_STATE=Northrhine-Westfalia \
+    SSL_SUBJ_STATE="North Rhine-Westphalia" \
     SSL_SUBJ_LOCALITY=Duesseldorf \
     SSL_SUBJ_ORGANIZATION=Mail \
     SSL_SUBJ_ORGANIZATIONAL_UNIT=Mail

@@ -1,4 +1,4 @@
-FROM mysql:5.7
+FROM mariadb:10
 LABEL maintainer="jeff@ressourcenkonflikt.de"
 
 ENV MYSQL_DATABASE=mailserver \
