@@ -1,6 +1,4 @@
-ARG ALPINE_VER=3.12
-
-FROM alpine:${ALPINE_VER}
+FROM alpine:3.12
 
 LABEL maintainer="jeff@ressourcenkonflikt.de"
 LABEL vendor="https://github.com/jeboehm/docker-mailserver"
