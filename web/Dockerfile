@@ -1,4 +1,4 @@
-FROM jwilder/dockerize:0.6.0 AS dockerize
+FROM jwilder/dockerize:0.6.1 AS dockerize
 FROM roundcube/roundcubemail:1.5.x-fpm AS roundcube
 FROM jeboehm/php-nginx-base:7.4
 
