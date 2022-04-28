@@ -1,12 +1,6 @@
-ARG ROUNDCUBE_VER=1.5.x-fpm
-ARG PHP_VER=7.4
-ARG DOCKERIZE_VER=0.6.0
-
-FROM jwilder/dockerize:${DOCKERIZE_VER} AS dockerize
-
-FROM roundcube/roundcubemail:${ROUNDCUBE_VER} AS roundcube
-
-FROM jeboehm/php-nginx-base:${PHP_VER}
+FROM jwilder/dockerize:0.6.0 AS dockerize
+FROM roundcube/roundcubemail:1.5.x-fpm AS roundcube
+FROM jeboehm/php-nginx-base:7.4
 
 ARG ADMIN_VER=1.6.4
 
