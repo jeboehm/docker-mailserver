@@ -43,7 +43,7 @@ server {
             client_max_body_size 24M;
             client_body_buffer_size 128k;
             fastcgi_param SCRIPT_FILENAME $request_filename;
-            fastcgi_pass php-fpm;
+            fastcgi_pass 127.0.0.1:9000;
         }
     }
 
@@ -52,7 +52,7 @@ server {
     }
 
     location ~ ^/index\.php(/|$) {
-        fastcgi_pass php-fpm;
+        fastcgi_pass 127.0.0.1:9000;
         fastcgi_split_path_info ^(.+\.php)(/.*)$;
         include fastcgi_params;
         fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
