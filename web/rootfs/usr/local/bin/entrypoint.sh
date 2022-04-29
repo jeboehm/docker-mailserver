@@ -33,11 +33,13 @@ dockerize \
   -wait tcp://${FILTER_HOST}:11334 \
   -wait file:///media/dkim/ \
   -timeout ${WAITSTART_TIMEOUT} \
-  -template /etc/nginx/10-docker.conf.templ:/etc/nginx/sites-enabled/10-docker.conf
+  -template /etc/nginx/http.d/default.conf.templ:/etc/nginx/http.d/default.conf
 
 manager_init
 roundcube_init
 permissions
 dkim_refresh
 
-/usr/bin/supervisord
+export APP_SECRET=`echo $RANDOM | md5sum | head -c 20`
+
+/usr/bin/supervisord -c /etc/supervisord.conf
