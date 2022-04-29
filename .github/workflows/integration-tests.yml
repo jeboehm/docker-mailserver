@@ -26,7 +26,7 @@ jobs:
           if [ -x ".ci/matrix/${{ matrix.BUILD_CASE }}/test.sh" ]; then
             .ci/matrix/${{ matrix.BUILD_CASE }}/test.sh
           fi
-          make ci
+          make pull ci
 
       - name: Collect logs
         if: failure()

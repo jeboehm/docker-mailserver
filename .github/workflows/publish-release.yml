@@ -36,5 +36,5 @@ jobs:
 
       - name: Build and push images
         run: |
-          make build
+          make pull build
           .ci/bin/push_image_version.sh ${{ steps.tag_version.outputs.new_tag }}
