@@ -60,4 +60,5 @@ RUN wget -O /tmp/admin.tar.gz -q https://github.com/jeboehm/mailserver-admin/arc
 
 WORKDIR /var/www/html
 HEALTHCHECK CMD curl -s http://127.0.0.1/login | grep docker-mailserver
+EXPOSE 80
 CMD ["/usr/local/bin/entrypoint.sh"]
