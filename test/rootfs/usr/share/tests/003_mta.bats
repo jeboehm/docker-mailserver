@@ -41,7 +41,7 @@
 }
 
 @test "send junk mail to local address" {
-    run swaks -s mta --to admin@example.com --body "$BATS_TEST_DESCRIPTION" --header "X-Spam: Yes"
+    run swaks -s mta --to admin@example.com --body "$BATS_TEST_DESCRIPTION YJS*C4JDBQADN1.NSBN3*2IDNEN*GTUBE-STANDARD-ANTI-UBE-TEST-EMAIL*C.34X"
     [ "$status" -eq 0 ]
 }
 
@@ -106,8 +106,8 @@
     [ "$status" -eq 0 ]
 }
 
-@test "send gtube mail is rejected" {
-    run swaks -s mta --to admin@example.com --data /usr/share/fixtures/gtube.txt
+@test "send gtube reject pattern mail is rejected" {
+    run swaks -s mta --to admin@example.com --body "XJS*C4JDBQADN1.NSBN3*2IDNEN*GTUBE-STANDARD-ANTI-UBE-TEST-EMAIL*C.34X"
     [ "$status" -eq 26 ]
 }
 
