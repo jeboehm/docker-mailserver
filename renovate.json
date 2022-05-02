@@ -4,7 +4,7 @@
   ],
   "regexManagers": [
     {
-      "fileMatch": ["^Dockerfile$"],
+      "fileMatch": ["Dockerfile$"],
       "matchStrings": ["VER=(?<currentValue>.*?) # renovate: depName=(?<depName>.*?)\\n"],
       "datasourceTemplate": "github-releases"
     }
