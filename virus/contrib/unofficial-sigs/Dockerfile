@@ -3,6 +3,9 @@ FROM alpine:3.15
 LABEL maintainer="jeff@ressourcenkonflikt.de"
 LABEL vendor="https://github.com/jeboehm/docker-mailserver"
 
+# renovate: datasource=github-tags depName=extremeshok/clamav-unofficial-sigs
+ARG SIGS_VER=7.2.4
+
 # hadolint ignore=DL3003
 RUN apk --no-cache add \
         bash \
@@ -12,10 +15,10 @@ RUN apk --no-cache add \
         ncurses \
         rsync \
         wget && \
-    wget -q -O /tmp/master.tar.gz https://github.com/extremeshok/clamav-unofficial-sigs/archive/master.tar.gz && \
+    wget -q -O /tmp/master.tar.gz https://github.com/extremeshok/clamav-unofficial-sigs/archive/${SIGS_VER}.tar.gz && \
     cd /tmp && \
         tar -xvf master.tar.gz && \
-    cd clamav-unofficial-sigs-master && \
+    cd clamav-unofficial-sigs-${SIGS_VER} && \
         cp clamav-unofficial-sigs.sh /usr/local/bin/ && \
         chmod +x /usr/local/bin/clamav-unofficial-sigs.sh && \
         cp -r config /etc/clamav-unofficial-sigs && \
