@@ -3,8 +3,7 @@ FROM alpine:3.15
 LABEL maintainer="jeff@ressourcenkonflikt.de"
 LABEL vendor="https://github.com/jeboehm/docker-mailserver"
 
-# renovate: datasource=github-tags depName=extremeshok/clamav-unofficial-sigs
-ARG SIGS_VER=7.2.4
+ARG SIGS_VER=7.2.4 # renovate: depName=extremeshok/clamav-unofficial-sigs
 
 # hadolint ignore=DL3003
 RUN apk --no-cache add \
