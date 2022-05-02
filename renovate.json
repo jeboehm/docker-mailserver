@@ -4,11 +4,9 @@
   ],
   "regexManagers": [
     {
-      "fileMatch": ["^Dockerfile$"],
-      "matchStrings": [
-        "datasource=(?<datasource>.*?) depName=(?<depName>.*?)( versioning=(?<versioning>.*?))?\\sENV .*?_VERSION=(?<currentValue>.*)\\s"
-      ],
-      "versioningTemplate": "{{#if versioning}}{{{versioning}}}{{else}}semver{{/if}}"
+      "fileMatch": ["Dockerfile$"],
+      "matchStrings": ["VER=(?<currentValue>.*?) # renovate: depName=(?<depName>.*?)\\n"],
+      "datasourceTemplate": "github-releases"
     }
   ],
   "ignorePaths": [
