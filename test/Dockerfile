@@ -14,6 +14,8 @@ ENV MYSQL_HOST=db \
 RUN apk add --no-cache --repository http://dl-cdn.alpinelinux.org/alpine/edge/community/ gnu-libiconv
 ENV LD_PRELOAD=/usr/lib/preloadable_libiconv.so
 
+RUN apk add --no-cache --repository http://dl-cdn.alpinelinux.org/alpine/edge/testing/ swaks
+
 ARG IMAPTESTER_VER=v0.2.1 # renovate: depName=jeboehm/imap-tester
 
 RUN apk --no-cache add \
@@ -33,8 +35,6 @@ RUN apk --no-cache add \
       php7-phar \
       php7-iconv \
       php7-openssl \
-    && wget -q -O /usr/local/bin/swaks https://www.jetmore.org/john/code/swaks/files/swaks-20130209.0/swaks \
-    && chmod +x /usr/local/bin/swaks \
     && wget -q -O /usr/local/bin/imap-tester https://github.com/jeboehm/imap-tester/releases/download/${IMAPTESTER_VER}/imap-tester.phar \
     && chmod +x /usr/local/bin/imap-tester \
     && mkdir -p /usr/share/fixtures \
