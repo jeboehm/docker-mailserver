@@ -1,0 +1,15 @@
+name: Validate renovate.json
+
+on:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+        
+      - name: Run renovate-config-validator
+        run: |
+          docker run -v $PWD/renovate.json:/usr/src/app/renovate.json -e LOG_LEVEL=debug --rm renovate/renovate renovate-config-validator
