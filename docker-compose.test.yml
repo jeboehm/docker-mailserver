@@ -12,10 +12,6 @@ services:
       # - ./test/rootfs/usr/share/tests:/usr/share/tests:ro
     env_file: .env
 
-  filter:
-    volumes:
-      - ./test/helper/filter/options:/etc/rpsmad/local.d/options:ro
-
   # For development
   # web:
   #   volumes:

@@ -41,7 +41,7 @@
 }
 
 @test "send junk mail to local address" {
-    run swaks -s mta --to admin@example.com --body "$BATS_TEST_DESCRIPTION YJS*C4JDBQADN1.NSBN3*2IDNEN*GTUBE-STANDARD-ANTI-UBE-TEST-EMAIL*C.34X"
+    run swaks -s mta --to admin@example.com --body "YJS*C4JDBQADN1.NSBN3*2IDNEN*GTUBE-STANDARD-ANTI-UBE-TEST-EMAIL*C.34X" --header "X-Spam: Yes"
     [ "$status" -eq 0 ]
 }
 
@@ -92,7 +92,7 @@
 }
 
 @test "junk mail is assorted to the junk folder" {
-    run grep -r "send junk mail to local address" /var/vmail/example.com/admin/Maildir/.Junk/
+    run grep -r "YJS*C4JDBQADN1.NSBN3*2IDNEN*GTUBE-STANDARD-ANTI-UBE-TEST-EMAIL*C.34X" /var/vmail/example.com/admin/Maildir/.Junk/
     [ "$status" -eq 0 ]
 }
 
