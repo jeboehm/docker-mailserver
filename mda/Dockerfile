@@ -14,6 +14,7 @@ ENV MYSQL_HOST=db \
     SUBMISSION_HOST=mta \
     ENABLE_POP3=true \
     ENABLE_IMAP=true \
+    FILTER_HOST=filter \
     SSL_CERT=/media/tls/mailserver.crt \
     SSL_KEY=/media/tls/mailserver.key \
     WAITSTART_TIMEOUT=1m \
