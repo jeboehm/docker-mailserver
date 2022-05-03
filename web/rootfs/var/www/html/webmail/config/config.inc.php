@@ -1,8 +1,8 @@
 <?php
 $config = [];
 $config['smtp_log'] = false;
-$config['log_dir'] = '/tmp/';
-$config['temp_dir'] = '/tmp/';
+$config['log_dir'] = '/var/www/html/webmail/logs';
+$config['temp_dir'] = '/var/www/html/webmail/temp';
 $config['imap_cache'] = 'apc';
 $config['db_dsnw'] = sprintf(
     'mysql://%s:%s@%s/%s',
