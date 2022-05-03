@@ -22,17 +22,22 @@ ENV MYSQL_HOST=db \
     TRUSTED_PROXIES=172.16.0.0/12 \
     WAITSTART_TIMEOUT=1m \
     ADMIN_VER=${ADMIN_VER} \
-    DATABASE_URL="mysql://%env(MYSQL_USER)%:%env(MYSQL_PASSWORD)%@%env(MYSQL_HOST)%:3306/%env(MYSQL_DATABASE)%?serverVersion=mariadb-10.4.11"
+    DATABASE_URL="mysql://%env(MYSQL_USER)%:%env(MYSQL_PASSWORD)%@%env(MYSQL_HOST)%:3306/%env(MYSQL_DATABASE)%?serverVersion=mariadb-10.4.11" \
+    COMPOSER_ALLOW_SUPERUSER=1
 
 COPY --from=roundcube /usr/src/roundcubemail/ /var/www/html/webmail/
 COPY --from=dockerize /usr/local/bin/dockerize /usr/local/bin
 COPY --from=composer /usr/bin/composer /usr/bin/composer
 
+# hadolint ignore=SC2086
 RUN apk add --no-cache \
         icu \
+        icu-dev \
+        libzip \
+        libzip-dev \
         nginx \
         supervisor && \
-    apk add --no-cache --virtual .phpize-deps icu-dev libzip-dev $PHPIZE_DEPS && \
+    apk add --no-cache --virtual .phpize-deps ${PHPIZE_DEPS} && \
     pecl install apcu && \
     docker-php-ext-install -j5 \
         intl \
@@ -42,7 +47,10 @@ RUN apk add --no-cache \
     docker-php-ext-enable apcu && \
     ln -sf /dev/stdout /var/log/nginx/access.log && \
     ln -sf /dev/stderr /var/log/nginx/error.log && \
-    apk del --no-cache icu-dev
+    apk del --no-cache \ 
+        icu-dev \
+        libzip-dev \
+        .phpize-deps
 
 COPY rootfs/ /
 
@@ -62,6 +70,13 @@ RUN wget -O /tmp/admin.tar.gz -q https://github.com/jeboehm/mailserver-admin/arc
         /var/www/html/webmail/logs/
 
 WORKDIR /var/www/html
+
+ARG RC_PLUGINS ""
+ENV RC_PLUGINS $RC_PLUGINS
+
+RUN mv /var/www/html/webmail/composer.json-dist /var/www/html/webmail/composer.json && \
+    /usr/local/bin/install_roundcube_plugins.sh
+
 HEALTHCHECK CMD curl -s http://127.0.0.1/login | grep docker-mailserver
 EXPOSE 80
 CMD ["/usr/local/bin/entrypoint.sh"]

@@ -37,3 +37,5 @@ $config['smtp_conn_options'] = [
         'allow_self_signed' => false,
     ],
 ];
+
+$config['plugins'] = array_merge($config['plugins'], array_map(static fn(string $name) => explode('/', $name, 2)[1], explode(' ', getenv('RC_PLUGINS'))));

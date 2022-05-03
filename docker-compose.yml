@@ -54,7 +54,11 @@ services:
   # live here. Can be removed if not needed.
   web:
     image: jeboehm/mailserver-web:latest
-    build: ./web
+    build:
+      context: ./web
+      args:
+        # Roundcube plugins can be added here. See https://packagist.org/?type=roundcube-plugin
+        RC_PLUGINS: "johndoh/contextmenu jfcherng-roundcube/show-folder-size"
     restart: on-failure:5
     env_file: .env
     volumes:
