@@ -30,13 +30,16 @@ COPY --from=composer /usr/bin/composer /usr/bin/composer
 
 RUN apk add --no-cache \
         icu \
-        icu-dev \
         nginx \
         supervisor && \
+    apk add --no-cache --virtual .phpize-deps icu-dev libzip-dev $PHPIZE_DEPS && \
+    pecl install apcu && \
     docker-php-ext-install -j5 \
         intl \
         opcache \
-        pdo_mysql && \
+        pdo_mysql \
+        zip && \
+    docker-php-ext-enable apcu && \
     ln -sf /dev/stdout /var/log/nginx/access.log && \
     ln -sf /dev/stderr /var/log/nginx/error.log && \
     apk del --no-cache icu-dev
