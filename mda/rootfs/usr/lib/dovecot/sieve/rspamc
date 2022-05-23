@@ -2,4 +2,4 @@
 
 ACTION=${1}
 
-curl -q -s --connect-timeout 60 --data-binary @- http://${FILTER_HOST}:11334/${ACTION}
+curl -q -s -H "Password: ${CONTROLLER_PASSWORD}" --connect-timeout 10 --data-binary @- http://${FILTER_HOST}:11334/${ACTION}
