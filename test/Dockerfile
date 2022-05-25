@@ -26,13 +26,13 @@ RUN apk --no-cache add \
       openssl \
       perl \
       perl-net-ssleay \
-      php7 \
-      php7-mbstring \
-      php7-iconv \
-      php7-imap \
-      php7-phar \
-      php7-iconv \
-      php7-openssl \
+      php8 \
+      php8-mbstring \
+      php8-iconv \
+      php8-imap \
+      php8-phar \
+      php8-iconv \
+      php8-openssl \
     && wget -q -O /usr/local/bin/swaks https://www.jetmore.org/john/code/swaks/files/swaks-20130209.0/swaks \
     && chmod +x /usr/local/bin/swaks \
     && wget -q -O /usr/local/bin/imap-tester https://github.com/jeboehm/imap-tester/releases/download/${IMAPTESTER_VER}/imap-tester.phar \
