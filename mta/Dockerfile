@@ -52,6 +52,7 @@ RUN apk --no-cache add \
     postconf maximal_backoff_time=15m && \
     postconf minimal_backoff_time=5m && \
     postconf queue_run_delay=5m && \
+    postconf maillog_file=/dev/stdout && \
     newaliases
 
 COPY --from=dockerize /usr/local/bin/dockerize /usr/local/bin
