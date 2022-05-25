@@ -13,6 +13,7 @@ roundcube_init() {
   PWD=`pwd`
 
   bin/initdb.sh --dir=$PWD/SQL || bin/updatedb.sh --dir=$PWD/SQL --package=roundcube || echo "Failed to initialize databse. Please run $PWD/bin/initdb.sh manually."
+  rm -f /var/www/html/webmail/logs/errors.log
 }
 
 permissions() {
@@ -33,11 +34,13 @@ dockerize \
   -wait tcp://${FILTER_HOST}:11334 \
   -wait file:///media/dkim/ \
   -timeout ${WAITSTART_TIMEOUT} \
-  -template /etc/nginx/10-docker.conf.templ:/etc/nginx/sites-enabled/10-docker.conf
+  -template /etc/nginx/nginx.conf.templ:/etc/nginx/nginx.conf
 
 manager_init
 roundcube_init
 permissions
 dkim_refresh
 
-/usr/bin/supervisord
+export APP_SECRET=`echo $RANDOM | md5sum | head -c 20`
+
+/usr/bin/supervisord -c /etc/supervisord.conf

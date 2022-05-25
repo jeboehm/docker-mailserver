@@ -1,9 +1,6 @@
-ARG DOCKERIZE_VER=0.6.0
-ARG ALPINE_VER=3.15
+FROM jwilder/dockerize:0.6.1 AS dockerize
+FROM alpine:3.16
 
-FROM jwilder/dockerize:${DOCKERIZE_VER} AS dockerize
-
-FROM alpine:${ALPINE_VER}
 LABEL maintainer="jeff@ressourcenkonflikt.de"
 LABEL vendor="https://github.com/jeboehm/docker-mailserver"
 LABEL de.ressourcenkonflikt.docker-mailserver.autoheal="true"
@@ -17,6 +14,7 @@ ENV MYSQL_HOST=db \
     SUBMISSION_HOST=mta \
     ENABLE_POP3=true \
     ENABLE_IMAP=true \
+    FILTER_HOST=filter \
     SSL_CERT=/media/tls/mailserver.crt \
     SSL_KEY=/media/tls/mailserver.key \
     WAITSTART_TIMEOUT=1m \

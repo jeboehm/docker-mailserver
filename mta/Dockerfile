@@ -1,8 +1,5 @@
-ARG DOCKERIZE_VER=0.6.0
-ARG ALPINE_VER=3.15
-
-FROM jwilder/dockerize:${DOCKERIZE_VER} AS dockerize
-FROM alpine:${ALPINE_VER}
+FROM jwilder/dockerize:0.6.1 AS dockerize
+FROM alpine:3.16
 
 LABEL maintainer="jeff@ressourcenkonflikt.de"
 LABEL vendor="https://github.com/jeboehm/docker-mailserver"
@@ -55,6 +52,7 @@ RUN apk --no-cache add \
     postconf maximal_backoff_time=15m && \
     postconf minimal_backoff_time=5m && \
     postconf queue_run_delay=5m && \
+    postconf maillog_file=/dev/stdout && \
     newaliases
 
 COPY --from=dockerize /usr/local/bin/dockerize /usr/local/bin
