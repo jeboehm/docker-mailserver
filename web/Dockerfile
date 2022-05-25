@@ -23,7 +23,8 @@ ENV MYSQL_HOST=db \
     WAITSTART_TIMEOUT=1m \
     ADMIN_VER=${ADMIN_VER} \
     DATABASE_URL="mysql://%env(MYSQL_USER)%:%env(MYSQL_PASSWORD)%@%env(MYSQL_HOST)%:3306/%env(MYSQL_DATABASE)%?serverVersion=mariadb-10.4.11" \
-    COMPOSER_ALLOW_SUPERUSER=1
+    COMPOSER_ALLOW_SUPERUSER=1 \
+    DKIM_PATH=/media/dkim
 
 COPY --from=roundcube /usr/src/roundcubemail/ /var/www/html/webmail/
 COPY --from=dockerize /usr/local/bin/dockerize /usr/local/bin
