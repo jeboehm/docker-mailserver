@@ -1,5 +1,5 @@
 user = {{ .Env.MYSQL_USER }}
 password = {{ .Env.MYSQL_PASSWORD }}
-hosts = {{ .Env.MYSQL_HOST }}
+hosts = {{ .Env.MYSQL_HOST }}:{{ .Env.MYSQL_PORT }}
 dbname = {{ .Env.MYSQL_DATABASE }}
 query = SELECT CONCAT(mail_users.name, '@', mail_domains.name) AS email FROM mail_users JOIN mail_domains ON mail_users.domain_id = mail_domains.id HAVING email='%s'

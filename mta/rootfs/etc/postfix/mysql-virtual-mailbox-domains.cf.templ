@@ -1,5 +1,5 @@
 user = {{ .Env.MYSQL_USER }}
 password = {{ .Env.MYSQL_PASSWORD }}
-hosts = {{ .Env.MYSQL_HOST }}
+hosts = {{ .Env.MYSQL_HOST }}:{{ .Env.MYSQL_PORT }}
 dbname = {{ .Env.MYSQL_DATABASE }}
 query = SELECT 1 FROM mail_domains WHERE name='%s'

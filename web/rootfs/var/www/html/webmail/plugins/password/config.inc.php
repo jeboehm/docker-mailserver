@@ -14,10 +14,11 @@ $config['password_algorithm_prefix'] = '';
 $config['password_blowfish_cost'] = 12;
 $config['password_disabled'] = false;
 $config['password_db_dsn'] = sprintf(
-    'mysql://%s:%s@%s/%s',
+    'mysql://%s:%s@%s:%s/%s',
     getenv('MYSQL_USER'),
     getenv('MYSQL_PASSWORD'),
     getenv('MYSQL_HOST'),
+    getenv('MYSQL_PORT'),
     getenv('MYSQL_DATABASE')
 );
 $config['password_query'] = "UPDATE mail_users JOIN mail_domains ON mail_users.domain_id = mail_domains.id SET password=CONCAT('{SHA256-CRYPT}', ENCRYPT (%p, CONCAT('$5$', SUBSTRING(SHA(RAND()), -16)))) WHERE CONCAT(mail_users.name, '@', mail_domains.name)=%u;";

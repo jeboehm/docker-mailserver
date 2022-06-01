@@ -10,6 +10,7 @@ LABEL vendor="https://github.com/jeboehm/docker-mailserver"
 LABEL de.ressourcenkonflikt.docker-mailserver.autoheal="true"
 
 ENV MYSQL_HOST=db \
+    MYSQL_PORT=3306 \
     MYSQL_DATABASE=mailserver \
     MYSQL_USER=mailserver \
     MYSQL_PASSWORD=changeme \
@@ -25,7 +26,7 @@ ENV MYSQL_HOST=db \
     TRUSTED_PROXIES=172.16.0.0/12 \
     WAITSTART_TIMEOUT=1m \
     ADMIN_VER=${ADMIN_VER} \
-    DATABASE_URL="mysql://%env(MYSQL_USER)%:%env(MYSQL_PASSWORD)%@%env(MYSQL_HOST)%:3306/%env(MYSQL_DATABASE)%?serverVersion=mariadb-10.4.11" \
+    DATABASE_URL="mysql://%env(MYSQL_USER)%:%env(MYSQL_PASSWORD)%@%env(MYSQL_HOST)%:%env(MYSQL_PORT)%/%env(MYSQL_DATABASE)%?serverVersion=mariadb-10.4.11" \
     COMPOSER_ALLOW_SUPERUSER=1 \
     DKIM_PATH=/media/dkim
 

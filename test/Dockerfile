@@ -5,6 +5,7 @@ LABEL maintainer="jeff@ressourcenkonflikt.de"
 LABEL vendor="https://github.com/jeboehm/docker-mailserver"
 
 ENV MYSQL_HOST=db \
+    MYSQL_PORT=3306 \
     MYSQL_USER=root \
     MYSQL_PASSWORD=changeme \
     MYSQL_DATABASE=mailserver \
