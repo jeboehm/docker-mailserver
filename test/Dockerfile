@@ -15,7 +15,7 @@ ENV MYSQL_HOST=db \
 RUN apk add --no-cache --repository http://dl-cdn.alpinelinux.org/alpine/edge/community/ gnu-libiconv
 ENV LD_PRELOAD=/usr/lib/preloadable_libiconv.so
 
-ARG IMAPTESTER_VER=v0.2.1 # renovate: depName=jeboehm/imap-tester
+ARG IMAPTESTER_VER=v1.0.0 # renovate: depName=jeboehm/imap-tester
 
 RUN apk --no-cache add \
       bash \
