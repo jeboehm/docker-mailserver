@@ -1,5 +1,18 @@
 #!/bin/sh
+set -e
 
-ACTION=${1}
+ACTION="${1}"
+HOST="${2}"
+PASSWORD="${3}"
 
-curl -q -s -H "Password: ${CONTROLLER_PASSWORD}" --connect-timeout 10 --data-binary @- http://${FILTER_HOST}:11334/${ACTION}
+if [ "${ACTION}" == "" ] || [ "${HOST}" == "" ] || [ "${PASSWORD}" == "" ]
+then
+    echo "Error: Missing parameters!"
+    echo
+    echo "Usage:"
+    echo "$0 <learnham|learnspam> <filter host> <controller password> < yourmail.txt"
+
+    exit 1
+fi
+
+curl -q -s -H "User: ${USER}" -H "Password: ${PASSWORD}" --connect-timeout 10 --data-binary @- http://${HOST}:11334/${ACTION}
