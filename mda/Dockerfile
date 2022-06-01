@@ -28,6 +28,7 @@ RUN apk --no-cache add \
          dovecot-mysql \
          dovecot-pigeonhole-plugin \
          dovecot-pop3d \
+         dovecot-fts-xapian \
          dovecot-submissiond && \
     adduser -h /var/vmail -u 5000 -D vmail && \
     rm -rf /etc/ssl/dovecot && \
