@@ -47,10 +47,8 @@ http {
             return 301 /;
         }
 
-        location ~ /\. {
-            deny all;
-            access_log off;
-            log_not_found off;
+        location /.well-known/autoconfig/mail/config-v1.1.xml {
+            alias /var/www/html/autoconfig/config-v1.1.xml;
         }
 
         location ~ \.(tpl|yml|ini|log)$ {
