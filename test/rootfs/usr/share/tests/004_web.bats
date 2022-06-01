@@ -14,3 +14,8 @@
     curl http://web/rspamd/ | grep "Rspamd Web Interface"
     [ "$?" -eq 0 ]
 }
+
+@test "http connection to autoconfigure file" {
+    curl http://web/.well-known/autoconfig/mail/config-v1.1.xml | grep "clientConfig"
+    [ "$?" -eq 0 ]
+}
