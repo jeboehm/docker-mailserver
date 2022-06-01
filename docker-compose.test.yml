@@ -15,6 +15,6 @@ services:
   # For development
   # web:
   #   volumes:
-  #     - ./web/rootfs/etc/nginx/sites-enabled/10-docker.conf:/etc/nginx/sites-enabled/10-docker.conf:ro
+  #     - ./web/rootfs/etc/nginx/nginx.conf.templ:/etc/nginx/nginx.conf.templ:ro
   #   ports:
   #     - "0.0.0.0:81:80"

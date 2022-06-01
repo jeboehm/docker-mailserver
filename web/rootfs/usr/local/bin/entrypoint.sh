@@ -34,7 +34,8 @@ dockerize \
   -wait tcp://${FILTER_HOST}:11334 \
   -wait file:///media/dkim/ \
   -timeout ${WAITSTART_TIMEOUT} \
-  -template /etc/nginx/nginx.conf.templ:/etc/nginx/nginx.conf
+  -template /etc/nginx/nginx.conf.templ:/etc/nginx/nginx.conf \
+  -template /var/www/html/autoconfig/config-v1.1.xml.templ:/var/www/html/autoconfig/config-v1.1.xml
 
 manager_init
 roundcube_init
