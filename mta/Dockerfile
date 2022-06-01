@@ -8,6 +8,7 @@ LABEL de.ressourcenkonflikt.docker-mailserver.autoheal="true"
 ENV MAILNAME=mail.example.com \
     MYNETWORKS=127.0.0.0/8\ 10.0.0.0/8\ 172.16.0.0/12\ 192.168.0.0/16 \
     MYSQL_HOST=db \
+    MYSQL_PORT=3306 \
     MYSQL_USER=root \
     MYSQL_PASSWORD=changeme \
     MYSQL_DATABASE=mailserver \
