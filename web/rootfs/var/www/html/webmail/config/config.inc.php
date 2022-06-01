@@ -5,10 +5,11 @@ $config['log_dir'] = '/var/www/html/webmail/logs';
 $config['temp_dir'] = '/var/www/html/webmail/temp';
 $config['imap_cache'] = 'apc';
 $config['db_dsnw'] = sprintf(
-    'mysql://%s:%s@%s/%s',
+    'mysql://%s:%s@%s:%s/%s',
     getenv('MYSQL_USER'),
     getenv('MYSQL_PASSWORD'),
     getenv('MYSQL_HOST'),
+    getenv('MYSQL_PORT'),
     getenv('MYSQL_DATABASE')
 );
 $config['default_host'] = 'tls://' . getenv('MDA_HOST');

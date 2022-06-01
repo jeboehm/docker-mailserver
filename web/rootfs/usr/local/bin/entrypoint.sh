@@ -28,7 +28,7 @@ dkim_refresh() {
 }
 
 dockerize \
-  -wait tcp://${MYSQL_HOST}:3306 \
+  -wait tcp://${MYSQL_HOST}:${MYSQL_PORT} \
   -wait tcp://${MDA_HOST}:143 \
   -wait tcp://${MTA_HOST}:25 \
   -wait tcp://${FILTER_HOST}:11334 \
