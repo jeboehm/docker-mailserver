@@ -35,6 +35,11 @@
     [ "$output" -gt 3 ]
 }
 
+@test "move mail to Junk folder (will test rspamc communication later)" {
+    run imap-tester test:move mda 143 admin@example.com changeme INBOX 0 Junk
+    [ "$status" -eq 0 ]
+}
+
 @test "imap login to send only mailbox is not possible" {
     run imap-tester test:count mda 143 sendonly@example.com test1234 INBOX
     [ "$status" -eq 1 ]
