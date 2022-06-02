@@ -24,6 +24,7 @@ Features
 - Web management interface to create / remove accounts, domains and aliases
 - Support of send only accounts which are not allowed to receive but send mails
 - IMAP, POP3 and malware filters can be disabled if they are not used
+- FTS (Full-Text Search) support using [fts-xapian](https://github.com/grosjo/fts-xapian) for fast message searching
 - Permanent self testing by Docker's healthcheck feature
 - Developed with high quality assurance standards
 - Address extension (-)
