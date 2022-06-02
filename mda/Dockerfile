@@ -15,11 +15,14 @@ ENV MYSQL_HOST=db \
     SUBMISSION_HOST=mta \
     ENABLE_POP3=true \
     ENABLE_IMAP=true \
+    ENABLE_FTS=true \
     FILTER_HOST=filter \
     SSL_CERT=/media/tls/mailserver.crt \
     SSL_KEY=/media/tls/mailserver.key \
     WAITSTART_TIMEOUT=1m \
-    RECIPIENT_DELIMITER=-
+    RECIPIENT_DELIMITER=- \
+    FTS_ARGS="partial=3 full=20 verbose=0 lowmemory=256" \
+    FTS_VSZ_LIMIT=256M
 
 RUN apk --no-cache add \
          curl \
@@ -28,6 +31,7 @@ RUN apk --no-cache add \
          dovecot-mysql \
          dovecot-pigeonhole-plugin \
          dovecot-pop3d \
+         dovecot-fts-xapian \
          dovecot-submissiond && \
     adduser -h /var/vmail -u 5000 -D vmail && \
     rm -rf /etc/ssl/dovecot && \

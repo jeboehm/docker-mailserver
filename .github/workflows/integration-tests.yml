@@ -11,7 +11,7 @@ jobs:
 
     strategy:
       matrix:
-        BUILD_CASE: [virus_disabled, virus_enabled, relayhost]
+        BUILD_CASE: [virus_disabled, virus_enabled, relayhost, fts_disabled]
 
     steps:
       - uses: actions/checkout@v3
