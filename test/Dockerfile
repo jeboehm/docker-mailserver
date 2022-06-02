@@ -28,6 +28,7 @@ RUN apk --no-cache add \
       perl \
       perl-net-ssleay \
       php8 \
+      php8-fileinfo \
       php8-mbstring \
       php8-iconv \
       php8-imap \
