@@ -16,3 +16,9 @@
     [ "$status" -eq 0 ]
     [ "$output" = "" ]
 }
+
+@test "Moved mail was sent to rspamd and learned successfully" {
+    run bash -c "dockerlogs.sh docker-mailserver_filter_1 | grep 'learned message as spam: undef' | grep rspamd_controller_learn_fin_task"
+
+    [ "$status" -eq 0 ]
+}
