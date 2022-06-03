@@ -75,3 +75,23 @@
     [ "$status" -eq 0 ]
     [ "$output" = "" ]
 }
+
+@test "fts-xapian index exists" {
+    if [ ${ENABLE_FTS} = "false" ]; then
+        skip
+    fi
+
+    run ls /var/vmail/example.com/admin/Maildir/xapian-indexes/*
+
+    [ "$status" -eq 0 ]
+}
+
+@test "fts-xapian index does not exist" {
+    if [ ${ENABLE_FTS} = "true" ]; then
+        skip
+    fi
+
+    run ls /var/vmail/example.com/admin/Maildir/xapian-indexes/*
+
+    [ "$status" -eq 1 ]
+}
