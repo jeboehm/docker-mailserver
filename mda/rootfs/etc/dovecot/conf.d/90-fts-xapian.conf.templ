@@ -1,26 +1,28 @@
 {{ $enable_fts := eq (or ($.Env.ENABLE_FTS) "") "true" }}
 {{ $fts_args := default .Env.FTS_ARGS "partial=3 full=20 verbose=0" }}
 
-
 {{ if $enable_fts }}
+mail_plugins = $mail_plugins fts fts_xapian
 
 plugin {
     fts = xapian
     fts_xapian = {{ $fts_args }}
     fts_autoindex = yes
     fts_enforced = yes
-    fts_autoindex_exclude = \Trash
     fts_decoder = decode2text
+
+    fts_autoindex_exclude = \Trash
+    fts_autoindex_exclude2 = Trash
+    fts_autoindex_exclude3 = \Junk
+    fts_autoindex_exclude4 = Junk
 }
 
 {{ if .Env.FTS_VSZ_LIMIT }}
-
 service indexer-worker {
     # Increase vsz_limit to 2GB or above.
     # Or 0 if you have rather large memory usable on your server, which is preferred for performance)
     vsz_limit = {{ .Env.FTS_VSZ_LIMIT }}
 }
-
 {{ end }}
 
 service decode2text {
@@ -30,6 +32,4 @@ service decode2text {
         mode = 0666
     }
 }
-
-
 {{ end }}

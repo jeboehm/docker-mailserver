@@ -4,6 +4,8 @@ docker-mailserver
 Docker Mailserver based on the famous [ISPMail guide](https://workaround.org/ispmail/).
 All images are based on [Alpine Linux](https://alpinelinux.org) and are so small as possible.
 
+[Changelog](https://github.com/jeboehm/docker-mailserver/releases)
+
 Build status
 ------------
 ![Lint YAMLs and Dockerfiles](https://github.com/jeboehm/docker-mailserver/workflows/Lint%20YAMLs%20and%20Dockerfiles/badge.svg)
@@ -18,6 +20,7 @@ Features
 - Webmail interface
 - Server-side mail filtering, rule configuration via web frontend
 - Spam- and malware filter
+- Spamfilter is trained just by moving emails to or out of the junk folder
 - Uses RBL (real time black hole lists) to block already known spam senders
 - Greylisting only when incoming mail is likely spam
 - DKIM message signing
