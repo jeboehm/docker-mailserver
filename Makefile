@@ -2,14 +2,14 @@ COMPOSE_PRODUCTION = bin/production.sh
 COMPOSE_TEST       = bin/test.sh
 
 .PHONY: ci
-ci: pull test
+ci: test
 
 .PHONY: prod
 prod: up
 
 .PHONY: build
 build:
-	$(COMPOSE_TEST) build
+	$(COMPOSE_TEST) build --pull
 
 .PHONY: pull
 pull:

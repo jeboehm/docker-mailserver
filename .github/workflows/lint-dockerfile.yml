@@ -6,7 +6,7 @@ on:
       - '**/Dockerfile'
 
 jobs:
-  yamllint:
+  hadolint:
     runs-on: ubuntu-latest
 
     steps:
