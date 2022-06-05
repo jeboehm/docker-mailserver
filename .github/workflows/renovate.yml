@@ -2,6 +2,8 @@ name: Validate renovate.json
 
 on:
   pull_request:
+    paths:
+      - '**/renovate.json'
 
 jobs:
   test:
