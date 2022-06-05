@@ -1,10 +1,12 @@
-name: Lint YAMLs and Dockerfiles
+name: Lint Dockerfiles
 
 on:
   pull_request:
+    paths:
+      - '**/Dockerfile'
 
 jobs:
-  test:
+  yamllint:
     runs-on: ubuntu-latest
 
     steps:
@@ -12,4 +14,4 @@ jobs:
         
       - name: Run linter
         run: |
-          make lint
+          make lint-dockerfile
