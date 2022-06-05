@@ -10,6 +10,16 @@
     [ "$status" -eq 0 ]
 }
 
+@test "send mail to unknown address (catchall)" {
+    run swaks -s mta --to notexisting@example.com --body "$BATS_TEST_DESCRIPTION"
+    [ "$status" -eq 0 ]
+}
+
+@test "send mail to unknown address should fail" {
+    run swaks -s mta --to notexisting@example.org --body "$BATS_TEST_DESCRIPTION"
+    [ "$status" -eq 24 ]
+}
+
 @test "authentification on smtp with disabled account should fail" {
     run swaks -s mta --to admin@example.com --from disabled@example.com -a -au disabled@example.com -ap test1234 -tls --body "$BATS_TEST_DESCRIPTION"
     [ "$status" -eq 28 ]
@@ -88,6 +98,11 @@
 
 @test "send mail to mda from sendonly account with smtp authentification (submission service) is stored" {
     run grep -r "send mail to mda from sendonly account with smtp authentification (submission service)" /var/vmail/example.com/admin/Maildir/
+    [ "$status" -eq 0 ]
+}
+
+@test "catchall mail is delivered" {
+    run grep -r "send mail to unknown address (catchall)" /var/vmail/example.com/admin/Maildir/
     [ "$status" -eq 0 ]
 }
 
