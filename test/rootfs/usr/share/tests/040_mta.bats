@@ -20,31 +20,6 @@
     [ "$status" -eq 24 ]
 }
 
-@test "authentification on smtp with disabled account should fail" {
-    run swaks -s mta --to admin@example.com --from disabled@example.com -a -au disabled@example.com -ap test1234 -tls --body "$BATS_TEST_DESCRIPTION"
-    [ "$status" -eq 28 ]
-}
-
-@test "authentification on smtp with disabled and send only account should fail" {
-    run swaks -s mta --to admin@example.com --from disabledsendonly@example.com -a -au disabled@example.com -ap test1234 -tls --body "$BATS_TEST_DESCRIPTION"
-    [ "$status" -eq 28 ]
-}
-
-@test "send mail to mda with smtp authentification (submission service)" {
-    run swaks -s mda --port 587 --to admin@example.com --from admin@example.com -a -au admin@example.com -ap changeme -tls --body "$BATS_TEST_DESCRIPTION"
-    [ "$status" -eq 0 ]
-}
-
-@test "send mail to mda with smtp authentification, with address extension (submission service)" {
-    run swaks -s mda --port 587 --to admin@example.com --from admin-extension@example.com -a -au admin@example.com -ap changeme -tls --body "$BATS_TEST_DESCRIPTION"
-    [ "$status" -eq 0 ]
-}
-
-@test "send mail to mda from sendonly account with smtp authentification (submission service)" {
-    run swaks -s mda --port 587 --to admin@example.com --from sendonly@example.com -a -au sendonly@example.com -ap test1234 -tls --body "$BATS_TEST_DESCRIPTION"
-    [ "$status" -eq 0 ]
-}
-
 @test "send mail to local alias" {
     run swaks -s mta --to foo@example.com --body "$BATS_TEST_DESCRIPTION"
     [ "$status" -eq 0 ]
@@ -72,6 +47,56 @@
     [ "$status" -eq 0 ]
 }
 
+@test "authentification on smtp with disabled account should fail" {
+    run swaks -s mta --port 587 --to admin@example.com --from disabled@example.com -a -au disabled@example.com -ap test1234 -tls --body "$BATS_TEST_DESCRIPTION"
+    [ "$status" -eq 28 ]
+}
+
+@test "authentification on smtp with disabled and send only account should fail" {
+    run swaks -s mta --port 587 --to admin@example.com --from disabledsendonly@example.com -a -au disabled@example.com -ap test1234 -tls --body "$BATS_TEST_DESCRIPTION"
+    [ "$status" -eq 28 ]
+}
+
+@test "send mail to mta with smtp authentification (submission service)" {
+    run swaks -s mta --port 587 --to admin@example.com --from admin@example.com -a -au admin@example.com -ap changeme -tls --body "$BATS_TEST_DESCRIPTION"
+    [ "$status" -eq 0 ]
+}
+
+@test "send mail to mta with smtp authentification on port 25 (as long as this is not disabled)" {
+    run swaks -s mta --to admin@example.com --from admin@example.com -a -au admin@example.com -ap changeme -tls --body "$BATS_TEST_DESCRIPTION"
+    [ "$status" -eq 0 ]
+}
+
+@test "send mail to mta with smtp authentification, with address extension (submission service)" {
+    run swaks -s mta --port 587 --to admin@example.com --from admin-extension@example.com -a -au admin@example.com -ap changeme -tls --body "$BATS_TEST_DESCRIPTION"
+    [ "$status" -eq 0 ]
+}
+
+@test "send mail to mta from sendonly account with smtp authentification (submission service)" {
+    run swaks -s mta --port 587 --to admin@example.com --from sendonly@example.com -a -au sendonly@example.com -ap test1234 -tls --body "$BATS_TEST_DESCRIPTION"
+    [ "$status" -eq 0 ]
+}
+
+@test "send mail to mta with smtp authentification, with unknown sender address should fail (submission service)" {
+    run swaks -s mta --port 587 --to admin@example.com --from unknown@example.org -a -au admin@example.com -ap changeme -tls --body "$BATS_TEST_DESCRIPTION"
+    [ "$status" -eq 24 ]
+}
+
+@test "send mail to mta with smtp authentification, with alias sender address (submission service)" {
+    run swaks -s mta --port 587 --to admin@example.com --from foo@example.org -a -au admin@example.com -ap changeme -tls --body "$BATS_TEST_DESCRIPTION"
+    [ "$status" -eq 0 ]
+}
+
+@test "send mail to mta without authentification (submission service)" {
+    run swaks -s mta --port 587 --to admin@example.com --from disabled@example.com -tls --body "$BATS_TEST_DESCRIPTION"
+    [ "$status" -eq 24 ]
+}
+
+@test "send mail to mta without tls (submission service)" {
+    run swaks -s mta --port 587 --to admin@example.com --from admin@example.com -a -au admin@example.com -ap changeme --body "$BATS_TEST_DESCRIPTION"
+    [ "$status" -eq 28 ]
+}
+
 @test "maildir was created" {
     sleep 10 # MTA + MDA need some time. :)
     [ -d /var/vmail/example.com/admin/Maildir/new/ ]
@@ -92,18 +117,18 @@
     [ "$status" -eq 0 ]
 }
 
-@test "mail to mda with smtp authentification (submission service) is stored" {
-    run grep -r "send mail to mda with smtp authentification (submission service)" /var/vmail/example.com/admin/Maildir/
+@test "mail to mta with smtp authentification (submission service) is stored" {
+    run grep -r "send mail to mta with smtp authentification (submission service)" /var/vmail/example.com/admin/Maildir/
     [ "$status" -eq 0 ]
 }
 
-@test "send mail to mda with smtp authentification, with address extension (submission service) is stored" {
-    run grep -r "send mail to mda with smtp authentification, with address extension (submission service)" /var/vmail/example.com/admin/Maildir/
+@test "mail to mta with smtp authentification, with address extension (submission service) is stored" {
+    run grep -r "send mail to mta with smtp authentification, with address extension (submission service)" /var/vmail/example.com/admin/Maildir/
     [ "$status" -eq 0 ]
 }
 
-@test "send mail to mda from sendonly account with smtp authentification (submission service) is stored" {
-    run grep -r "send mail to mda from sendonly account with smtp authentification (submission service)" /var/vmail/example.com/admin/Maildir/
+@test "mail to mta from sendonly account with smtp authentification (submission service) is stored" {
+    run grep -r "send mail to mta from sendonly account with smtp authentification (submission service)" /var/vmail/example.com/admin/Maildir/
     [ "$status" -eq 0 ]
 }
 

@@ -10,13 +10,13 @@
     [ "$status" -eq 0 ]
 }
 
-@test "send mail to mda with smtp authentification, external recipient" {
+@test "send mail to mta with smtp authentification, external recipient" {
     if [ ${RELAYHOST} = "false" ]; then
         echo '# Relayhost is disabled, skipping test' >&3
         skip
     fi
 
-    run swaks -s mda --port 587 --to nobody@ressourcenkonflikt.de --from admin@example.com -a -au admin@example.com -ap changeme -tls --body "$BATS_TEST_DESCRIPTION"
+    run swaks -s mta --port 587 --to nobody@ressourcenkonflikt.de --from admin@example.com -a -au admin@example.com -ap changeme -tls --body "$BATS_TEST_DESCRIPTION"
     [ "$status" -eq 0 ]
 }
 
@@ -30,5 +30,6 @@
 
     RESULT=$(curl -s "http://mailhog:8025/api/v2/messages" | jq -cr .items[0].Content.Body | tr -d '[:space:]')
 
-    [ "$RESULT" = "sendmailtomdawithsmtpauthentification,externalrecipient" ]
+    # send mail to mta with smtp authentification, external recipient
+    [ "$RESULT" = "sendmailtomtawithsmtpauthentification,externalrecipient" ]
 }
