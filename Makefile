@@ -9,7 +9,7 @@ prod: up
 
 .PHONY: build
 build:
-	$(COMPOSE_TEST) build --pull
+	$(COMPOSE_TEST) build
 
 .PHONY: pull
 pull:
