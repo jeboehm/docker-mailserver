@@ -21,10 +21,13 @@ Features
 - Server-side mail filtering, rule configuration via web frontend
 - Spam- and malware filter
 - Catchall address support
+- Restricted sender addresses
 - Spamfilter is trained just by moving emails to or out of the junk folder
 - Uses RBL (real time black hole lists) to block already known spam senders
 - Greylisting only when incoming mail is likely spam
 - DKIM message signing
+- Quota support
+- Notifications when exceeding the quota
 - Web management interface to create / remove accounts, domains and aliases
 - Support of send only accounts which are not allowed to receive but send mails
 - IMAP, POP3 and malware filters can be disabled if they are not used

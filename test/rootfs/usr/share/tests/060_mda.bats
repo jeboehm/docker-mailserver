@@ -1,20 +1,5 @@
 #!/usr/bin/env bats
 
-@test "send mail to mda from disabled account with smtp authentification (submission service)" {
-    run swaks -s mda --port 587 --to admin@example.com --from disabled@example.com -a -au disabled@example.com -ap test1234 -tls --body "$BATS_TEST_DESCRIPTION"
-    [ "$status" -eq 28 ]
-}
-
-@test "send mail to mda without authentification (submission service)" {
-    run swaks -s mda --port 587 --to admin@example.com --from disabled@example.com -tls --body "$BATS_TEST_DESCRIPTION"
-    [ "$status" -eq 23 ]
-}
-
-@test "send mail to mda without tls (submission service)" {
-    run swaks -s mda --port 587 --to admin@example.com --from admin@example.com -a -au admin@example.com -ap changeme --body "$BATS_TEST_DESCRIPTION"
-    [ "$status" -eq 28 ]
-}
-
 @test "count mails in inbox via imap" {
     run imap-tester test:count mda 143 admin@example.com changeme INBOX
     [ "$output" -gt 3 ]

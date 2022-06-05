@@ -1,0 +1,5 @@
+user = {{ .Env.MYSQL_USER }}
+password = {{ .Env.MYSQL_PASSWORD }}
+hosts = {{ .Env.MYSQL_HOST }}:{{ .Env.MYSQL_PORT }}
+dbname = {{ .Env.MYSQL_DATABASE }}
+query = SELECT CONCAT(mail_users.name, '@', d1.name) AS email FROM mail_users JOIN mail_domains d1 ON mail_users.domain_id = d1.id HAVING email='%s' UNION SELECT destination AS email FROM mail_aliases JOIN mail_domains d2 ON mail_aliases.domain_id = d2.id WHERE CONCAT(mail_aliases.name, '@', d2.name)='%s'

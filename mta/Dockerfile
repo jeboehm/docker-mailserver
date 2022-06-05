@@ -24,12 +24,12 @@ ENV MAILNAME=mail.example.com \
 
 RUN apk --no-cache add \
       postfix-mysql \
-      postfix \
-      supervisor && \
+      postfix && \
     postconf virtual_mailbox_domains=mysql:/etc/postfix/mysql-virtual-mailbox-domains.cf && \
     postconf virtual_mailbox_maps=mysql:/etc/postfix/mysql-virtual-mailbox-maps.cf && \
     postconf virtual_alias_maps=mysql:/etc/postfix/mysql-virtual-alias-maps.cf,mysql:/etc/postfix/mysql-email2email.cf && \
-    postconf smtpd_recipient_restrictions="check_recipient_access mysql:/etc/postfix/mysql-recipient-access.cf" && \
+    postconf smtpd_sender_login_maps=mysql:/etc/postfix/mysql-email-submission.cf && \
+    postconf smtpd_recipient_restrictions="reject_unauth_destination,check_recipient_access mysql:/etc/postfix/mysql-recipient-access.cf" && \
     postconf smtputf8_enable=no && \
     postconf smtpd_milters="inet:${RSPAMD_HOST}:11332" && \
     postconf non_smtpd_milters="inet:${RSPAMD_HOST}:11332" && \
@@ -43,6 +43,9 @@ RUN apk --no-cache add \
     postconf smtpd_tls_cert_file="${SSL_CERT}" && \
     postconf smtpd_tls_key_file="${SSL_KEY}" && \
     postconf smtpd_discard_ehlo_keywords="silent-discard, dsn" && \
+    postconf smtpd_sasl_path=inet:${MDA_HOST}:2004 && \
+    postconf smtpd_sasl_type=dovecot && \
+    postconf smtpd_sasl_auth_enable=yes && \
     postconf soft_bounce=no && \
     postconf message_size_limit=52428800 && \
     postconf mailbox_size_limit=0 && \
@@ -54,7 +57,17 @@ RUN apk --no-cache add \
     postconf minimal_backoff_time=5m && \
     postconf queue_run_delay=5m && \
     postconf maillog_file=/dev/stdout && \
-    newaliases
+    newaliases && \
+    echo "submission inet n - n - - smtpd" >> /etc/postfix/master.cf && \
+    echo " -o syslog_name=postfix/submission" >> /etc/postfix/master.cf && \
+    echo " -o smtpd_tls_security_level=encrypt" >> /etc/postfix/master.cf && \
+    echo " -o smtpd_sasl_auth_enable=yes" >> /etc/postfix/master.cf && \
+    echo " -o smtpd_tls_auth_only=yes" >> /etc/postfix/master.cf && \
+    echo " -o smtpd_reject_unlisted_recipient=no" >> /etc/postfix/master.cf && \
+    echo " -o smtpd_recipient_restrictions=" >> /etc/postfix/master.cf && \
+    echo " -o smtpd_sender_restrictions=reject_sender_login_mismatch,permit_sasl_authenticated,reject" >> /etc/postfix/master.cf && \
+    echo " -o smtpd_relay_restrictions=permit_sasl_authenticated,reject" >> /etc/postfix/master.cf && \
+    echo " -o milter_macro_daemon_name=ORIGINATING" >> /etc/postfix/master.cf
 
 COPY --from=dockerize /usr/local/bin/dockerize /usr/local/bin
 COPY rootfs/ /

@@ -31,8 +31,7 @@ RUN apk --no-cache add \
          dovecot-mysql \
          dovecot-pigeonhole-plugin \
          dovecot-pop3d \
-         dovecot-fts-xapian \
-         dovecot-submissiond && \
+         dovecot-fts-xapian && \
     adduser -h /var/vmail -u 5000 -D vmail && \
     rm -rf /etc/ssl/dovecot && \
     openssl dhparam -out /etc/dovecot/dh.pem 2048
@@ -44,7 +43,7 @@ RUN sievec /etc/dovecot/sieve/global/spam-to-folder.sieve && \
     sievec /etc/dovecot/sieve/global/learn-ham.sieve && \
     sievec /etc/dovecot/sieve/global/learn-spam.sieve
 
-EXPOSE 2003 4190 143 110 993 995
+EXPOSE 2003 2004 4190 143 110 993 995
 VOLUME ["/var/vmail"]
 
 HEALTHCHECK CMD echo "? LOGOUT" | nc 127.0.0.1 143 | grep "Dovecot ready."
