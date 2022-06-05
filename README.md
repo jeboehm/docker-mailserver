@@ -20,6 +20,7 @@ Features
 - Webmail interface
 - Server-side mail filtering, rule configuration via web frontend
 - Spam- and malware filter
+- Catchall address support
 - Spamfilter is trained just by moving emails to or out of the junk folder
 - Uses RBL (real time black hole lists) to block already known spam senders
 - Greylisting only when incoming mail is likely spam
