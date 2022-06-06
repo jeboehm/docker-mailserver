@@ -12,6 +12,8 @@ services:
     ports:
       - "0.0.0.0:25:25"
       - "0.0.0.0:587:587"
+    # Uncomment to use SSL encrypted mail submission
+    #  - "0.0.0.0:465:465"
 
   web:
     ports:
