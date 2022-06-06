@@ -4,20 +4,27 @@ on:
   push:
     branches:
       - main
+      - next
 
 jobs:
-  bump_version:
+  publish_release:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
+
     steps:
       - uses: actions/checkout@v3
+
+      - name: Prepare environment
+        run: make .env
+
+      - name: Build images
+        run: make build
 
       - name: Bump version and push tag
         id: tag_version
         uses: mathieudutour/github-tag-action@v6.0
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
+        if: github.ref == 'refs/heads/main'
 
       - name: Create a GitHub release
         uses: ncipollo/release-action@v1
@@ -25,6 +32,7 @@ jobs:
           tag: ${{ steps.tag_version.outputs.new_tag }}
           name: Release ${{ steps.tag_version.outputs.new_tag }}
           body: ${{ steps.tag_version.outputs.changelog }}
+        if: github.ref == 'refs/heads/main'
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v2
@@ -32,11 +40,12 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Prepare environment
+      - name: Push images (new tag)
         run: |
-          cp .env.dist .env
-
-      - name: Build and push images
-        run: |
-          make build
           .ci/bin/push_image_version.sh ${{ steps.tag_version.outputs.new_tag }}
+        if: github.ref == 'refs/heads/main'
+
+      - name: Push images (next)
+        run: |
+          .ci/bin/push_image_version.sh next
+        if: github.ref == 'refs/heads/next'
