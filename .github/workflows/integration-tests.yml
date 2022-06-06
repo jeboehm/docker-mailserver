@@ -18,7 +18,7 @@ jobs:
 
       - name: Prepare environment
         run: |
-          cp .env.dist .env
+          make .env
           cat .ci/matrix/${{ matrix.BUILD_CASE }}.env >> .env
         
       - name: Run tests
