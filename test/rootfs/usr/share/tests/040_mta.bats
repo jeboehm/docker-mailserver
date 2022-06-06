@@ -1,38 +1,38 @@
 #!/usr/bin/env bats
 
 @test "send mail to local account address" {
-    run swaks -s mta --to admin@example.com --body "$BATS_TEST_DESCRIPTION"
+    run swaks -s mta --port 25 --to admin@example.com --body "$BATS_TEST_DESCRIPTION"
     [ "$status" -eq 0 ]
 }
 
 @test "send mail to local address with extension" {
-    run swaks -s mta --to admin-test@example.com --body "$BATS_TEST_DESCRIPTION"
+    run swaks -s mta --port 25 --to admin-test@example.com --body "$BATS_TEST_DESCRIPTION"
     [ "$status" -eq 0 ]
 }
 
 @test "send mail to unknown address (catchall)" {
-    run swaks -s mta --to notexisting@example.com --body "$BATS_TEST_DESCRIPTION"
+    run swaks -s mta --port 25 --to notexisting@example.com --body "$BATS_TEST_DESCRIPTION"
     [ "$status" -eq 0 ]
 }
 
 @test "send mail to unknown address should fail" {
-    run swaks -s mta --to notexisting@example.org --body "$BATS_TEST_DESCRIPTION"
+    run swaks -s mta --port 25 --to notexisting@example.org --body "$BATS_TEST_DESCRIPTION"
     [ "$status" -eq 24 ]
 }
 
 @test "send mail to local alias" {
-    run swaks -s mta --to foo@example.com --body "$BATS_TEST_DESCRIPTION"
+    run swaks -s mta --port 25 --to foo@example.com --body "$BATS_TEST_DESCRIPTION"
     [ "$status" -eq 0 ]
 }
 
 @test "send junk mail to local address" {
-    run swaks -s mta --to admin@example.com --body "$BATS_TEST_DESCRIPTION" --header "X-Spam: Yes"
+    run swaks -s mta --port 25 --to admin@example.com --body "$BATS_TEST_DESCRIPTION" --header "X-Spam: Yes"
     [ "$status" -eq 0 ]
 }
 
 @test "send mail with too big attachment to quota user" {
     dd if=/dev/urandom of=/tmp/bigfile bs=1M count=5
-    run swaks -s mta --to quota@example.com --body "$BATS_TEST_DESCRIPTION" --attach /tmp/bigfile
+    run swaks -s mta --port 25 --to quota@example.com --body "$BATS_TEST_DESCRIPTION" --attach /tmp/bigfile
     [ "$status" -eq 0 ]
 }
 
@@ -47,23 +47,18 @@
     [ "$status" -eq 0 ]
 }
 
-@test "authentification on smtp with disabled account should fail" {
+@test "authentification on smtp with disabled account should fail (submission service)" {
     run swaks -s mta --port 587 --to admin@example.com --from disabled@example.com -a -au disabled@example.com -ap test1234 -tls --body "$BATS_TEST_DESCRIPTION"
     [ "$status" -eq 28 ]
 }
 
-@test "authentification on smtp with disabled and send only account should fail" {
+@test "authentification on smtp with disabled and send only account should fail (submission service)" {
     run swaks -s mta --port 587 --to admin@example.com --from disabledsendonly@example.com -a -au disabled@example.com -ap test1234 -tls --body "$BATS_TEST_DESCRIPTION"
     [ "$status" -eq 28 ]
 }
 
 @test "send mail to mta with smtp authentification (submission service)" {
     run swaks -s mta --port 587 --to admin@example.com --from admin@example.com -a -au admin@example.com -ap changeme -tls --body "$BATS_TEST_DESCRIPTION"
-    [ "$status" -eq 0 ]
-}
-
-@test "send mail to mta with smtp authentification on port 25 (as long as this is not disabled)" {
-    run swaks -s mta --to admin@example.com --from admin@example.com -a -au admin@example.com -ap changeme -tls --body "$BATS_TEST_DESCRIPTION"
     [ "$status" -eq 0 ]
 }
 
@@ -94,6 +89,26 @@
 
 @test "send mail to mta without tls (submission service)" {
     run swaks -s mta --port 587 --to admin@example.com --from admin@example.com -a -au admin@example.com -ap changeme --body "$BATS_TEST_DESCRIPTION"
+    [ "$status" -eq 28 ]
+}
+
+@test "send mail to mta with smtp authentification on port 25 (as long as this is not disabled)" {
+    run swaks -s mta --port 25 --to admin@example.com --from admin@example.com -a -au admin@example.com -ap changeme -tls --body "$BATS_TEST_DESCRIPTION"
+    [ "$status" -eq 0 ]
+}
+
+@test "send mail to mta with smtp authentification on port 25 with wrong credentials (as long as this is not disabled)" {
+    run swaks -s mta --port 25 --to admin@example.com --from admin@example.com -a -au unknown@example.com -ap changeme -tls --body "$BATS_TEST_DESCRIPTION"
+    [ "$status" -eq 28 ]
+}
+
+@test "send mail to mta with smtp authentification on port 465" {
+    run swaks -s mta --port 465 --to admin@example.com --from admin@example.com -a -au admin@example.com -ap changeme -tlsc --body "$BATS_TEST_DESCRIPTION"
+    [ "$status" -eq 0 ]
+}
+
+@test "send mail to mta with smtp authentification on port 465 with wrong credentials" {
+    run swaks -s mta --port 465 --to admin@example.com --from admin@example.com -a -au unknown@example.com -ap changeme -tlsc --body "$BATS_TEST_DESCRIPTION"
     [ "$status" -eq 28 ]
 }
 
