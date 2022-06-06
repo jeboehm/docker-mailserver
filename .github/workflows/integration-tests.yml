@@ -4,14 +4,16 @@ on:
   pull_request:
 
 jobs:
-  # Run tests.
-  # See also https://docs.docker.com/docker-hub/builds/automated-testing/
   test:
     runs-on: ubuntu-latest
 
     strategy:
       matrix:
-        BUILD_CASE: [virus_disabled, virus_enabled, relayhost, fts_disabled]
+        BUILD_CASE: 
+          - virus_disabled
+          - virus_enabled
+          - relayhost
+          - fts_disabled
 
     steps:
       - uses: actions/checkout@v3
@@ -20,13 +22,16 @@ jobs:
         run: |
           make .env
           cat .ci/matrix/${{ matrix.BUILD_CASE }}.env >> .env
-        
+
+      - name: Build images
+        run: make build
+
       - name: Run tests
         run: |
           if [ -x ".ci/matrix/${{ matrix.BUILD_CASE }}/test.sh" ]; then
             .ci/matrix/${{ matrix.BUILD_CASE }}/test.sh
           fi
-          make ci
+          make test
 
       - name: Collect logs
         if: failure()

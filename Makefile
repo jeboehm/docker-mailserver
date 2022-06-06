@@ -1,9 +1,6 @@
 COMPOSE_PRODUCTION = bin/production.sh
 COMPOSE_TEST       = bin/test.sh
 
-.PHONY: ci
-ci: test
-
 .PHONY: prod
 prod: up
 
@@ -16,7 +13,7 @@ pull:
 	$(COMPOSE_PRODUCTION) pull
 
 .PHONY: test
-test: .env build up fixtures
+test: up fixtures
 	$(COMPOSE_TEST) run --rm test
 
 .PHONY: clean
