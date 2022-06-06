@@ -91,6 +91,17 @@
     [ "$status" -eq 28 ]
 }
 
+@test "send mail to quota user to fill quota for about 80%" {
+    dd if=/dev/urandom of=/tmp/bigfile bs=100K count=8
+    run swaks -s mta --to quota@example.com --body "$BATS_TEST_DESCRIPTION" --attach /tmp/bigfile
+    [ "$status" -eq 0 ]
+}
+
+@test "send mail to disabled user" {
+    run swaks -s mta --to disabled@example.com --body "$BATS_TEST_DESCRIPTION"
+    [ "$status" -eq 0 ]
+}
+
 @test "maildir was created" {
     sleep 10 # MTA + MDA need some time. :)
     [ -d /var/vmail/example.com/admin/Maildir/new/ ]
@@ -143,6 +154,11 @@
 
 @test "mail to disabled user is stored anyway" {
     run grep -r "send mail to disabled user" /var/vmail/example.com/disabled/Maildir/
+    [ "$status" -eq 0 ]
+}
+
+@test "quota warn mail was sent" {
+    run grep -r "Your mailbox can only store a limited amount of emails." /var/vmail/example.com/quota/Maildir/
     [ "$status" -eq 0 ]
 }
 
