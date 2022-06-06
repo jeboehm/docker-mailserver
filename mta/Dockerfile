@@ -67,6 +67,14 @@ RUN apk --no-cache add \
     echo " -o smtpd_recipient_restrictions=" >> /etc/postfix/master.cf && \
     echo " -o smtpd_sender_restrictions=reject_sender_login_mismatch,permit_sasl_authenticated,reject" >> /etc/postfix/master.cf && \
     echo " -o smtpd_relay_restrictions=permit_sasl_authenticated,reject" >> /etc/postfix/master.cf && \
+    echo " -o milter_macro_daemon_name=ORIGINATING" >> /etc/postfix/master.cf && \
+    echo "smtps inet n - n - - smtpd" >> /etc/postfix/master.cf && \
+    echo " -o syslog_name=postfix/smtps" >> /etc/postfix/master.cf && \
+    echo " -o smtpd_tls_wrappermode=yes" >> /etc/postfix/master.cf && \
+    echo " -o smtpd_reject_unlisted_recipient=no" >> /etc/postfix/master.cf && \
+    echo " -o smtpd_recipient_restrictions=" >> /etc/postfix/master.cf && \
+    echo " -o smtpd_sender_restrictions=reject_sender_login_mismatch,permit_sasl_authenticated,reject" >> /etc/postfix/master.cf && \
+    echo " -o smtpd_relay_restrictions=permit_sasl_authenticated,reject" >> /etc/postfix/master.cf && \
     echo " -o milter_macro_daemon_name=ORIGINATING" >> /etc/postfix/master.cf
 
 COPY --from=dockerize /usr/local/bin/dockerize /usr/local/bin
