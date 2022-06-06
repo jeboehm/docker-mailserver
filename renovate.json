@@ -9,6 +9,5 @@
       "datasourceTemplate": "github-releases"
     }
   ],
-  "ignorePaths": [
-  ]
+  "baseBranches": ["main", "next"]
 }
