@@ -27,7 +27,9 @@ ENV MAILNAME=mail.example.com \
 RUN apk --no-cache add \
       postfix-mysql \
       postfix \
-      supervisor && \
+      supervisor \
+      cyrus-sasl \
+      cyrus-sasl-plain && \
     postconf virtual_mailbox_domains=mysql:/etc/postfix/mysql-virtual-mailbox-domains.cf && \
     postconf virtual_mailbox_maps=mysql:/etc/postfix/mysql-virtual-mailbox-maps.cf && \
     postconf virtual_alias_maps=mysql:/etc/postfix/mysql-virtual-alias-maps.cf,mysql:/etc/postfix/mysql-email2email.cf && \
