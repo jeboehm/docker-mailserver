@@ -18,12 +18,12 @@ then
   if [ "${RELAY_PASSWD_FILE}" != "false" ]
   then
     #fix permissions for postmap
-    chgrp postfix /etc/postfix/
-    chmod 775 /etc/postfix/
+    #chgrp  postfix /etc/postfix/
+    #chmod 775 /etc/postfix/
     postmap ${RELAY_PASSWD_FILE}
     postconf smtp_use_tls=yes
     postconf smtp_sasl_auth_enable=yes
-    postconf smtp_sasl_password_maps=hash:${RELAY_PASSWD_FILE}
+    postconf smtp_sasl_password_maps=lmdb:${RELAY_PASSWD_FILE}
     postconf smtp_tls_CAfile=/etc/ssl/certs/ca-certificates.crt
   fi
   if [ "${RELAY_OPTIONS}" != "false" ]
