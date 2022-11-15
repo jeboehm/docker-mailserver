@@ -3,7 +3,7 @@ FROM roundcube/roundcubemail:1.5.x-fpm AS roundcube
 FROM composer:2.3 AS composer
 FROM php:8.1-fpm-alpine
 
-ARG ADMIN_VER=2.1.1 # renovate: depName=jeboehm/mailserver-admin
+ARG ADMIN_VER=2.1.2 # renovate: depName=jeboehm/mailserver-admin
 
 LABEL maintainer="jeff@ressourcenkonflikt.de"
 LABEL vendor="https://github.com/jeboehm/docker-mailserver"
