@@ -1,5 +1,5 @@
 FROM jwilder/dockerize:0.6.1 AS dockerize
-FROM roundcube/roundcubemail:1.5.x-fpm AS roundcube
+FROM roundcube/roundcubemail:1.6.x-fpm AS roundcube
 FROM composer:2.3 AS composer
 FROM php:8.1-fpm-alpine
 
@@ -52,7 +52,7 @@ RUN apk add --no-cache \
     docker-php-ext-enable apcu && \
     ln -sf /dev/stdout /var/log/nginx/access.log && \
     ln -sf /dev/stderr /var/log/nginx/error.log && \
-    apk del --no-cache \ 
+    apk del --no-cache \
         icu-dev \
         libzip-dev \
         .phpize-deps
