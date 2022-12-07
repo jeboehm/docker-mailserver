@@ -80,7 +80,7 @@ RUN apk --no-cache add \
 COPY --from=dockerize /usr/local/bin/dockerize /usr/local/bin
 COPY rootfs/ /
 
-EXPOSE 25
+EXPOSE 25 465 587
 VOLUME ["/var/spool/postfix"]
 
 HEALTHCHECK CMD postfix status || exit 1
