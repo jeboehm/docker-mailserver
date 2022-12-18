@@ -15,7 +15,7 @@ ENV MYSQL_HOST=db \
 RUN apk add --no-cache --repository http://dl-cdn.alpinelinux.org/alpine/edge/community/ gnu-libiconv
 ENV LD_PRELOAD=/usr/lib/preloadable_libiconv.so
 
-ARG IMAPTESTER_VER=v1.1.0 # renovate: depName=jeboehm/imap-tester
+ARG IMAPTESTER_VER=v1.2.0 # renovate: depName=jeboehm/imap-tester
 
 RUN apk --no-cache add \
       bash \
@@ -28,10 +28,10 @@ RUN apk --no-cache add \
       perl \
       perl-net-ssleay \
       php8 \
+      php8-dom \
       php8-fileinfo \
       php8-mbstring \
       php8-iconv \
-      php8-imap \
       php8-phar \
       php8-iconv \
       php8-openssl \
