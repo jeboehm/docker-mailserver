@@ -31,12 +31,17 @@ http {
 			'"$http_user_agent" "$http_x_forwarded_for"';
 
 	access_log /var/log/nginx/access.log main;
-	
+
     server {
         listen 80;
         absolute_redirect off;
 
         root /var/www/html/manager;
+
+        add_header X-Frame-Options "SAMEORIGIN";
+        add_header X-XSS-Protection "1; mode=block";
+        add_header X-Content-Type-Options nosniff;
+        add_header Referrer-Policy "strict-origin";
 
         location = /favicon.ico {
             log_not_found off;
