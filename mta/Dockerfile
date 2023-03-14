@@ -57,10 +57,10 @@ RUN apk --no-cache add \
     postconf minimal_backoff_time=5m && \
     postconf queue_run_delay=5m && \
     postconf maillog_file=/dev/stdout && \
-    postconf smtpd_tls_mandatory_protocols="!SSLv2, !SSLv3, !TLSv1, !TLSv1.1" && \
-    postconf smtpd_tls_protocols="!SSLv2, !SSLv3, !TLSv1, !TLSv1.1" && \
-    postconf smtp_tls_mandatory_protocols="!SSLv2, !SSLv3, !TLSv1, !TLSv1.1" && \
-    postconf smtp_tls_protocols="!SSLv2, !SSLv3, !TLSv1, !TLSv1.1" && \
+    postconf smtpd_tls_mandatory_protocols="TLSv1.3, TLSv1.2, !TLSv1.1, !TLSv1, !SSLv3, !SSLv2" && \
+    postconf smtpd_tls_protocols="TLSv1.3, TLSv1.2, !TLSv1.1, !TLSv1, !SSLv3, !SSLv2" && \
+    postconf smtp_tls_mandatory_protocols="TLSv1.3, TLSv1.2, !TLSv1.1, !TLSv1, !SSLv3, !SSLv2" && \
+    postconf smtp_tls_protocols="TLSv1.3, TLSv1.2, !TLSv1.1, !TLSv1, !SSLv3, !SSLv2" && \
     newaliases && \
     echo "submission inet n - n - - smtpd" >> /etc/postfix/master.cf && \
     echo " -o syslog_name=postfix/submission" >> /etc/postfix/master.cf && \
