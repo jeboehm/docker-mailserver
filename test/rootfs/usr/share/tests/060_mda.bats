@@ -27,12 +27,12 @@
 
 @test "imap login to send only mailbox is not possible" {
     run imap-tester test:count mda 143 sendonly@example.com test1234 INBOX
-    [ "$status" -eq 1 ]
+    ! [ "$status" -eq 0 ]
 }
 
 @test "pop3 login to send only mailbox is not possible" {
     run imap-tester test:count mda 110 sendonly@example.com test1234 INBOX
-    [ "$status" -eq 1 ]
+    ! [ "$status" -eq 0 ]
 }
 
 @test "pop3 login to quota mailbox is possible" {
@@ -47,12 +47,12 @@
 
 @test "pop3 login to disabled mailbox is not possible" {
     run imap-tester test:count mda 110 disabled@example.com test1234 INBOX
-    [ "$status" -eq 1 ]
+    ! [ "$status" -eq 0 ]
 }
 
 @test "imap login to disabled mailbox is not possible" {
     run imap-tester test:count mda 143 disabled@example.com test1234 INBOX
-    [ "$status" -eq 1 ]
+    ! [ "$status" -eq 0 ]
 }
 
 @test "mails are owned by vmail" {

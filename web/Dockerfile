@@ -1,9 +1,9 @@
 FROM jwilder/dockerize:0.6.1 AS dockerize
-FROM roundcube/roundcubemail:1.5.x-fpm AS roundcube
-FROM composer:2.3 AS composer
+FROM roundcube/roundcubemail:1.6.x-fpm AS roundcube
+FROM composer:2.5 AS composer
 FROM php:8.1-fpm-alpine
 
-ARG ADMIN_VER=2.1.0 # renovate: depName=jeboehm/mailserver-admin
+ARG ADMIN_VER=2.1.2 # renovate: depName=jeboehm/mailserver-admin
 
 LABEL maintainer="jeff@ressourcenkonflikt.de"
 LABEL vendor="https://github.com/jeboehm/docker-mailserver"
@@ -52,7 +52,7 @@ RUN apk add --no-cache \
     docker-php-ext-enable apcu && \
     ln -sf /dev/stdout /var/log/nginx/access.log && \
     ln -sf /dev/stderr /var/log/nginx/error.log && \
-    apk del --no-cache \ 
+    apk del --no-cache \
         icu-dev \
         libzip-dev \
         .phpize-deps
