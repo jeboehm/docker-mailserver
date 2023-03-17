@@ -15,6 +15,21 @@ fi
 if [ "${RELAYHOST}" != "false" ]
 then
   postconf relayhost=${RELAYHOST}
+  if [ "${RELAY_PASSWD_FILE}" != "false" ]
+  then
+    #fix permissions for postmap
+    chown root:root ${RELAY_PASSWD_FILE}
+    chmod 600 ${RELAY_PASSWD_FILE}
+    postmap ${RELAY_PASSWD_FILE}
+    postconf smtp_use_tls=yes
+    postconf smtp_sasl_auth_enable=yes
+    postconf smtp_sasl_password_maps=lmdb:${RELAY_PASSWD_FILE}
+    postconf smtp_tls_CAfile=/etc/ssl/certs/ca-certificates.crt
+  fi
+  if [ "${RELAY_OPTIONS}" != "false" ]
+  then
+    postconf smtp_sasl_security_options=${RELAY_OPTIONS}
+  fi
 fi
 
 dockerize \
