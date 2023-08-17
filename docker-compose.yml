@@ -91,7 +91,7 @@ services:
       - data-virusdb:/var/lib/clamav
 
   redis:
-    image: redis:7.0-alpine
+    image: redis:7.2-alpine
     restart: on-failure:5
     command: ["redis-server", "--appendonly", "yes"]
     volumes:
