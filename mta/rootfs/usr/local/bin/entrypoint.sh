@@ -6,6 +6,8 @@ postconf mynetworks="${MYNETWORKS}"
 postconf recipient_delimiter="${RECIPIENT_DELIMITER}"
 postconf smtpd_milters="inet:${RSPAMD_HOST}:11332"
 postconf non_smtpd_milters="inet:${RSPAMD_HOST}:11332"
+postconf virtual_transport="lmtp:${MDA_HOST}:2003"
+postconf smtpd_sasl_path="inet:${MDA_HOST}:2004"
 
 if [ "${FILTER_MIME}" == "true" ]
 then
