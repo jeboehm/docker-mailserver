@@ -1,6 +1,6 @@
 FROM jwilder/dockerize:0.6.1 AS dockerize
 FROM roundcube/roundcubemail:1.6.x-fpm AS roundcube
-FROM composer:2.5 AS composer
+FROM composer:2.6 AS composer
 FROM php:8.1-fpm-alpine
 
 ARG ADMIN_VER=2.1.2 # renovate: depName=jeboehm/mailserver-admin
