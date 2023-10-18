@@ -21,4 +21,4 @@ dockerize \
   -template /etc/rspamd/local.d/classifier-bayes.conf.templ:/etc/rspamd/local.d/classifier-bayes.conf \
   ${FILTER_VIRUS_ARGS} \
   -timeout ${WAITSTART_TIMEOUT} \
-  /usr/sbin/rspamd -c /etc/rspamd/rspamd.conf -f
+  /usr/bin/rspamd -c /etc/rspamd/rspamd.conf -f
