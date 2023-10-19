@@ -1,3 +1,5 @@
+---
+
 version: '3.5'
 
 services:
@@ -57,7 +59,8 @@ services:
     build:
       context: ./web
       args:
-        # Roundcube plugins can be added here. See https://packagist.org/?type=roundcube-plugin
+        # Roundcube plugins can be added here.
+        # See https://packagist.org/?type=roundcube-plugin
         RC_PLUGINS: "johndoh/contextmenu jfcherng-roundcube/show-folder-size"
     restart: on-failure:5
     env_file: .env
