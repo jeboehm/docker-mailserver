@@ -5,7 +5,6 @@ LABEL vendor="https://github.com/jeboehm/docker-mailserver"
 
 ARG SIGS_VER=7.2.5 # renovate: depName=extremeshok/clamav-unofficial-sigs
 
-# hadolint ignore=DL3003
 RUN apk --no-cache add \
         bash \
         bind-tools \

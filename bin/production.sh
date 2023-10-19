@@ -19,6 +19,11 @@ fi
 
 $BIN version --short >/dev/null 2>&1 || {
     BIN=$(which docker-compose)
+
+    if ! [ -x "${BIN}" ]; then
+        echo "Could not find docker-compose."
+        exit 1
+    fi
 }
 
 cd "${DIR}/../" || exit
@@ -30,7 +35,8 @@ else
     ADDITIONAL=""
 fi
 
-$BIN \
+# shellcheck disable=SC2086
+${BIN} \
   -f docker-compose.yml \
   -f docker-compose.production.yml \
   ${ADDITIONAL} \
