@@ -9,7 +9,7 @@
 set -e
 
 DIR="$(cd "$(dirname "$0")" && pwd)"
-BIN="docker comspose"
+BIN="docker compose"
 
 ## Guard against empty $DIR
 if [[ "$DIR" != */bin ]]; then
@@ -23,7 +23,7 @@ $BIN version --short >/dev/null 2>&1 || {
 
 cd "${DIR}/../" || exit
 
-docker-compose \
+$BIN \
   -f docker-compose.yml \
   -f docker-compose.production.yml \
   -f docker-compose.test.yml \
