@@ -9,7 +9,7 @@
 set -e
 
 DIR="$(cd "$(dirname "$0")" && pwd)"
-BIN="docker comspose"
+BIN="docker compose"
 
 ## Guard against empty $DIR
 if [[ "$DIR" != */bin ]]; then
