@@ -1,3 +1,5 @@
+---
+
 name: Validate renovate.json
 
 on:
@@ -13,5 +15,4 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Run renovate-config-validator
-        run: |
-          docker run -v $PWD/renovate.json:/usr/src/app/renovate.json -e LOG_LEVEL=debug --rm renovate/renovate renovate-config-validator
+        run: docker run -v "$PWD/renovate.json:/usr/src/app/renovate.json" -e LOG_LEVEL=debug --rm renovate/renovate renovate-config-validator
