@@ -34,7 +34,6 @@ COPY --from=roundcube /usr/src/roundcubemail/ /var/www/html/webmail/
 COPY --from=dockerize /usr/local/bin/dockerize /usr/local/bin
 COPY --from=composer /usr/bin/composer /usr/bin/composer
 
-# hadolint ignore=SC2086
 RUN apk add --no-cache \
         icu \
         icu-dev \

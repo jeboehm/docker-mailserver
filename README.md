@@ -8,9 +8,10 @@ All images are based on [Alpine Linux](https://alpinelinux.org) and are so small
 
 Build status
 ------------
-![Lint YAMLs and Dockerfiles](https://github.com/jeboehm/docker-mailserver/workflows/Lint%20YAMLs%20and%20Dockerfiles/badge.svg)
-![Integration Tests](https://github.com/jeboehm/docker-mailserver/workflows/Integration%20Tests/badge.svg)
-![Build unofficial-sigs](https://github.com/jeboehm/docker-mailserver/workflows/Build%20unofficial-sigs/badge.svg)
+[![Integration Tests](https://github.com/jeboehm/docker-mailserver/actions/workflows/integration-tests.yml/badge.svg)](https://github.com/jeboehm/docker-mailserver/actions/workflows/integration-tests.yml)
+[![Build unofficial-sigs](https://github.com/jeboehm/docker-mailserver/actions/workflows/build-unofficial-sigs.yml/badge.svg)](https://github.com/jeboehm/docker-mailserver/actions/workflows/build-unofficial-sigs.yml)
+[![Lint Code Base](https://github.com/jeboehm/docker-mailserver/actions/workflows/super-linter.yml/badge.svg)](https://github.com/jeboehm/docker-mailserver/actions/workflows/super-linter.yml)
+[![Publish release](https://github.com/jeboehm/docker-mailserver/actions/workflows/publish-release.yml/badge.svg)](https://github.com/jeboehm/docker-mailserver/actions/workflows/publish-release.yml)
 
 Features
 --------
