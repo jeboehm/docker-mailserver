@@ -1,7 +1,7 @@
 #!/bin/bash
 # Helper script for docker compose.
-# Usage: bin/production.sh [COMMAND]
-# Example: bin/production.sh up -d
+# Usage: bin/test.sh [COMMAND]
+# Example: bin/test.sh up -d
 #
 # You can also use docker compose directly, but this script
 # will make sure that the correct compose files are used.
@@ -27,6 +27,12 @@ $BIN version --short >/dev/null 2>&1 || {
 }
 
 cd "${DIR}/../" || exit
+
+if [ ! -r docker-compose.yml ] || [ ! -r docker-compose.production.yml ] || [ ! -r docker-compose.test.yml ]
+then
+    echo "Could not find docker-compose.yml or docker-compose.production.yml or docker-compose.test.yml in ${PWD}."
+    exit 1
+fi
 
 ${BIN} \
   -f docker-compose.yml \
