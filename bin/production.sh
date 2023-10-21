@@ -1,7 +1,7 @@
 #!/bin/bash
 # Helper script for docker compose.
-# Usage: bin/test.sh [COMMAND]
-# Example: bin/test.sh up -d
+# Usage: bin/production.sh [COMMAND]
+# Example: bin/production.sh up -d
 #
 # You can also use docker compose directly, but this script
 # will make sure that the correct compose files are used.
@@ -33,6 +33,12 @@ then
     ADDITIONAL="-f docker-compose.override.yml"
 else
     ADDITIONAL=""
+fi
+
+if [ ! -r docker-compose.yml ] || [ ! -r docker-compose.production.yml ]
+then
+    echo "Could not find docker-compose.yml or docker-compose.production.yml in ${PWD}."
+    exit 1
 fi
 
 # shellcheck disable=SC2086
