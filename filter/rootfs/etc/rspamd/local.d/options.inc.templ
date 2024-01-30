@@ -1,0 +1,8 @@
+{{ $dnsservers := split .Env.DNS_RESOLVERS "," }}
+
+dns {
+    timeout = 1s;
+    sockets = 16;
+    retransmits = 5;
+    nameserver = [{{- range $index, $element := $dnsservers }}{{ if $index }},{{ end }}"{{ $element }}"{{- end }}];
+}
