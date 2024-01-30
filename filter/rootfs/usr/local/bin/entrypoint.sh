@@ -19,6 +19,7 @@ export CONTROLLER_PASSWORD_ENC
 # shellcheck disable=SC2086
 dockerize \
   -template /etc/rspamd/local.d/antivirus.conf.templ:/etc/rspamd/local.d/antivirus.conf \
+  -template /etc/rspamd/local.d/options.inc.templ:/etc/rspamd/local.d/options.inc \
   -template /etc/rspamd/local.d/worker-controller.inc.templ:/etc/rspamd/local.d/worker-controller.inc \
   -template /etc/rspamd/override.d/redis.conf.templ:/etc/rspamd/override.d/redis.conf \
   -template /etc/rspamd/local.d/classifier-bayes.conf.templ:/etc/rspamd/local.d/classifier-bayes.conf \
