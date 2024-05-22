@@ -1,4 +1,4 @@
-FROM alpine:3.18
+FROM alpine:3.20
 
 LABEL maintainer="jeff@ressourcenkonflikt.de"
 LABEL vendor="https://github.com/jeboehm/docker-mailserver"
