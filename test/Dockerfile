@@ -35,8 +35,7 @@ RUN apk --no-cache add \
       php8-phar \
       php8-iconv \
       php8-openssl \
-    && wget -q -O /usr/local/bin/swaks https://www.jetmore.org/john/code/swaks/files/swaks-20130209.0/swaks \
-    && chmod +x /usr/local/bin/swaks \
+    && apk add --no-cache --repository http://dl-cdn.alpinelinux.org/alpine/edge/testing/ swaks \
     && wget -q -O /usr/local/bin/imap-tester https://github.com/jeboehm/imap-tester/releases/download/${IMAPTESTER_VER}/imap-tester.phar \
     && chmod +x /usr/local/bin/imap-tester \
     && mkdir -p /usr/share/fixtures \
