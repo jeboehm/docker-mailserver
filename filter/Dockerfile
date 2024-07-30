@@ -1,5 +1,5 @@
 FROM jwilder/dockerize:0.6.1 AS dockerize
-FROM alpine:3.18
+FROM alpine:3.20
 
 LABEL maintainer="jeff@ressourcenkonflikt.de"
 LABEL vendor="https://github.com/jeboehm/docker-mailserver"
@@ -9,7 +9,9 @@ ENV FILTER_VIRUS=false \
     FILTER_VIRUS_HOST=virus.local \
     REDIS_HOST=redis \
     WAITSTART_TIMEOUT=1m \
-    CONTROLLER_PASSWORD=changeme
+    CONTROLLER_PASSWORD=changeme \
+    # OpenDNS resolvers
+    DNS_RESOLVERS=208.67.222.222,208.67.220.220
 
 RUN apk --no-cache add \
       openssl \
@@ -21,6 +23,7 @@ RUN apk --no-cache add \
     touch \
       /etc/rspamd/local.d/antivirus.conf \
       /etc/rspamd/local.d/classifier-bayes.conf \
+      /etc/rspamd/local.d/options.inc \
       /etc/rspamd/override.d/redis.conf \
       /etc/rspamd/local.d/worker-controller.inc && \
     chown -R rspamd \
@@ -28,6 +31,7 @@ RUN apk --no-cache add \
       /var/lib/rspamd \
       /etc/rspamd/local.d/antivirus.conf \
       /etc/rspamd/local.d/classifier-bayes.conf \
+      /etc/rspamd/local.d/options.inc \
       /etc/rspamd/override.d/redis.conf \
       /etc/rspamd/local.d/worker-controller.inc && \
     apk --no-cache del \
