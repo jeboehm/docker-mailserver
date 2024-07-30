@@ -23,5 +23,5 @@
     }
   ],
   "platformAutomerge": true,
-  "automergeType": "branch"
+  "automergeType": "pr"
 }
