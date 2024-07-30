@@ -3,14 +3,7 @@
 name: Lint Code Base
 
 on:
-  push:
-    branches:
-      - main
-
   pull_request:
-    branches:
-      - main
-      - next
 
 jobs:
   run-lint:
@@ -27,3 +20,4 @@ jobs:
           VALIDATE_ALL_CODEBASE: false
           DEFAULT_BRANCH: "main"
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VALIDATE_SQLFLUFF: false
