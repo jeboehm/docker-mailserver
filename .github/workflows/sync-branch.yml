@@ -15,7 +15,7 @@ jobs:
     - name: Sync branch main to next
       uses: devmasx/merge-branch@1.4.0
       with:
-        from_branch: 'main'
-        target_branch: 'next'
+        from_branch: main
+        target_branch: next
         type: now
         github_token: ${{ secrets.GITHUB_TOKEN }}
