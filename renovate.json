@@ -10,7 +10,6 @@
       "datasourceTemplate": "github-releases"
     }
   ],
-  "baseBranches": ["main", "next"],
   "packageRules": [
     {
       "matchUpdateTypes": [
