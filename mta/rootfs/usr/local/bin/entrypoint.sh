@@ -23,7 +23,7 @@ then
     chown root:root ${RELAY_PASSWD_FILE}
     chmod 600 ${RELAY_PASSWD_FILE}
     postmap ${RELAY_PASSWD_FILE}
-    postconf smtp_use_tls=yes
+    postconf smtp_tls_security_level=may
     postconf smtp_sasl_auth_enable=yes
     postconf smtp_sasl_password_maps=lmdb:${RELAY_PASSWD_FILE}
     postconf smtp_tls_CAfile=/etc/ssl/certs/ca-certificates.crt
