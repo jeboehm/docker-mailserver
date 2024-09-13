@@ -1,12 +1,12 @@
 #!/usr/bin/env bats
 
-@test "check mailhog api for messages" {
+@test "check mailpit api for messages" {
     if [ ${RELAYHOST} = "false" ]; then
         echo '# Relayhost is disabled, skipping test' >&3
         skip
     fi
 
-    run curl "http://mailhog:8025/api/v2/messages"
+    run curl "http://mailpit:8025/api/v1/messages"
     [ "$status" -eq 0 ]
 }
 
@@ -20,15 +20,15 @@
     [ "$status" -eq 0 ]
 }
 
-@test "check mailhog api for outgoing message" {
+@test "check mailpit api for outgoing message" {
     if [ ${RELAYHOST} = "false" ]; then
         echo '# Relayhost is disabled, skipping test' >&3
         skip
     fi
 
-    sleep 5 # Give mailhog some time
+    sleep 5 # Give mailpit some time
 
-    RESULT=$(curl -s "http://mailhog:8025/api/v2/messages" | jq -cr .items[0].Content.Body | tr -d '[:space:]')
+    RESULT=$(curl -s "http://mailpit:8025/api/v1/messages" | jq -cr ".messages[0].Snippet" | tr -d '[:space:]')
 
     # send mail to mta with smtp authentification, external recipient
     [ "$RESULT" = "sendmailtomtawithsmtpauthentification,externalrecipient" ]

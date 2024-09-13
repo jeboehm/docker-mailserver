@@ -1,9 +1,9 @@
 FROM jwilder/dockerize:0.6.1 AS dockerize
 FROM roundcube/roundcubemail:1.6.x-fpm AS roundcube
-FROM composer:2.5 AS composer
-FROM php:8.1-fpm-alpine
+FROM composer:2.7 AS composer
+FROM php:8.3-fpm-alpine
 
-ARG ADMIN_VER=2.1.2 # renovate: depName=jeboehm/mailserver-admin
+ARG ADMIN_VER=2.1.23 # renovate: depName=jeboehm/mailserver-admin
 
 LABEL maintainer="jeff@ressourcenkonflikt.de"
 LABEL vendor="https://github.com/jeboehm/docker-mailserver"
@@ -34,7 +34,6 @@ COPY --from=roundcube /usr/src/roundcubemail/ /var/www/html/webmail/
 COPY --from=dockerize /usr/local/bin/dockerize /usr/local/bin
 COPY --from=composer /usr/bin/composer /usr/bin/composer
 
-# hadolint ignore=SC2086
 RUN apk add --no-cache \
         icu \
         icu-dev \

@@ -1,5 +1,5 @@
 FROM jwilder/dockerize:0.6.1 AS dockerize
-FROM alpine:3.17
+FROM alpine:3.20
 
 LABEL maintainer="jeff@ressourcenkonflikt.de"
 LABEL vendor="https://github.com/jeboehm/docker-mailserver"
@@ -45,14 +45,14 @@ RUN apk --no-cache add \
     postconf smtpd_tls_cert_file="${SSL_CERT}" && \
     postconf smtpd_tls_key_file="${SSL_KEY}" && \
     postconf smtpd_discard_ehlo_keywords="silent-discard, dsn" && \
-    postconf smtpd_sasl_path=inet:${MDA_HOST}:2004 && \
+    postconf smtpd_sasl_path="inet:${MDA_HOST}:2004" && \
     postconf smtpd_sasl_type=dovecot && \
     postconf smtpd_sasl_auth_enable=yes && \
     postconf soft_bounce=no && \
     postconf message_size_limit=52428800 && \
     postconf mailbox_size_limit=0 && \
-    postconf recipient_delimiter="$RECIPIENT_DELIMITER" && \
-    postconf mynetworks="$MYNETWORKS" && \
+    postconf recipient_delimiter="${RECIPIENT_DELIMITER}" && \
+    postconf mynetworks="${MYNETWORKS}" && \
     postconf maximal_queue_lifetime=1h && \
     postconf bounce_queue_lifetime=1h && \
     postconf maximal_backoff_time=15m && \

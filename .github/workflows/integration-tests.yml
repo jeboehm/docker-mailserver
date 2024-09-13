@@ -1,7 +1,10 @@
+---
+
 name: Integration Tests
 
 on:
   pull_request:
+  workflow_dispatch:
 
 jobs:
   test:
@@ -9,14 +12,14 @@ jobs:
 
     strategy:
       matrix:
-        BUILD_CASE: 
+        BUILD_CASE:
           - virus_disabled
           - virus_enabled
           - relayhost
           - fts_disabled
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Prepare environment
         run: |

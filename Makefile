@@ -58,14 +58,3 @@ unofficial-sigs:
 .PHONY: setup
 setup:
 	$(COMPOSE_PRODUCTION) run --rm web /usr/local/bin/setup.sh
-
-.PHONY: lint
-lint: lint-dockerfile lint-yaml
-
-.PHONY: lint-dockerfile
-lint-dockerfile:
-	.ci/bin/dockerfile_lint.sh
-
-.PHONY: lint-yaml
-lint-yaml:
-	.ci/bin/yamllint.sh

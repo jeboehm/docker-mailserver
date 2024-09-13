@@ -1,5 +1,5 @@
 FROM jwilder/dockerize:0.6.1 AS dockerize
-FROM alpine:3.17
+FROM alpine:3.20
 
 LABEL maintainer="jeff@ressourcenkonflikt.de"
 LABEL vendor="https://github.com/jeboehm/docker-mailserver"
