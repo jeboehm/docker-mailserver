@@ -1,7 +1,7 @@
 #!/usr/bin/env bats
 
 @test "check mailpit api for messages" {
-    if [ ${RELAYHOST} = "false" ]; then
+    if [ "${RELAYHOST}" = "false" ]; then
         echo '# Relayhost is disabled, skipping test' >&3
         skip
     fi
@@ -11,7 +11,7 @@
 }
 
 @test "send mail to mta with smtp authentification, external recipient" {
-    if [ ${RELAYHOST} = "false" ]; then
+    if [ "${RELAYHOST}" = "false" ]; then
         echo '# Relayhost is disabled, skipping test' >&3
         skip
     fi
@@ -21,7 +21,7 @@
 }
 
 @test "check mailpit api for outgoing message" {
-    if [ ${RELAYHOST} = "false" ]; then
+    if [ "${RELAYHOST}" = "false" ]; then
         echo '# Relayhost is disabled, skipping test' >&3
         skip
     fi
