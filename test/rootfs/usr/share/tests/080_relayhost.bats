@@ -28,7 +28,7 @@
 
     sleep 5 # Give mailpit some time
 
-    RESULT=$(curl -s "http://mailpit:8025/api/v1/messages" | jq -cr .items[0].Content.Body | tr -d '[:space:]')
+    RESULT=$(curl -s "http://mailpit:8025/api/v1/messages" | jq -cr ".messages[0].Snippet" | tr -d '[:space:]')
 
     # send mail to mta with smtp authentification, external recipient
     [ "$RESULT" = "sendmailtomtawithsmtpauthentification,externalrecipient" ]
