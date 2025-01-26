@@ -4,7 +4,7 @@ version: '3.5'
 
 services:
   mailpit:
-    image: axllent/mailpit:v1.21
+    image: axllent/mailpit:v1.22
 
   test:
     build: ./test
