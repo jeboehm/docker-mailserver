@@ -34,6 +34,14 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 Create a default fully qualified app name.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
 */}}
+{{- define "docker-mailserver.mta" -}}
+  {{- printf "%s-mta" (include "common.names.fullname" .) | trunc 63 | trimSuffix "-" }}
+{{- end -}}
+
+{{/*
+Create a default fully qualified app name.
+We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
+*/}}
 {{- define "docker-mailserver.filter" -}}
   {{- printf "%s-filter" (include "common.names.fullname" .) | trunc 63 | trimSuffix "-" }}
 {{- end -}}
@@ -52,6 +60,10 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 
 {{- define "docker-mailserver.filter.image" -}}
 {{- include "common.images.image" ( dict "imageRoot" .Values.filter.image "global" .Values.global ) -}}
+{{- end -}}
+
+{{- define "docker-mailserver.mta.image" -}}
+{{- include "common.images.image" ( dict "imageRoot" .Values.mta.image "global" .Values.global ) -}}
 {{- end -}}
 
 {{- define "docker-mailserver.redis.image" -}}

@@ -1,0 +1,242 @@
+---
+
+apiVersion: {{ include "common.capabilities.deployment.apiVersion" . }}
+kind: StatefulSet
+metadata:
+  name: {{ include "docker-mailserver.mta" . }}
+  namespace: {{ include "common.names.namespace" . | quote }}
+  labels: {{- include "common.labels.standard" ( dict "customLabels" .Values.commonLabels "context" $ ) | nindent 4 }}
+    app.kubernetes.io/component: mta
+  {{- if .Values.commonAnnotations }}
+  annotations: {{- include "common.tplvalues.render" ( dict "value" .Values.commonAnnotations "context" $ ) | nindent 4 }}
+  {{- end }}
+spec:
+  replicas: {{ .Values.mta.replicaCount }}
+  {{- if .Values.mta.updateStrategy }}
+  updateStrategy: {{- toYaml .Values.mta.updateStrategy | nindent 4 }}
+  {{- end }}
+  {{- $podLabels := include "common.tplvalues.merge" ( dict "values" ( list .Values.mta.podLabels .Values.commonLabels ) "context" . ) }}
+  selector:
+    matchLabels: {{- include "common.labels.matchLabels" ( dict "customLabels" $podLabels "context" $ ) | nindent 6 }}
+      app.kubernetes.io/component: mta
+  template:
+    metadata:
+      {{- if .Values.mta.podAnnotations }}
+      annotations: {{- include "common.tplvalues.render" (dict "value" .Values.mta.podAnnotations "context" $) | nindent 8 }}
+      {{- end }}
+      labels: {{- include "common.labels.standard" ( dict "customLabels" $podLabels "context" $ ) | nindent 8 }}
+        app.kubernetes.io/component: mta
+    spec:
+      {{- include "docker-mailserver.imagePullSecrets" . | nindent 6 }}
+      {{- if .Values.mta.hostAliases }}
+      hostAliases: {{- include "common.tplvalues.render" (dict "value" .Values.mta.hostAliases "context" $) | nindent 8 }}
+      {{- end }}
+      {{- if .Values.mta.affinity }}
+      affinity: {{- include "common.tplvalues.render" ( dict "value" .Values.mta.affinity "context" $) | nindent 8 }}
+      {{- else }}
+      affinity:
+        podAffinity: {{- include "common.affinities.pods" (dict "type" .Values.mta.podAffinityPreset "component" "mta" "customLabels" $podLabels "context" $) | nindent 10 }}
+        podAntiAffinity: {{- include "common.affinities.pods" (dict "type" .Values.mta.podAntiAffinityPreset "component" "mta" "customLabels" $podLabels "context" $) | nindent 10 }}
+        nodeAffinity: {{- include "common.affinities.nodes" (dict "type" .Values.mta.nodeAffinityPreset.type "key" .Values.mta.nodeAffinityPreset.key "values" .Values.mta.nodeAffinityPreset.values) | nindent 10 }}
+      {{- end }}
+      {{- if .Values.mta.nodeSelector }}
+      nodeSelector: {{- include "common.tplvalues.render" ( dict "value" .Values.mta.nodeSelector "context" $) | nindent 8 }}
+      {{- end }}
+      {{- if .Values.mta.tolerations }}
+      tolerations: {{- include "common.tplvalues.render" (dict "value" .Values.mta.tolerations "context" .) | nindent 8 }}
+      {{- end }}
+      {{- if .Values.mta.schedulerName }}
+      schedulerName: {{ .Values.mta.schedulerName }}
+      {{- end }}
+      {{- if .Values.mta.topologySpreadConstraints }}
+      topologySpreadConstraints: {{- include "common.tplvalues.render" (dict "value" .Values.controller.topologySpreadConstraints "context" .) | nindent 8 }}
+      {{- end }}
+      {{- if .Values.mta.priorityClassName }}
+      priorityClassName: {{ .Values.mta.priorityClassName | quote }}
+      {{- end }}
+      {{- if .Values.mta.runtimeClassName }}
+      runtimeClassName: {{ .Values.mta.runtimeClassName }}
+      {{- end }}
+      {{- if .Values.mta.podSecurityContext.enabled }}
+      securityContext: {{- include "common.compatibility.renderSecurityContext" (dict "secContext" .Values.mta.podSecurityContext "context" $) | nindent 8 }}
+      {{- end }}
+      initContainers:
+        - name: copy-config-to-volume
+          image: {{ include "docker-mailserver.mta.image" . }}
+          imagePullPolicy: {{ .Values.mta.image.pullPolicy }}
+          {{- if .Values.mta.containerSecurityContext.enabled }}
+          securityContext: {{- include "common.compatibility.renderSecurityContext" (dict "secContext" .Values.mta.containerSecurityContext "context" $) | nindent 12 }}
+          {{- end }}
+          command: ["/bin/sh"]
+          args:
+            - -ec
+            - |
+              cp -r /etc/postfix/* /target/
+              chown -R root:root /target/
+              ls -lha /target
+          volumeMounts:
+            - name: mta-config
+              mountPath: /target
+        - name: prepare-config
+          image: {{ include "docker-mailserver.mta.image" . }}
+          imagePullPolicy: {{ .Values.mta.image.pullPolicy }}
+          {{- if .Values.mta.containerSecurityContext.enabled }}
+          securityContext: {{- include "common.compatibility.renderSecurityContext" (dict "secContext" .Values.mta.containerSecurityContext "context" $) | nindent 12 }}
+          {{- end }}
+          command:
+            - /usr/local/bin/dockerize
+          args:
+            - -template
+            - /etc/postfix/mysql-email2email.cf.templ:/etc/postfix/mysql-email2email.cf
+            - -template
+            - /etc/postfix/mysql-virtual-alias-maps.cf.templ:/etc/postfix/mysql-virtual-alias-maps.cf
+            - -template
+            - /etc/postfix/mysql-virtual-mailbox-domains.cf.templ:/etc/postfix/mysql-virtual-mailbox-domains.cf
+            - -template
+            - /etc/postfix/mysql-virtual-mailbox-maps.cf.templ:/etc/postfix/mysql-virtual-mailbox-maps.cf
+            - -template
+            - /etc/postfix/mysql-recipient-access.cf.templ:/etc/postfix/mysql-recipient-access.cf
+            - -template
+            - /etc/postfix/mysql-email-submission.cf.templ:/etc/postfix/mysql-email-submission.cf
+            - /bin/true
+          envFrom:
+            - configMapRef:
+                name: {{ printf "%s-configenv" (include "common.names.fullname" .) | trunc 63 | trimSuffix "-" }}
+          env:
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "docker-mailserver.databaseSecretName" . }}
+                  key: mariadb-password
+          volumeMounts:
+            - name: mta-config
+              mountPath: /etc/postfix
+        - name: postconf
+          image: {{ include "docker-mailserver.mta.image" . }}
+          imagePullPolicy: {{ .Values.mta.image.pullPolicy }}
+          {{- if .Values.mta.containerSecurityContext.enabled }}
+          securityContext: {{- include "common.compatibility.renderSecurityContext" (dict "secContext" .Values.mta.containerSecurityContext "context" $) | nindent 12 }}
+          {{- end }}
+          command: ["/bin/sh"]
+          args:
+            - -ec
+            - |
+              postconf myhostname="{{ .Values.config.mailname }}"
+              postconf recipient_delimiter="{{ .Values.config.recipientDelimiter }}"
+              postconf smtpd_milters="inet:{{ include "docker-mailserver.filter" . }}:11332"
+              postconf non_smtpd_milters="inet:{{ include "docker-mailserver.filter" . }}:11332"
+              postconf virtual_transport="lmtp:{{ include "docker-mailserver.mda" . }}:2003"
+              postconf smtpd_sasl_path="inet:{{ include "docker-mailserver.mda" . }}:2004"
+          volumeMounts:
+            - name: mta-config
+              mountPath: /etc/postfix
+        - name: wait-for-resources
+          image: {{ include "docker-mailserver.mta.image" . }}
+          imagePullPolicy: {{ .Values.mta.image.pullPolicy }}
+          {{- if .Values.mta.containerSecurityContext.enabled }}
+          securityContext: {{- include "common.compatibility.renderSecurityContext" (dict "secContext" .Values.mta.containerSecurityContext "context" $) | nindent 12 }}
+          {{- end }}
+          command:
+            - /usr/local/bin/dockerize
+          args:
+            - -wait
+            - tcp://{{ include "docker-mailserver.databaseHost" . }}:{{ include "docker-mailserver.databasePort" . }}
+            - -wait
+            - tcp://{{ include "docker-mailserver.mda" . }}:2003
+            - -wait
+            - tcp://{{ include "docker-mailserver.filter" . }}:11332
+            - -timeout
+            - 20s
+            - /bin/true
+        {{- if .Values.mta.initContainers }}
+          {{- include "common.tplvalues.render" (dict "value" .Values.mta.initContainers "context" $) | nindent 8 }}
+        {{- end }}
+      containers:
+        - name: postfix
+          image: {{ include "docker-mailserver.mta.image" . }}
+          imagePullPolicy: {{ .Values.mta.image.pullPolicy }}
+          {{- if .Values.mta.lifecycleHooks }}
+          lifecycle: {{- include "common.tplvalues.render" (dict "value" .Values.mta.lifecycleHooks "context" $) | nindent 12 }}
+          {{- end }}
+          {{- if .Values.mta.containerSecurityContext.enabled }}
+          securityContext: {{- include "common.compatibility.renderSecurityContext" (dict "secContext" .Values.mta.containerSecurityContext "context" $) | nindent 12 }}
+          {{- end }}
+          command:
+            - /usr/sbin/postfix
+          args:
+            - start-fg
+          ports:
+            - name: smtp
+              containerPort: 25
+              protocol: TCP
+            - name: submission
+              containerPort: 587
+              protocol: TCP
+            - name: submission-ssl
+              containerPort: 465
+              protocol: TCP
+          env:
+            {{- if .Values.mta.extraEnvVars }}
+            {{- include "common.tplvalues.render" (dict "value" .Values.mta.extraEnvVars "context" $) | nindent 12 }}
+            {{- end }}
+          envFrom:
+            {{- if .Values.mta.extraEnvVarsCM }}
+            - configMapRef:
+                name: {{ include "common.tplvalues.render" (dict "value" .Values.mta.extraEnvVarsCM "context" $) }}
+            {{- end }}
+            {{- if .Values.mta.extraEnvVarsSecret }}
+            - secretRef:
+                name: {{ include "common.tplvalues.render" (dict "value" .Values.mta.extraEnvVarsSecret "context" $) }}
+            {{- end }}
+            - configMapRef:
+                name: {{ printf "%s-configenv" (include "common.names.fullname" .) | trunc 63 | trimSuffix "-" }}
+          {{- if .Values.mta.resources }}
+          resources: {{- toYaml .Values.mta.resources | nindent 12 }}
+          {{- else if ne .Values.mta.resourcesPreset "none" }}
+          resources: {{- include "common.resources.preset" (dict "type" .Values.mta.resourcesPreset) | nindent 12 }}
+          {{- end }}
+          {{- if .Values.mta.customLivenessProbe }}
+          livenessProbe: {{- include "common.tplvalues.render" (dict "value" .Values.mta.customLivenessProbe "context" $) | nindent 12 }}
+          {{- else if .Values.mta.livenessProbe.enabled }}
+          livenessProbe:
+            tcpSocket:
+              port: 25
+            initialDelaySeconds: {{ .Values.mta.livenessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.mta.livenessProbe.periodSeconds }}
+            timeoutSeconds: {{ .Values.mta.livenessProbe.timeoutSeconds }}
+            successThreshold: {{ .Values.mta.livenessProbe.successThreshold }}
+            failureThreshold: {{ .Values.mta.livenessProbe.failureThreshold }}
+          {{- end }}
+          volumeMounts:
+            - name: mta-config
+              mountPath: /etc/postfix
+              readOnly: true
+            - name: mta-tmp
+              mountPath: /var/lib/postfix
+            - name: tls-certs
+              mountPath: /media/tls
+              readOnly: true
+          {{- if .Values.mta.extraVolumeMounts }}
+          {{- include "common.tplvalues.render" (dict "value" .Values.mta.extraVolumeMounts "context" $) | nindent 12 }}
+          {{- end }}
+        {{- if .Values.mta.sidecars }}
+        {{- include "common.tplvalues.render" ( dict "value" .Values.mta.sidecars "context" $) | nindent 8 }}
+        {{- end }}
+      volumes:
+        - name: tls-certs
+          secret:
+            items:
+              - key: tls.crt
+                path: mailserver.crt
+              - key: tls.key
+                path: mailserver.key
+              - key: ca.crt
+                path: ca.crt
+            secretName: {{ printf "%s-tls" (tpl .Values.ingress.hostname $) }}
+        - name: mta-tmp
+          emptyDir: {}
+        - name: mta-config
+          emptyDir: {}
+        {{- if .Values.mta.extraVolumes }}
+        {{- include "common.tplvalues.render" (dict "value" .Values.mta.extraVolumes "context" $) | nindent 8 }}
+        {{- end }}

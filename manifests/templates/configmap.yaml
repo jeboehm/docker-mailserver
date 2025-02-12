@@ -18,8 +18,11 @@ data:
     REDIS_HOST: {{ include "docker-mailserver.redisHost" . | quote }}
     REDIS_PORT: {{ include "docker-mailserver.redisPort" . | quote }}
 
-    MAILNAME: mail.example.com
-    POSTMASTER: postmaster@example.com
+    MDA_HOST: {{ include "docker-mailserver.mda" . | quote }}
+    RSPAMD_HOST: {{ include "docker-mailserver.filter" . | quote }}
+
+    MAILNAME: {{ .Values.config.mailname | quote }}
+    POSTMASTER: {{ .Values.config.postmaster | quote }}
 
     RELAYHOST: "false"
     RELAY_OPTIONS: "false"
@@ -37,7 +40,7 @@ data:
     FTS_ARGS: partial=3 full=20 verbose=0 lowmemory=256
     FTS_VSZ_LIMIT: 256M
 
-    RECIPIENT_DELIMITER: "-"
+    RECIPIENT_DELIMITER: {{ .Values.config.recipientDelimiter | quote }}
     DNS_RESOLVERS: 80.69.96.12,81.210.129.4
 
     CONTROLLER_PASSWORD: trust

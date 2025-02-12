@@ -59,7 +59,6 @@ spec:
       {{- else if eq .Values.mda.internalService.type "ClusterIP" }}
       nodePort: null
       {{- end }}
-
     {{- if .Values.mda.internalService.extraPorts }}
     {{- include "common.tplvalues.render" (dict "value" .Values.mda.internalService.extraPorts "context" $) | nindent 4 }}
     {{- end }}

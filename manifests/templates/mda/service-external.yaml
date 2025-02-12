@@ -1,0 +1,80 @@
+{{- if .Values.mda.service.enabled }}
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "docker-mailserver.mda" . }}-external
+  namespace: {{ include "common.names.namespace" . | quote }}
+  labels: {{- include "common.labels.standard" ( dict "customLabels" .Values.commonLabels "context" $ ) | nindent 4 }}
+    app.kubernetes.io/component: mda
+  {{- if or .Values.commonAnnotations .Values.mda.service.annotations }}
+  {{- $annotations := include "common.tplvalues.merge" ( dict "values" ( list .Values.mda.service.annotations .Values.commonAnnotations ) "context" . ) }}
+  annotations: {{- include "common.tplvalues.render" ( dict "value" $annotations "context" $) | nindent 4 }}
+  {{- end }}
+spec:
+  type: {{ .Values.mda.service.type }}
+  {{- if and .Values.mda.service.clusterIP (eq .Values.mda.service.type "ClusterIP") }}
+  clusterIP: {{ .Values.mda.service.clusterIP }}
+  {{- end }}
+  {{- if (or (eq .Values.mda.service.type "LoadBalancer") (eq .Values.mda.service.type "NodePort")) }}
+  externalTrafficPolicy: {{ .Values.mda.service.externalTrafficPolicy | quote }}
+  {{- end }}
+  {{- if eq .Values.mda.service.type "LoadBalancer" }}
+  loadBalancerSourceRanges: {{ .Values.mda.service.loadBalancerSourceRanges }}
+  {{- end }}
+  {{- if (and (eq .Values.mda.service.type "LoadBalancer") (not (empty .Values.mda.service.loadBalancerIP))) }}
+  loadBalancerIP: {{ .Values.mda.service.loadBalancerIP }}
+  {{- end }}
+  {{- if .Values.mda.service.sessionAffinity }}
+  sessionAffinity: {{ .Values.mda.service.sessionAffinity }}
+  {{- end }}
+  {{- if .Values.mda.service.sessionAffinityConfig }}
+  sessionAffinityConfig: {{- include "common.tplvalues.render" (dict "value" .Values.mda.service.sessionAffinityConfig "context" $) | nindent 4 }}
+  {{- end }}
+  ports:
+    - name: pop3
+      port: {{ coalesce .Values.mda.service.port .Values.mda.service.ports.pop3 }}
+      targetPort: 110
+      protocol: TCP
+      {{- if (and (or (eq .Values.mda.service.type "NodePort") (eq .Values.mda.service.type "LoadBalancer")) (not (empty (coalesce .Values.mda.service.nodePort .Values.mda.service.nodePorts.pop3)))) }}
+      nodePort: {{ coalesce .Values.mda.service.nodePort .Values.mda.service.nodePorts.pop3 }}
+      {{- else if eq .Values.mda.service.type "ClusterIP" }}
+      nodePort: null
+      {{- end }}
+    - name: pop3s
+      port: {{ coalesce .Values.mda.service.port .Values.mda.service.ports.pop3s }}
+      targetPort: 995
+      protocol: TCP
+      {{- if (and (or (eq .Values.mda.service.type "NodePort") (eq .Values.mda.service.type "LoadBalancer")) (not (empty (coalesce .Values.mda.service.nodePort .Values.mda.service.nodePorts.pop3s)))) }}
+      nodePort: {{ coalesce .Values.mda.service.nodePort .Values.mda.service.nodePorts.pop3s }}
+      {{- else if eq .Values.mda.service.type "ClusterIP" }}
+      nodePort: null
+      {{- end }}
+    - name: imap
+      port: {{ coalesce .Values.mda.service.port .Values.mda.service.ports.imap }}
+      targetPort: 143
+      protocol: TCP
+      {{- if (and (or (eq .Values.mda.service.type "NodePort") (eq .Values.mda.service.type "LoadBalancer")) (not (empty (coalesce .Values.mda.service.nodePort .Values.mda.service.nodePorts.imap)))) }}
+      nodePort: {{ coalesce .Values.mda.service.nodePort .Values.mda.service.nodePorts.imap }}
+      {{- else if eq .Values.mda.service.type "ClusterIP" }}
+      nodePort: null
+      {{- end }}
+    - name: imaps
+      port: {{ coalesce .Values.mda.service.port .Values.mda.service.ports.imaps }}
+      targetPort: 993
+      protocol: TCP
+      {{- if (and (or (eq .Values.mda.service.type "NodePort") (eq .Values.mda.service.type "LoadBalancer")) (not (empty (coalesce .Values.mda.service.nodePort .Values.mda.service.nodePorts.imaps)))) }}
+      nodePort: {{ coalesce .Values.mda.service.nodePort .Values.mda.service.nodePorts.imaps }}
+      {{- else if eq .Values.mda.service.type "ClusterIP" }}
+      nodePort: null
+      {{- end }}
+
+
+    {{- if .Values.mda.service.extraPorts }}
+    {{- include "common.tplvalues.render" (dict "value" .Values.mda.service.extraPorts "context" $) | nindent 4 }}
+    {{- end }}
+  {{- $podLabels := include "common.tplvalues.merge" ( dict "values" ( list .Values.mda.podLabels .Values.commonLabels ) "context" . ) }}
+  selector: {{- include "common.labels.matchLabels" ( dict "customLabels" $podLabels "context" $ ) | nindent 4 }}
+    app.kubernetes.io/component: mda
+{{- end }}

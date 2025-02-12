@@ -135,9 +135,6 @@ spec:
             - -timeout
             - 20s
             - /bin/true
-          envFrom:
-            - configMapRef:
-                name: {{ printf "%s-configenv" (include "common.names.fullname" .) | trunc 63 | trimSuffix "-" }}
         {{- if .Values.mda.initContainers }}
           {{- include "common.tplvalues.render" (dict "value" .Values.mda.initContainers "context" $) | nindent 8 }}
         {{- end }}
@@ -178,30 +175,6 @@ spec:
               containerPort: 4190
               protocol: TCP
           env:
-            - name: MYSQL_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: {{ include "docker-mailserver.databaseSecretName" . }}
-                  key: mariadb-password
-{{- /*
-             {{- if and .Values.redis.enabled (include "docker-mailserver.redis.auth.enabled" .) }}
-            - name: REDIS_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: {{ include "docker-mailserver.redis.secretName" . }}
-                  key: {{ include "docker-mailserver.redis.secretPasswordKey" . }}
-            {{- else if .Values.externalRedis.enabled }}
-            - name: REDIS_PASSWORD
-              {{- if not ( eq "" .Values.externalRedis.password ) }}
-              value: {{ .Values.externalRedis.password }}
-              {{- else }}
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Values.externalRedis.existingSecret }}
-                  key: {{ .Values.externalRedis.existingSecretPasswordKey }}
-              {{- end }}
-            {{- end }}
-*/ -}}
             {{- if .Values.mda.extraEnvVars }}
             {{- include "common.tplvalues.render" (dict "value" .Values.mda.extraEnvVars "context" $) | nindent 12 }}
             {{- end }}
