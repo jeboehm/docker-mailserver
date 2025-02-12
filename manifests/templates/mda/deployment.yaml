@@ -142,7 +142,7 @@ spec:
           {{- include "common.tplvalues.render" (dict "value" .Values.mda.initContainers "context" $) | nindent 8 }}
         {{- end }}
       containers:
-        - name: mailserver-mda
+        - name: dovecot
           image: {{ include "docker-mailserver.mda.image" . }}
           imagePullPolicy: {{ .Values.mda.image.pullPolicy }}
           {{- if .Values.mda.lifecycleHooks }}

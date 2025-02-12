@@ -1,0 +1,186 @@
+---
+
+apiVersion: {{ include "common.capabilities.deployment.apiVersion" . }}
+kind: Deployment
+metadata:
+  name: {{ include "docker-mailserver.virus" . }}
+  namespace: {{ include "common.names.namespace" . | quote }}
+  labels: {{- include "common.labels.standard" ( dict "customLabels" .Values.commonLabels "context" $ ) | nindent 4 }}
+    app.kubernetes.io/component: virus
+  {{- if .Values.commonAnnotations }}
+  annotations: {{- include "common.tplvalues.render" ( dict "value" .Values.commonAnnotations "context" $ ) | nindent 4 }}
+  {{- end }}
+spec:
+  replicas: {{ .Values.virus.replicaCount }}
+  {{- if .Values.virus.updateStrategy }}
+  strategy: {{- toYaml .Values.virus.updateStrategy | nindent 4 }}
+  {{- end }}
+  {{- $podLabels := include "common.tplvalues.merge" ( dict "values" ( list .Values.virus.podLabels .Values.commonLabels ) "context" . ) }}
+  selector:
+    matchLabels: {{- include "common.labels.matchLabels" ( dict "customLabels" $podLabels "context" $ ) | nindent 6 }}
+      app.kubernetes.io/component: virus
+  template:
+    metadata:
+      {{- if .Values.virus.podAnnotations }}
+      annotations: {{- include "common.tplvalues.render" (dict "value" .Values.virus.podAnnotations "context" $) | nindent 8 }}
+      {{- end }}
+      labels: {{- include "common.labels.standard" ( dict "customLabels" $podLabels "context" $ ) | nindent 8 }}
+        app.kubernetes.io/component: virus
+    spec:
+      {{- include "docker-mailserver.imagePullSecrets" . | nindent 6 }}
+      {{- if .Values.virus.hostAliases }}
+      hostAliases: {{- include "common.tplvalues.render" (dict "value" .Values.virus.hostAliases "context" $) | nindent 8 }}
+      {{- end }}
+      {{- if .Values.virus.affinity }}
+      affinity: {{- include "common.tplvalues.render" ( dict "value" .Values.virus.affinity "context" $) | nindent 8 }}
+      {{- else }}
+      affinity:
+        podAffinity: {{- include "common.affinities.pods" (dict "type" .Values.virus.podAffinityPreset "component" "virus" "customLabels" $podLabels "context" $) | nindent 10 }}
+        podAntiAffinity: {{- include "common.affinities.pods" (dict "type" .Values.virus.podAntiAffinityPreset "component" "virus" "customLabels" $podLabels "context" $) | nindent 10 }}
+        nodeAffinity: {{- include "common.affinities.nodes" (dict "type" .Values.virus.nodeAffinityPreset.type "key" .Values.virus.nodeAffinityPreset.key "values" .Values.virus.nodeAffinityPreset.values) | nindent 10 }}
+      {{- end }}
+      {{- if .Values.virus.nodeSelector }}
+      nodeSelector: {{- include "common.tplvalues.render" ( dict "value" .Values.virus.nodeSelector "context" $) | nindent 8 }}
+      {{- end }}
+      {{- if .Values.virus.tolerations }}
+      tolerations: {{- include "common.tplvalues.render" (dict "value" .Values.virus.tolerations "context" .) | nindent 8 }}
+      {{- end }}
+      {{- if .Values.virus.schedulerName }}
+      schedulerName: {{ .Values.virus.schedulerName }}
+      {{- end }}
+      {{- if .Values.virus.topologySpreadConstraints }}
+      topologySpreadConstraints: {{- include "common.tplvalues.render" (dict "value" .Values.controller.topologySpreadConstraints "context" .) | nindent 8 }}
+      {{- end }}
+      {{- if .Values.virus.priorityClassName }}
+      priorityClassName: {{ .Values.virus.priorityClassName | quote }}
+      {{- end }}
+      {{- if .Values.virus.runtimeClassName }}
+      runtimeClassName: {{ .Values.virus.runtimeClassName }}
+      {{- end }}
+      {{- if .Values.virus.podSecurityContext.enabled }}
+      securityContext: {{- include "common.compatibility.renderSecurityContext" (dict "secContext" .Values.virus.podSecurityContext "context" $) | nindent 8 }}
+      {{- end }}
+      initContainers:
+        - name: download-definitions
+          image: {{ include "docker-mailserver.virus.image" . }}
+          imagePullPolicy: {{ .Values.virus.image.pullPolicy }}
+          {{- if .Values.virus.containerSecurityContext.enabled }}
+          securityContext: {{- include "common.compatibility.renderSecurityContext" (dict "secContext" .Values.virus.containerSecurityContext "context" $) | nindent 12 }}
+          {{- end }}
+          command:
+            - /usr/bin/freshclam
+          envFrom:
+            - configMapRef:
+                name: {{ printf "%s-configenv" (include "common.names.fullname" .) | trunc 63 | trimSuffix "-" }}
+          volumeMounts:
+            - name: virus-definitions
+              mountPath: /var/lib/clamav
+      containers:
+        - name: clamd
+          image: {{ include "docker-mailserver.virus.image" . }}
+          imagePullPolicy: {{ .Values.virus.image.pullPolicy }}
+          {{- if .Values.virus.lifecycleHooks }}
+          lifecycle: {{- include "common.tplvalues.render" (dict "value" .Values.virus.lifecycleHooks "context" $) | nindent 12 }}
+          {{- end }}
+          {{- if .Values.virus.containerSecurityContext.enabled }}
+          securityContext: {{- include "common.compatibility.renderSecurityContext" (dict "secContext" .Values.virus.containerSecurityContext "context" $) | nindent 12 }}
+          {{- end }}
+          command:
+            - /usr/sbin/clamd
+          args:
+            - -F
+          ports:
+            - name: clamav
+              containerPort: 3310
+              protocol: TCP
+          env:
+            {{- if .Values.virus.extraEnvVars }}
+            {{- include "common.tplvalues.render" (dict "value" .Values.virus.extraEnvVars "context" $) | nindent 12 }}
+            {{- end }}
+          envFrom:
+            {{- if .Values.virus.extraEnvVarsCM }}
+            - configMapRef:
+                name: {{ include "common.tplvalues.render" (dict "value" .Values.virus.extraEnvVarsCM "context" $) }}
+            {{- end }}
+            {{- if .Values.virus.extraEnvVarsSecret }}
+            - secretRef:
+                name: {{ include "common.tplvalues.render" (dict "value" .Values.virus.extraEnvVarsSecret "context" $) }}
+            {{- end }}
+            - configMapRef:
+                name: {{ printf "%s-configenv" (include "common.names.fullname" .) | trunc 63 | trimSuffix "-" }}
+          {{- if .Values.virus.resources }}
+          resources: {{- toYaml .Values.virus.resources | nindent 12 }}
+          {{- else if ne .Values.virus.resourcesPreset "none" }}
+          resources: {{- include "common.resources.preset" (dict "type" .Values.virus.resourcesPreset) | nindent 12 }}
+          {{- end }}
+          {{- if .Values.virus.customLivenessProbe }}
+          livenessProbe: {{- include "common.tplvalues.render" (dict "value" .Values.virus.customLivenessProbe "context" $) | nindent 12 }}
+          {{- else if .Values.virus.livenessProbe.enabled }}
+          livenessProbe:
+            tcpSocket:
+              port: 3310
+            initialDelaySeconds: {{ .Values.virus.livenessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.virus.livenessProbe.periodSeconds }}
+            timeoutSeconds: {{ .Values.virus.livenessProbe.timeoutSeconds }}
+            successThreshold: {{ .Values.virus.livenessProbe.successThreshold }}
+            failureThreshold: {{ .Values.virus.livenessProbe.failureThreshold }}
+          {{- end }}
+          volumeMounts:
+            - name: virus-definitions
+              mountPath: /var/lib/clamav
+              readOnly: true
+            - name: virus-tmp
+              mountPath: /tmp
+          {{- if .Values.virus.extraVolumeMounts }}
+          {{- include "common.tplvalues.render" (dict "value" .Values.virus.extraVolumeMounts "context" $) | nindent 12 }}
+          {{- end }}
+        - name: freshclam
+          image: {{ include "docker-mailserver.virus.image" . }}
+          imagePullPolicy: {{ .Values.virus.image.pullPolicy }}
+          {{- if .Values.virus.lifecycleHooks }}
+          lifecycle: {{- include "common.tplvalues.render" (dict "value" .Values.virus.lifecycleHooks "context" $) | nindent 12 }}
+          {{- end }}
+          {{- if .Values.virus.containerSecurityContext.enabled }}
+          securityContext: {{- include "common.compatibility.renderSecurityContext" (dict "secContext" .Values.virus.containerSecurityContext "context" $) | nindent 12 }}
+          {{- end }}
+          command:
+            - /usr/bin/freshclam
+          args:
+            - -dF
+          env:
+            {{- if .Values.virus.extraEnvVars }}
+            {{- include "common.tplvalues.render" (dict "value" .Values.virus.extraEnvVars "context" $) | nindent 12 }}
+            {{- end }}
+          envFrom:
+            {{- if .Values.virus.extraEnvVarsCM }}
+            - configMapRef:
+                name: {{ include "common.tplvalues.render" (dict "value" .Values.virus.extraEnvVarsCM "context" $) }}
+            {{- end }}
+            {{- if .Values.virus.extraEnvVarsSecret }}
+            - secretRef:
+                name: {{ include "common.tplvalues.render" (dict "value" .Values.virus.extraEnvVarsSecret "context" $) }}
+            {{- end }}
+            - configMapRef:
+                name: {{ printf "%s-configenv" (include "common.names.fullname" .) | trunc 63 | trimSuffix "-" }}
+          {{- if .Values.virus.resources }}
+          resources: {{- toYaml .Values.virus.resourcesUpdate | nindent 12 }}
+          {{- else if ne .Values.virus.resourcesPresetUpdate "none" }}
+          resources: {{- include "common.resources.preset" (dict "type" .Values.virus.resourcesPresetUpdate) | nindent 12 }}
+          {{- end }}
+          volumeMounts:
+            - name: virus-definitions
+              mountPath: /var/lib/clamav
+          {{- if .Values.virus.extraVolumeMounts }}
+          {{- include "common.tplvalues.render" (dict "value" .Values.virus.extraVolumeMounts "context" $) | nindent 12 }}
+          {{- end }}
+        {{- if .Values.virus.sidecars }}
+        {{- include "common.tplvalues.render" ( dict "value" .Values.virus.sidecars "context" $) | nindent 8 }}
+        {{- end }}
+      volumes:
+        - name: virus-definitions
+          emptyDir: {}
+        - name: virus-tmp
+          emptyDir: {}
+        {{- if .Values.virus.extraVolumes }}
+        {{- include "common.tplvalues.render" (dict "value" .Values.virus.extraVolumes "context" $) | nindent 8 }}
+        {{- end }}
