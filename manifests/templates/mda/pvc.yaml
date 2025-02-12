@@ -1,0 +1,33 @@
+---
+
+{{- if and .Values.mda.persistence.enabled (not .Values.mda.persistence.existingClaim) }}
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: {{ include "docker-mailserver.mda" . }}
+  namespace: {{ include "common.names.namespace" . | quote }}
+  labels: {{- include "common.labels.standard" ( dict "customLabels" .Values.commonLabels "context" $ ) | nindent 4 }}
+  {{- if or .Values.mda.persistence.annotations .Values.commonAnnotations }}
+  {{- $annotations := include "common.tplvalues.merge" ( dict "values" ( list .Values.mda.persistence.annotations .Values.commonAnnotations ) "context" . ) }}
+  annotations: {{- include "common.tplvalues.render" ( dict "value" $annotations "context" $) | nindent 4 }}
+  {{- end }}
+spec:
+  accessModes:
+  {{- if not (empty .Values.mda.persistence.accessModes) }}
+  {{- range .Values.mda.persistence.accessModes }}
+    - {{ . | quote }}
+  {{- end }}
+  {{- else }}
+    - {{ .Values.mda.persistence.accessMode | quote }}
+  {{- end }}
+  resources:
+    requests:
+      storage: {{ .Values.mda.persistence.size | quote }}
+  {{- include "common.storage.class" (dict "persistence" .Values.mda.persistence "global" .Values.global) | nindent 2 }}
+  {{- if .Values.mda.persistence.selector }}
+  selector: {{- include "common.tplvalues.render" (dict "value" .Values.mda.persistence.selector "context" $) | nindent 4 }}
+  {{- end -}}
+  {{- if .Values.mda.persistence.dataSource }}
+  dataSource: {{- include "common.tplvalues.render" (dict "value" .Values.mda.persistence.dataSource "context" $) | nindent 4 }}
+  {{- end }}
+{{- end }}

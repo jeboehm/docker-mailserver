@@ -1,0 +1,12 @@
+dependencies:
+- name: redis
+  repository: oci://registry-1.docker.io/bitnamicharts
+  version: 20.7.0
+- name: mariadb
+  repository: oci://registry-1.docker.io/bitnamicharts
+  version: 20.2.2
+- name: common
+  repository: oci://registry-1.docker.io/bitnamicharts
+  version: 2.29.1
+digest: sha256:a942f7f99a34ba19220e248dfa166f009e375fefc217b70c47c851594af9d320
+generated: "2025-02-11T17:17:41.339743+01:00"

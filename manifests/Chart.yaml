@@ -1,0 +1,50 @@
+---
+
+annotations:
+  category: Mail
+  licenses: MIT
+  images: |
+    - name: mailserver-mta
+      image: docker.io/jeboehm/mailserver-mta:latest
+    - name: mailserver-mda
+      image: docker.io/jeboehm/mailserver-mda:latest
+    - name: mailserver-filter
+      image: docker.io/jeboehm/mailserver-filter:latest
+    - name: mailserver-web
+      image: docker.io/jeboehm/mailserver-web:latest
+    - name: mailserver-virus
+      image: docker.io/jeboehm/mailserver-virus:latest
+    - name: redis
+      image: docker.io/bitnami/redis:latest
+apiVersion: v2
+appVersion: 2.14.1
+dependencies:
+- condition: redis.enabled
+  name: redis
+  repository: oci://registry-1.docker.io/bitnamicharts
+  version: 20.x.x
+- condition: mariadb.enabled
+  name: mariadb
+  repository: oci://registry-1.docker.io/bitnamicharts
+  version: 20.x.x
+- name: common
+  repository: oci://registry-1.docker.io/bitnamicharts
+  tags:
+  - bitnami-common
+  version: 2.x.x
+description: Docker Mailserver based on the famous ISPMail guide. All images are based on Alpine Linux and are so small as possible.
+home: https://github.com/jeboehm/docker-mailserver
+keywords:
+- postfix
+- dovecot
+- mail
+- mailserver
+- smtp
+- imap
+maintainers:
+- name: Jeffrey Boehm
+  url: https://github.com/jeboehm
+name: docker-mailserver
+sources:
+- https://github.com/jeboehm/docker-mailserver
+version: 7.1.9

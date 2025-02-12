@@ -1,0 +1,38 @@
+---
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+    name: {{ printf "%s-configenv" (include "common.names.fullname" .) | trunc 63 | trimSuffix "-" }}
+    namespace: {{ include "common.names.namespace" . | quote }}
+    labels: {{- include "common.labels.standard" ( dict "customLabels" .Values.commonLabels "context" $ ) | nindent 4 }}
+    {{- if .Values.commonAnnotations }}
+    annotations: {{- include "common.tplvalues.render" ( dict "value" .Values.commonAnnotations "context" $ ) | nindent 4 }}
+    {{- end }}
+data:
+    MYSQL_DATABASE: {{ include "docker-mailserver.databaseName" . | quote }}
+    MYSQL_USER: {{ include "docker-mailserver.databaseUser" . | quote }}
+    MYSQL_HOST: {{ include "docker-mailserver.databaseHost" . | quote }}
+    MYSQL_PORT: {{ include "docker-mailserver.databasePort" . | quote }}
+
+    MAILNAME: mail.example.com
+    POSTMASTER: postmaster@example.com
+
+    RELAYHOST: "false"
+    RELAY_OPTIONS: "false"
+    RELAY_PASSWD_FILE: "false"
+
+    FILTER_MIME: "false"
+
+    ENABLE_IMAP: "true"
+    ENABLE_POP3: "true"
+    ENABLE_VIRUS: "true"
+
+    ENABLE_FTS: "true"
+    FTS_ARGS: partial=3 full=20 verbose=0 lowmemory=256
+    FTS_VSZ_LIMIT: 256M
+
+    RECIPIENT_DELIMITER: "-"
+    DNS_RESOLVERS: 80.69.96.12,81.210.129.4
+
+    CONTROLLER_PASSWORD: trust

@@ -1,0 +1,285 @@
+---
+
+apiVersion: {{ include "common.capabilities.deployment.apiVersion" . }}
+kind: Deployment
+metadata:
+  name: {{ include "docker-mailserver.mda" . }}
+  namespace: {{ include "common.names.namespace" . | quote }}
+  labels: {{- include "common.labels.standard" ( dict "customLabels" .Values.commonLabels "context" $ ) | nindent 4 }}
+    app.kubernetes.io/component: mda
+  {{- if .Values.commonAnnotations }}
+  annotations: {{- include "common.tplvalues.render" ( dict "value" .Values.commonAnnotations "context" $ ) | nindent 4 }}
+  {{- end }}
+spec:
+  replicas: {{ .Values.mda.replicaCount }}
+  {{- if .Values.mda.updateStrategy }}
+  strategy: {{- toYaml .Values.mda.updateStrategy | nindent 4 }}
+  {{- end }}
+  {{- $podLabels := include "common.tplvalues.merge" ( dict "values" ( list .Values.mda.podLabels .Values.commonLabels ) "context" . ) }}
+  selector:
+    matchLabels: {{- include "common.labels.matchLabels" ( dict "customLabels" $podLabels "context" $ ) | nindent 6 }}
+      app.kubernetes.io/component: mda
+  template:
+    metadata:
+      {{- if .Values.mda.podAnnotations }}
+      annotations: {{- include "common.tplvalues.render" (dict "value" .Values.mda.podAnnotations "context" $) | nindent 8 }}
+      {{- end }}
+      labels: {{- include "common.labels.standard" ( dict "customLabels" $podLabels "context" $ ) | nindent 8 }}
+        app.kubernetes.io/component: mda
+    spec:
+      {{- include "docker-mailserver.imagePullSecrets" . | nindent 6 }}
+      {{- if .Values.mda.hostAliases }}
+      hostAliases: {{- include "common.tplvalues.render" (dict "value" .Values.mda.hostAliases "context" $) | nindent 8 }}
+      {{- end }}
+      {{- if .Values.mda.affinity }}
+      affinity: {{- include "common.tplvalues.render" ( dict "value" .Values.mda.affinity "context" $) | nindent 8 }}
+      {{- else }}
+      affinity:
+        podAffinity: {{- include "common.affinities.pods" (dict "type" .Values.mda.podAffinityPreset "component" "mda" "customLabels" $podLabels "context" $) | nindent 10 }}
+        podAntiAffinity: {{- include "common.affinities.pods" (dict "type" .Values.mda.podAntiAffinityPreset "component" "mda" "customLabels" $podLabels "context" $) | nindent 10 }}
+        nodeAffinity: {{- include "common.affinities.nodes" (dict "type" .Values.mda.nodeAffinityPreset.type "key" .Values.mda.nodeAffinityPreset.key "values" .Values.mda.nodeAffinityPreset.values) | nindent 10 }}
+      {{- end }}
+      {{- if .Values.mda.nodeSelector }}
+      nodeSelector: {{- include "common.tplvalues.render" ( dict "value" .Values.mda.nodeSelector "context" $) | nindent 8 }}
+      {{- end }}
+      {{- if .Values.mda.tolerations }}
+      tolerations: {{- include "common.tplvalues.render" (dict "value" .Values.mda.tolerations "context" .) | nindent 8 }}
+      {{- end }}
+      {{- if .Values.mda.schedulerName }}
+      schedulerName: {{ .Values.mda.schedulerName }}
+      {{- end }}
+      {{- if .Values.mda.topologySpreadConstraints }}
+      topologySpreadConstraints: {{- include "common.tplvalues.render" (dict "value" .Values.controller.topologySpreadConstraints "context" .) | nindent 8 }}
+      {{- end }}
+      {{- if .Values.mda.priorityClassName }}
+      priorityClassName: {{ .Values.mda.priorityClassName | quote }}
+      {{- end }}
+      {{- if .Values.mda.runtimeClassName }}
+      runtimeClassName: {{ .Values.mda.runtimeClassName }}
+      {{- end }}
+      {{- if .Values.mda.podSecurityContext.enabled }}
+      securityContext: {{- include "common.compatibility.renderSecurityContext" (dict "secContext" .Values.mda.podSecurityContext "context" $) | nindent 8 }}
+      {{- end }}
+      initContainers:
+        - name: copy-config-to-volume
+          image: {{ include "docker-mailserver.mda.image" . }}
+          imagePullPolicy: {{ .Values.mda.image.pullPolicy }}
+          {{- if .Values.mda.initContainerSecurityContext.enabled }}
+          securityContext: {{- include "common.compatibility.renderSecurityContext" (dict "secContext" .Values.mda.initContainerSecurityContext "context" $) | nindent 12 }}
+          {{- end }}
+          command: ["/bin/sh", "-c"]
+          args:
+            - cp -r /etc/dovecot/* /target/
+          volumeMounts:
+            - name: mda-config
+              mountPath: /target
+        {{- if .Values.mda.createDhParams }}
+        - name: dh-params
+          image: {{ include "docker-mailserver.mda.image" . }}
+          imagePullPolicy: {{ .Values.mda.image.pullPolicy }}
+          {{- if .Values.mda.initContainerSecurityContext.enabled }}
+          securityContext: {{- include "common.compatibility.renderSecurityContext" (dict "secContext" .Values.mda.initContainerSecurityContext "context" $) | nindent 12 }}
+          {{- end }}
+          command:
+            - /usr/local/bin/dh.sh
+          envFrom:
+            - configMapRef:
+                name: {{ printf "%s-configenv" (include "common.names.fullname" .) | trunc 63 | trimSuffix "-" }}
+          volumeMounts:
+            - name: mda-config
+              mountPath: /etc/dovecot
+        {{- end }}
+        - name: prepare-config
+          image: {{ include "docker-mailserver.mda.image" . }}
+          imagePullPolicy: {{ .Values.mda.image.pullPolicy }}
+          {{- if .Values.mda.initContainerSecurityContext.enabled }}
+          securityContext: {{- include "common.compatibility.renderSecurityContext" (dict "secContext" .Values.mda.initContainerSecurityContext "context" $) | nindent 12 }}
+          {{- end }}
+          command:
+            - /usr/local/bin/dockerize
+          args:
+            - -template
+            - /etc/dovecot/conf.d/10-master.conf.templ:/etc/dovecot/conf.d/10-master.conf
+            - -template
+            - /etc/dovecot/conf.d/15-lda.conf.templ:/etc/dovecot/conf.d/15-lda.conf
+            - -template
+            - /etc/dovecot/conf.d/15-fts-xapian.conf.templ:/etc/dovecot/conf.d/15-fts-xapian.conf
+            - -template
+            - /etc/dovecot/conf.d/90-sieve.conf.templ:/etc/dovecot/conf.d/90-sieve.conf
+            - -template
+            - /etc/dovecot/dovecot-sql.conf.ext.templ:/etc/dovecot/dovecot-sql.conf.ext
+            - /bin/true
+          envFrom:
+            - configMapRef:
+                name: {{ printf "%s-configenv" (include "common.names.fullname" .) | trunc 63 | trimSuffix "-" }}
+          env:
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "docker-mailserver.databaseSecretName" . }}
+                  key: mariadb-password
+          volumeMounts:
+            - name: mda-config
+              mountPath: /etc/dovecot
+        - name: wait-for-resources
+          image: {{ include "docker-mailserver.mda.image" . }}
+          imagePullPolicy: {{ .Values.mda.image.pullPolicy }}
+          {{- if .Values.mda.containerSecurityContext.enabled }}
+          securityContext: {{- include "common.compatibility.renderSecurityContext" (dict "secContext" .Values.mda.containerSecurityContext "context" $) | nindent 12 }}
+          {{- end }}
+          command:
+            - /usr/local/bin/dockerize
+          args:
+            - -wait
+            - tcp://{{ include "docker-mailserver.databaseHost" . }}:{{ include "docker-mailserver.databasePort" . }}
+            - -timeout
+            - 20s
+            - /bin/true
+          envFrom:
+            - configMapRef:
+                name: {{ printf "%s-configenv" (include "common.names.fullname" .) | trunc 63 | trimSuffix "-" }}
+        {{- if .Values.mda.initContainers }}
+          {{- include "common.tplvalues.render" (dict "value" .Values.mda.initContainers "context" $) | nindent 8 }}
+        {{- end }}
+      containers:
+        - name: mailserver-mda
+          image: {{ include "docker-mailserver.mda.image" . }}
+          imagePullPolicy: {{ .Values.mda.image.pullPolicy }}
+          {{- if .Values.mda.lifecycleHooks }}
+          lifecycle: {{- include "common.tplvalues.render" (dict "value" .Values.mda.lifecycleHooks "context" $) | nindent 12 }}
+          {{- end }}
+          {{- if .Values.mda.containerSecurityContext.enabled }}
+          securityContext: {{- include "common.compatibility.renderSecurityContext" (dict "secContext" .Values.mda.containerSecurityContext "context" $) | nindent 12 }}
+          {{- end }}
+          command:
+            - /usr/sbin/dovecot
+          args:
+            - -F
+          ports:
+            - name: pop3
+              containerPort: 110
+              protocol: TCP
+            - name: imap
+              containerPort: 143
+              protocol: TCP
+            - name: pop3s
+              containerPort: 995
+              protocol: TCP
+            - name: imaps
+              containerPort: 993
+              protocol: TCP
+            - name: lmtp
+              containerPort: 2003
+              protocol: TCP
+            - name: auth
+              containerPort: 2004
+              protocol: TCP
+            - name: managesieve
+              containerPort: 4190
+              protocol: TCP
+          env:
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "docker-mailserver.databaseSecretName" . }}
+                  key: mariadb-password
+{{- /*
+             {{- if and .Values.redis.enabled (include "docker-mailserver.redis.auth.enabled" .) }}
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "docker-mailserver.redis.secretName" . }}
+                  key: {{ include "docker-mailserver.redis.secretPasswordKey" . }}
+            {{- else if .Values.externalRedis.enabled }}
+            - name: REDIS_PASSWORD
+              {{- if not ( eq "" .Values.externalRedis.password ) }}
+              value: {{ .Values.externalRedis.password }}
+              {{- else }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.externalRedis.existingSecret }}
+                  key: {{ .Values.externalRedis.existingSecretPasswordKey }}
+              {{- end }}
+            {{- end }}
+*/ -}}
+            {{- if .Values.mda.extraEnvVars }}
+            {{- include "common.tplvalues.render" (dict "value" .Values.mda.extraEnvVars "context" $) | nindent 12 }}
+            {{- end }}
+          envFrom:
+            {{- if .Values.mda.extraEnvVarsCM }}
+            - configMapRef:
+                name: {{ include "common.tplvalues.render" (dict "value" .Values.mda.extraEnvVarsCM "context" $) }}
+            {{- end }}
+            {{- if .Values.mda.extraEnvVarsSecret }}
+            - secretRef:
+                name: {{ include "common.tplvalues.render" (dict "value" .Values.mda.extraEnvVarsSecret "context" $) }}
+            {{- end }}
+            - configMapRef:
+                name: {{ printf "%s-configenv" (include "common.names.fullname" .) | trunc 63 | trimSuffix "-" }}
+          {{- if .Values.mda.resources }}
+          resources: {{- toYaml .Values.mda.resources | nindent 12 }}
+          {{- else if ne .Values.mda.resourcesPreset "none" }}
+          resources: {{- include "common.resources.preset" (dict "type" .Values.mda.resourcesPreset) | nindent 12 }}
+          {{- end }}
+          {{- if .Values.mda.customLivenessProbe }}
+          livenessProbe: {{- include "common.tplvalues.render" (dict "value" .Values.mda.customLivenessProbe "context" $) | nindent 12 }}
+          {{- else if .Values.mda.livenessProbe.enabled }}
+          livenessProbe:
+            tcpSocket:
+              port: 143
+            initialDelaySeconds: {{ .Values.mda.livenessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.mda.livenessProbe.periodSeconds }}
+            timeoutSeconds: {{ .Values.mda.livenessProbe.timeoutSeconds }}
+            successThreshold: {{ .Values.mda.livenessProbe.successThreshold }}
+            failureThreshold: {{ .Values.mda.livenessProbe.failureThreshold }}
+          {{- end }}
+          volumeMounts:
+            - name: mda-run
+              mountPath: /run
+            - name: mda-tmp
+              mountPath: /tmp
+            - name: mda-lib
+              mountPath: /var/lib/dovecot
+            - name: mda-maildata
+              mountPath: /var/mail
+            - name: mda-config
+              mountPath: /etc/dovecot
+              readOnly: true
+            - name: tls-certs
+              mountPath: /media/tls
+              readOnly: true
+          {{- if .Values.mda.extraVolumeMounts }}
+          {{- include "common.tplvalues.render" (dict "value" .Values.mda.extraVolumeMounts "context" $) | nindent 12 }}
+          {{- end }}
+        {{- if .Values.mda.sidecars }}
+        {{- include "common.tplvalues.render" ( dict "value" .Values.mda.sidecars "context" $) | nindent 8 }}
+        {{- end }}
+      volumes:
+        - name: tls-certs
+          secret:
+            items:
+              - key: tls.crt
+                path: mailserver.crt
+              - key: tls.key
+                path: mailserver.key
+              - key: ca.crt
+                path: ca.crt
+            secretName: {{ printf "%s-tls" (tpl .Values.ingress.hostname $) }}
+        - name: mda-run
+          emptyDir: {}
+        - name: mda-tmp
+          emptyDir: {}
+        - name: mda-lib
+          emptyDir: {}
+        - name: mda-config
+          emptyDir: {}
+        - name: mda-maildata
+          {{- if .Values.mda.persistence.enabled }}
+          persistentVolumeClaim:
+            claimName: {{ .Values.mda.persistence.existingClaim | default (include "docker-mailserver.mda" .) }}
+          {{- else }}
+          emptyDir: {}
+          {{- end }}
+        {{- if .Values.mda.extraVolumes }}
+        {{- include "common.tplvalues.render" (dict "value" .Values.mda.extraVolumes "context" $) | nindent 8 }}
+        {{- end }}
