@@ -1,0 +1,219 @@
+---
+
+apiVersion: {{ include "common.capabilities.deployment.apiVersion" . }}
+kind: Deployment
+metadata:
+  name: {{ include "docker-mailserver.filter" . }}
+  namespace: {{ include "common.names.namespace" . | quote }}
+  labels: {{- include "common.labels.standard" ( dict "customLabels" .Values.commonLabels "context" $ ) | nindent 4 }}
+    app.kubernetes.io/component: filter
+  {{- if .Values.commonAnnotations }}
+  annotations: {{- include "common.tplvalues.render" ( dict "value" .Values.commonAnnotations "context" $ ) | nindent 4 }}
+  {{- end }}
+spec:
+  replicas: {{ .Values.filter.replicaCount }}
+  {{- if .Values.filter.updateStrategy }}
+  strategy: {{- toYaml .Values.filter.updateStrategy | nindent 4 }}
+  {{- end }}
+  {{- $podLabels := include "common.tplvalues.merge" ( dict "values" ( list .Values.filter.podLabels .Values.commonLabels ) "context" . ) }}
+  selector:
+    matchLabels: {{- include "common.labels.matchLabels" ( dict "customLabels" $podLabels "context" $ ) | nindent 6 }}
+      app.kubernetes.io/component: filter
+  template:
+    metadata:
+      {{- if .Values.filter.podAnnotations }}
+      annotations: {{- include "common.tplvalues.render" (dict "value" .Values.filter.podAnnotations "context" $) | nindent 8 }}
+      {{- end }}
+      labels: {{- include "common.labels.standard" ( dict "customLabels" $podLabels "context" $ ) | nindent 8 }}
+        app.kubernetes.io/component: filter
+    spec:
+      {{- include "docker-mailserver.imagePullSecrets" . | nindent 6 }}
+      {{- if .Values.filter.hostAliases }}
+      hostAliases: {{- include "common.tplvalues.render" (dict "value" .Values.filter.hostAliases "context" $) | nindent 8 }}
+      {{- end }}
+      {{- if .Values.filter.affinity }}
+      affinity: {{- include "common.tplvalues.render" ( dict "value" .Values.filter.affinity "context" $) | nindent 8 }}
+      {{- else }}
+      affinity:
+        podAffinity: {{- include "common.affinities.pods" (dict "type" .Values.filter.podAffinityPreset "component" "filter" "customLabels" $podLabels "context" $) | nindent 10 }}
+        podAntiAffinity: {{- include "common.affinities.pods" (dict "type" .Values.filter.podAntiAffinityPreset "component" "filter" "customLabels" $podLabels "context" $) | nindent 10 }}
+        nodeAffinity: {{- include "common.affinities.nodes" (dict "type" .Values.filter.nodeAffinityPreset.type "key" .Values.filter.nodeAffinityPreset.key "values" .Values.filter.nodeAffinityPreset.values) | nindent 10 }}
+      {{- end }}
+      {{- if .Values.filter.nodeSelector }}
+      nodeSelector: {{- include "common.tplvalues.render" ( dict "value" .Values.filter.nodeSelector "context" $) | nindent 8 }}
+      {{- end }}
+      {{- if .Values.filter.tolerations }}
+      tolerations: {{- include "common.tplvalues.render" (dict "value" .Values.filter.tolerations "context" .) | nindent 8 }}
+      {{- end }}
+      {{- if .Values.filter.schedulerName }}
+      schedulerName: {{ .Values.filter.schedulerName }}
+      {{- end }}
+      {{- if .Values.filter.topologySpreadConstraints }}
+      topologySpreadConstraints: {{- include "common.tplvalues.render" (dict "value" .Values.controller.topologySpreadConstraints "context" .) | nindent 8 }}
+      {{- end }}
+      {{- if .Values.filter.priorityClassName }}
+      priorityClassName: {{ .Values.filter.priorityClassName | quote }}
+      {{- end }}
+      {{- if .Values.filter.runtimeClassName }}
+      runtimeClassName: {{ .Values.filter.runtimeClassName }}
+      {{- end }}
+      {{- if .Values.filter.podSecurityContext.enabled }}
+      securityContext: {{- include "common.compatibility.renderSecurityContext" (dict "secContext" .Values.filter.podSecurityContext "context" $) | nindent 8 }}
+      {{- end }}
+      initContainers:
+        - name: copy-config-to-volume
+          image: {{ include "docker-mailserver.filter.image" . }}
+          imagePullPolicy: {{ .Values.filter.image.pullPolicy }}
+          {{- if .Values.filter.containerSecurityContext.enabled }}
+          securityContext: {{- include "common.compatibility.renderSecurityContext" (dict "secContext" .Values.filter.containerSecurityContext "context" $) | nindent 12 }}
+          {{- end }}
+          command: ["/bin/sh"]
+          args:
+            - -ec
+            - |
+              cp -r /etc/rspamd/* /target/
+              echo "password = \"{{`{{$.Env.REDIS_PASSWORD}}`}}\";" >> /target/override.d/redis.conf.templ
+              cat /target/override.d/redis.conf.templ
+          volumeMounts:
+            - name: filter-config
+              mountPath: /target
+        - name: prepare-config
+          image: {{ include "docker-mailserver.filter.image" . }}
+          imagePullPolicy: {{ .Values.filter.image.pullPolicy }}
+          {{- if .Values.filter.containerSecurityContext.enabled }}
+          securityContext: {{- include "common.compatibility.renderSecurityContext" (dict "secContext" .Values.filter.containerSecurityContext "context" $) | nindent 12 }}
+          {{- end }}
+          command:
+            - /usr/local/bin/dockerize
+          args:
+            - -template
+            - /etc/rspamd/local.d/antivirus.conf.templ:/etc/rspamd/local.d/antivirus.conf
+            - -template
+            - /etc/rspamd/local.d/options.inc.templ:/etc/rspamd/local.d/options.inc
+            - -template
+            - /etc/rspamd/local.d/worker-controller.inc.templ:/etc/rspamd/local.d/worker-controller.inc
+            - -template
+            - /etc/rspamd/override.d/redis.conf.templ:/etc/rspamd/override.d/redis.conf
+            - -template
+            - /etc/rspamd/local.d/classifier-bayes.conf.templ:/etc/rspamd/local.d/classifier-bayes.conf
+            - /bin/true
+          envFrom:
+            - configMapRef:
+                name: {{ printf "%s-configenv" (include "common.names.fullname" .) | trunc 63 | trimSuffix "-" }}
+          env:
+            {{- if and .Values.redis.enabled (include "docker-mailserver.redis.auth.enabled" .) }}
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "docker-mailserver.redis.secretName" . }}
+                  key: {{ include "docker-mailserver.redis.secretPasswordKey" . }}
+            {{- else if .Values.externalRedis.enabled }}
+            - name: REDIS_PASSWORD
+              {{- if not ( eq "" .Values.externalRedis.password ) }}
+              value: {{ .Values.externalRedis.password }}
+              {{- else }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.externalRedis.existingSecret }}
+                  key: {{ .Values.externalRedis.existingSecretPasswordKey }}
+              {{- end }}
+            {{- end }}
+          volumeMounts:
+            - name: filter-config
+              mountPath: /etc/rspamd
+        - name: wait-for-resources
+          image: {{ include "docker-mailserver.mda.image" . }}
+          imagePullPolicy: {{ .Values.mda.image.pullPolicy }}
+          {{- if .Values.mda.containerSecurityContext.enabled }}
+          securityContext: {{- include "common.compatibility.renderSecurityContext" (dict "secContext" .Values.mda.containerSecurityContext "context" $) | nindent 12 }}
+          {{- end }}
+          command:
+            - /usr/local/bin/dockerize
+          args:
+            - -wait
+            - tcp://{{ include "docker-mailserver.redisHost" . }}:{{ include "docker-mailserver.redisPort" . }}
+            - -timeout
+            - 20s
+            - /bin/true
+          envFrom:
+            - configMapRef:
+                name: {{ printf "%s-configenv" (include "common.names.fullname" .) | trunc 63 | trimSuffix "-" }}
+      containers:
+        - name: rspamd
+          image: {{ include "docker-mailserver.filter.image" . }}
+          imagePullPolicy: {{ .Values.filter.image.pullPolicy }}
+          {{- if .Values.filter.lifecycleHooks }}
+          lifecycle: {{- include "common.tplvalues.render" (dict "value" .Values.filter.lifecycleHooks "context" $) | nindent 12 }}
+          {{- end }}
+          {{- if .Values.filter.containerSecurityContext.enabled }}
+          securityContext: {{- include "common.compatibility.renderSecurityContext" (dict "secContext" .Values.filter.containerSecurityContext "context" $) | nindent 12 }}
+          {{- end }}
+          command:
+            - /usr/bin/rspamd
+          args:
+            - -c
+            - /etc/rspamd/rspamd.conf
+            - -f
+          ports:
+            - name: controller
+              containerPort: 11334
+              protocol: TCP
+            - name: worker
+              containerPort: 11332
+              protocol: TCP
+          env:
+            {{- if .Values.filter.extraEnvVars }}
+            {{- include "common.tplvalues.render" (dict "value" .Values.filter.extraEnvVars "context" $) | nindent 12 }}
+            {{- end }}
+          envFrom:
+            {{- if .Values.filter.extraEnvVarsCM }}
+            - configMapRef:
+                name: {{ include "common.tplvalues.render" (dict "value" .Values.filter.extraEnvVarsCM "context" $) }}
+            {{- end }}
+            {{- if .Values.filter.extraEnvVarsSecret }}
+            - secretRef:
+                name: {{ include "common.tplvalues.render" (dict "value" .Values.filter.extraEnvVarsSecret "context" $) }}
+            {{- end }}
+            - configMapRef:
+                name: {{ printf "%s-configenv" (include "common.names.fullname" .) | trunc 63 | trimSuffix "-" }}
+          {{- if .Values.filter.resources }}
+          resources: {{- toYaml .Values.filter.resources | nindent 12 }}
+          {{- else if ne .Values.filter.resourcesPreset "none" }}
+          resources: {{- include "common.resources.preset" (dict "type" .Values.filter.resourcesPreset) | nindent 12 }}
+          {{- end }}
+          {{- if .Values.filter.customLivenessProbe }}
+          livenessProbe: {{- include "common.tplvalues.render" (dict "value" .Values.filter.customLivenessProbe "context" $) | nindent 12 }}
+          {{- else if .Values.filter.livenessProbe.enabled }}
+          livenessProbe:
+            tcpSocket:
+              port: 11332
+            initialDelaySeconds: {{ .Values.filter.livenessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.filter.livenessProbe.periodSeconds }}
+            timeoutSeconds: {{ .Values.filter.livenessProbe.timeoutSeconds }}
+            successThreshold: {{ .Values.filter.livenessProbe.successThreshold }}
+            failureThreshold: {{ .Values.filter.livenessProbe.failureThreshold }}
+          {{- end }}
+          volumeMounts:
+            - name: filter-config
+              mountPath: /etc/rspamd
+              readOnly: true
+            - name: filter-tmp
+              mountPath: /tmp
+            - name: filter-rspamd
+              mountPath: /var/lib/rspamd
+          {{- if .Values.filter.extraVolumeMounts }}
+          {{- include "common.tplvalues.render" (dict "value" .Values.filter.extraVolumeMounts "context" $) | nindent 12 }}
+          {{- end }}
+        {{- if .Values.filter.sidecars }}
+        {{- include "common.tplvalues.render" ( dict "value" .Values.filter.sidecars "context" $) | nindent 8 }}
+        {{- end }}
+      volumes:
+        - name: filter-config
+          emptyDir: {}
+        - name: filter-tmp
+          emptyDir: {}
+        - name: filter-rspamd
+          emptyDir: {}
+        {{- if .Values.filter.extraVolumes }}
+        {{- include "common.tplvalues.render" (dict "value" .Values.filter.extraVolumes "context" $) | nindent 8 }}
+        {{- end }}

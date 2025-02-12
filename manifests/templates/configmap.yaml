@@ -15,6 +15,9 @@ data:
     MYSQL_HOST: {{ include "docker-mailserver.databaseHost" . | quote }}
     MYSQL_PORT: {{ include "docker-mailserver.databasePort" . | quote }}
 
+    REDIS_HOST: {{ include "docker-mailserver.redisHost" . | quote }}
+    REDIS_PORT: {{ include "docker-mailserver.redisPort" . | quote }}
+
     MAILNAME: mail.example.com
     POSTMASTER: postmaster@example.com
 
@@ -26,7 +29,9 @@ data:
 
     ENABLE_IMAP: "true"
     ENABLE_POP3: "true"
-    ENABLE_VIRUS: "true"
+
+    FILTER_VIRUS: "true"
+    FILTER_VIRUS_HOST: {{ include "docker-mailserver.virus" . | quote }}
 
     ENABLE_FTS: "true"
     FTS_ARGS: partial=3 full=20 verbose=0 lowmemory=256
