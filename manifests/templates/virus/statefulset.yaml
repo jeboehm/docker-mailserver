@@ -1,7 +1,7 @@
 ---
 
 apiVersion: {{ include "common.capabilities.deployment.apiVersion" . }}
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: {{ include "docker-mailserver.virus" . }}
   namespace: {{ include "common.names.namespace" . | quote }}
@@ -13,7 +13,7 @@ metadata:
 spec:
   replicas: {{ .Values.virus.replicaCount }}
   {{- if .Values.virus.updateStrategy }}
-  strategy: {{- toYaml .Values.virus.updateStrategy | nindent 4 }}
+  updateStrategy: {{- toYaml .Values.virus.updateStrategy | nindent 4 }}
   {{- end }}
   {{- $podLabels := include "common.tplvalues.merge" ( dict "values" ( list .Values.virus.podLabels .Values.commonLabels ) "context" . ) }}
   selector:

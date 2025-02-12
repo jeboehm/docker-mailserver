@@ -1,7 +1,7 @@
 ---
 
 apiVersion: {{ include "common.capabilities.deployment.apiVersion" . }}
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: {{ include "docker-mailserver.filter" . }}
   namespace: {{ include "common.names.namespace" . | quote }}
@@ -13,7 +13,7 @@ metadata:
 spec:
   replicas: {{ .Values.filter.replicaCount }}
   {{- if .Values.filter.updateStrategy }}
-  strategy: {{- toYaml .Values.filter.updateStrategy | nindent 4 }}
+  updateStrategy: {{- toYaml .Values.filter.updateStrategy | nindent 4 }}
   {{- end }}
   {{- $podLabels := include "common.tplvalues.merge" ( dict "values" ( list .Values.filter.podLabels .Values.commonLabels ) "context" . ) }}
   selector:
