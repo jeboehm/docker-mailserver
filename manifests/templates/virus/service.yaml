@@ -1,0 +1,49 @@
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "docker-mailserver.virus" . }}
+  namespace: {{ include "common.names.namespace" . | quote }}
+  labels: {{- include "common.labels.standard" ( dict "customLabels" .Values.commonLabels "context" $ ) | nindent 4 }}
+    app.kubernetes.io/component: virus
+  {{- if or .Values.commonAnnotations .Values.virus.service.annotations }}
+  {{- $annotations := include "common.tplvalues.merge" ( dict "values" ( list .Values.virus.service.annotations .Values.commonAnnotations ) "context" . ) }}
+  annotations: {{- include "common.tplvalues.render" ( dict "value" $annotations "context" $) | nindent 4 }}
+  {{- end }}
+spec:
+  type: {{ .Values.virus.service.type }}
+  {{- if and .Values.virus.service.clusterIP (eq .Values.virus.service.type "ClusterIP") }}
+  clusterIP: {{ .Values.virus.service.clusterIP }}
+  {{- end }}
+  {{- if (or (eq .Values.virus.service.type "LoadBalancer") (eq .Values.virus.service.type "NodePort")) }}
+  externalTrafficPolicy: {{ .Values.virus.service.externalTrafficPolicy | quote }}
+  {{- end }}
+  {{- if eq .Values.virus.service.type "LoadBalancer" }}
+  loadBalancerSourceRanges: {{ .Values.virus.service.loadBalancerSourceRanges }}
+  {{- end }}
+  {{- if (and (eq .Values.virus.service.type "LoadBalancer") (not (empty .Values.virus.service.loadBalancerIP))) }}
+  loadBalancerIP: {{ .Values.virus.service.loadBalancerIP }}
+  {{- end }}
+  {{- if .Values.virus.service.sessionAffinity }}
+  sessionAffinity: {{ .Values.virus.service.sessionAffinity }}
+  {{- end }}
+  {{- if .Values.virus.service.sessionAffinityConfig }}
+  sessionAffinityConfig: {{- include "common.tplvalues.render" (dict "value" .Values.virus.service.sessionAffinityConfig "context" $) | nindent 4 }}
+  {{- end }}
+  ports:
+    - name: clamav
+      port: {{ coalesce .Values.virus.service.port .Values.virus.service.ports.clamav }}
+      targetPort: 3310
+      protocol: TCP
+      {{- if (and (or (eq .Values.virus.service.type "NodePort") (eq .Values.virus.service.type "LoadBalancer")) (not (empty (coalesce .Values.virus.service.nodePort .Values.virus.service.nodePorts.clamav)))) }}
+      nodePort: {{ coalesce .Values.virus.service.nodePort .Values.virus.service.nodePorts.clamav }}
+      {{- else if eq .Values.virus.service.type "ClusterIP" }}
+      nodePort: null
+      {{- end }}
+    {{- if .Values.virus.service.extraPorts }}
+    {{- include "common.tplvalues.render" (dict "value" .Values.virus.service.extraPorts "context" $) | nindent 4 }}
+    {{- end }}
+  {{- $podLabels := include "common.tplvalues.merge" ( dict "values" ( list .Values.virus.podLabels .Values.commonLabels ) "context" . ) }}
+  selector: {{- include "common.labels.matchLabels" ( dict "customLabels" $podLabels "context" $ ) | nindent 4 }}
+    app.kubernetes.io/component: virus

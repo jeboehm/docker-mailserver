@@ -73,7 +73,6 @@ spec:
             - |
               cp -r /etc/rspamd/* /target/
               echo "password = \"{{`{{$.Env.REDIS_PASSWORD}}`}}\";" >> /target/override.d/redis.conf.templ
-              cat /target/override.d/redis.conf.templ
           volumeMounts:
             - name: filter-config
               mountPath: /target
@@ -132,6 +131,8 @@ spec:
           args:
             - -wait
             - tcp://{{ include "docker-mailserver.redisHost" . }}:{{ include "docker-mailserver.redisPort" . }}
+            - -wait
+            - tcp://{{ include "docker-mailserver.virus" . }}:3310
             - -timeout
             - 20s
             - /bin/true
