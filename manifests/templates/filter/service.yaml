@@ -1,0 +1,58 @@
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "docker-mailserver.filter" . }}
+  namespace: {{ include "common.names.namespace" . | quote }}
+  labels: {{- include "common.labels.standard" ( dict "customLabels" .Values.commonLabels "context" $ ) | nindent 4 }}
+    app.kubernetes.io/component: filter
+  {{- if or .Values.commonAnnotations .Values.filter.service.annotations }}
+  {{- $annotations := include "common.tplvalues.merge" ( dict "values" ( list .Values.filter.service.annotations .Values.commonAnnotations ) "context" . ) }}
+  annotations: {{- include "common.tplvalues.render" ( dict "value" $annotations "context" $) | nindent 4 }}
+  {{- end }}
+spec:
+  type: {{ .Values.filter.service.type }}
+  {{- if and .Values.filter.service.clusterIP (eq .Values.filter.service.type "ClusterIP") }}
+  clusterIP: {{ .Values.filter.service.clusterIP }}
+  {{- end }}
+  {{- if (or (eq .Values.filter.service.type "LoadBalancer") (eq .Values.filter.service.type "NodePort")) }}
+  externalTrafficPolicy: {{ .Values.filter.service.externalTrafficPolicy | quote }}
+  {{- end }}
+  {{- if eq .Values.filter.service.type "LoadBalancer" }}
+  loadBalancerSourceRanges: {{ .Values.filter.service.loadBalancerSourceRanges }}
+  {{- end }}
+  {{- if (and (eq .Values.filter.service.type "LoadBalancer") (not (empty .Values.filter.service.loadBalancerIP))) }}
+  loadBalancerIP: {{ .Values.filter.service.loadBalancerIP }}
+  {{- end }}
+  {{- if .Values.filter.service.sessionAffinity }}
+  sessionAffinity: {{ .Values.filter.service.sessionAffinity }}
+  {{- end }}
+  {{- if .Values.filter.service.sessionAffinityConfig }}
+  sessionAffinityConfig: {{- include "common.tplvalues.render" (dict "value" .Values.filter.service.sessionAffinityConfig "context" $) | nindent 4 }}
+  {{- end }}
+  ports:
+    - name: controller
+      port: {{ coalesce .Values.filter.service.port .Values.filter.service.ports.controller }}
+      targetPort: 11334
+      protocol: TCP
+      {{- if (and (or (eq .Values.filter.service.type "NodePort") (eq .Values.filter.service.type "LoadBalancer")) (not (empty (coalesce .Values.filter.service.nodePort .Values.filter.service.nodePorts.controller)))) }}
+      nodePort: {{ coalesce .Values.filter.service.nodePort .Values.filter.service.nodePorts.controller }}
+      {{- else if eq .Values.filter.service.type "ClusterIP" }}
+      nodePort: null
+      {{- end }}
+    - name: worker
+      port: {{ coalesce .Values.filter.service.port .Values.filter.service.ports.worker }}
+      targetPort: 11332
+      protocol: TCP
+      {{- if (and (or (eq .Values.filter.service.type "NodePort") (eq .Values.filter.service.type "LoadBalancer")) (not (empty (coalesce .Values.filter.service.nodePort .Values.filter.service.nodePorts.worker)))) }}
+      nodePort: {{ coalesce .Values.filter.service.nodePort .Values.filter.service.nodePorts.worker }}
+      {{- else if eq .Values.filter.service.type "ClusterIP" }}
+      nodePort: null
+      {{- end }}
+    {{- if .Values.filter.service.extraPorts }}
+    {{- include "common.tplvalues.render" (dict "value" .Values.filter.service.extraPorts "context" $) | nindent 4 }}
+    {{- end }}
+  {{- $podLabels := include "common.tplvalues.merge" ( dict "values" ( list .Values.filter.podLabels .Values.commonLabels ) "context" . ) }}
+  selector: {{- include "common.labels.matchLabels" ( dict "customLabels" $podLabels "context" $ ) | nindent 4 }}
+    app.kubernetes.io/component: filter

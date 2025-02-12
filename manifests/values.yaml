@@ -448,6 +448,60 @@ mda:
   ##
   podLabels: {}
   ## @section Traffic Exposure Parameters
+  ##
+  internalService:
+    ## @param controller.service.type Argo CD service type
+    ##
+    type: ClusterIP
+    ## @param controller.service.ports.metrics Argo CD application controller service port
+    ##
+    ports:
+      lmtp: 2003
+      auth: 2004
+      managesieve: 4190
+    ## Node ports to expose
+    ## @param controller.service.nodePorts.metrics Node port for Argo CD application controller service
+    ## NOTE: choose port between <30000-32767>
+    ##
+    nodePorts:
+      controller: ""
+      worker: ""
+    ## @param controller.service.clusterIP Argo CD application controller service Cluster IP
+    ## e.g.:
+    ## clusterIP: None
+    ##
+    clusterIP: ""
+    ## @param controller.service.loadBalancerIP Argo CD application controller service Load Balancer IP
+    ## ref: https://kubernetes.io/docs/concepts/services-networking/service/#type-loadbalancer
+    ##
+    loadBalancerIP: ""
+    ## @param controller.service.loadBalancerSourceRanges Argo CD application controller service Load Balancer sources
+    ## ref: https://kubernetes.io/docs/tasks/access-application-cluster/configure-cloud-provider-firewall/#restrict-access-for-loadbalancer-service
+    ## e.g:
+    ## loadBalancerSourceRanges:
+    ##   - 10.10.10.0/24
+    ##
+    loadBalancerSourceRanges: []
+    ## @param controller.service.externalTrafficPolicy Argo CD application controller service external traffic policy
+    ## ref https://kubernetes.io/docs/tasks/access-application-cluster/create-external-load-balancer/#preserving-the-client-source-ip
+    ##
+    externalTrafficPolicy: Cluster
+    ## @param controller.service.annotations Additional custom annotations for Argo CD application controller service
+    ##
+    annotations: {}
+    ## @param controller.service.extraPorts Extra ports to expose (normally used with the `sidecar` value)
+    ##
+    extraPorts: []
+    ## @param controller.service.sessionAffinity Session Affinity for Kubernetes service, can be "None" or "ClientIP"
+    ## If "ClientIP", consecutive client requests will be directed to the same Pod
+    ## ref: https://kubernetes.io/docs/concepts/services-networking/service/#virtual-ips-and-service-proxies
+    ##
+    sessionAffinity: None
+    ## @param controller.service.sessionAffinityConfig Additional settings for the sessionAffinity
+    ## sessionAffinityConfig:
+    ##   clientIP:
+    ##     timeoutSeconds: 300
+    sessionAffinityConfig: {}
 
   ## Kubernetes configuration. For minikube, set this to NodePort, elsewhere use LoadBalancer
   ##
@@ -1048,6 +1102,59 @@ filter:
   ##
   podLabels: {}
   ## @section Traffic Exposure Parameters
+  ##
+  service:
+    ## @param controller.service.type Argo CD service type
+    ##
+    type: ClusterIP
+    ## @param controller.service.ports.metrics Argo CD application controller service port
+    ##
+    ports:
+      controller: 11334
+      worker: 11332
+    ## Node ports to expose
+    ## @param controller.service.nodePorts.metrics Node port for Argo CD application controller service
+    ## NOTE: choose port between <30000-32767>
+    ##
+    nodePorts:
+      controller: ""
+      worker: ""
+    ## @param controller.service.clusterIP Argo CD application controller service Cluster IP
+    ## e.g.:
+    ## clusterIP: None
+    ##
+    clusterIP: ""
+    ## @param controller.service.loadBalancerIP Argo CD application controller service Load Balancer IP
+    ## ref: https://kubernetes.io/docs/concepts/services-networking/service/#type-loadbalancer
+    ##
+    loadBalancerIP: ""
+    ## @param controller.service.loadBalancerSourceRanges Argo CD application controller service Load Balancer sources
+    ## ref: https://kubernetes.io/docs/tasks/access-application-cluster/configure-cloud-provider-firewall/#restrict-access-for-loadbalancer-service
+    ## e.g:
+    ## loadBalancerSourceRanges:
+    ##   - 10.10.10.0/24
+    ##
+    loadBalancerSourceRanges: []
+    ## @param controller.service.externalTrafficPolicy Argo CD application controller service external traffic policy
+    ## ref https://kubernetes.io/docs/tasks/access-application-cluster/create-external-load-balancer/#preserving-the-client-source-ip
+    ##
+    externalTrafficPolicy: Cluster
+    ## @param controller.service.annotations Additional custom annotations for Argo CD application controller service
+    ##
+    annotations: {}
+    ## @param controller.service.extraPorts Extra ports to expose (normally used with the `sidecar` value)
+    ##
+    extraPorts: []
+    ## @param controller.service.sessionAffinity Session Affinity for Kubernetes service, can be "None" or "ClientIP"
+    ## If "ClientIP", consecutive client requests will be directed to the same Pod
+    ## ref: https://kubernetes.io/docs/concepts/services-networking/service/#virtual-ips-and-service-proxies
+    ##
+    sessionAffinity: None
+    ## @param controller.service.sessionAffinityConfig Additional settings for the sessionAffinity
+    ## sessionAffinityConfig:
+    ##   clientIP:
+    ##     timeoutSeconds: 300
+    sessionAffinityConfig: {}
 
 ## MariaDB chart configuration
 ## https://github.com/bitnami/charts/blob/main/bitnami/mariadb/values.yaml
