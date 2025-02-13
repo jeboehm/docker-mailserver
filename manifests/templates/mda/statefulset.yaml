@@ -214,7 +214,7 @@ spec:
             - name: mda-lib
               mountPath: /var/lib/dovecot
             - name: mda-maildata
-              mountPath: /var/mail
+              mountPath: /var/vmail
             - name: mda-config
               mountPath: /etc/dovecot
               readOnly: true
@@ -247,9 +247,9 @@ spec:
         - name: mda-config
           emptyDir: {}
         - name: mda-maildata
-          {{- if .Values.mda.persistence.enabled }}
+          {{- if .Values.persistence.vmail.enabled }}
           persistentVolumeClaim:
-            claimName: {{ .Values.mda.persistence.existingClaim | default (include "docker-mailserver.mda" .) }}
+            claimName: {{ .Values.persistence.vmail.existingClaim | default (include "docker-mailserver.vmail" .) }}
           {{- else }}
           emptyDir: {}
           {{- end }}

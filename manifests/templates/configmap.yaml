@@ -35,6 +35,7 @@ data:
 
     FILTER_VIRUS: "true"
     FILTER_VIRUS_HOST: {{ include "docker-mailserver.virus" . | quote }}
+    FILTER_HOST: {{ include "docker-mailserver.filter" . | quote }}
 
     ENABLE_FTS: "true"
     FTS_ARGS: partial=3 full=20 verbose=0 lowmemory=256

@@ -1,0 +1,377 @@
+---
+
+apiVersion: {{ include "common.capabilities.deployment.apiVersion" . }}
+kind: StatefulSet
+metadata:
+  name: {{ include "docker-mailserver.web" . }}
+  namespace: {{ include "common.names.namespace" . | quote }}
+  labels: {{- include "common.labels.standard" ( dict "customLabels" .Values.commonLabels "context" $ ) | nindent 4 }}
+    app.kubernetes.io/component: web
+  {{- if .Values.commonAnnotations }}
+  annotations: {{- include "common.tplvalues.render" ( dict "value" .Values.commonAnnotations "context" $ ) | nindent 4 }}
+  {{- end }}
+spec:
+  replicas: {{ .Values.web.replicaCount }}
+  {{- if .Values.web.updateStrategy }}
+  updateStrategy: {{- toYaml .Values.web.updateStrategy | nindent 4 }}
+  {{- end }}
+  {{- $podLabels := include "common.tplvalues.merge" ( dict "values" ( list .Values.web.podLabels .Values.commonLabels ) "context" . ) }}
+  selector:
+    matchLabels: {{- include "common.labels.matchLabels" ( dict "customLabels" $podLabels "context" $ ) | nindent 6 }}
+      app.kubernetes.io/component: web
+  template:
+    metadata:
+      {{- if .Values.web.podAnnotations }}
+      annotations: {{- include "common.tplvalues.render" (dict "value" .Values.web.podAnnotations "context" $) | nindent 8 }}
+      {{- end }}
+      labels: {{- include "common.labels.standard" ( dict "customLabels" $podLabels "context" $ ) | nindent 8 }}
+        app.kubernetes.io/component: web
+    spec:
+      {{- include "docker-mailserver.imagePullSecrets" . | nindent 6 }}
+      {{- if .Values.web.hostAliases }}
+      hostAliases: {{- include "common.tplvalues.render" (dict "value" .Values.web.hostAliases "context" $) | nindent 8 }}
+      {{- end }}
+      {{- if .Values.web.affinity }}
+      affinity: {{- include "common.tplvalues.render" ( dict "value" .Values.web.affinity "context" $) | nindent 8 }}
+      {{- else }}
+      affinity:
+        podAffinity: {{- include "common.affinities.pods" (dict "type" .Values.web.podAffinityPreset "component" "web" "customLabels" $podLabels "context" $) | nindent 10 }}
+        podAntiAffinity: {{- include "common.affinities.pods" (dict "type" .Values.web.podAntiAffinityPreset "component" "web" "customLabels" $podLabels "context" $) | nindent 10 }}
+        nodeAffinity: {{- include "common.affinities.nodes" (dict "type" .Values.web.nodeAffinityPreset.type "key" .Values.web.nodeAffinityPreset.key "values" .Values.web.nodeAffinityPreset.values) | nindent 10 }}
+      {{- end }}
+      {{- if .Values.web.nodeSelector }}
+      nodeSelector: {{- include "common.tplvalues.render" ( dict "value" .Values.web.nodeSelector "context" $) | nindent 8 }}
+      {{- end }}
+      {{- if .Values.web.tolerations }}
+      tolerations: {{- include "common.tplvalues.render" (dict "value" .Values.web.tolerations "context" .) | nindent 8 }}
+      {{- end }}
+      {{- if .Values.web.schedulerName }}
+      schedulerName: {{ .Values.web.schedulerName }}
+      {{- end }}
+      {{- if .Values.web.topologySpreadConstraints }}
+      topologySpreadConstraints: {{- include "common.tplvalues.render" (dict "value" .Values.controller.topologySpreadConstraints "context" .) | nindent 8 }}
+      {{- end }}
+      {{- if .Values.web.priorityClassName }}
+      priorityClassName: {{ .Values.web.priorityClassName | quote }}
+      {{- end }}
+      {{- if .Values.web.runtimeClassName }}
+      runtimeClassName: {{ .Values.web.runtimeClassName }}
+      {{- end }}
+      {{- if .Values.web.podSecurityContext.enabled }}
+      securityContext: {{- include "common.compatibility.renderSecurityContext" (dict "secContext" .Values.web.podSecurityContext "context" $) | nindent 8 }}
+      {{- end }}
+      initContainers:
+        - name: copy-config-to-volume
+          image: {{ include "docker-mailserver.web.image" . }}
+          imagePullPolicy: {{ .Values.web.image.pullPolicy }}
+          {{- if .Values.web.containerSecurityContext.enabled }}
+          securityContext: {{- include "common.compatibility.renderSecurityContext" (dict "secContext" .Values.web.containerSecurityContext "context" $) | nindent 12 }}
+          {{- end }}
+          command: ["/bin/sh"]
+          args:
+            - -ec
+            - |
+              cp -r /etc/nginx/* /target-nginx/
+              cp -r /var/www/html/autoconfig/* /target-autoconfig/
+          volumeMounts:
+            - name: web-autoconfig
+              mountPath: /target-autoconfig
+            - name: web-nginx
+              mountPath: /target-nginx
+        - name: prepare-config
+          image: {{ include "docker-mailserver.web.image" . }}
+          imagePullPolicy: {{ .Values.web.image.pullPolicy }}
+          {{- if .Values.web.containerSecurityContext.enabled }}
+          securityContext: {{- include "common.compatibility.renderSecurityContext" (dict "secContext" .Values.web.containerSecurityContext "context" $) | nindent 12 }}
+          {{- end }}
+          command:
+            - /usr/local/bin/dockerize
+          args:
+            - -template
+            - /etc/nginx/nginx.conf.templ:/etc/nginx/nginx.conf
+            - -template
+            - /var/www/html/autoconfig/config-v1.1.xml.templ:/var/www/html/autoconfig/config-v1.1.xml
+            - /bin/true
+          envFrom:
+            - configMapRef:
+                name: {{ printf "%s-configenv" (include "common.names.fullname" .) | trunc 63 | trimSuffix "-" }}
+          env:
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "docker-mailserver.databaseSecretName" . }}
+                  key: mariadb-password
+            {{- if and .Values.redis.enabled (include "docker-mailserver.redis.auth.enabled" .) }}
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "docker-mailserver.redis.secretName" . }}
+                  key: {{ include "docker-mailserver.redis.secretPasswordKey" . }}
+            {{- else if .Values.externalRedis.enabled }}
+            - name: REDIS_PASSWORD
+              {{- if not ( eq "" .Values.externalRedis.password ) }}
+              value: {{ .Values.externalRedis.password }}
+              {{- else }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.externalRedis.existingSecret }}
+                  key: {{ .Values.externalRedis.existingSecretPasswordKey }}
+              {{- end }}
+            {{- end }}
+          volumeMounts:
+            - name: web-autoconfig
+              mountPath: /var/www/html/autoconfig
+            - name: web-nginx
+              mountPath: /etc/nginx
+        - name: wait-for-resources
+          image: {{ include "docker-mailserver.web.image" . }}
+          imagePullPolicy: {{ .Values.web.image.pullPolicy }}
+          {{- if .Values.web.containerSecurityContext.enabled }}
+          securityContext: {{- include "common.compatibility.renderSecurityContext" (dict "secContext" .Values.web.containerSecurityContext "context" $) | nindent 12 }}
+          {{- end }}
+          command:
+            - /usr/local/bin/dockerize
+          args:
+            - -wait
+            - tcp://{{ include "docker-mailserver.redisHost" . }}:{{ include "docker-mailserver.redisPort" . }}
+            - -wait
+            - tcp://{{ include "docker-mailserver.databaseHost" . }}:{{ include "docker-mailserver.databasePort" . }}
+            - -wait
+            - tcp://{{ include "docker-mailserver.filter" . }}:11332
+            - -timeout
+            - 20s
+            - /bin/true
+          envFrom:
+            - configMapRef:
+                name: {{ printf "%s-configenv" (include "common.names.fullname" .) | trunc 63 | trimSuffix "-" }}
+        - name: check-database
+          image: {{ include "docker-mailserver.web.image" . }}
+          imagePullPolicy: {{ .Values.web.image.pullPolicy }}
+          {{- if .Values.web.containerSecurityContext.enabled }}
+          securityContext: {{- include "common.compatibility.renderSecurityContext" (dict "secContext" .Values.web.containerSecurityContext "context" $) | nindent 12 }}
+          {{- end }}
+          command: ["/bin/sh"]
+          args:
+            - -ec
+            - |
+              cd /var/www/html/webmail
+              bin/updatedb.sh --dir="/var/www/html/webmail/SQL" --package=roundcube
+              /opt/manager/bin/console dkim:refresh
+          envFrom:
+            - configMapRef:
+                name: {{ printf "%s-configenv" (include "common.names.fullname" .) | trunc 63 | trimSuffix "-" }}
+          env:
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "docker-mailserver.databaseSecretName" . }}
+                  key: mariadb-password
+            {{- if and .Values.redis.enabled (include "docker-mailserver.redis.auth.enabled" .) }}
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "docker-mailserver.redis.secretName" . }}
+                  key: {{ include "docker-mailserver.redis.secretPasswordKey" . }}
+            {{- else if .Values.externalRedis.enabled }}
+            - name: REDIS_PASSWORD
+              {{- if not ( eq "" .Values.externalRedis.password ) }}
+              value: {{ .Values.externalRedis.password }}
+              {{- else }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.externalRedis.existingSecret }}
+                  key: {{ .Values.externalRedis.existingSecretPasswordKey }}
+              {{- end }}
+            {{- end }}
+          volumeMounts:
+            - name: web-autoconfig
+              mountPath: /var/www/html/autoconfig
+            - name: web-nginx
+              mountPath: /etc/nginx
+            - name: web-dkim
+              mountPath: /media/dkim
+      containers:
+        - name: php-fpm
+          image: {{ include "docker-mailserver.web.image" . }}
+          imagePullPolicy: {{ .Values.web.image.pullPolicy }}
+          {{- if .Values.web.lifecycleHooks }}
+          lifecycle: {{- include "common.tplvalues.render" (dict "value" .Values.web.lifecycleHooks "context" $) | nindent 12 }}
+          {{- end }}
+          {{- if .Values.web.containerSecurityContext.enabled }}
+          securityContext: {{- include "common.compatibility.renderSecurityContext" (dict "secContext" .Values.web.containerSecurityContext "context" $) | nindent 12 }}
+          {{- end }}
+          command:
+            - /usr/local/sbin/php-fpm
+          ports:
+            - name: php-fpm
+              containerPort: 9000
+              protocol: TCP
+          env:
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "docker-mailserver.databaseSecretName" . }}
+                  key: mariadb-password
+            {{- if and .Values.redis.enabled (include "docker-mailserver.redis.auth.enabled" .) }}
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "docker-mailserver.redis.secretName" . }}
+                  key: {{ include "docker-mailserver.redis.secretPasswordKey" . }}
+            {{- else if .Values.externalRedis.enabled }}
+            - name: REDIS_PASSWORD
+              {{- if not ( eq "" .Values.externalRedis.password ) }}
+              value: {{ .Values.externalRedis.password }}
+              {{- else }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.externalRedis.existingSecret }}
+                  key: {{ .Values.externalRedis.existingSecretPasswordKey }}
+              {{- end }}
+            {{- end }}
+            {{- if .Values.web.extraEnvVars }}
+            {{- include "common.tplvalues.render" (dict "value" .Values.web.extraEnvVars "context" $) | nindent 12 }}
+            {{- end }}
+          envFrom:
+            {{- if .Values.web.extraEnvVarsCM }}
+            - configMapRef:
+                name: {{ include "common.tplvalues.render" (dict "value" .Values.web.extraEnvVarsCM "context" $) }}
+            {{- end }}
+            {{- if .Values.web.extraEnvVarsSecret }}
+            - secretRef:
+                name: {{ include "common.tplvalues.render" (dict "value" .Values.web.extraEnvVarsSecret "context" $) }}
+            {{- end }}
+            - configMapRef:
+                name: {{ printf "%s-configenv" (include "common.names.fullname" .) | trunc 63 | trimSuffix "-" }}
+          {{- if .Values.web.resources }}
+          resources: {{- toYaml .Values.web.resources | nindent 12 }}
+          {{- else if ne .Values.web.resourcesPreset "none" }}
+          resources: {{- include "common.resources.preset" (dict "type" .Values.web.resourcesPreset) | nindent 12 }}
+          {{- end }}
+          {{- if .Values.web.customLivenessProbe }}
+          livenessProbe: {{- include "common.tplvalues.render" (dict "value" .Values.web.customLivenessProbe "context" $) | nindent 12 }}
+          {{- else if .Values.web.livenessProbe.enabled }}
+          livenessProbe:
+            tcpSocket:
+              port: 9000
+            initialDelaySeconds: {{ .Values.web.livenessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.web.livenessProbe.periodSeconds }}
+            timeoutSeconds: {{ .Values.web.livenessProbe.timeoutSeconds }}
+            successThreshold: {{ .Values.web.livenessProbe.successThreshold }}
+            failureThreshold: {{ .Values.web.livenessProbe.failureThreshold }}
+          {{- end }}
+          volumeMounts:
+            - name: web-autoconfig
+              mountPath: /var/www/html/autoconfig
+              readOnly: true
+            - name: web-nginx
+              mountPath: /etc/nginx
+              readOnly: true
+            - name: web-dkim
+              mountPath: /media/dkim
+          {{- if .Values.web.extraVolumeMounts }}
+          {{- include "common.tplvalues.render" (dict "value" .Values.web.extraVolumeMounts "context" $) | nindent 12 }}
+          {{- end }}
+        - name: nginx
+          image: {{ include "docker-mailserver.web.image" . }}
+          imagePullPolicy: {{ .Values.web.image.pullPolicy }}
+          {{- if .Values.web.lifecycleHooks }}
+          lifecycle: {{- include "common.tplvalues.render" (dict "value" .Values.web.lifecycleHooks "context" $) | nindent 12 }}
+          {{- end }}
+          {{- if .Values.web.containerSecurityContext.enabled }}
+          securityContext: {{- include "common.compatibility.renderSecurityContext" (dict "secContext" .Values.web.containerSecurityContext "context" $) | nindent 12 }}
+          {{- end }}
+          command:
+            - /usr/sbin/nginx
+          args:
+            - -g
+            - daemon off; pid off;
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+          env:
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "docker-mailserver.databaseSecretName" . }}
+                  key: mariadb-password
+            {{- if and .Values.redis.enabled (include "docker-mailserver.redis.auth.enabled" .) }}
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "docker-mailserver.redis.secretName" . }}
+                  key: {{ include "docker-mailserver.redis.secretPasswordKey" . }}
+            {{- else if .Values.externalRedis.enabled }}
+            - name: REDIS_PASSWORD
+              {{- if not ( eq "" .Values.externalRedis.password ) }}
+              value: {{ .Values.externalRedis.password }}
+              {{- else }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.externalRedis.existingSecret }}
+                  key: {{ .Values.externalRedis.existingSecretPasswordKey }}
+              {{- end }}
+            {{- end }}
+            {{- if .Values.web.extraEnvVars }}
+            {{- include "common.tplvalues.render" (dict "value" .Values.web.extraEnvVars "context" $) | nindent 12 }}
+            {{- end }}
+          envFrom:
+            {{- if .Values.web.extraEnvVarsCM }}
+            - configMapRef:
+                name: {{ include "common.tplvalues.render" (dict "value" .Values.web.extraEnvVarsCM "context" $) }}
+            {{- end }}
+            {{- if .Values.web.extraEnvVarsSecret }}
+            - secretRef:
+                name: {{ include "common.tplvalues.render" (dict "value" .Values.web.extraEnvVarsSecret "context" $) }}
+            {{- end }}
+            - configMapRef:
+                name: {{ printf "%s-configenv" (include "common.names.fullname" .) | trunc 63 | trimSuffix "-" }}
+          {{- if .Values.web.resources }}
+          resources: {{- toYaml .Values.web.resources | nindent 12 }}
+          {{- else if ne .Values.web.resourcesPreset "none" }}
+          resources: {{- include "common.resources.preset" (dict "type" .Values.web.resourcesPreset) | nindent 12 }}
+          {{- end }}
+          {{- if .Values.web.customLivenessProbe }}
+          livenessProbe: {{- include "common.tplvalues.render" (dict "value" .Values.web.customLivenessProbe "context" $) | nindent 12 }}
+          {{- else if .Values.web.livenessProbe.enabled }}
+          livenessProbe:
+            httpGet:
+              path: /manager
+              port: 80
+            initialDelaySeconds: {{ .Values.web.livenessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.web.livenessProbe.periodSeconds }}
+            timeoutSeconds: {{ .Values.web.livenessProbe.timeoutSeconds }}
+            successThreshold: {{ .Values.web.livenessProbe.successThreshold }}
+            failureThreshold: {{ .Values.web.livenessProbe.failureThreshold }}
+          {{- end }}
+          volumeMounts:
+            - name: web-autoconfig
+              mountPath: /var/www/html/autoconfig
+              readOnly: true
+            - name: web-nginx
+              mountPath: /etc/nginx
+              readOnly: true
+            - name: web-dkim
+              mountPath: /media/dkim
+          {{- if .Values.web.extraVolumeMounts }}
+          {{- include "common.tplvalues.render" (dict "value" .Values.web.extraVolumeMounts "context" $) | nindent 12 }}
+          {{- end }}
+        {{- if .Values.web.sidecars }}
+        {{- include "common.tplvalues.render" ( dict "value" .Values.web.sidecars "context" $) | nindent 8 }}
+        {{- end }}
+      volumes:
+        - name: web-autoconfig
+          emptyDir: {}
+        - name: web-nginx
+          emptyDir: {}
+        - name: web-dkim
+          {{- if .Values.persistence.dkim.enabled }}
+          persistentVolumeClaim:
+            claimName: {{ .Values.persistence.dkim.existingClaim | default (include "docker-mailserver.dkim" .) }}
+          {{- else }}
+          emptyDir: {}
+          {{- end }}
+        {{- if .Values.web.extraVolumes }}
+        {{- include "common.tplvalues.render" (dict "value" .Values.web.extraVolumes "context" $) | nindent 8 }}
+        {{- end }}

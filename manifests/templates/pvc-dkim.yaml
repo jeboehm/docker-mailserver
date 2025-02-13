@@ -1,0 +1,33 @@
+---
+
+{{- if and .Values.persistence.dkim.enabled (not .Values.persistence.dkim.existingClaim) }}
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: {{ include "docker-mailserver.dkim" . }}
+  namespace: {{ include "common.names.namespace" . | quote }}
+  labels: {{- include "common.labels.standard" ( dict "customLabels" .Values.commonLabels "context" $ ) | nindent 4 }}
+  {{- if or .Values.persistence.dkim.annotations .Values.commonAnnotations }}
+  {{- $annotations := include "common.tplvalues.merge" ( dict "values" ( list .Values.persistence.dkim.annotations .Values.commonAnnotations ) "context" . ) }}
+  annotations: {{- include "common.tplvalues.render" ( dict "value" $annotations "context" $) | nindent 4 }}
+  {{- end }}
+spec:
+  accessModes:
+  {{- if not (empty .Values.persistence.dkim.accessModes) }}
+  {{- range .Values.persistence.dkim.accessModes }}
+    - {{ . | quote }}
+  {{- end }}
+  {{- else }}
+    - {{ .Values.persistence.dkim.accessMode | quote }}
+  {{- end }}
+  resources:
+    requests:
+      storage: {{ .Values.persistence.dkim.size | quote }}
+  {{- include "common.storage.class" (dict "persistence" .Values.persistence.dkim "global" .Values.global) | nindent 2 }}
+  {{- if .Values.persistence.dkim.selector }}
+  selector: {{- include "common.tplvalues.render" (dict "value" .Values.persistence.dkim.selector "context" $) | nindent 4 }}
+  {{- end -}}
+  {{- if .Values.persistence.dkim.dataSource }}
+  dataSource: {{- include "common.tplvalues.render" (dict "value" .Values.persistence.dkim.dataSource "context" $) | nindent 4 }}
+  {{- end }}
+{{- end }}

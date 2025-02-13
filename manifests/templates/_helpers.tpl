@@ -46,6 +46,22 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
   {{- printf "%s-filter" (include "common.names.fullname" .) | trunc 63 | trimSuffix "-" }}
 {{- end -}}
 
+{{/*
+Create a default fully qualified app name.
+We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
+*/}}
+{{- define "docker-mailserver.web" -}}
+  {{- printf "%s-web" (include "common.names.fullname" .) | trunc 63 | trimSuffix "-" }}
+{{- end -}}
+
+{{- define "docker-mailserver.dkim" -}}
+  {{- printf "%s-dkim" (include "common.names.fullname" .) | trunc 63 | trimSuffix "-" }}
+{{- end -}}
+
+{{- define "docker-mailserver.vmail" -}}
+  {{- printf "%s-vmail" (include "common.names.fullname" .) | trunc 63 | trimSuffix "-" }}
+{{- end -}}
+
 {{- define "docker-mailserver.imagePullSecrets" -}}
 {{- include "common.images.renderPullSecrets" (dict "images" (list .Values.mda.image .Values.virus.image .Values.filter.image .Values.redis.image) "context" $) -}}
 {{- end -}}
@@ -66,8 +82,8 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{- include "common.images.image" ( dict "imageRoot" .Values.mta.image "global" .Values.global ) -}}
 {{- end -}}
 
-{{- define "docker-mailserver.redis.image" -}}
-{{- include "common.images.image" ( dict "imageRoot" .Values.redis.image "global" .Values.global ) -}}
+{{- define "docker-mailserver.web.image" -}}
+{{- include "common.images.image" ( dict "imageRoot" .Values.web.image "global" .Values.global ) -}}
 {{- end -}}
 
 {{/*

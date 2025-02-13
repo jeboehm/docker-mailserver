@@ -202,6 +202,8 @@ spec:
               mountPath: /tmp
             - name: filter-rspamd
               mountPath: /var/lib/rspamd
+            - name: filter-dkim
+              mountPath: /media/dkim
           {{- if .Values.filter.extraVolumeMounts }}
           {{- include "common.tplvalues.render" (dict "value" .Values.filter.extraVolumeMounts "context" $) | nindent 12 }}
           {{- end }}
@@ -215,6 +217,13 @@ spec:
           emptyDir: {}
         - name: filter-rspamd
           emptyDir: {}
+        - name: filter-dkim
+          {{- if .Values.persistence.dkim.enabled }}
+          persistentVolumeClaim:
+            claimName: {{ .Values.persistence.dkim.existingClaim | default (include "docker-mailserver.dkim" .) }}
+          {{- else }}
+          emptyDir: {}
+          {{- end }}
         {{- if .Values.filter.extraVolumes }}
         {{- include "common.tplvalues.render" (dict "value" .Values.filter.extraVolumes "context" $) | nindent 8 }}
         {{- end }}

@@ -1,0 +1,33 @@
+---
+
+{{- if and .Values.persistence.vmail.enabled (not .Values.persistence.vmail.existingClaim) }}
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: {{ include "docker-mailserver.vmail" . }}
+  namespace: {{ include "common.names.namespace" . | quote }}
+  labels: {{- include "common.labels.standard" ( dict "customLabels" .Values.commonLabels "context" $ ) | nindent 4 }}
+  {{- if or .Values.persistence.vmail.annotations .Values.commonAnnotations }}
+  {{- $annotations := include "common.tplvalues.merge" ( dict "values" ( list .Values.persistence.vmail.annotations .Values.commonAnnotations ) "context" . ) }}
+  annotations: {{- include "common.tplvalues.render" ( dict "value" $annotations "context" $) | nindent 4 }}
+  {{- end }}
+spec:
+  accessModes:
+  {{- if not (empty .Values.persistence.vmail.accessModes) }}
+  {{- range .Values.persistence.vmail.accessModes }}
+    - {{ . | quote }}
+  {{- end }}
+  {{- else }}
+    - {{ .Values.persistence.vmail.accessMode | quote }}
+  {{- end }}
+  resources:
+    requests:
+      storage: {{ .Values.persistence.vmail.size | quote }}
+  {{- include "common.storage.class" (dict "persistence" .Values.persistence.vmail "global" .Values.global) | nindent 2 }}
+  {{- if .Values.persistence.vmail.selector }}
+  selector: {{- include "common.tplvalues.render" (dict "value" .Values.persistence.vmail.selector "context" $) | nindent 4 }}
+  {{- end -}}
+  {{- if .Values.persistence.vmail.dataSource }}
+  dataSource: {{- include "common.tplvalues.render" (dict "value" .Values.persistence.vmail.dataSource "context" $) | nindent 4 }}
+  {{- end }}
+{{- end }}
