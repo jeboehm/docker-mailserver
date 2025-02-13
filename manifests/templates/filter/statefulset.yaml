@@ -121,10 +121,10 @@ spec:
             - name: filter-config
               mountPath: /etc/rspamd
         - name: wait-for-resources
-          image: {{ include "docker-mailserver.mda.image" . }}
-          imagePullPolicy: {{ .Values.mda.image.pullPolicy }}
-          {{- if .Values.mda.containerSecurityContext.enabled }}
-          securityContext: {{- include "common.compatibility.renderSecurityContext" (dict "secContext" .Values.mda.containerSecurityContext "context" $) | nindent 12 }}
+          image: {{ include "docker-mailserver.filter.image" . }}
+          imagePullPolicy: {{ .Values.filter.image.pullPolicy }}
+          {{- if .Values.filter.containerSecurityContext.enabled }}
+          securityContext: {{- include "common.compatibility.renderSecurityContext" (dict "secContext" .Values.filter.containerSecurityContext "context" $) | nindent 12 }}
           {{- end }}
           command:
             - /usr/local/bin/dockerize
