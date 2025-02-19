@@ -178,8 +178,10 @@ spec:
                 path: mailserver.crt
               - key: tls.key
                 path: mailserver.key
+              {{- if .Values.ingress.selfSigned }}
               - key: ca.crt
                 path: ca.crt
+              {{- end }}
             secretName: {{ printf "%s-tls" (tpl .Values.ingress.hostname $) }}
         - name: tmp
           emptyDir: {}
