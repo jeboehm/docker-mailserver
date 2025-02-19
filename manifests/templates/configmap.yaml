@@ -19,6 +19,7 @@ data:
     REDIS_PORT: {{ include "docker-mailserver.redisPort" . | quote }}
 
     MDA_HOST: {{ include "docker-mailserver.mda" . | quote }}
+    MTA_HOST: {{ include "docker-mailserver.mta" . | quote }}
     RSPAMD_HOST: {{ include "docker-mailserver.filter" . | quote }}
 
     MAILNAME: {{ .Values.config.mailname | quote }}

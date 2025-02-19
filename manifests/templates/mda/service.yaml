@@ -32,6 +32,15 @@ spec:
   sessionAffinityConfig: {{- include "common.tplvalues.render" (dict "value" .Values.mda.internalService.sessionAffinityConfig "context" $) | nindent 4 }}
   {{- end }}
   ports:
+    - name: imap
+      port: {{ coalesce .Values.mda.internalService.port .Values.mda.internalService.ports.imap }}
+      targetPort: 143
+      protocol: TCP
+      {{- if (and (or (eq .Values.mda.internalService.type "NodePort") (eq .Values.mda.internalService.type "LoadBalancer")) (not (empty (coalesce .Values.mda.internalService.nodePort .Values.mda.internalService.nodePorts.imap)))) }}
+      nodePort: {{ coalesce .Values.mda.internalService.nodePort .Values.mda.internalService.nodePorts.imap }}
+      {{- else if eq .Values.mda.internalService.type "ClusterIP" }}
+      nodePort: null
+      {{- end }}
     - name: lmtp
       port: {{ coalesce .Values.mda.internalService.port .Values.mda.internalService.ports.lmtp }}
       targetPort: 2003

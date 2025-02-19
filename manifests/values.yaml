@@ -818,6 +818,7 @@ mda:
     ## @param controller.service.ports.metrics Argo CD application controller service port
     ##
     ports:
+      imap: 143
       lmtp: 2003
       auth: 2004
       managesieve: 4190
@@ -826,8 +827,10 @@ mda:
     ## NOTE: choose port between <30000-32767>
     ##
     nodePorts:
-      controller: ""
-      worker: ""
+      imap: ""
+      lmtp: ""
+      auth: ""
+      managesieve: ""
     ## @param controller.service.clusterIP Argo CD application controller service Cluster IP
     ## e.g.:
     ## clusterIP: None
