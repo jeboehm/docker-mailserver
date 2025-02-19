@@ -46,13 +46,14 @@ RUN apk add --no-cache \
         supervisor && \
     apk add --no-cache --virtual .phpize-deps ${PHPIZE_DEPS} && \
     pecl install apcu && \
+    pecl install redis && \
     docker-php-ext-install -j5 \
         intl \
         opcache \
         pdo_mysql \
-        redis \
         zip && \
     docker-php-ext-enable apcu && \
+    docker-php-ext-enable redis && \
     ln -sf /dev/stdout /var/log/nginx/access.log && \
     ln -sf /dev/stderr /var/log/nginx/error.log && \
     apk del --no-cache \
