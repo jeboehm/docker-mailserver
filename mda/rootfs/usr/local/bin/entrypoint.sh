@@ -1,13 +1,13 @@
 #!/bin/sh
 
-if ! [ -r /etc/dovecot/dh.pem.created ]
-then
-  echo "Using pre-generated Diffie Hellman parameters until the new one is generated."
-  /usr/local/bin/dh.sh &
-fi
-
 if [ "${SKIP_INIT}" != "true" ]; then
-    /usr/local/bin/init.sh
+  if ! [ -r /etc/dovecot/dh.pem.created ]
+  then
+    echo "Using pre-generated Diffie Hellman parameters until the new one is generated."
+    /usr/local/bin/dh.sh &
+  fi
+
+  /usr/local/bin/init.sh
 fi
 
 rm -f /run/dovecot/master.pid

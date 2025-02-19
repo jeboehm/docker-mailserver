@@ -50,6 +50,7 @@ RUN apk add --no-cache \
         intl \
         opcache \
         pdo_mysql \
+        redis \
         zip && \
     docker-php-ext-enable apcu && \
     ln -sf /dev/stdout /var/log/nginx/access.log && \
