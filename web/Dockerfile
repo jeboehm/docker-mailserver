@@ -43,7 +43,7 @@ RUN apk add --no-cache \
         libzip-dev \
         nginx \
         supervisor && \
-    apk add --no-cache --virtual .phpize-deps ${PHPIZE_DEPS} && \
+    apk add --no-cache --virtual .phpize-deps "${PHPIZE_DEPS}" && \
     pecl install apcu && \
     docker-php-ext-install -j5 \
         intl \
