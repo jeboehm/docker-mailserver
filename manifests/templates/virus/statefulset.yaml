@@ -73,7 +73,7 @@ spec:
             - configMapRef:
                 name: {{ printf "%s-configenv" (include "common.names.fullname" .) | trunc 63 | trimSuffix "-" }}
           volumeMounts:
-            - name: virus-definitions
+            - name: clamav
               mountPath: /var/lib/clamav
       containers:
         - name: clamd
@@ -126,10 +126,10 @@ spec:
             failureThreshold: {{ .Values.virus.livenessProbe.failureThreshold }}
           {{- end }}
           volumeMounts:
-            - name: virus-definitions
+            - name: clamav
               mountPath: /var/lib/clamav
               readOnly: true
-            - name: virus-tmp
+            - name: tmp
               mountPath: /tmp
           {{- if .Values.virus.extraVolumeMounts }}
           {{- include "common.tplvalues.render" (dict "value" .Values.virus.extraVolumeMounts "context" $) | nindent 12 }}
@@ -168,7 +168,7 @@ spec:
           resources: {{- include "common.resources.preset" (dict "type" .Values.virus.resourcesPresetUpdate) | nindent 12 }}
           {{- end }}
           volumeMounts:
-            - name: virus-definitions
+            - name: clamav
               mountPath: /var/lib/clamav
           {{- if .Values.virus.extraVolumeMounts }}
           {{- include "common.tplvalues.render" (dict "value" .Values.virus.extraVolumeMounts "context" $) | nindent 12 }}
@@ -177,9 +177,9 @@ spec:
         {{- include "common.tplvalues.render" ( dict "value" .Values.virus.sidecars "context" $) | nindent 8 }}
         {{- end }}
       volumes:
-        - name: virus-definitions
+        - name: clamav
           emptyDir: {}
-        - name: virus-tmp
+        - name: tmp
           emptyDir: {}
         {{- if .Values.virus.extraVolumes }}
         {{- include "common.tplvalues.render" (dict "value" .Values.virus.extraVolumes "context" $) | nindent 8 }}

@@ -73,9 +73,8 @@ spec:
             - |
               cp -r /etc/postfix/* /target/
               chown -R root:root /target/
-              ls -lha /target
           volumeMounts:
-            - name: mta-config
+            - name: postfix
               mountPath: /target
         - name: prepare-config
           image: {{ include "docker-mailserver.mta.image" . }}
@@ -109,7 +108,7 @@ spec:
                   name: {{ include "docker-mailserver.databaseSecretName" . }}
                   key: mariadb-password
           volumeMounts:
-            - name: mta-config
+            - name: postfix
               mountPath: /etc/postfix
         - name: postconf
           image: {{ include "docker-mailserver.mta.image" . }}
@@ -128,7 +127,7 @@ spec:
               postconf virtual_transport="lmtp:{{ include "docker-mailserver.mda" . }}:2003"
               postconf smtpd_sasl_path="inet:{{ include "docker-mailserver.mda" . }}:2004"
           volumeMounts:
-            - name: mta-config
+            - name: postfix
               mountPath: /etc/postfix
         - name: wait-for-resources
           image: {{ include "docker-mailserver.mta.image" . }}
@@ -208,10 +207,10 @@ spec:
             failureThreshold: {{ .Values.mta.livenessProbe.failureThreshold }}
           {{- end }}
           volumeMounts:
-            - name: mta-config
+            - name: postfix
               mountPath: /etc/postfix
               readOnly: true
-            - name: mta-tmp
+            - name: tmp
               mountPath: /var/lib/postfix
             - name: tls-certs
               mountPath: /media/tls
@@ -233,9 +232,9 @@ spec:
               - key: ca.crt
                 path: ca.crt
             secretName: {{ printf "%s-tls" (tpl .Values.ingress.hostname $) }}
-        - name: mta-tmp
+        - name: tmp
           emptyDir: {}
-        - name: mta-config
+        - name: postfix
           emptyDir: {}
         {{- if .Values.mta.extraVolumes }}
         {{- include "common.tplvalues.render" (dict "value" .Values.mta.extraVolumes "context" $) | nindent 8 }}

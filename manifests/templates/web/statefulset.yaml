@@ -74,9 +74,9 @@ spec:
               cp -r /etc/nginx/* /target-nginx/
               cp -r /var/www/html/autoconfig/* /target-autoconfig/
           volumeMounts:
-            - name: web-autoconfig
+            - name: autoconfig
               mountPath: /target-autoconfig
-            - name: web-nginx
+            - name: nginx
               mountPath: /target-nginx
         - name: prepare-config
           image: {{ include "docker-mailserver.web.image" . }}
@@ -119,9 +119,9 @@ spec:
               {{- end }}
             {{- end }}
           volumeMounts:
-            - name: web-autoconfig
+            - name: autoconfig
               mountPath: /var/www/html/autoconfig
-            - name: web-nginx
+            - name: nginx
               mountPath: /etc/nginx
         - name: wait-for-resources
           image: {{ include "docker-mailserver.web.image" . }}
@@ -184,11 +184,11 @@ spec:
               {{- end }}
             {{- end }}
           volumeMounts:
-            - name: web-autoconfig
+            - name: autoconfig
               mountPath: /var/www/html/autoconfig
-            - name: web-nginx
+            - name: nginx
               mountPath: /etc/nginx
-            - name: web-dkim
+            - name: dkim
               mountPath: /media/dkim
       containers:
         - name: php-fpm
@@ -261,13 +261,13 @@ spec:
             failureThreshold: {{ .Values.web.livenessProbe.failureThreshold }}
           {{- end }}
           volumeMounts:
-            - name: web-autoconfig
+            - name: autoconfig
               mountPath: /var/www/html/autoconfig
               readOnly: true
-            - name: web-nginx
+            - name: nginx
               mountPath: /etc/nginx
               readOnly: true
-            - name: web-dkim
+            - name: dkim
               mountPath: /media/dkim
           {{- if .Values.web.extraVolumeMounts }}
           {{- include "common.tplvalues.render" (dict "value" .Values.web.extraVolumeMounts "context" $) | nindent 12 }}
@@ -346,14 +346,16 @@ spec:
             failureThreshold: {{ .Values.web.livenessProbe.failureThreshold }}
           {{- end }}
           volumeMounts:
-            - name: web-autoconfig
+            - name: autoconfig
               mountPath: /var/www/html/autoconfig
               readOnly: true
-            - name: web-nginx
+            - name: nginx
               mountPath: /etc/nginx
               readOnly: true
-            - name: web-dkim
+            - name: dkim
               mountPath: /media/dkim
+            - name: nginx-tmp
+              mountPath: /var/lib/nginx/tmp
           {{- if .Values.web.extraVolumeMounts }}
           {{- include "common.tplvalues.render" (dict "value" .Values.web.extraVolumeMounts "context" $) | nindent 12 }}
           {{- end }}
@@ -361,11 +363,13 @@ spec:
         {{- include "common.tplvalues.render" ( dict "value" .Values.web.sidecars "context" $) | nindent 8 }}
         {{- end }}
       volumes:
-        - name: web-autoconfig
+        - name: autoconfig
           emptyDir: {}
-        - name: web-nginx
+        - name: nginx
           emptyDir: {}
-        - name: web-dkim
+        - name: nginx-tmp
+          emptyDir: {}
+        - name: dkim
           {{- if .Values.persistence.dkim.enabled }}
           persistentVolumeClaim:
             claimName: {{ .Values.persistence.dkim.existingClaim | default (include "docker-mailserver.dkim" .) }}

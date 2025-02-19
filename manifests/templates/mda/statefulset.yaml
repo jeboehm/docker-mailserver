@@ -71,7 +71,7 @@ spec:
           args:
             - cp -r /etc/dovecot/* /target/
           volumeMounts:
-            - name: mda-config
+            - name: dovecot-config
               mountPath: /target
         {{- if .Values.mda.createDhParams }}
         - name: dh-params
@@ -86,7 +86,7 @@ spec:
             - configMapRef:
                 name: {{ printf "%s-configenv" (include "common.names.fullname" .) | trunc 63 | trimSuffix "-" }}
           volumeMounts:
-            - name: mda-config
+            - name: dovecot-config
               mountPath: /etc/dovecot
         {{- end }}
         - name: prepare-config
@@ -119,7 +119,7 @@ spec:
                   name: {{ include "docker-mailserver.databaseSecretName" . }}
                   key: mariadb-password
           volumeMounts:
-            - name: mda-config
+            - name: dovecot-config
               mountPath: /etc/dovecot
         - name: wait-for-resources
           image: {{ include "docker-mailserver.mda.image" . }}
@@ -207,15 +207,15 @@ spec:
             failureThreshold: {{ .Values.mda.livenessProbe.failureThreshold }}
           {{- end }}
           volumeMounts:
-            - name: mda-run
+            - name: run
               mountPath: /run
-            - name: mda-tmp
+            - name: tmp
               mountPath: /tmp
-            - name: mda-lib
+            - name: dovecot-lib
               mountPath: /var/lib/dovecot
-            - name: mda-maildata
+            - name: vmail
               mountPath: /var/vmail
-            - name: mda-config
+            - name: dovecot-config
               mountPath: /etc/dovecot
               readOnly: true
             - name: tls-certs
@@ -238,15 +238,15 @@ spec:
               - key: ca.crt
                 path: ca.crt
             secretName: {{ printf "%s-tls" (tpl .Values.ingress.hostname $) }}
-        - name: mda-run
+        - name: run
           emptyDir: {}
-        - name: mda-tmp
+        - name: tmp
           emptyDir: {}
-        - name: mda-lib
+        - name: dovecot-lib
           emptyDir: {}
-        - name: mda-config
+        - name: dovecot-config
           emptyDir: {}
-        - name: mda-maildata
+        - name: vmail
           {{- if .Values.persistence.vmail.enabled }}
           persistentVolumeClaim:
             claimName: {{ .Values.persistence.vmail.existingClaim | default (include "docker-mailserver.vmail" .) }}

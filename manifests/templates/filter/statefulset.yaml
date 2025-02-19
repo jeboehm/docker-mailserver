@@ -74,7 +74,7 @@ spec:
               cp -r /etc/rspamd/* /target/
               echo "password = \"{{`{{$.Env.REDIS_PASSWORD}}`}}\";" >> /target/override.d/redis.conf.templ
           volumeMounts:
-            - name: filter-config
+            - name: rspamd-config
               mountPath: /target
         - name: prepare-config
           image: {{ include "docker-mailserver.filter.image" . }}
@@ -118,7 +118,7 @@ spec:
               {{- end }}
             {{- end }}
           volumeMounts:
-            - name: filter-config
+            - name: rspamd-config
               mountPath: /etc/rspamd
         - name: wait-for-resources
           image: {{ include "docker-mailserver.filter.image" . }}
@@ -195,15 +195,16 @@ spec:
             failureThreshold: {{ .Values.filter.livenessProbe.failureThreshold }}
           {{- end }}
           volumeMounts:
-            - name: filter-config
+            - name: rspamd-config
               mountPath: /etc/rspamd
               readOnly: true
-            - name: filter-tmp
+            - name: tmp
               mountPath: /tmp
-            - name: filter-rspamd
+            - name: rspamd-lib
               mountPath: /var/lib/rspamd
-            - name: filter-dkim
+            - name: dkim
               mountPath: /media/dkim
+              readOnly: true
           {{- if .Values.filter.extraVolumeMounts }}
           {{- include "common.tplvalues.render" (dict "value" .Values.filter.extraVolumeMounts "context" $) | nindent 12 }}
           {{- end }}
@@ -211,16 +212,17 @@ spec:
         {{- include "common.tplvalues.render" ( dict "value" .Values.filter.sidecars "context" $) | nindent 8 }}
         {{- end }}
       volumes:
-        - name: filter-config
+        - name: rspamd-config
           emptyDir: {}
-        - name: filter-tmp
+        - name: rspamd-lib
           emptyDir: {}
-        - name: filter-rspamd
+        - name: tmp
           emptyDir: {}
-        - name: filter-dkim
+        - name: dkim
           {{- if .Values.persistence.dkim.enabled }}
           persistentVolumeClaim:
             claimName: {{ .Values.persistence.dkim.existingClaim | default (include "docker-mailserver.dkim" .) }}
+            readOnly: true
           {{- else }}
           emptyDir: {}
           {{- end }}
