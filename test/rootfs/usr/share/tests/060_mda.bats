@@ -27,12 +27,12 @@
 
 @test "imap login to send only mailbox is not possible" {
     run imap-tester test:count mda 143 sendonly@example.com test1234 INBOX
-    ! [ "$status" -eq 0 ]
+    [ "$status" -ne 0 ]
 }
 
 @test "pop3 login to send only mailbox is not possible" {
     run imap-tester test:count mda 110 sendonly@example.com test1234 INBOX
-    ! [ "$status" -eq 0 ]
+    [ "$status" -ne 0 ]
 }
 
 @test "pop3 login to quota mailbox is possible" {
@@ -47,12 +47,12 @@
 
 @test "pop3 login to disabled mailbox is not possible" {
     run imap-tester test:count mda 110 disabled@example.com test1234 INBOX
-    ! [ "$status" -eq 0 ]
+    [ "$status" -ne 0 ]
 }
 
 @test "imap login to disabled mailbox is not possible" {
     run imap-tester test:count mda 143 disabled@example.com test1234 INBOX
-    ! [ "$status" -eq 0 ]
+    [ "$status" -ne 0 ]
 }
 
 @test "mails are owned by vmail" {
@@ -62,7 +62,7 @@
 }
 
 @test "fts-xapian index exists" {
-    if [ ${ENABLE_FTS} = "false" ]; then
+    if [ "${ENABLE_FTS}" = "false" ]; then
         skip
     fi
 
@@ -72,7 +72,7 @@
 }
 
 @test "fts-xapian index does not exist" {
-    if [ ${ENABLE_FTS} = "true" ]; then
+    if [ "${ENABLE_FTS}" = "true" ]; then
         skip
     fi
 

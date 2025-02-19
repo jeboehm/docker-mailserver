@@ -188,7 +188,7 @@
 }
 
 @test "virus is rejected" {
-    if [ ${FILTER_VIRUS} = "false" ]; then
+    if [ "${FILTER_VIRUS}" = "false" ]; then
         skip
     fi
 

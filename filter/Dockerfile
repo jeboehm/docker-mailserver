@@ -8,6 +8,8 @@ LABEL de.ressourcenkonflikt.docker-mailserver.autoheal="true"
 ENV FILTER_VIRUS=false \
     FILTER_VIRUS_HOST=virus.local \
     REDIS_HOST=redis \
+    REDIS_PORT=6379 \
+    REDIS_PASSWORD= \
     WAITSTART_TIMEOUT=1m \
     CONTROLLER_PASSWORD=changeme \
     # OpenDNS resolvers
