@@ -1,4 +1,4 @@
-FROM jwilder/dockerize:0.6.1 AS dockerize
+FROM jwilder/dockerize:v0.9.2 AS dockerize
 FROM alpine:3.16
 
 LABEL maintainer="jeff@ressourcenkonflikt.de"
@@ -44,7 +44,7 @@ RUN apk --no-cache add \
     && wget -q -O /usr/share/fixtures/gtube.txt https://spamassassin.apache.org/gtube/gtube.txt \
     && wget -q -O /usr/share/fixtures/eicar.com https://secure.eicar.org/eicar.com
 
-COPY --from=dockerize /usr/local/bin/dockerize /usr/local/bin
+COPY --from=dockerize /bin/dockerize /usr/local/bin/dockerize
 COPY rootfs/ /
 
 CMD ["/usr/local/bin/run-tests.sh"]

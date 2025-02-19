@@ -1,4 +1,4 @@
-FROM jwilder/dockerize:0.6.1 AS dockerize
+FROM jwilder/dockerize:v0.9.2 AS dockerize
 FROM roundcube/roundcubemail:1.6.x-fpm AS roundcube
 FROM composer:2.8 AS composer
 FROM php:8.3-fpm-alpine
@@ -33,7 +33,7 @@ ENV MYSQL_HOST=db \
     COMPOSER_ALLOW_SUPERUSER=1
 
 COPY --from=roundcube /usr/src/roundcubemail/ /var/www/html/webmail/
-COPY --from=dockerize /usr/local/bin/dockerize /usr/local/bin
+COPY --from=dockerize /bin/dockerize /usr/local/bin/dockerize
 COPY --from=composer /usr/bin/composer /usr/bin/composer
 
 # shellcheck disable=SC2086

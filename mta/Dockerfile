@@ -1,4 +1,4 @@
-FROM jwilder/dockerize:0.6.1 AS dockerize
+FROM jwilder/dockerize:v0.9.2 AS dockerize
 FROM alpine:3.21
 
 LABEL maintainer="jeff@ressourcenkonflikt.de"
@@ -83,7 +83,7 @@ RUN apk --no-cache add \
     echo " -o smtpd_relay_restrictions=permit_sasl_authenticated,reject" >> /etc/postfix/master.cf && \
     echo " -o milter_macro_daemon_name=ORIGINATING" >> /etc/postfix/master.cf
 
-COPY --from=dockerize /usr/local/bin/dockerize /usr/local/bin
+COPY --from=dockerize /bin/dockerize /usr/local/bin/dockerize
 COPY rootfs/ /
 
 EXPOSE 25

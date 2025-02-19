@@ -1,4 +1,4 @@
-FROM jwilder/dockerize:0.6.1 AS dockerize
+FROM jwilder/dockerize:v0.9.2 AS dockerize
 FROM alpine:3.21
 
 LABEL maintainer="jeff@ressourcenkonflikt.de"
@@ -36,7 +36,7 @@ RUN apk --no-cache add \
     rm -rf /etc/ssl/dovecot && \
     openssl dhparam -out /etc/dovecot/dh.pem 2048
 
-COPY --from=dockerize /usr/local/bin/dockerize /usr/local/bin
+COPY --from=dockerize /bin/dockerize /usr/local/bin/dockerize
 COPY rootfs/ /
 
 RUN sievec /etc/dovecot/sieve/global/spam-to-folder.sieve && \
