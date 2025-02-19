@@ -169,41 +169,6 @@ extraDeploy: []
 ## ref: https://kubernetes.io/docs/concepts/storage/persistent-volumes/
 ##
 persistence:
-  dkim:
-    ## @param persistence.enabled Enable persistence using PVC
-    ##
-    enabled: true
-    ## @param persistence.storageClass PVC Storage Class for docker-mailserver volume
-    ## If defined, storageClassName: <storageClass>
-    ## If set to "-", storageClassName: "", which disables dynamic provisioning
-    ## If undefined (the default) or set to null, no storageClassName spec is
-    ##   set, choosing the default provisioner.  (gp2 on AWS, standard on
-    ##   GKE, AWS & OpenStack)
-    ##
-    storageClass: ""
-    ## @param persistence.accessModes PVC Access Mode for docker-mailserver volume
-    ## Requires persistence.enabled: true
-    ## If defined, PVC must be created manually before volume will be bound
-    ##
-    accessModes:
-      - ReadWriteOnce
-    ## @param persistence.size PVC Storage Request for docker-mailserver volume
-    ##
-    size: 128Mi
-    ## @param persistence.existingClaim A manually managed Persistent Volume Claim
-    ## Requires persistence.enabled: true
-    ## If defined, PVC must be created manually before volume will be bound
-    ##
-    existingClaim: ""
-    ## @param persistence.hostPath If defined, the docker-mailserver-data volume will mount to the specified hostPath.
-    ## Requires persistence.enabled: true
-    ## Requires persistence.existingClaim: nil|false
-    ## Default: nil.
-    ##
-    hostPath: ""
-    ## @param persistence.annotations Persistent Volume Claim annotations
-    ##
-    annotations: {}
   vmail:
     ## @param persistence.enabled Enable persistence using PVC
     ##

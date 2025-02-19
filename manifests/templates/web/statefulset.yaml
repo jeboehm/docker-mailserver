@@ -188,8 +188,6 @@ spec:
               mountPath: /var/www/html/autoconfig
             - name: nginx
               mountPath: /etc/nginx
-            - name: dkim
-              mountPath: /media/dkim
       containers:
         - name: php-fpm
           image: {{ include "docker-mailserver.web.image" . }}
@@ -267,8 +265,6 @@ spec:
             - name: nginx
               mountPath: /etc/nginx
               readOnly: true
-            - name: dkim
-              mountPath: /media/dkim
           {{- if .Values.web.extraVolumeMounts }}
           {{- include "common.tplvalues.render" (dict "value" .Values.web.extraVolumeMounts "context" $) | nindent 12 }}
           {{- end }}
@@ -352,8 +348,6 @@ spec:
             - name: nginx
               mountPath: /etc/nginx
               readOnly: true
-            - name: dkim
-              mountPath: /media/dkim
             - name: nginx-tmp
               mountPath: /var/lib/nginx/tmp
           {{- if .Values.web.extraVolumeMounts }}
@@ -369,13 +363,6 @@ spec:
           emptyDir: {}
         - name: nginx-tmp
           emptyDir: {}
-        - name: dkim
-          {{- if .Values.persistence.dkim.enabled }}
-          persistentVolumeClaim:
-            claimName: {{ .Values.persistence.dkim.existingClaim | default (include "docker-mailserver.dkim" .) }}
-          {{- else }}
-          emptyDir: {}
-          {{- end }}
         {{- if .Values.web.extraVolumes }}
         {{- include "common.tplvalues.render" (dict "value" .Values.web.extraVolumes "context" $) | nindent 8 }}
         {{- end }}
