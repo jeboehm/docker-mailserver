@@ -15,11 +15,6 @@ roundcube_init() {
   rm -f /var/www/html/webmail/logs/errors.log
 }
 
-permissions() {
-  chown -R www-data /media/dkim
-  chmod 777 /media/dkim
-}
-
 dkim_refresh() {
   cd /opt/manager
 
@@ -31,14 +26,12 @@ dockerize \
   -wait "tcp://${MDA_HOST}:143" \
   -wait "tcp://${MTA_HOST}:25" \
   -wait "tcp://${FILTER_HOST}:11334" \
-  -wait file:///media/dkim/ \
   -timeout "${WAITSTART_TIMEOUT}" \
   -template /etc/nginx/nginx.conf.templ:/etc/nginx/nginx.conf \
   -template /var/www/html/autoconfig/config-v1.1.xml.templ:/var/www/html/autoconfig/config-v1.1.xml
 
 manager_init
 roundcube_init
-permissions
 dkim_refresh
 
 # shellcheck disable=SC3028,SC2155

@@ -1,7 +1,5 @@
 ---
 
-version: '3.5'
-
 services:
   # Creates self signed tls certificates. Remove if you
   # use your own.
@@ -64,8 +62,6 @@ services:
         RC_PLUGINS: "johndoh/contextmenu jfcherng-roundcube/show-folder-size"
     restart: on-failure:5
     env_file: .env
-    volumes:
-      - data-dkim:/media/dkim
     # For use with jwilder/nginx-proxy.
     # environment:
     #   - VIRTUAL_HOST=mail.example.com
@@ -79,7 +75,6 @@ services:
     env_file: .env
     volumes:
       - data-filter:/var/lib/rspamd
-      - data-dkim:/media/dkim
     links:
       - virus:virus.local
 
@@ -122,7 +117,6 @@ services:
 
 volumes:
   data-db:
-  data-dkim:
   data-mail:
   data-tls:
   data-filter:
