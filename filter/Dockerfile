@@ -37,7 +37,7 @@ RUN apk --no-cache add \
     apk --no-cache del \
       openssl
 
-COPY --from=dockerize /usr/local/bin/dockerize /usr/local/bin
+COPY --from=dockerize /bin/dockerize /usr/local/bin/dockerize
 COPY rootfs/ /
 
 EXPOSE 11332 11334

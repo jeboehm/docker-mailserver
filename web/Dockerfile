@@ -31,7 +31,7 @@ ENV MYSQL_HOST=db \
     DKIM_PATH=/media/dkim
 
 COPY --from=roundcube /usr/src/roundcubemail/ /var/www/html/webmail/
-COPY --from=dockerize /usr/local/bin/dockerize /usr/local/bin
+COPY --from=dockerize /bin/dockerize /usr/local/bin/dockerize
 COPY --from=composer /usr/bin/composer /usr/bin/composer
 
 RUN apk add --no-cache \

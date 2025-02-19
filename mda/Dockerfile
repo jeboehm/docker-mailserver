@@ -36,7 +36,7 @@ RUN apk --no-cache add \
     rm -rf /etc/ssl/dovecot && \
     openssl dhparam -out /etc/dovecot/dh.pem 2048
 
-COPY --from=dockerize /usr/local/bin/dockerize /usr/local/bin
+COPY --from=dockerize /bin/dockerize /usr/local/bin/dockerize
 COPY rootfs/ /
 
 RUN sievec /etc/dovecot/sieve/global/spam-to-folder.sieve && \

@@ -43,7 +43,7 @@ RUN apk --no-cache add \
     && wget -q -O /usr/share/fixtures/gtube.txt https://spamassassin.apache.org/gtube/gtube.txt \
     && wget -q -O /usr/share/fixtures/eicar.com https://secure.eicar.org/eicar.com
 
-COPY --from=dockerize /usr/local/bin/dockerize /usr/local/bin
+COPY --from=dockerize /bin/dockerize /usr/local/bin/dockerize
 COPY rootfs/ /
 
 CMD ["/usr/local/bin/run-tests.sh"]
