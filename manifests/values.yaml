@@ -189,7 +189,7 @@ persistence:
       - ReadWriteOnce
     ## @param persistence.size PVC Storage Request for docker-mailserver volume
     ##
-    size: 8Gi
+    size: 128Mi
     ## @param persistence.existingClaim A manually managed Persistent Volume Claim
     ## Requires persistence.enabled: true
     ## If defined, PVC must be created manually before volume will be bound
