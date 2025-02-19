@@ -24,7 +24,6 @@ RUN apk --no-cache add \
     mkdir /run/rspamd && \
     touch \
       /etc/rspamd/local.d/antivirus.conf \
-      /etc/rspamd/local.d/classifier-bayes.conf \
       /etc/rspamd/local.d/options.inc \
       /etc/rspamd/override.d/redis.conf \
       /etc/rspamd/local.d/worker-controller.inc && \
@@ -32,7 +31,6 @@ RUN apk --no-cache add \
       /run/rspamd \
       /var/lib/rspamd \
       /etc/rspamd/local.d/antivirus.conf \
-      /etc/rspamd/local.d/classifier-bayes.conf \
       /etc/rspamd/local.d/options.inc \
       /etc/rspamd/override.d/redis.conf \
       /etc/rspamd/local.d/worker-controller.inc && \
