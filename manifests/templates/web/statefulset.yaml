@@ -85,13 +85,7 @@ spec:
           securityContext: {{- include "common.compatibility.renderSecurityContext" (dict "secContext" .Values.web.containerSecurityContext "context" $) | nindent 12 }}
           {{- end }}
           command:
-            - /usr/local/bin/dockerize
-          args:
-            - -template
-            - /etc/nginx/nginx.conf.templ:/etc/nginx/nginx.conf
-            - -template
-            - /var/www/html/autoconfig/config-v1.1.xml.templ:/var/www/html/autoconfig/config-v1.1.xml
-            - /bin/true
+            - /usr/local/bin/init.sh
           envFrom:
             - configMapRef:
                 name: {{ printf "%s-configenv" (include "common.names.fullname" .) | trunc 63 | trimSuffix "-" }}
@@ -123,40 +117,14 @@ spec:
               mountPath: /var/www/html/autoconfig
             - name: nginx
               mountPath: /etc/nginx
-        - name: wait-for-resources
+        - name: init-database
           image: {{ include "docker-mailserver.web.image" . }}
           imagePullPolicy: {{ .Values.web.image.pullPolicy }}
           {{- if .Values.web.containerSecurityContext.enabled }}
           securityContext: {{- include "common.compatibility.renderSecurityContext" (dict "secContext" .Values.web.containerSecurityContext "context" $) | nindent 12 }}
           {{- end }}
           command:
-            - /usr/local/bin/dockerize
-          args:
-            - -wait
-            - tcp://{{ include "docker-mailserver.redisHost" . }}:{{ include "docker-mailserver.redisPort" . }}
-            - -wait
-            - tcp://{{ include "docker-mailserver.databaseHost" . }}:{{ include "docker-mailserver.databasePort" . }}
-            - -wait
-            - tcp://{{ include "docker-mailserver.filter" . }}:11332
-            - -timeout
-            - 20s
-            - /bin/true
-          envFrom:
-            - configMapRef:
-                name: {{ printf "%s-configenv" (include "common.names.fullname" .) | trunc 63 | trimSuffix "-" }}
-        - name: check-database
-          image: {{ include "docker-mailserver.web.image" . }}
-          imagePullPolicy: {{ .Values.web.image.pullPolicy }}
-          {{- if .Values.web.containerSecurityContext.enabled }}
-          securityContext: {{- include "common.compatibility.renderSecurityContext" (dict "secContext" .Values.web.containerSecurityContext "context" $) | nindent 12 }}
-          {{- end }}
-          command: ["/bin/sh"]
-          args:
-            - -ec
-            - |
-              cd /var/www/html/webmail
-              bin/updatedb.sh --dir="/var/www/html/webmail/SQL" --package=roundcube
-              /opt/manager/bin/console dkim:refresh
+            - /usr/local/bin/init_database.sh
           envFrom:
             - configMapRef:
                 name: {{ printf "%s-configenv" (include "common.names.fullname" .) | trunc 63 | trimSuffix "-" }}
@@ -281,7 +249,7 @@ spec:
             - /usr/sbin/nginx
           args:
             - -g
-            - daemon off; pid off;
+            - daemon off; pid /var/lib/nginx/tmp/pid;
           ports:
             - name: http
               containerPort: 80

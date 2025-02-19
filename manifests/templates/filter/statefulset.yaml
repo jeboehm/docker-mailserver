@@ -72,7 +72,6 @@ spec:
             - -ec
             - |
               cp -r /etc/rspamd/* /target/
-              echo "password = \"{{`{{$.Env.REDIS_PASSWORD}}`}}\";" >> /target/override.d/redis.conf.templ
           volumeMounts:
             - name: rspamd-config
               mountPath: /target
@@ -83,17 +82,7 @@ spec:
           securityContext: {{- include "common.compatibility.renderSecurityContext" (dict "secContext" .Values.filter.containerSecurityContext "context" $) | nindent 12 }}
           {{- end }}
           command:
-            - /usr/local/bin/dockerize
-          args:
-            - -template
-            - /etc/rspamd/local.d/antivirus.conf.templ:/etc/rspamd/local.d/antivirus.conf
-            - -template
-            - /etc/rspamd/local.d/options.inc.templ:/etc/rspamd/local.d/options.inc
-            - -template
-            - /etc/rspamd/local.d/worker-controller.inc.templ:/etc/rspamd/local.d/worker-controller.inc
-            - -template
-            - /etc/rspamd/override.d/redis.conf.templ:/etc/rspamd/override.d/redis.conf
-            - /bin/true
+            - /usr/local/bin/init.sh
           envFrom:
             - configMapRef:
                 name: {{ printf "%s-configenv" (include "common.names.fullname" .) | trunc 63 | trimSuffix "-" }}
@@ -118,25 +107,6 @@ spec:
           volumeMounts:
             - name: rspamd-config
               mountPath: /etc/rspamd
-        - name: wait-for-resources
-          image: {{ include "docker-mailserver.filter.image" . }}
-          imagePullPolicy: {{ .Values.filter.image.pullPolicy }}
-          {{- if .Values.filter.containerSecurityContext.enabled }}
-          securityContext: {{- include "common.compatibility.renderSecurityContext" (dict "secContext" .Values.filter.containerSecurityContext "context" $) | nindent 12 }}
-          {{- end }}
-          command:
-            - /usr/local/bin/dockerize
-          args:
-            - -wait
-            - tcp://{{ include "docker-mailserver.redisHost" . }}:{{ include "docker-mailserver.redisPort" . }}
-            - -wait
-            - tcp://{{ include "docker-mailserver.virus" . }}:3310
-            - -timeout
-            - 20s
-            - /bin/true
-          envFrom:
-            - configMapRef:
-                name: {{ printf "%s-configenv" (include "common.names.fullname" .) | trunc 63 | trimSuffix "-" }}
       containers:
         - name: rspamd
           image: {{ include "docker-mailserver.filter.image" . }}
@@ -148,11 +118,7 @@ spec:
           securityContext: {{- include "common.compatibility.renderSecurityContext" (dict "secContext" .Values.filter.containerSecurityContext "context" $) | nindent 12 }}
           {{- end }}
           command:
-            - /usr/bin/rspamd
-          args:
-            - -c
-            - /etc/rspamd/rspamd.conf
-            - -f
+            - /usr/local/bin/entrypoint.sh
           ports:
             - name: controller
               containerPort: 11334
@@ -161,6 +127,8 @@ spec:
               containerPort: 11332
               protocol: TCP
           env:
+            - name: SKIP_INIT
+              value: "true"
             {{- if .Values.filter.extraEnvVars }}
             {{- include "common.tplvalues.render" (dict "value" .Values.filter.extraEnvVars "context" $) | nindent 12 }}
             {{- end }}

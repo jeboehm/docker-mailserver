@@ -83,21 +83,7 @@ spec:
           securityContext: {{- include "common.compatibility.renderSecurityContext" (dict "secContext" .Values.mta.containerSecurityContext "context" $) | nindent 12 }}
           {{- end }}
           command:
-            - /usr/local/bin/dockerize
-          args:
-            - -template
-            - /etc/postfix/mysql-email2email.cf.templ:/etc/postfix/mysql-email2email.cf
-            - -template
-            - /etc/postfix/mysql-virtual-alias-maps.cf.templ:/etc/postfix/mysql-virtual-alias-maps.cf
-            - -template
-            - /etc/postfix/mysql-virtual-mailbox-domains.cf.templ:/etc/postfix/mysql-virtual-mailbox-domains.cf
-            - -template
-            - /etc/postfix/mysql-virtual-mailbox-maps.cf.templ:/etc/postfix/mysql-virtual-mailbox-maps.cf
-            - -template
-            - /etc/postfix/mysql-recipient-access.cf.templ:/etc/postfix/mysql-recipient-access.cf
-            - -template
-            - /etc/postfix/mysql-email-submission.cf.templ:/etc/postfix/mysql-email-submission.cf
-            - /bin/true
+            - /usr/local/bin/init.sh
           envFrom:
             - configMapRef:
                 name: {{ printf "%s-configenv" (include "common.names.fullname" .) | trunc 63 | trimSuffix "-" }}
@@ -110,43 +96,6 @@ spec:
           volumeMounts:
             - name: postfix
               mountPath: /etc/postfix
-        - name: postconf
-          image: {{ include "docker-mailserver.mta.image" . }}
-          imagePullPolicy: {{ .Values.mta.image.pullPolicy }}
-          {{- if .Values.mta.containerSecurityContext.enabled }}
-          securityContext: {{- include "common.compatibility.renderSecurityContext" (dict "secContext" .Values.mta.containerSecurityContext "context" $) | nindent 12 }}
-          {{- end }}
-          command: ["/bin/sh"]
-          args:
-            - -ec
-            - |
-              postconf myhostname="{{ .Values.config.mailname }}"
-              postconf recipient_delimiter="{{ .Values.config.recipientDelimiter }}"
-              postconf smtpd_milters="inet:{{ include "docker-mailserver.filter" . }}:11332"
-              postconf non_smtpd_milters="inet:{{ include "docker-mailserver.filter" . }}:11332"
-              postconf virtual_transport="lmtp:{{ include "docker-mailserver.mda" . }}:2003"
-              postconf smtpd_sasl_path="inet:{{ include "docker-mailserver.mda" . }}:2004"
-          volumeMounts:
-            - name: postfix
-              mountPath: /etc/postfix
-        - name: wait-for-resources
-          image: {{ include "docker-mailserver.mta.image" . }}
-          imagePullPolicy: {{ .Values.mta.image.pullPolicy }}
-          {{- if .Values.mta.containerSecurityContext.enabled }}
-          securityContext: {{- include "common.compatibility.renderSecurityContext" (dict "secContext" .Values.mta.containerSecurityContext "context" $) | nindent 12 }}
-          {{- end }}
-          command:
-            - /usr/local/bin/dockerize
-          args:
-            - -wait
-            - tcp://{{ include "docker-mailserver.databaseHost" . }}:{{ include "docker-mailserver.databasePort" . }}
-            - -wait
-            - tcp://{{ include "docker-mailserver.mda" . }}:2003
-            - -wait
-            - tcp://{{ include "docker-mailserver.filter" . }}:11332
-            - -timeout
-            - 20s
-            - /bin/true
         {{- if .Values.mta.initContainers }}
           {{- include "common.tplvalues.render" (dict "value" .Values.mta.initContainers "context" $) | nindent 8 }}
         {{- end }}
@@ -161,9 +110,7 @@ spec:
           securityContext: {{- include "common.compatibility.renderSecurityContext" (dict "secContext" .Values.mta.containerSecurityContext "context" $) | nindent 12 }}
           {{- end }}
           command:
-            - /usr/sbin/postfix
-          args:
-            - start-fg
+            - /usr/local/bin/entrypoint.sh
           ports:
             - name: smtp
               containerPort: 25
@@ -175,6 +122,8 @@ spec:
               containerPort: 465
               protocol: TCP
           env:
+            - name: SKIP_INIT
+              value: "true"
             {{- if .Values.mta.extraEnvVars }}
             {{- include "common.tplvalues.render" (dict "value" .Values.mta.extraEnvVars "context" $) | nindent 12 }}
             {{- end }}

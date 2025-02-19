@@ -96,19 +96,7 @@ spec:
           securityContext: {{- include "common.compatibility.renderSecurityContext" (dict "secContext" .Values.mda.initContainerSecurityContext "context" $) | nindent 12 }}
           {{- end }}
           command:
-            - /usr/local/bin/dockerize
-          args:
-            - -template
-            - /etc/dovecot/conf.d/10-master.conf.templ:/etc/dovecot/conf.d/10-master.conf
-            - -template
-            - /etc/dovecot/conf.d/15-lda.conf.templ:/etc/dovecot/conf.d/15-lda.conf
-            - -template
-            - /etc/dovecot/conf.d/15-fts-xapian.conf.templ:/etc/dovecot/conf.d/15-fts-xapian.conf
-            - -template
-            - /etc/dovecot/conf.d/90-sieve.conf.templ:/etc/dovecot/conf.d/90-sieve.conf
-            - -template
-            - /etc/dovecot/dovecot-sql.conf.ext.templ:/etc/dovecot/dovecot-sql.conf.ext
-            - /bin/true
+            - /usr/local/bin/init.sh
           envFrom:
             - configMapRef:
                 name: {{ printf "%s-configenv" (include "common.names.fullname" .) | trunc 63 | trimSuffix "-" }}
@@ -121,20 +109,6 @@ spec:
           volumeMounts:
             - name: dovecot-config
               mountPath: /etc/dovecot
-        - name: wait-for-resources
-          image: {{ include "docker-mailserver.mda.image" . }}
-          imagePullPolicy: {{ .Values.mda.image.pullPolicy }}
-          {{- if .Values.mda.containerSecurityContext.enabled }}
-          securityContext: {{- include "common.compatibility.renderSecurityContext" (dict "secContext" .Values.mda.containerSecurityContext "context" $) | nindent 12 }}
-          {{- end }}
-          command:
-            - /usr/local/bin/dockerize
-          args:
-            - -wait
-            - tcp://{{ include "docker-mailserver.databaseHost" . }}:{{ include "docker-mailserver.databasePort" . }}
-            - -timeout
-            - 20s
-            - /bin/true
         {{- if .Values.mda.initContainers }}
           {{- include "common.tplvalues.render" (dict "value" .Values.mda.initContainers "context" $) | nindent 8 }}
         {{- end }}
@@ -149,9 +123,7 @@ spec:
           securityContext: {{- include "common.compatibility.renderSecurityContext" (dict "secContext" .Values.mda.containerSecurityContext "context" $) | nindent 12 }}
           {{- end }}
           command:
-            - /usr/sbin/dovecot
-          args:
-            - -F
+            - /usr/local/bin/entrypoint.sh
           ports:
             - name: pop3
               containerPort: 110
@@ -175,6 +147,8 @@ spec:
               containerPort: 4190
               protocol: TCP
           env:
+            - name: SKIP_INIT
+              value: "true"
             {{- if .Values.mda.extraEnvVars }}
             {{- include "common.tplvalues.render" (dict "value" .Values.mda.extraEnvVars "context" $) | nindent 12 }}
             {{- end }}
