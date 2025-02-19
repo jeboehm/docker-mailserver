@@ -3,8 +3,8 @@
 version: '3.5'
 
 services:
-  mailhog:
-    image: mailhog/mailhog:v1.0.1
+  mailpit:
+    image: axllent/mailpit:v1.22
 
   test:
     build: ./test
@@ -17,7 +17,7 @@ services:
       - ./test/rootfs/usr/share/tests:/usr/share/tests:ro
     env_file: .env
     depends_on:
-      - mailhog
+      - mailpit
 
   # For development
   # web:

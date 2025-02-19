@@ -1,5 +1,5 @@
 FROM jwilder/dockerize:0.6.1 AS dockerize
-FROM alpine:3.20
+FROM alpine:3.21
 
 LABEL maintainer="jeff@ressourcenkonflikt.de"
 LABEL vendor="https://github.com/jeboehm/docker-mailserver"
@@ -17,6 +17,8 @@ ENV MAILNAME=mail.example.com \
     MDA_HOST=mda \
     MTA_HOST=mta \
     RELAYHOST=false \
+    RELAY_PASSWD_FILE=false \
+    RELAY_OPTIONS=false \
     SSL_CERT=/media/tls/mailserver.crt \
     SSL_KEY=/media/tls/mailserver.key \
     WAITSTART_TIMEOUT=1m \

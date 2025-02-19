@@ -10,7 +10,6 @@
       "datasourceTemplate": "github-releases"
     }
   ],
-  "baseBranches": ["main", "next"],
   "packageRules": [
     {
       "matchUpdateTypes": [
@@ -23,5 +22,5 @@
     }
   ],
   "platformAutomerge": true,
-  "automergeType": "branch"
+  "automergeType": "pr"
 }
