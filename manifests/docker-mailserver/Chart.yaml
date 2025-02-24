@@ -16,7 +16,6 @@ annotations:
     - name: redis
       image: docker.io/bitnami/redis:latest
 apiVersion: v2
-appVersion: 2.14.1
 dependencies:
   - condition: redis.enabled
     name: redis
@@ -35,8 +34,7 @@ description: Docker Mailserver based on the famous ISPMail guide. All images are
 home: https://github.com/jeboehm/docker-mailserver
 keywords: [postfix, dovecot, mail, mailserver, smtp, imap]
 maintainers:
-  - name: Jeffrey Boehm
-    url: https://github.com/jeboehm
+  - name: jeboehm
 name: docker-mailserver
 sources: [https://github.com/jeboehm/docker-mailserver]
-version: 7.1.9
+version: 0.0.1
