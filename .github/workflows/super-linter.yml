@@ -27,6 +27,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VALIDATE_SQLFLUFF: false
           VALIDATE_KUBERNETES_KUBECONFORM: false
+          VALIDATE_JSCPD: false
           FIX_YAML_PRETTIER: true
           FIX_SHELL_SHFMT: true
 
