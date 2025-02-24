@@ -35,6 +35,9 @@ config:
   mailname: mail.example.com
   postmaster: postmaster@example.com
   recipientDelimiter: '-'
+## @section Mail parameters
+
+## @section Ingress parameters
 ingress:
   ## @param ingress.enabled Enable ingress record generation for docker-mailserver
   ##
@@ -70,7 +73,7 @@ ingress:
   ##
   annotations: {}
   ## @param ingress.tls Enable TLS configuration for the host defined at `ingress.hostname` parameter
-  ## TLS certificates will be retrieved from a TLS secret with name: `{{- printf "%s-tls" .Values.ingress.hostname }}`
+  ## TLS certificates will be retrieved from a TLS secret with name: `{{- printf "%s-tls" .Values.config.mailname }}`
   ## You can:
   ##   - Use the `ingress.secrets` parameter to create this TLS secret
   ##   - Rely on cert-manager to create it by setting the corresponding annotations
@@ -87,6 +90,8 @@ ingress:
   ##     path: /
   ##
   extraHosts: []
+  ## @param ingress.extraTlsHostnames An array with additional hostname(s) to be covered with the ingress tls record. The host names are templated and thus can contain other variable references.
+  extraTlsHostnames: []
   ## @param ingress.extraPaths An array with additional arbitrary paths that may need to be added to the ingress under the main host
   ## e.g:
   ## extraPaths:

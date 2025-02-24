@@ -46,11 +46,11 @@ spec:
   tls:
     {{- if and .Values.ingress.tls (or (include "common.ingress.certManagerRequest" ( dict "annotations" .Values.ingress.annotations )) .Values.ingress.selfSigned) }}
     - hosts:
-        - {{ tpl .Values.ingress.hostname $ | quote }}
-        {{- if and (or (.Values.ingress.tlsWwwPrefix) (eq (index .Values.ingress.annotations "nginx.ingress.kubernetes.io/from-to-www-redirect") "true" )) (not (contains "www." .Values.ingress.hostname))  }}
-        - {{ printf "www.%s" (tpl .Values.ingress.hostname $) | quote }}
+        - {{ tpl .Values.ingress.hostname $ }}
+        {{- with .Values.ingress.extraTlsHostnames }}
+        {{- toYaml . | nindent 8 }}
         {{- end }}
-      secretName: {{ printf "%s-tls" (tpl .Values.ingress.hostname $) }}
+      secretName: {{ printf "%s-tls" (tpl .Values.config.mailname $) }}
     {{- end }}
     {{- if .Values.ingress.extraTls }}
     {{- include "common.tplvalues.render" (dict "value" .Values.ingress.extraTls "context" $) | nindent 4 }}

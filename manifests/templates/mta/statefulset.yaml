@@ -182,7 +182,7 @@ spec:
               - key: ca.crt
                 path: ca.crt
               {{- end }}
-            secretName: {{ printf "%s-tls" (tpl .Values.ingress.hostname $) }}
+            secretName: {{ printf "%s-tls" (tpl .Values.config.mailname $) }}
         - name: tmp
           emptyDir: {}
         - name: postfix
