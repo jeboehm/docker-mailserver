@@ -22,14 +22,15 @@ jobs:
       - name: Lint Code Base
         uses: github/super-linter@v5
         env:
-          VALIDATE_ALL_CODEBASE: false
           DEFAULT_BRANCH: main
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VALIDATE_ALL_CODEBASE: false
           VALIDATE_SQLFLUFF: false
           VALIDATE_KUBERNETES_KUBECONFORM: false
           VALIDATE_JSCPD: false
           FIX_YAML_PRETTIER: true
           FIX_SHELL_SHFMT: true
+          FILTER_REGEX_EXCLUDE: ^manifests/
 
       - name: Commit and push linting fixes
         if: >
