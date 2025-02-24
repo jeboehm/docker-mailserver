@@ -1,20 +1,20 @@
+---
 ## @section Global parameters
 ## Global Docker image parameters
 ## Please, note that this will override the image parameters, including dependencies, configured to use the global value
 ## Current available global Docker image parameters: imageRegistry, imagePullSecrets and storageClass
-
 ## @param global.imageRegistry Global Docker image registry
 ## @param global.imagePullSecrets Global Docker registry secret names as an array
 ## @param global.defaultStorageClass Global default StorageClass for Persistent Volume(s)
 ##
 global:
-  imageRegistry: ""
+  imageRegistry: ''
   ## E.g.
   ## imagePullSecrets:
   ##   - myRegistryKeySecretName
   ##
   imagePullSecrets: []
-  defaultStorageClass: ""
+  defaultStorageClass: ''
   ## Security parameters
   ##
   security:
@@ -30,13 +30,11 @@ global:
       ##
       adaptSecurityContext: auto
 ## @section Common parameters
-
 ## @section Mail parameters
 config:
   mailname: mail.example.com
   postmaster: postmaster@example.com
-  recipientDelimiter: "-"
-
+  recipientDelimiter: '-'
 ingress:
   ## @param ingress.enabled Enable ingress record generation for docker-mailserver
   ##
@@ -46,12 +44,12 @@ ingress:
   pathType: ImplementationSpecific
   ## @param ingress.apiVersion Force Ingress API version (automatically detected if not set)
   ##
-  apiVersion: ""
+  apiVersion: ''
   ## @param ingress.ingressClassName IngressClass that will be be used to implement the Ingress (Kubernetes 1.18+)
   ## This is supported in Kubernetes 1.18+ and required if you have more than one IngressClass marked as the default for your cluster .
   ## ref: https://kubernetes.io/blog/2020/04/02/improvements-to-the-ingress-api-in-kubernetes-1.18/
   ##
-  ingressClassName: ""
+  ingressClassName: ''
   ## @param ingress.hostname Default host for the ingress record. The hostname is templated and thus can contain other variable references.
   ##
   hostname: mail.example.com
@@ -141,19 +139,18 @@ ingress:
   ##             name: http
   ##
   extraRules: []
-
 ## @param kubeVersion Force target Kubernetes version (using Helm capabilities if not set)
 ##
-kubeVersion: ""
+kubeVersion: ''
 ## @param nameOverride String to partially override docker-mailserver.fullname template (will maintain the release name)
 ##
-nameOverride: ""
+nameOverride: ''
 ## @param fullnameOverride String to fully override docker-mailserver.fullname template
 ##
-fullnameOverride: ""
+fullnameOverride: ''
 ## @param namespaceOverride String to fully override common.names.namespace
 ##
-namespaceOverride: ""
+namespaceOverride: ''
 ## @param commonAnnotations Common annotations to add to all docker-mailserver resources (sub-charts are not considered). Evaluated as a template
 ##
 commonAnnotations: {}
@@ -164,7 +161,6 @@ commonLabels: {}
 ##
 extraDeploy: []
 ## @section docker-mailserver parameters
-
 ## Enable persistence using Persistent Volume Claims
 ## ref: https://kubernetes.io/docs/concepts/storage/persistent-volumes/
 ##
@@ -180,7 +176,7 @@ persistence:
     ##   set, choosing the default provisioner.  (gp2 on AWS, standard on
     ##   GKE, AWS & OpenStack)
     ##
-    storageClass: ""
+    storageClass: ''
     ## @param persistence.accessModes PVC Access Mode for docker-mailserver volume
     ## Requires persistence.enabled: true
     ## If defined, PVC must be created manually before volume will be bound
@@ -194,17 +190,16 @@ persistence:
     ## Requires persistence.enabled: true
     ## If defined, PVC must be created manually before volume will be bound
     ##
-    existingClaim: ""
+    existingClaim: ''
     ## @param persistence.hostPath If defined, the docker-mailserver-data volume will mount to the specified hostPath.
     ## Requires persistence.enabled: true
     ## Requires persistence.existingClaim: nil|false
     ## Default: nil.
     ##
-    hostPath: ""
+    hostPath: ''
     ## @param persistence.annotations Persistent Volume Claim annotations
     ##
     annotations: {}
-
 ## @section mta - Mail Transfer Agent parameters
 mta:
   ## mda image version
@@ -221,7 +216,7 @@ mta:
     registry: docker.io
     repository: jeboehm/mailserver-mta
     tag: next
-    digest: ""
+    digest: ''
     ## Specify a imagePullPolicy
     ## ref: https://kubernetes.io/docs/concepts/containers/images/#pre-pulled-images
     ##
@@ -248,11 +243,11 @@ mta:
 
   ## @param priorityClassName docker-mailserver pods' priorityClassName
   ##
-  priorityClassName: ""
+  priorityClassName: ''
   ## @param schedulerName Name of the k8s scheduler (other than default)
   ## ref: https://kubernetes.io/docs/tasks/administer-cluster/configure-multiple-schedulers/
   ##
-  schedulerName: ""
+  schedulerName: ''
   ## @param topologySpreadConstraints Topology Spread Constraints for pod assignment
   ## https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/
   ## The value is evaluated as a template
@@ -270,10 +265,10 @@ mta:
   #    value: true
   ## @param extraEnvVarsCM ConfigMap containing extra env vars
   ##
-  extraEnvVarsCM: ""
+  extraEnvVarsCM: ''
   ## @param extraEnvVarsSecret Secret containing extra env vars (in case of sensitive data)
   ##
-  extraEnvVarsSecret: ""
+  extraEnvVarsSecret: ''
   ## @param extraVolumes Array of extra volumes to be added to the deployment (evaluated as template). Requires setting `extraVolumeMounts`
   ##
   extraVolumes: []
@@ -292,8 +287,8 @@ mta:
   ##
   pdb:
     create: true
-    minAvailable: ""
-    maxUnavailable: ""
+    minAvailable: ''
+    maxUnavailable: ''
   ## @param sidecars Attach additional containers to the pod (evaluated as a template)
   ##
   sidecars: []
@@ -312,11 +307,11 @@ mta:
   ## @param sessionAffinity Control where client requests go, to the same pod or round-robin. Values: ClientIP or None
   ## ref: https://kubernetes.io/docs/concepts/services-networking/service/
   ##
-  sessionAffinity: "None"
+  sessionAffinity: None
   ## @param podAffinityPreset Pod affinity preset. Ignored if `affinity` is set. Allowed values: `soft` or `hard`
   ## ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#inter-pod-affinity-and-anti-affinity
   ##
-  podAffinityPreset: ""
+  podAffinityPreset: ''
   ## @param podAntiAffinityPreset Pod anti-affinity preset. Ignored if `affinity` is set. Allowed values: `soft` or `hard`
   ## Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#inter-pod-affinity-and-anti-affinity
   ##
@@ -328,11 +323,11 @@ mta:
   ## @param nodeAffinityPreset.values Node label values to match. Ignored if `affinity` is set.
   ##
   nodeAffinityPreset:
-    type: ""
+    type: ''
     ## E.g.
     ## key: "kubernetes.io/e2e-az-name"
     ##
-    key: ""
+    key: ''
     ## E.g.
     ## values:
     ##   - e2e-az1
@@ -357,7 +352,7 @@ mta:
   ## @param resourcesPreset Set container resources according to one common preset (allowed values: none, nano, micro, small, medium, large, xlarge, 2xlarge). This is ignored if resources is set (resources is recommended for production).
   ## More information: https://github.com/bitnami/charts/blob/main/bitnami/common/templates/_resources.tpl#L15
   ##
-  resourcesPreset: "small"
+  resourcesPreset: small
   ## @param resources Set container requests and limits for different resources like CPU or memory (essential for production workloads)
   ## Example:
   ## resources:
@@ -412,7 +407,7 @@ mta:
     #     - CAP_SYS_CHROOT
     #     - CAP_
     seccompProfile:
-      type: "RuntimeDefault"
+      type: RuntimeDefault
   ## Configure extra options for liveness probe
   ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/#configure-probes
   ## @param livenessProbe.enabled Enable livenessProbe
@@ -458,16 +453,16 @@ mta:
     ## NOTE: choose port between <30000-32767>
     ##
     nodePorts:
-      smtp: ""
+      smtp: ''
     ## @param controller.service.clusterIP Argo CD application controller service Cluster IP
     ## e.g.:
     ## clusterIP: None
     ##
-    clusterIP: ""
+    clusterIP: ''
     ## @param controller.service.loadBalancerIP Argo CD application controller service Load Balancer IP
     ## ref: https://kubernetes.io/docs/concepts/services-networking/service/#type-loadbalancer
     ##
-    loadBalancerIP: ""
+    loadBalancerIP: ''
     ## @param controller.service.loadBalancerSourceRanges Argo CD application controller service Load Balancer sources
     ## ref: https://kubernetes.io/docs/tasks/access-application-cluster/configure-cloud-provider-firewall/#restrict-access-for-loadbalancer-service
     ## e.g:
@@ -495,7 +490,6 @@ mta:
     ##   clientIP:
     ##     timeoutSeconds: 300
     sessionAffinityConfig: {}
-
   service:
     ## @param service.enabled Enable public facing mta service
     ##
@@ -518,16 +512,16 @@ mta:
     loadBalancerSourceRanges: []
     ## @param service.loadBalancerIP loadBalancerIP for the docker-mailserver Service (optional, cloud specific)
     ## ref: https://kubernetes.io/docs/concepts/services-networking/service/#type-loadbalancer
-    loadBalancerIP: ""
+    loadBalancerIP: ''
     ## @param service.nodePorts [object] Kubernetes node port
     ## nodePorts:
     ##   http: <to set explicitly, choose port between 30000-32767>
     ##   https: <to set explicitly, choose port between 30000-32767>
     ##
     nodePorts:
-      smtp: ""
-      submission: ""
-      submissionssl: ""
+      smtp: ''
+      submission: ''
+      submissionssl: ''
     ## @param service.externalTrafficPolicy Enable client source IP preservation
     ## ref https://kubernetes.io/docs/tasks/access-application-cluster/create-external-load-balancer/#preserving-the-client-source-ip
     ##
@@ -536,7 +530,7 @@ mta:
     ## e.g.:
     ## clusterIP: None
     ##
-    clusterIP: ""
+    clusterIP: ''
     ## @param service.extraPorts Extra ports to expose (normally used with the `sidecar` value)
     ##
     extraPorts: []
@@ -554,7 +548,6 @@ mta:
     ##     timeoutSeconds: 300
     ##
     sessionAffinityConfig: {}
-
 ## @section mda - Mail Delivery Agent parameters
 mda:
   ## mda image version
@@ -571,7 +564,7 @@ mda:
     registry: docker.io
     repository: jeboehm/mailserver-mda
     tag: next
-    digest: ""
+    digest: ''
     ## Specify a imagePullPolicy
     ## ref: https://kubernetes.io/docs/concepts/containers/images/#pre-pulled-images
     ##
@@ -598,11 +591,11 @@ mda:
 
   ## @param priorityClassName docker-mailserver pods' priorityClassName
   ##
-  priorityClassName: ""
+  priorityClassName: ''
   ## @param schedulerName Name of the k8s scheduler (other than default)
   ## ref: https://kubernetes.io/docs/tasks/administer-cluster/configure-multiple-schedulers/
   ##
-  schedulerName: ""
+  schedulerName: ''
   ## @param topologySpreadConstraints Topology Spread Constraints for pod assignment
   ## https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/
   ## The value is evaluated as a template
@@ -620,10 +613,10 @@ mda:
   #    value: true
   ## @param extraEnvVarsCM ConfigMap containing extra env vars
   ##
-  extraEnvVarsCM: ""
+  extraEnvVarsCM: ''
   ## @param extraEnvVarsSecret Secret containing extra env vars (in case of sensitive data)
   ##
-  extraEnvVarsSecret: ""
+  extraEnvVarsSecret: ''
   ## @param extraVolumes Array of extra volumes to be added to the deployment (evaluated as template). Requires setting `extraVolumeMounts`
   ##
   extraVolumes: []
@@ -646,8 +639,8 @@ mda:
   ##
   pdb:
     create: true
-    minAvailable: ""
-    maxUnavailable: ""
+    minAvailable: ''
+    maxUnavailable: ''
   ## @param sidecars Attach additional containers to the pod (evaluated as a template)
   ##
   sidecars: []
@@ -666,11 +659,11 @@ mda:
   ## @param sessionAffinity Control where client requests go, to the same pod or round-robin. Values: ClientIP or None
   ## ref: https://kubernetes.io/docs/concepts/services-networking/service/
   ##
-  sessionAffinity: "None"
+  sessionAffinity: None
   ## @param podAffinityPreset Pod affinity preset. Ignored if `affinity` is set. Allowed values: `soft` or `hard`
   ## ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#inter-pod-affinity-and-anti-affinity
   ##
-  podAffinityPreset: ""
+  podAffinityPreset: ''
   ## @param podAntiAffinityPreset Pod anti-affinity preset. Ignored if `affinity` is set. Allowed values: `soft` or `hard`
   ## Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#inter-pod-affinity-and-anti-affinity
   ##
@@ -682,11 +675,11 @@ mda:
   ## @param nodeAffinityPreset.values Node label values to match. Ignored if `affinity` is set.
   ##
   nodeAffinityPreset:
-    type: ""
+    type: ''
     ## E.g.
     ## key: "kubernetes.io/e2e-az-name"
     ##
-    key: ""
+    key: ''
     ## E.g.
     ## values:
     ##   - e2e-az1
@@ -711,7 +704,7 @@ mda:
   ## @param resourcesPreset Set container resources according to one common preset (allowed values: none, nano, micro, small, medium, large, xlarge, 2xlarge). This is ignored if resources is set (resources is recommended for production).
   ## More information: https://github.com/bitnami/charts/blob/main/bitnami/common/templates/_resources.tpl#L15
   ##
-  resourcesPreset: "micro"
+  resourcesPreset: micro
   ## @param resources Set container requests and limits for different resources like CPU or memory (essential for production workloads)
   ## Example:
   ## resources:
@@ -766,7 +759,7 @@ mda:
     #     - CAP_SYS_CHROOT
     #     - CAP_
     seccompProfile:
-      type: "RuntimeDefault"
+      type: RuntimeDefault
   initContainerSecurityContext:
     enabled: true
     seLinuxOptions: {}
@@ -777,7 +770,7 @@ mda:
     allowPrivilegeEscalation: false
     readOnlyRootFilesystem: true
     seccompProfile:
-      type: "RuntimeDefault"
+      type: RuntimeDefault
 
   ## Configure extra options for liveness probe
   ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/#configure-probes
@@ -827,19 +820,19 @@ mda:
     ## NOTE: choose port between <30000-32767>
     ##
     nodePorts:
-      imap: ""
-      lmtp: ""
-      auth: ""
-      managesieve: ""
+      imap: ''
+      lmtp: ''
+      auth: ''
+      managesieve: ''
     ## @param controller.service.clusterIP Argo CD application controller service Cluster IP
     ## e.g.:
     ## clusterIP: None
     ##
-    clusterIP: ""
+    clusterIP: ''
     ## @param controller.service.loadBalancerIP Argo CD application controller service Load Balancer IP
     ## ref: https://kubernetes.io/docs/concepts/services-networking/service/#type-loadbalancer
     ##
-    loadBalancerIP: ""
+    loadBalancerIP: ''
     ## @param controller.service.loadBalancerSourceRanges Argo CD application controller service Load Balancer sources
     ## ref: https://kubernetes.io/docs/tasks/access-application-cluster/configure-cloud-provider-firewall/#restrict-access-for-loadbalancer-service
     ## e.g:
@@ -892,17 +885,17 @@ mda:
     loadBalancerSourceRanges: []
     ## @param service.loadBalancerIP loadBalancerIP for the docker-mailserver Service (optional, cloud specific)
     ## ref: https://kubernetes.io/docs/concepts/services-networking/service/#type-loadbalancer
-    loadBalancerIP: ""
+    loadBalancerIP: ''
     ## @param service.nodePorts [object] Kubernetes node port
     ## nodePorts:
     ##   http: <to set explicitly, choose port between 30000-32767>
     ##   https: <to set explicitly, choose port between 30000-32767>
     ##
     nodePorts:
-      pop3: ""
-      imap: ""
-      pop3s: ""
-      imaps: ""
+      pop3: ''
+      imap: ''
+      pop3s: ''
+      imaps: ''
     ## @param service.externalTrafficPolicy Enable client source IP preservation
     ## ref https://kubernetes.io/docs/tasks/access-application-cluster/create-external-load-balancer/#preserving-the-client-source-ip
     ##
@@ -911,7 +904,7 @@ mda:
     ## e.g.:
     ## clusterIP: None
     ##
-    clusterIP: ""
+    clusterIP: ''
     ## @param service.extraPorts Extra ports to expose (normally used with the `sidecar` value)
     ##
     extraPorts: []
@@ -929,7 +922,6 @@ mda:
     ##     timeoutSeconds: 300
     ##
     sessionAffinityConfig: {}
-
 ## @section virus - Malware scanner parameters
 virus:
   ## virus image version
@@ -946,7 +938,7 @@ virus:
     registry: docker.io
     repository: jeboehm/mailserver-virus
     tag: next
-    digest: ""
+    digest: ''
     ## Specify a imagePullPolicy
     ## ref: https://kubernetes.io/docs/concepts/containers/images/#pre-pulled-images
     ##
@@ -973,11 +965,11 @@ virus:
 
   ## @param priorityClassName docker-mailserver pods' priorityClassName
   ##
-  priorityClassName: ""
+  priorityClassName: ''
   ## @param schedulerName Name of the k8s scheduler (other than default)
   ## ref: https://kubernetes.io/docs/tasks/administer-cluster/configure-multiple-schedulers/
   ##
-  schedulerName: ""
+  schedulerName: ''
   ## @param topologySpreadConstraints Topology Spread Constraints for pod assignment
   ## https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/
   ## The value is evaluated as a template
@@ -995,10 +987,10 @@ virus:
   #    value: true
   ## @param extraEnvVarsCM ConfigMap containing extra env vars
   ##
-  extraEnvVarsCM: ""
+  extraEnvVarsCM: ''
   ## @param extraEnvVarsSecret Secret containing extra env vars (in case of sensitive data)
   ##
-  extraEnvVarsSecret: ""
+  extraEnvVarsSecret: ''
   ## @param extraVolumes Array of extra volumes to be added to the deployment (evaluated as template). Requires setting `extraVolumeMounts`
   ##
   extraVolumes: []
@@ -1017,8 +1009,8 @@ virus:
   ##
   pdb:
     create: true
-    minAvailable: ""
-    maxUnavailable: ""
+    minAvailable: ''
+    maxUnavailable: ''
   ## @param sidecars Attach additional containers to the pod (evaluated as a template)
   ##
   sidecars: []
@@ -1037,11 +1029,11 @@ virus:
   ## @param sessionAffinity Control where client requests go, to the same pod or round-robin. Values: ClientIP or None
   ## ref: https://kubernetes.io/docs/concepts/services-networking/service/
   ##
-  sessionAffinity: "None"
+  sessionAffinity: None
   ## @param podAffinityPreset Pod affinity preset. Ignored if `affinity` is set. Allowed values: `soft` or `hard`
   ## ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#inter-pod-affinity-and-anti-affinity
   ##
-  podAffinityPreset: ""
+  podAffinityPreset: ''
   ## @param podAntiAffinityPreset Pod anti-affinity preset. Ignored if `affinity` is set. Allowed values: `soft` or `hard`
   ## Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#inter-pod-affinity-and-anti-affinity
   ##
@@ -1053,11 +1045,11 @@ virus:
   ## @param nodeAffinityPreset.values Node label values to match. Ignored if `affinity` is set.
   ##
   nodeAffinityPreset:
-    type: ""
+    type: ''
     ## E.g.
     ## key: "kubernetes.io/e2e-az-name"
     ##
-    key: ""
+    key: ''
     ## E.g.
     ## values:
     ##   - e2e-az1
@@ -1082,8 +1074,8 @@ virus:
   ## @param resourcesPreset Set container resources according to one common preset (allowed values: none, nano, micro, small, medium, large, xlarge, 2xlarge). This is ignored if resources is set (resources is recommended for production).
   ## More information: https://github.com/bitnami/charts/blob/main/bitnami/common/templates/_resources.tpl#L15
   ##
-  resourcesPreset: "medium"
-  resourcesPresetUpdate: "micro"
+  resourcesPreset: medium
+  resourcesPresetUpdate: micro
   ## @param resources Set container requests and limits for different resources like CPU or memory (essential for production workloads)
   ## Example:
   ## resources:
@@ -1141,7 +1133,7 @@ virus:
     #     - CAP_SYS_CHROOT
     #     - CAP_
     seccompProfile:
-      type: "RuntimeDefault"
+      type: RuntimeDefault
 
   ## Configure extra options for liveness probe
   ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/#configure-probes
@@ -1188,16 +1180,16 @@ virus:
     ## NOTE: choose port between <30000-32767>
     ##
     nodePorts:
-      clamav: ""
+      clamav: ''
     ## @param controller.service.clusterIP Argo CD application controller service Cluster IP
     ## e.g.:
     ## clusterIP: None
     ##
-    clusterIP: ""
+    clusterIP: ''
     ## @param controller.service.loadBalancerIP Argo CD application controller service Load Balancer IP
     ## ref: https://kubernetes.io/docs/concepts/services-networking/service/#type-loadbalancer
     ##
-    loadBalancerIP: ""
+    loadBalancerIP: ''
     ## @param controller.service.loadBalancerSourceRanges Argo CD application controller service Load Balancer sources
     ## ref: https://kubernetes.io/docs/tasks/access-application-cluster/configure-cloud-provider-firewall/#restrict-access-for-loadbalancer-service
     ## e.g:
@@ -1225,7 +1217,6 @@ virus:
     ##   clientIP:
     ##     timeoutSeconds: 300
     sessionAffinityConfig: {}
-
 ## @section filter - Mail filter parameters
 filter:
   ## virus image version
@@ -1242,7 +1233,7 @@ filter:
     registry: docker.io
     repository: jeboehm/mailserver-filter
     tag: next
-    digest: ""
+    digest: ''
     ## Specify a imagePullPolicy
     ## ref: https://kubernetes.io/docs/concepts/containers/images/#pre-pulled-images
     ##
@@ -1269,11 +1260,11 @@ filter:
 
   ## @param priorityClassName docker-mailserver pods' priorityClassName
   ##
-  priorityClassName: ""
+  priorityClassName: ''
   ## @param schedulerName Name of the k8s scheduler (other than default)
   ## ref: https://kubernetes.io/docs/tasks/administer-cluster/configure-multiple-schedulers/
   ##
-  schedulerName: ""
+  schedulerName: ''
   ## @param topologySpreadConstraints Topology Spread Constraints for pod assignment
   ## https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/
   ## The value is evaluated as a template
@@ -1291,10 +1282,10 @@ filter:
   #    value: true
   ## @param extraEnvVarsCM ConfigMap containing extra env vars
   ##
-  extraEnvVarsCM: ""
+  extraEnvVarsCM: ''
   ## @param extraEnvVarsSecret Secret containing extra env vars (in case of sensitive data)
   ##
-  extraEnvVarsSecret: ""
+  extraEnvVarsSecret: ''
   ## @param extraVolumes Array of extra volumes to be added to the deployment (evaluated as template). Requires setting `extraVolumeMounts`
   ##
   extraVolumes: []
@@ -1313,8 +1304,8 @@ filter:
   ##
   pdb:
     create: true
-    minAvailable: ""
-    maxUnavailable: ""
+    minAvailable: ''
+    maxUnavailable: ''
   ## @param sidecars Attach additional containers to the pod (evaluated as a template)
   ##
   sidecars: []
@@ -1333,11 +1324,11 @@ filter:
   ## @param sessionAffinity Control where client requests go, to the same pod or round-robin. Values: ClientIP or None
   ## ref: https://kubernetes.io/docs/concepts/services-networking/service/
   ##
-  sessionAffinity: "None"
+  sessionAffinity: None
   ## @param podAffinityPreset Pod affinity preset. Ignored if `affinity` is set. Allowed values: `soft` or `hard`
   ## ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#inter-pod-affinity-and-anti-affinity
   ##
-  podAffinityPreset: ""
+  podAffinityPreset: ''
   ## @param podAntiAffinityPreset Pod anti-affinity preset. Ignored if `affinity` is set. Allowed values: `soft` or `hard`
   ## Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#inter-pod-affinity-and-anti-affinity
   ##
@@ -1349,11 +1340,11 @@ filter:
   ## @param nodeAffinityPreset.values Node label values to match. Ignored if `affinity` is set.
   ##
   nodeAffinityPreset:
-    type: ""
+    type: ''
     ## E.g.
     ## key: "kubernetes.io/e2e-az-name"
     ##
-    key: ""
+    key: ''
     ## E.g.
     ## values:
     ##   - e2e-az1
@@ -1378,7 +1369,7 @@ filter:
   ## @param resourcesPreset Set container resources according to one common preset (allowed values: none, nano, micro, small, medium, large, xlarge, 2xlarge). This is ignored if resources is set (resources is recommended for production).
   ## More information: https://github.com/bitnami/charts/blob/main/bitnami/common/templates/_resources.tpl#L15
   ##
-  resourcesPreset: "medium"
+  resourcesPreset: medium
   ## @param resources Set container requests and limits for different resources like CPU or memory (essential for production workloads)
   ## Example:
   ## resources:
@@ -1435,7 +1426,7 @@ filter:
     #     - CAP_SYS_CHROOT
     #     - CAP_
     seccompProfile:
-      type: "RuntimeDefault"
+      type: RuntimeDefault
 
   ## Configure extra options for liveness probe
   ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/#configure-probes
@@ -1483,17 +1474,17 @@ filter:
     ## NOTE: choose port between <30000-32767>
     ##
     nodePorts:
-      controller: ""
-      worker: ""
+      controller: ''
+      worker: ''
     ## @param controller.service.clusterIP Argo CD application controller service Cluster IP
     ## e.g.:
     ## clusterIP: None
     ##
-    clusterIP: ""
+    clusterIP: ''
     ## @param controller.service.loadBalancerIP Argo CD application controller service Load Balancer IP
     ## ref: https://kubernetes.io/docs/concepts/services-networking/service/#type-loadbalancer
     ##
-    loadBalancerIP: ""
+    loadBalancerIP: ''
     ## @param controller.service.loadBalancerSourceRanges Argo CD application controller service Load Balancer sources
     ## ref: https://kubernetes.io/docs/tasks/access-application-cluster/configure-cloud-provider-firewall/#restrict-access-for-loadbalancer-service
     ## e.g:
@@ -1521,7 +1512,6 @@ filter:
     ##   clientIP:
     ##     timeoutSeconds: 300
     sessionAffinityConfig: {}
-
 ## @section web - Web management interface parameters
 web:
   ## web image version
@@ -1538,7 +1528,7 @@ web:
     registry: docker.io
     repository: jeboehm/mailserver-web
     tag: next
-    digest: ""
+    digest: ''
     ## Specify a imagePullPolicy
     ## ref: https://kubernetes.io/docs/concepts/containers/images/#pre-pulled-images
     ##
@@ -1565,11 +1555,11 @@ web:
 
   ## @param priorityClassName docker-mailserver pods' priorityClassName
   ##
-  priorityClassName: ""
+  priorityClassName: ''
   ## @param schedulerName Name of the k8s scheduler (other than default)
   ## ref: https://kubernetes.io/docs/tasks/administer-cluster/configure-multiple-schedulers/
   ##
-  schedulerName: ""
+  schedulerName: ''
   ## @param topologySpreadConstraints Topology Spread Constraints for pod assignment
   ## https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/
   ## The value is evaluated as a template
@@ -1587,10 +1577,10 @@ web:
   #    value: true
   ## @param extraEnvVarsCM ConfigMap containing extra env vars
   ##
-  extraEnvVarsCM: ""
+  extraEnvVarsCM: ''
   ## @param extraEnvVarsSecret Secret containing extra env vars (in case of sensitive data)
   ##
-  extraEnvVarsSecret: ""
+  extraEnvVarsSecret: ''
   ## @param extraVolumes Array of extra volumes to be added to the deployment (evaluated as template). Requires setting `extraVolumeMounts`
   ##
   extraVolumes: []
@@ -1609,8 +1599,8 @@ web:
   ##
   pdb:
     create: true
-    minAvailable: ""
-    maxUnavailable: ""
+    minAvailable: ''
+    maxUnavailable: ''
   ## @param sidecars Attach additional containers to the pod (evaluated as a template)
   ##
   sidecars: []
@@ -1629,11 +1619,11 @@ web:
   ## @param sessionAffinity Control where client requests go, to the same pod or round-robin. Values: ClientIP or None
   ## ref: https://kubernetes.io/docs/concepts/services-networking/service/
   ##
-  sessionAffinity: "None"
+  sessionAffinity: None
   ## @param podAffinityPreset Pod affinity preset. Ignored if `affinity` is set. Allowed values: `soft` or `hard`
   ## ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#inter-pod-affinity-and-anti-affinity
   ##
-  podAffinityPreset: ""
+  podAffinityPreset: ''
   ## @param podAntiAffinityPreset Pod anti-affinity preset. Ignored if `affinity` is set. Allowed values: `soft` or `hard`
   ## Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#inter-pod-affinity-and-anti-affinity
   ##
@@ -1645,11 +1635,11 @@ web:
   ## @param nodeAffinityPreset.values Node label values to match. Ignored if `affinity` is set.
   ##
   nodeAffinityPreset:
-    type: ""
+    type: ''
     ## E.g.
     ## key: "kubernetes.io/e2e-az-name"
     ##
-    key: ""
+    key: ''
     ## E.g.
     ## values:
     ##   - e2e-az1
@@ -1674,7 +1664,7 @@ web:
   ## @param resourcesPreset Set container resources according to one common preset (allowed values: none, nano, micro, small, medium, large, xlarge, 2xlarge). This is ignored if resources is set (resources is recommended for production).
   ## More information: https://github.com/bitnami/charts/blob/main/bitnami/common/templates/_resources.tpl#L15
   ##
-  resourcesPreset: "small"
+  resourcesPreset: small
   ## @param resources Set container requests and limits for different resources like CPU or memory (essential for production workloads)
   ## Example:
   ## resources:
@@ -1731,7 +1721,7 @@ web:
     #     - CAP_SYS_CHROOT
     #     - CAP_
     seccompProfile:
-      type: "RuntimeDefault"
+      type: RuntimeDefault
 
   ## Configure extra options for liveness probe
   ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/#configure-probes
@@ -1778,16 +1768,16 @@ web:
     ## NOTE: choose port between <30000-32767>
     ##
     nodePorts:
-      http: ""
+      http: ''
     ## @param controller.service.clusterIP Argo CD application controller service Cluster IP
     ## e.g.:
     ## clusterIP: None
     ##
-    clusterIP: ""
+    clusterIP: ''
     ## @param controller.service.loadBalancerIP Argo CD application controller service Load Balancer IP
     ## ref: https://kubernetes.io/docs/concepts/services-networking/service/#type-loadbalancer
     ##
-    loadBalancerIP: ""
+    loadBalancerIP: ''
     ## @param controller.service.loadBalancerSourceRanges Argo CD application controller service Load Balancer sources
     ## ref: https://kubernetes.io/docs/tasks/access-application-cluster/configure-cloud-provider-firewall/#restrict-access-for-loadbalancer-service
     ## e.g:
@@ -1815,7 +1805,6 @@ web:
     ##   clientIP:
     ##     timeoutSeconds: 300
     sessionAffinityConfig: {}
-
 ## MariaDB chart configuration
 ## https://github.com/bitnami/charts/blob/main/bitnami/mariadb/values.yaml
 ##
@@ -1824,7 +1813,6 @@ mariadb:
     mailserver.sql: |
       SET NAMES utf8mb4;
       SET FOREIGN_KEY_CHECKS = 0;
-
       DROP TABLE IF EXISTS `mail_aliases`;
       CREATE TABLE `mail_aliases` (
           `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -1838,7 +1826,6 @@ mariadb:
               `domain_id`
           ) REFERENCES `mail_domains` (`id`)
       ) ENGINE = InnoDB;
-
       DROP TABLE IF EXISTS `mail_domains`;
       CREATE TABLE `mail_domains` (
           `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -1849,7 +1836,6 @@ mariadb:
           PRIMARY KEY (`id`),
           UNIQUE KEY `UNIQ_56C63EF25E237E06` (`name`)
       ) ENGINE = InnoDB;
-
       DROP TABLE IF EXISTS `mail_users`;
       CREATE TABLE `mail_users` (
           `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -1867,7 +1853,6 @@ mariadb:
               `domain_id`
           ) REFERENCES `mail_domains` (`id`)
       ) ENGINE = InnoDB;
-
       DROP TABLE IF EXISTS `migration_versions`;
       CREATE TABLE `migration_versions` (
           `version` varchar(191) NOT NULL,
@@ -1875,7 +1860,6 @@ mariadb:
           `execution_time` int(11) DEFAULT NULL,
           PRIMARY KEY (`version`)
       ) ENGINE = InnoDB;
-
       INSERT INTO `migration_versions` (
           `version`, `executed_at`, `execution_time`
       ) VALUES
@@ -1884,14 +1868,10 @@ mariadb:
       ('DoctrineMigrations\\Version20180322081734', NOW(), 0),
       ('DoctrineMigrations\\Version20180520173959', NOW(), 0),
       ('DoctrineMigrations\\Version20190610121554', NOW(), 0);
-
     webmail.sql: |
       -- Roundcube Webmail initial database structure
-
       /*!40014  SET FOREIGN_KEY_CHECKS=0 */;
-
       -- Table structure for table `session`
-
       CREATE TABLE `session` (
       `sess_id` varchar(128) NOT NULL,
       `changed` datetime NOT NULL DEFAULT '1000-01-01 00:00:00',
@@ -1900,10 +1880,7 @@ mariadb:
       PRIMARY KEY(`sess_id`),
       INDEX `changed_index` (`changed`)
       ) /*!40000 ENGINE=INNODB */ /*!40101 CHARACTER SET utf8 COLLATE utf8_general_ci */;
-
-
       -- Table structure for table `users`
-
       CREATE TABLE `users` (
       `user_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
       `username` varchar(128) BINARY NOT NULL,
@@ -1917,10 +1894,7 @@ mariadb:
       PRIMARY KEY(`user_id`),
       UNIQUE `username` (`username`, `mail_host`)
       ) /*!40000 ENGINE=INNODB */ /*!40101 CHARACTER SET utf8 COLLATE utf8_general_ci */;
-
-
       -- Table structure for table `cache`
-
       CREATE TABLE `cache` (
       `user_id` int(10) UNSIGNED NOT NULL,
       `cache_key` varchar(128) BINARY NOT NULL,
@@ -1931,10 +1905,7 @@ mariadb:
         REFERENCES `users`(`user_id`) ON DELETE CASCADE ON UPDATE CASCADE,
       INDEX `expires_index` (`expires`)
       ) /*!40000 ENGINE=INNODB */ /*!40101 CHARACTER SET utf8 COLLATE utf8_general_ci */;
-
-
       -- Table structure for table `cache_shared`
-
       CREATE TABLE `cache_shared` (
       `cache_key` varchar(255) BINARY NOT NULL,
       `expires` datetime DEFAULT NULL,
@@ -1942,10 +1913,7 @@ mariadb:
       PRIMARY KEY (`cache_key`),
       INDEX `expires_index` (`expires`)
       ) /*!40000 ENGINE=INNODB */ /*!40101 CHARACTER SET utf8 COLLATE utf8_general_ci */;
-
-
       -- Table structure for table `cache_index`
-
       CREATE TABLE `cache_index` (
       `user_id` int(10) UNSIGNED NOT NULL,
       `mailbox` varchar(255) BINARY NOT NULL,
@@ -1957,10 +1925,7 @@ mariadb:
       INDEX `expires_index` (`expires`),
       PRIMARY KEY (`user_id`, `mailbox`)
       ) /*!40000 ENGINE=INNODB */ /*!40101 CHARACTER SET utf8 COLLATE utf8_general_ci */;
-
-
       -- Table structure for table `cache_thread`
-
       CREATE TABLE `cache_thread` (
       `user_id` int(10) UNSIGNED NOT NULL,
       `mailbox` varchar(255) BINARY NOT NULL,
@@ -1971,10 +1936,7 @@ mariadb:
       INDEX `expires_index` (`expires`),
       PRIMARY KEY (`user_id`, `mailbox`)
       ) /*!40000 ENGINE=INNODB */ /*!40101 CHARACTER SET utf8 COLLATE utf8_general_ci */;
-
-
       -- Table structure for table `cache_messages`
-
       CREATE TABLE `cache_messages` (
       `user_id` int(10) UNSIGNED NOT NULL,
       `mailbox` varchar(255) BINARY NOT NULL,
@@ -1987,10 +1949,7 @@ mariadb:
       INDEX `expires_index` (`expires`),
       PRIMARY KEY (`user_id`, `mailbox`, `uid`)
       ) /*!40000 ENGINE=INNODB */ /*!40101 CHARACTER SET utf8 COLLATE utf8_general_ci */;
-
-
       -- Table structure for table `contacts`
-
       CREATE TABLE `contacts` (
       `contact_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
       `changed` datetime NOT NULL DEFAULT '1000-01-01 00:00:00',
@@ -2007,9 +1966,7 @@ mariadb:
         REFERENCES `users`(`user_id`) ON DELETE CASCADE ON UPDATE CASCADE,
       INDEX `user_contacts_index` (`user_id`,`del`)
       ) /*!40000 ENGINE=INNODB */ /*!40101 CHARACTER SET utf8 COLLATE utf8_general_ci */;
-
       -- Table structure for table `contactgroups`
-
       CREATE TABLE `contactgroups` (
         `contactgroup_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
         `user_id` int(10) UNSIGNED NOT NULL,
@@ -2021,7 +1978,6 @@ mariadb:
           REFERENCES `users`(`user_id`) ON DELETE CASCADE ON UPDATE CASCADE,
         INDEX `contactgroups_user_index` (`user_id`,`del`)
       ) /*!40000 ENGINE=INNODB */ /*!40101 CHARACTER SET utf8 COLLATE utf8_general_ci */;
-
       CREATE TABLE `contactgroupmembers` (
         `contactgroup_id` int(10) UNSIGNED NOT NULL,
         `contact_id` int(10) UNSIGNED NOT NULL,
@@ -2033,10 +1989,7 @@ mariadb:
           REFERENCES `contacts`(`contact_id`) ON DELETE CASCADE ON UPDATE CASCADE,
         INDEX `contactgroupmembers_contact_index` (`contact_id`)
       ) /*!40000 ENGINE=INNODB */;
-
-
       -- Table structure for table `identities`
-
       CREATE TABLE `identities` (
       `identity_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
       `user_id` int(10) UNSIGNED NOT NULL,
@@ -2056,10 +2009,7 @@ mariadb:
       INDEX `user_identities_index` (`user_id`, `del`),
       INDEX `email_identities_index` (`email`, `del`)
       ) /*!40000 ENGINE=INNODB */ /*!40101 CHARACTER SET utf8 COLLATE utf8_general_ci */;
-
-
       -- Table structure for table `dictionary`
-
       CREATE TABLE `dictionary` (
         `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY, -- redundant, for compat. with Galera Cluster
         `user_id` int(10) UNSIGNED DEFAULT NULL, -- NULL here is for "shared dictionaries"
@@ -2069,10 +2019,7 @@ mariadb:
           REFERENCES `users`(`user_id`) ON DELETE CASCADE ON UPDATE CASCADE,
         UNIQUE `uniqueness` (`user_id`, `language`)
       ) /*!40000 ENGINE=INNODB */ /*!40101 CHARACTER SET utf8 COLLATE utf8_general_ci */;
-
-
       -- Table structure for table `searches`
-
       CREATE TABLE `searches` (
       `search_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
       `user_id` int(10) UNSIGNED NOT NULL,
@@ -2084,9 +2031,7 @@ mariadb:
         REFERENCES `users`(`user_id`) ON DELETE CASCADE ON UPDATE CASCADE,
       UNIQUE `uniqueness` (`user_id`, `type`, `name`)
       ) /*!40000 ENGINE=INNODB */ /*!40101 CHARACTER SET utf8 COLLATE utf8_general_ci */;
-
       -- Table structure for table `filestore`
-
       CREATE TABLE `filestore` (
       `file_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
       `user_id` int(10) UNSIGNED NOT NULL,
@@ -2099,19 +2044,14 @@ mariadb:
         REFERENCES `users` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE,
       UNIQUE `uniqueness` (`user_id`, `context`, `filename`)
       ) /*!40000 ENGINE=INNODB */ /*!40101 CHARACTER SET utf8 COLLATE utf8_general_ci */;
-
       -- Table structure for table `system`
-
       CREATE TABLE `system` (
       `name` varchar(64) NOT NULL,
       `value` mediumtext,
       PRIMARY KEY(`name`)
       ) /*!40000 ENGINE=INNODB */ /*!40101 CHARACTER SET utf8 COLLATE utf8_general_ci */;
-
       /*!40014 SET FOREIGN_KEY_CHECKS=1 */;
-
       INSERT INTO `system` (`name`, `value`) VALUES ('roundcube-version', '2019092900');
-
 
   ## @param mariadb.enabled Whether to deploy a mariadb server to satisfy the applications database requirements
   ## To use an external database set this to false and configure the externalDatabase parameters
@@ -2129,14 +2069,14 @@ mariadb:
   auth:
     ## ref: https://github.com/bitnami/containers/tree/main/bitnami/mariadb#setting-the-root-password-on-first-run
     ##
-    rootPassword: ""
+    rootPassword: ''
     ## ref: https://github.com/bitnami/containers/blob/main/bitnami/mariadb/README.md#creating-a-database-on-first-run
     ##
     database: mailserver
     ## ref: https://github.com/bitnami/containers/blob/main/bitnami/mariadb/README.md#creating-a-database-user-on-first-run
     ##
     username: mailserver
-    password: ""
+    password: ''
   primary:
     ## Enable persistence using Persistent Volume Claims
     ## ref: https://kubernetes.io/docs/concepts/storage/persistent-volumes/
@@ -2156,12 +2096,11 @@ mariadb:
       ##   set, choosing the default provisioner.  (gp2 on AWS, standard on
       ##   GKE, AWS & OpenStack)
       ##
-      storageClass: ""
-      accessModes:
-        - ReadWriteOnce
+      storageClass: ''
+      accessModes: [ReadWriteOnce]
       size: 8Gi
-      hostPath: ""
-      existingClaim: ""
+      hostPath: ''
+      existingClaim: ''
 ## External database configuration
 ## @param externalDatabase.host Host of the existing database
 ## @param externalDatabase.port Port of the existing database
@@ -2171,13 +2110,12 @@ mariadb:
 ## @param externalDatabase.existingSecret Name of a secret with the database password. (externalDatabase.password will be ignored and picked up from this secret). The secret has to contain the key db-password
 ##
 externalDatabase:
-  host: ""
+  host: ''
   port: 3306
   user: mailserver
-  password: ""
+  password: ''
   database: mailserver
-  existingSecret: ""
-
+  existingSecret: ''
 ## Redis parameters
 ##
 redis:
@@ -2194,7 +2132,7 @@ redis:
     registry: docker.io
     repository: bitnami/redis
     tag: 7.4.2-debian-12-r1
-    digest: ""
+    digest: ''
     ## Specify a imagePullPolicy
     ## ref: https://kubernetes.io/docs/concepts/containers/images/#pre-pulled-images
     ##
@@ -2212,7 +2150,7 @@ redis:
   enabled: true
   ## @param redis.nameOverride Name override for the Redis dependency
   ##
-  nameOverride: ""
+  nameOverride: ''
   ## @param redis.service.ports.redis Service port for Redis dependency
   ##
   service:
@@ -2227,11 +2165,11 @@ redis:
     enabled: true
     ## Name of existing secret object containing the password
     ##
-    existingSecret: ""
+    existingSecret: ''
     ##
     ## Password key to be retrieved from Redis&reg; secret
     ##
-    existingSecretPasswordKey: 'redis-password'
+    existingSecretPasswordKey: redis-password
   ## Cluster settings
   ## @param redis.architecture Redis&reg; architecture. Allowed values: `standalone` or `replication`
   ##
@@ -2247,7 +2185,7 @@ externalRedis:
   ## Redis&reg; host
   ## @param externalRedis.host External Redis host
   ##
-  host: ""
+  host: ''
   ## Redis&reg; port
   ## @param externalRedis.port External Redis port
   ##
@@ -2256,21 +2194,21 @@ externalRedis:
   ## Ignored if existingSecret is set
   ## @param externalRedis.password External Redis password
   ##
-  password: ""
+  password: ''
   ## Name of existing secret object containing the password
   ## @param externalRedis.existingSecret Existing secret for the external redis
   ##
-  existingSecret: ""
+  existingSecret: ''
   ## Password key to be retrieved from Redis&reg; secret
   ## @param externalRedis.existingSecretPasswordKey Password key for the existing secret containing the external redis password
   ##
-  existingSecretPasswordKey: 'redis-password'
+  existingSecretPasswordKey: redis-password
   ## Specify a label to use with the label selector
   ## @param externalRedis.selector External Redis selector labels
   ##
   selector: {}
   #
   # selector:
-    # app.kubernetes.io/component: master
-    # app.kubernetes.io/instance: redis
-    # app.kubernetes.io/name: redis
+  # app.kubernetes.io/component: master
+  # app.kubernetes.io/instance: redis
+  # app.kubernetes.io/name: redis
