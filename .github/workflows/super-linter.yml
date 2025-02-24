@@ -30,7 +30,7 @@ jobs:
           VALIDATE_JSCPD: false
           FIX_YAML_PRETTIER: true
           FIX_SHELL_SHFMT: true
-          FILTER_REGEX_EXCLUDE: charts/
+          FILTER_REGEX_EXCLUDE: manifests/
 
       - name: Commit and push linting fixes
         if: >
