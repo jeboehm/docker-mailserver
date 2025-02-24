@@ -47,6 +47,9 @@ spec:
     {{- if and .Values.ingress.tls (or (include "common.ingress.certManagerRequest" ( dict "annotations" .Values.ingress.annotations )) .Values.ingress.selfSigned) }}
     - hosts:
         - {{ tpl .Values.ingress.hostname $ }}
+        {{- if ne .Values.ingress.hostname .Values.config.mailname }}
+        - {{ tpl .Values.config.mailname $ }}
+        {{- end }}
         {{- with .Values.ingress.extraTlsHostnames }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
