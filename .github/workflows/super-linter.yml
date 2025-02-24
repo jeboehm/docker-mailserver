@@ -26,6 +26,7 @@ jobs:
           DEFAULT_BRANCH: main
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VALIDATE_SQLFLUFF: false
+          VALIDATE_KUBERNETES_KUBECONFORM: false
           FIX_YAML_PRETTIER: true
           FIX_SHELL_SHFMT: true
 
