@@ -121,13 +121,13 @@ ingress:
   ## secrets:
   ##   - name: docker-mailserver.local-tls
   ##     key: |-
-  ##       -----BEGIN RSA PRIVATE KEY-----
+  ##       -----BEGIN EXAMPLE KEY-----
   ##       ...
-  ##       -----END RSA PRIVATE KEY-----
+  ##       -----END EXAMPLE KEY-----
   ##     certificate: |-
-  ##       -----BEGIN CERTIFICATE-----
+  ##       -----BEGIN EXAMPLE CERTIFICATE-----
   ##       ...
-  ##       -----END CERTIFICATE-----
+  ##       -----END EXAMPLE CERTIFICATE-----
   ##
   secrets: []
   ## @param ingress.extraRules Additional rules to be covered with this ingress record
