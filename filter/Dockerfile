@@ -11,9 +11,7 @@ ENV FILTER_VIRUS=false \
     REDIS_PORT=6379 \
     REDIS_PASSWORD= \
     WAITSTART_TIMEOUT=1m \
-    CONTROLLER_PASSWORD=changeme \
-    # OpenDNS resolvers
-    DNS_RESOLVERS=208.67.222.222,208.67.220.220
+    CONTROLLER_PASSWORD=changeme
 
 RUN apk --no-cache add \
       openssl \
@@ -24,14 +22,12 @@ RUN apk --no-cache add \
     mkdir /run/rspamd && \
     touch \
       /etc/rspamd/local.d/antivirus.conf \
-      /etc/rspamd/local.d/options.inc \
       /etc/rspamd/override.d/redis.conf \
       /etc/rspamd/local.d/worker-controller.inc && \
     chown -R rspamd \
       /run/rspamd \
       /var/lib/rspamd \
       /etc/rspamd/local.d/antivirus.conf \
-      /etc/rspamd/local.d/options.inc \
       /etc/rspamd/override.d/redis.conf \
       /etc/rspamd/local.d/worker-controller.inc && \
     apk --no-cache del \
