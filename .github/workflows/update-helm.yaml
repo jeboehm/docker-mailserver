@@ -3,7 +3,7 @@
 name: Update Helm repository
 on:
   push:
-    branches: [main, next]
+#    branches: [main, next]
 jobs:
   publish_release:
     runs-on: ubuntu-latest
@@ -12,7 +12,7 @@ jobs:
       - name: Update helm chart
         uses: shini4i/helm-charts-updater@v1
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ secrets.CHARTS_REPO_TOKEN }}
           gh_user: jeboehm
           gh_repo: mailserver-charts
           chart_name: docker-mailserver
