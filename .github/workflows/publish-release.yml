@@ -69,3 +69,4 @@ jobs:
           app_version: ${{ steps.tag_version.outputs.new_tag }}
           generate_docs: true
           update_readme: true
+        if: github.ref == 'refs/heads/main'
