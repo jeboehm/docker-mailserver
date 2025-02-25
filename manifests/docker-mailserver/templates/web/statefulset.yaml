@@ -156,6 +156,7 @@ spec:
               mountPath: /var/www/html/autoconfig
             - name: nginx
               mountPath: /etc/nginx
+        {{- if .Values.config.admin.password }}
         - name: init-admin-user
           image: {{ include "docker-mailserver.web.image" . }}
           imagePullPolicy: {{ .Values.web.image.pullPolicy }}
@@ -210,6 +211,7 @@ spec:
               mountPath: /var/www/html/autoconfig
             - name: nginx
               mountPath: /etc/nginx
+        {{- end }}
       containers:
         - name: php-fpm
           image: {{ include "docker-mailserver.web.image" . }}
