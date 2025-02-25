@@ -35,6 +35,11 @@ config:
   mailname: mail.example.com
   postmaster: postmaster@example.com
   recipientDelimiter: '-'
+  admin:
+    name: admin
+    domain: example.com
+    password: ''
+
 ## @section Mail parameters
 
 ## @section Ingress parameters
@@ -1717,14 +1722,11 @@ web:
     privileged: false
     allowPrivilegeEscalation: false
     readOnlyRootFilesystem: true
-    # TODO: Add capabilities
-    # capabilities:
-    #   drop:
-    #     - ALL
-    #   add:
-    #     - NET_BIND_SERVICE
-    #     - CAP_SYS_CHROOT
-    #     - CAP_
+    capabilities:
+      drop:
+        - ALL
+      add:
+        - NET_BIND_SERVICE
     seccompProfile:
       type: RuntimeDefault
 

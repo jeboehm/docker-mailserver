@@ -156,6 +156,60 @@ spec:
               mountPath: /var/www/html/autoconfig
             - name: nginx
               mountPath: /etc/nginx
+        - name: init-admin-user
+          image: {{ include "docker-mailserver.web.image" . }}
+          imagePullPolicy: {{ .Values.web.image.pullPolicy }}
+          {{- if .Values.web.containerSecurityContext.enabled }}
+          securityContext: {{- include "common.compatibility.renderSecurityContext" (dict "secContext" .Values.web.containerSecurityContext "context" $) | nindent 12 }}
+          {{- end }}
+          command:
+            - /usr/local/bin/init_admin_user.sh
+          envFrom:
+            - configMapRef:
+                name: {{ printf "%s-configenv" (include "common.names.fullname" .) | trunc 63 | trimSuffix "-" }}
+          env:
+            - name: INIT_ADMIN_DOMAIN
+              valueFrom:
+                secretKeyRef:
+                  name: {{ printf "%s-admin" (include "common.names.fullname" .) | trunc 63 | trimSuffix "-" }}
+                  key: admin-domain
+            - name: INIT_ADMIN_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ printf "%s-admin" (include "common.names.fullname" .) | trunc 63 | trimSuffix "-" }}
+                  key: admin-name
+            - name: INIT_ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ printf "%s-admin" (include "common.names.fullname" .) | trunc 63 | trimSuffix "-" }}
+                  key: admin-password
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "docker-mailserver.databaseSecretName" . }}
+                  key: mariadb-password
+            {{- if and .Values.redis.enabled (include "docker-mailserver.redis.auth.enabled" .) }}
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "docker-mailserver.redis.secretName" . }}
+                  key: {{ include "docker-mailserver.redis.secretPasswordKey" . }}
+            {{- else if .Values.externalRedis.enabled }}
+            - name: REDIS_PASSWORD
+              {{- if not ( eq "" .Values.externalRedis.password ) }}
+              value: {{ .Values.externalRedis.password }}
+              {{- else }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.externalRedis.existingSecret }}
+                  key: {{ .Values.externalRedis.existingSecretPasswordKey }}
+              {{- end }}
+            {{- end }}
+          volumeMounts:
+            - name: autoconfig
+              mountPath: /var/www/html/autoconfig
+            - name: nginx
+              mountPath: /etc/nginx
       containers:
         - name: php-fpm
           image: {{ include "docker-mailserver.web.image" . }}
