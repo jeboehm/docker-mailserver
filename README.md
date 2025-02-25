@@ -50,6 +50,19 @@ Installation (basic setup)
    The wizard will ask you a few questions to set everything up.
 8. Now you can login to the management interface with your new account credentials.
 
+Installation on Kubernetes / k8s
+--------------------------------
+
+### TL;DR
+
+```bash
+$ helm repo add mailserver https://jeboehm.github.io/mailserver-charts/
+$ helm search repo mailserver
+$ helm install my-release mailserver/docker-mailserver
+```
+
+You can find ```values.yaml``` and more information in the [mailserver-charts repository](https://github.com/jeboehm/mailserver-charts/tree/main/charts/docker-mailserver).
+
 Screenshots
 -----------
 

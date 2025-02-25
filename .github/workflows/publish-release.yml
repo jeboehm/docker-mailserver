@@ -58,3 +58,14 @@ jobs:
         run: |
           .ci/bin/push_image_version.sh next
         if: github.ref == 'refs/heads/next'
+
+      - name: Update Helm chart
+        uses: shini4i/helm-charts-updater@v1
+        with:
+          github_token: ${{ secrets.CHARTS_REPO_TOKEN }}
+          gh_user: jeboehm
+          gh_repo: mailserver-charts
+          chart_name: docker-mailserver
+          app_version: ${{ steps.tag_version.outputs.new_tag }}
+          generate_docs: true
+          update_readme: true
