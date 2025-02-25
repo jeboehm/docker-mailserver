@@ -286,9 +286,8 @@ spec:
             - name: autoconfig
               mountPath: /var/www/html/autoconfig
               readOnly: true
-            - name: nginx
-              mountPath: /etc/nginx
-              readOnly: true
+            - name: manager-tmp
+              mountPath: /opt/manager/var/cache/prod
           {{- if .Values.web.extraVolumeMounts }}
           {{- include "common.tplvalues.render" (dict "value" .Values.web.extraVolumeMounts "context" $) | nindent 12 }}
           {{- end }}
@@ -311,28 +310,6 @@ spec:
               containerPort: 80
               protocol: TCP
           env:
-            - name: MYSQL_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: {{ include "docker-mailserver.databaseSecretName" . }}
-                  key: mariadb-password
-            {{- if and .Values.redis.enabled (include "docker-mailserver.redis.auth.enabled" .) }}
-            - name: REDIS_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: {{ include "docker-mailserver.redis.secretName" . }}
-                  key: {{ include "docker-mailserver.redis.secretPasswordKey" . }}
-            {{- else if .Values.externalRedis.enabled }}
-            - name: REDIS_PASSWORD
-              {{- if not ( eq "" .Values.externalRedis.password ) }}
-              value: {{ .Values.externalRedis.password }}
-              {{- else }}
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Values.externalRedis.existingSecret }}
-                  key: {{ .Values.externalRedis.existingSecretPasswordKey }}
-              {{- end }}
-            {{- end }}
             {{- if .Values.web.extraEnvVars }}
             {{- include "common.tplvalues.render" (dict "value" .Values.web.extraEnvVars "context" $) | nindent 12 }}
             {{- end }}
@@ -386,6 +363,8 @@ spec:
         - name: nginx
           emptyDir: {}
         - name: nginx-tmp
+          emptyDir: {}
+        - name: manager-tmp
           emptyDir: {}
         {{- if .Values.web.extraVolumes }}
         {{- include "common.tplvalues.render" (dict "value" .Values.web.extraVolumes "context" $) | nindent 8 }}
