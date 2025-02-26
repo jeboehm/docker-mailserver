@@ -12,6 +12,7 @@ Build status
 [![Build unofficial-sigs](https://github.com/jeboehm/docker-mailserver/actions/workflows/build-unofficial-sigs.yml/badge.svg)](https://github.com/jeboehm/docker-mailserver/actions/workflows/build-unofficial-sigs.yml)
 [![Lint Code Base](https://github.com/jeboehm/docker-mailserver/actions/workflows/super-linter.yml/badge.svg)](https://github.com/jeboehm/docker-mailserver/actions/workflows/super-linter.yml)
 [![Publish release](https://github.com/jeboehm/docker-mailserver/actions/workflows/publish-release.yml/badge.svg)](https://github.com/jeboehm/docker-mailserver/actions/workflows/publish-release.yml)
+[![Update Helm repository](https://github.com/jeboehm/docker-mailserver/actions/workflows/update-helm.yaml/badge.svg)](https://github.com/jeboehm/docker-mailserver/actions/workflows/update-helm.yaml)
 
 Features
 --------
@@ -50,8 +51,8 @@ Installation (basic setup)
    The wizard will ask you a few questions to set everything up.
 8. Now you can login to the management interface with your new account credentials.
 
-Installation on Kubernetes / k8s
---------------------------------
+Installation on Kubernetes / k8s (beta)
+---------------------------------------
 
 ### TL;DR
 
