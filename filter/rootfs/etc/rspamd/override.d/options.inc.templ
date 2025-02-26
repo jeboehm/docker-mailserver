@@ -1,3 +1,0 @@
-{{ $localAddrs := split .Env.LOCAL_ADDRS "," }}
-
-local_addrs = [{{- range $index, $element := $localAddrs }}{{ if $index }},{{ end }}"{{ $element }}"{{- end }}]
