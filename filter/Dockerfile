@@ -11,8 +11,7 @@ ENV FILTER_VIRUS=false \
     REDIS_PORT=6379 \
     REDIS_PASSWORD= \
     WAITSTART_TIMEOUT=1m \
-    CONTROLLER_PASSWORD=changeme \
-    LOCAL_ADDRS="192.168.0.0/16,10.0.0.0/8,172.16.0.0/12,fd00::/8,169.254.0.0/16,fe80::/10,127.2.4.7"
+    CONTROLLER_PASSWORD=changeme
 
 RUN apk --no-cache add \
       openssl \
@@ -23,14 +22,12 @@ RUN apk --no-cache add \
     mkdir /run/rspamd && \
     touch \
       /etc/rspamd/local.d/antivirus.conf \
-      /etc/rspamd/override.d/options.inc \
       /etc/rspamd/override.d/redis.conf \
       /etc/rspamd/local.d/worker-controller.inc && \
     chown -R rspamd \
       /run/rspamd \
       /var/lib/rspamd \
       /etc/rspamd/local.d/antivirus.conf \
-      /etc/rspamd/override.d/options.inc \
       /etc/rspamd/override.d/redis.conf \
       /etc/rspamd/local.d/worker-controller.inc && \
     apk --no-cache del \
