@@ -1,4 +1,4 @@
-FROM jwilder/dockerize:0.6.1 AS dockerize
+FROM jwilder/dockerize:v0.9.2 AS dockerize
 FROM alpine:3.21
 
 LABEL maintainer="jeff@ressourcenkonflikt.de"
@@ -13,7 +13,7 @@ ENV MAILNAME=mail.example.com \
     MYSQL_PASSWORD=changeme \
     MYSQL_DATABASE=mailserver \
     FILTER_MIME=false \
-    RSPAMD_HOST=filter \
+    FILTER_HOST=filter \
     MDA_HOST=mda \
     MTA_HOST=mta \
     RELAYHOST=false \
@@ -33,8 +33,8 @@ RUN apk --no-cache add \
     postconf smtpd_sender_login_maps=mysql:/etc/postfix/mysql-email-submission.cf && \
     postconf smtpd_recipient_restrictions="permit_mynetworks,reject_unauth_destination,check_recipient_access mysql:/etc/postfix/mysql-recipient-access.cf" && \
     postconf smtputf8_enable=no && \
-    postconf smtpd_milters="inet:${RSPAMD_HOST}:11332" && \
-    postconf non_smtpd_milters="inet:${RSPAMD_HOST}:11332" && \
+    postconf smtpd_milters="inet:${FILTER_HOST}:11332" && \
+    postconf non_smtpd_milters="inet:${FILTER_HOST}:11332" && \
     postconf milter_protocol=6 && \
     postconf milter_mail_macros="i {mail_addr} {client_addr} {client_name} {auth_authen}" && \
     postconf milter_default_action=accept && \
@@ -83,7 +83,7 @@ RUN apk --no-cache add \
     echo " -o smtpd_relay_restrictions=permit_sasl_authenticated,reject" >> /etc/postfix/master.cf && \
     echo " -o milter_macro_daemon_name=ORIGINATING" >> /etc/postfix/master.cf
 
-COPY --from=dockerize /usr/local/bin/dockerize /usr/local/bin
+COPY --from=dockerize /bin/dockerize /usr/local/bin/dockerize
 COPY rootfs/ /
 
 EXPOSE 25

@@ -1,9 +1,9 @@
-FROM jwilder/dockerize:0.6.1 AS dockerize
+FROM jwilder/dockerize:v0.9.2 AS dockerize
 FROM roundcube/roundcubemail:1.6.x-fpm AS roundcube
 FROM composer:2.8 AS composer
 FROM php:8.3-fpm-alpine
 
-ARG ADMIN_VER=2.1.35 # renovate: depName=jeboehm/mailserver-admin
+ARG ADMIN_VER=4.1.0 # renovate: depName=jeboehm/mailserver-admin
 
 LABEL maintainer="jeff@ressourcenkonflikt.de"
 LABEL vendor="https://github.com/jeboehm/docker-mailserver"
@@ -14,6 +14,9 @@ ENV MYSQL_HOST=db \
     MYSQL_DATABASE=mailserver \
     MYSQL_USER=mailserver \
     MYSQL_PASSWORD=changeme \
+    REDIS_HOST=redis \
+    REDIS_PORT=6379 \
+    REDIS_PASSWORD= \
     MTA_HOST=mta \
     MDA_HOST=mda \
     FILTER_HOST=filter \
@@ -27,13 +30,13 @@ ENV MYSQL_HOST=db \
     WAITSTART_TIMEOUT=1m \
     ADMIN_VER=${ADMIN_VER} \
     DATABASE_URL="mysql://%env(MYSQL_USER)%:%env(MYSQL_PASSWORD)%@%env(MYSQL_HOST)%:%env(MYSQL_PORT)%/%env(MYSQL_DATABASE)%?serverVersion=mariadb-10.4.11" \
-    COMPOSER_ALLOW_SUPERUSER=1 \
-    DKIM_PATH=/media/dkim
+    COMPOSER_ALLOW_SUPERUSER=1
 
 COPY --from=roundcube /usr/src/roundcubemail/ /var/www/html/webmail/
-COPY --from=dockerize /usr/local/bin/dockerize /usr/local/bin
+COPY --from=dockerize /bin/dockerize /usr/local/bin/dockerize
 COPY --from=composer /usr/bin/composer /usr/bin/composer
 
+# shellcheck disable=SC2086
 RUN apk add --no-cache \
         icu \
         icu-dev \
@@ -43,12 +46,14 @@ RUN apk add --no-cache \
         supervisor && \
     apk add --no-cache --virtual .phpize-deps ${PHPIZE_DEPS} && \
     pecl install apcu && \
+    pecl install redis && \
     docker-php-ext-install -j5 \
         intl \
         opcache \
         pdo_mysql \
         zip && \
     docker-php-ext-enable apcu && \
+    docker-php-ext-enable redis && \
     ln -sf /dev/stdout /var/log/nginx/access.log && \
     ln -sf /dev/stderr /var/log/nginx/error.log && \
     apk del --no-cache \

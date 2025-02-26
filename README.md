@@ -12,6 +12,7 @@ Build status
 [![Build unofficial-sigs](https://github.com/jeboehm/docker-mailserver/actions/workflows/build-unofficial-sigs.yml/badge.svg)](https://github.com/jeboehm/docker-mailserver/actions/workflows/build-unofficial-sigs.yml)
 [![Lint Code Base](https://github.com/jeboehm/docker-mailserver/actions/workflows/super-linter.yml/badge.svg)](https://github.com/jeboehm/docker-mailserver/actions/workflows/super-linter.yml)
 [![Publish release](https://github.com/jeboehm/docker-mailserver/actions/workflows/publish-release.yml/badge.svg)](https://github.com/jeboehm/docker-mailserver/actions/workflows/publish-release.yml)
+[![Update Helm repository](https://github.com/jeboehm/docker-mailserver/actions/workflows/update-helm.yaml/badge.svg)](https://github.com/jeboehm/docker-mailserver/actions/workflows/update-helm.yaml)
 
 Features
 --------
@@ -49,6 +50,19 @@ Installation (basic setup)
 6. Create your first email address and an admin user by running ```bin/production.sh run --rm web setup.sh```.
    The wizard will ask you a few questions to set everything up.
 8. Now you can login to the management interface with your new account credentials.
+
+Installation on Kubernetes / k8s (beta)
+---------------------------------------
+
+### TL;DR
+
+```bash
+helm repo add mailserver https://jeboehm.github.io/mailserver-charts/
+helm search repo mailserver
+helm install my-release mailserver/docker-mailserver
+```
+
+You can find ```values.yaml``` and more information in the [mailserver-charts repository](https://github.com/jeboehm/mailserver-charts/tree/main/charts/docker-mailserver).
 
 Screenshots
 -----------

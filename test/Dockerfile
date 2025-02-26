@@ -1,4 +1,4 @@
-FROM jwilder/dockerize:0.6.1 AS dockerize
+FROM jwilder/dockerize:v0.9.2 AS dockerize
 FROM alpine:3.16
 
 LABEL maintainer="jeff@ressourcenkonflikt.de"
@@ -35,6 +35,7 @@ RUN apk --no-cache add \
       php8-phar \
       php8-iconv \
       php8-openssl \
+      redis \
     && wget -q -O /usr/local/bin/swaks https://www.jetmore.org/john/code/swaks/files/swaks-20130209.0/swaks \
     && chmod +x /usr/local/bin/swaks \
     && wget -q -O /usr/local/bin/imap-tester https://github.com/jeboehm/imap-tester/releases/download/${IMAPTESTER_VER}/imap-tester.phar \
@@ -43,7 +44,7 @@ RUN apk --no-cache add \
     && wget -q -O /usr/share/fixtures/gtube.txt https://spamassassin.apache.org/gtube/gtube.txt \
     && wget -q -O /usr/share/fixtures/eicar.com https://secure.eicar.org/eicar.com
 
-COPY --from=dockerize /usr/local/bin/dockerize /usr/local/bin
+COPY --from=dockerize /bin/dockerize /usr/local/bin/dockerize
 COPY rootfs/ /
 
 CMD ["/usr/local/bin/run-tests.sh"]
