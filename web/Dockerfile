@@ -29,7 +29,7 @@ ENV MYSQL_HOST=db \
     TRUSTED_PROXIES=172.16.0.0/12 \
     WAITSTART_TIMEOUT=1m \
     ADMIN_VER=${ADMIN_VER} \
-    DATABASE_URL="mysql://%env(MYSQL_USER)%:%env(MYSQL_PASSWORD)%@%env(MYSQL_HOST)%:%env(MYSQL_PORT)%/%env(MYSQL_DATABASE)%?serverVersion=mariadb-10.4.11" \
+    DATABASE_URL="mysql://%env(MYSQL_USER)%:%env(MYSQL_PASSWORD)%@%env(MYSQL_HOST)%:%env(MYSQL_PORT)%/%env(MYSQL_DATABASE)%" \
     COMPOSER_ALLOW_SUPERUSER=1
 
 COPY --from=roundcube /usr/src/roundcubemail/ /var/www/html/webmail/
@@ -38,6 +38,7 @@ COPY --from=composer /usr/bin/composer /usr/bin/composer
 
 # shellcheck disable=SC2086
 RUN apk add --no-cache \
+        acl \
         icu \
         icu-dev \
         libzip \
@@ -68,15 +69,16 @@ WORKDIR /opt/manager
 RUN wget -O /tmp/admin.tar.gz -q https://github.com/jeboehm/mailserver-admin/archive/${ADMIN_VER}.tar.gz && \
     tar -xf /tmp/admin.tar.gz -C /opt/manager --strip=1 && \
     rm /tmp/admin.tar.gz && \
-    composer install --no-dev --prefer-dist -o --apcu-autoloader && \
-    bin/console cache:clear --no-warmup --env=prod && \
-    bin/console cache:warmup --env=prod && \
-    ln -s /opt/manager/public /var/www/html/manager && \
-    chown -R www-data \
+    mkdir -p \
+        /opt/manager/var/cache \
+        /opt/manager/var/log && \
+    setfacl -dR -m u:"www-data":rwX \
         /opt/manager/var/cache/ \
         /opt/manager/var/log/ \
         /var/www/html/webmail/temp/ \
-        /var/www/html/webmail/logs/
+        /var/www/html/webmail/logs/ && \
+    DATABASE_URL="${DATABASE_URL}?serverVersion=8.0" composer install --no-dev --prefer-dist -o --apcu-autoloader && \
+    ln -s /opt/manager/public /var/www/html/manager
 
 WORKDIR /var/www/html
 
