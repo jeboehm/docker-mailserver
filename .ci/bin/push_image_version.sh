@@ -2,7 +2,7 @@
 set -e
 
 VERSION="${1}"
-COMPONENTS="mda mta db filter ssl virus web"
+COMPONENTS="mda mta filter ssl virus web"
 
 if [ "${VERSION}" = "" ]
 then
