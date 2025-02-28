@@ -24,6 +24,7 @@ RUN apk --no-cache add \
       docker \
       jq \
       mariadb-client \
+      mariadb-connector-c \
       openssl \
       perl \
       perl-net-ssleay \
