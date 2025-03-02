@@ -3,7 +3,7 @@ FROM roundcube/roundcubemail:1.6.x-fpm AS roundcube
 FROM composer:2.8 AS composer
 FROM php:8.3-fpm-alpine
 
-ARG ADMIN_VER=4.1.1 # renovate: depName=jeboehm/mailserver-admin
+ARG ADMIN_VER=4.2.1 # renovate: depName=jeboehm/mailserver-admin
 
 LABEL maintainer="jeff@ressourcenkonflikt.de"
 LABEL vendor="https://github.com/jeboehm/docker-mailserver"
@@ -78,6 +78,7 @@ RUN wget -O /tmp/admin.tar.gz -q https://github.com/jeboehm/mailserver-admin/arc
         /var/www/html/webmail/temp/ \
         /var/www/html/webmail/logs/ && \
     DATABASE_URL="${DATABASE_URL}?serverVersion=8.0" composer install --no-dev --prefer-dist -o --apcu-autoloader && \
+    composer symfony:dump-env prod && \
     ln -s /opt/manager/public /var/www/html/manager
 
 WORKDIR /var/www/html
