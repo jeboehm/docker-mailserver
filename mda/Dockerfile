@@ -39,9 +39,7 @@ RUN apk --no-cache add \
 COPY --from=dockerize /bin/dockerize /usr/local/bin/dockerize
 COPY rootfs/ /
 
-RUN sievec /etc/dovecot/sieve/global/spam-to-folder.sieve && \
-    sievec /etc/dovecot/sieve/global/learn-ham.sieve && \
-    sievec /etc/dovecot/sieve/global/learn-spam.sieve
+RUN sievec /etc/dovecot/sieve/global/
 
 EXPOSE 2003 2004 4190 143 110 993 995
 VOLUME ["/var/vmail"]
