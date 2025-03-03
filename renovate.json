@@ -1,12 +1,17 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
-    "config:base"
+    "config:recommended"
   ],
-  "regexManagers": [
+  "customManagers": [
     {
-      "fileMatch": ["Dockerfile$"],
-      "matchStrings": ["VER=(?<currentValue>.*?) # renovate: depName=(?<depName>.*?)\\n"],
+      "customType": "regex",
+      "fileMatch": [
+        "Dockerfile$"
+      ],
+      "matchStrings": [
+        "VER=(?<currentValue>.*?) # renovate: depName=(?<depName>.*?)\\n"
+      ],
       "datasourceTemplate": "github-releases"
     }
   ],
