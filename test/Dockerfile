@@ -1,4 +1,4 @@
-FROM jwilder/dockerize:v0.9.2 AS dockerize
+FROM ghcr.io/jeboehm/dockerize:v0.9.3 AS dockerize
 FROM alpine:3.16
 
 LABEL maintainer="jeff@ressourcenkonflikt.de"
