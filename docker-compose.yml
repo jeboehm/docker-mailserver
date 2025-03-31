@@ -88,6 +88,14 @@ services:
     volumes:
       - data-virusdb:/var/lib/clamav
 
+  # Fetchmail is used to fetch emails from external servers
+  # and deliver them to the local mail server. Can be removed
+  # if you don't need it.
+  fetchmail:
+    image: ghcr.io/jeboehm/fetchmailmgr:0.2.1
+    restart: on-failure:5
+    env_file: .env
+
   redis:
     image: redis:7.4-alpine
     restart: on-failure:5
