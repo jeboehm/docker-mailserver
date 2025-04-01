@@ -20,6 +20,7 @@ ARG IMAPTESTER_VER=v1.2.0 # renovate: depName=jeboehm/imap-tester
 RUN apk --no-cache add \
       bash \
       bats \
+      bats-assert \
       curl \
       docker \
       jq \

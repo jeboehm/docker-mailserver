@@ -1,7 +1,7 @@
 #!/usr/bin/env bats
 
 @test "http connection to manager web interface" {
-	run curl -L http://web/manager/ | grep "Email address"
+	run curl -L http://web/manager/
 	assert_output --partial "Email address"
 }
 
