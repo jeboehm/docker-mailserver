@@ -1,10 +1,9 @@
 #!/bin/sh
 set -e
 
-if [ -r "${SSL_CERT}" ]
-then
-    echo "SSL certificate found. Exiting..."
-    exit 0
+if [ -r "${SSL_CERT}" ]; then
+	echo "SSL certificate found. Exiting..."
+	exit 0
 fi
 
 echo "No SSL certificate found. Creating a new one..."
