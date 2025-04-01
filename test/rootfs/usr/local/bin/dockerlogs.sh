@@ -2,7 +2,7 @@
 
 CONTAINER="$1"
 
-if [ "$1" == "" ]; then
+if [ "$1" = "" ]; then
 	echo "Expected container name"
 
 	exit 1

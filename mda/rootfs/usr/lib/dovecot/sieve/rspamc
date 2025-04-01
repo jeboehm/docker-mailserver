@@ -5,7 +5,7 @@ ACTION="${1}"
 HOST="${2}"
 PASSWORD="${3}"
 
-if [ "${ACTION}" == "" ] || [ "${HOST}" == "" ] || [ "${PASSWORD}" == "" ]; then
+if [ "${ACTION}" = "" ] || [ "${HOST}" = "" ] || [ "${PASSWORD}" = "" ]; then
 	echo "Error: Missing parameters!"
 	echo
 	echo "Usage:"
