@@ -10,6 +10,8 @@ services:
       cache_from:
         - jeboehm/mailserver-ssl:latest
         - type=gha
+      cache_to:
+        - type=gha,mode=max
     env_file: .env
     volumes:
       - data-tls:/media/tls:rw
@@ -33,6 +35,8 @@ services:
       cache_from:
         - jeboehm/mailserver-mta:latest
         - type=gha
+      cache_to:
+        - type=gha,mode=max
     restart: on-failure:5
     env_file: .env
     volumes:
@@ -52,6 +56,8 @@ services:
       cache_from:
         - jeboehm/mailserver-mda:latest
         - type=gha
+      cache_to:
+        - type=gha,mode=max
     restart: on-failure:5
     env_file: .env
     volumes:
@@ -75,6 +81,8 @@ services:
       cache_from:
         - jeboehm/mailserver-web:latest
         - type=gha
+      cache_to:
+        - type=gha,mode=max
     restart: on-failure:5
     env_file: .env
     # For use with jwilder/nginx-proxy.
@@ -90,6 +98,8 @@ services:
       cache_from:
         - jeboehm/mailserver-filter:latest
         - type=gha
+      cache_to:
+        - type=gha,mode=max
     restart: on-failure:5
     env_file: .env
     volumes:
@@ -104,8 +114,10 @@ services:
     build:
       context: ./virus
       cache_from:
-        - jeboehm/mailserver-filter:latest
+        - jeboehm/mailserver-virus:latest
         - type=gha
+      cache_to:
+        - type=gha,mode=max
     restart: on-failure:5
     env_file: .env
     volumes:
