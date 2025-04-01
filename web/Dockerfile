@@ -1,4 +1,4 @@
-FROM jwilder/dockerize:v0.9.3 AS dockerize
+FROM ghcr.io/jeboehm/dockerize:0.9.3 AS dockerize
 FROM roundcube/roundcubemail:1.6.x-fpm AS roundcube
 FROM composer:2.8 AS composer
 FROM php:8.3-fpm-alpine
