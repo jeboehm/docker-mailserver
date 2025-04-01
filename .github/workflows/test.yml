@@ -22,7 +22,7 @@ jobs:
           cat .ci/matrix/${{ matrix.BUILD_CASE }}.env >> .env
 
           # Replace WAITSTART_TIMEOUT variable in .env with 10m instead of 2m
-          sed -i 's/WAITSTART_TIMEOUT=2m/WAITSTART_TIMEOUT=10m/' .env
+          sed -i -e 's/WAITSTART_TIMEOUT=2m/WAITSTART_TIMEOUT=10m/' .env
       - name: Pull and build images
         run: |
           bin/production.sh pull
