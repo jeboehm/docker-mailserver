@@ -15,4 +15,4 @@ then
     exit 1
 fi
 
-curl -q -s -H "User: ${USER}" -H "Password: ${PASSWORD}" --connect-timeout 10 --data-binary @- http://${HOST}:11334/${ACTION}
+curl -q -s -H "User: ${USER}" -H "Password: ${PASSWORD}" --connect-timeout 10 --data-binary @- "http://${HOST}:11334/${ACTION}"
