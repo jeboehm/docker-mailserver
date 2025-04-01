@@ -5,7 +5,11 @@ services:
   # use your own.
   ssl:
     image: jeboehm/mailserver-ssl:latest
-    build: ./ssl
+    build:
+      context: ./ssl
+      cache_from:
+        - jeboehm/mailserver-ssl:latest
+        - type=gha
     env_file: .env
     volumes:
       - data-tls:/media/tls:rw
@@ -24,7 +28,11 @@ services:
   # on TCP port 25.
   mta:
     image: jeboehm/mailserver-mta:latest
-    build: ./mta
+    build:
+      context: ./mta
+      cache_from:
+        - jeboehm/mailserver-mta:latest
+        - type=gha
     restart: on-failure:5
     env_file: .env
     volumes:
@@ -39,7 +47,11 @@ services:
   # via POP3 or IMAP4.
   mda:
     image: jeboehm/mailserver-mda:latest
-    build: ./mda
+    build:
+      context: ./mda
+      cache_from:
+        - jeboehm/mailserver-mda:latest
+        - type=gha
     restart: on-failure:5
     env_file: .env
     volumes:
@@ -60,6 +72,9 @@ services:
         # Roundcube plugins can be added here.
         # See https://packagist.org/?type=roundcube-plugin
         RC_PLUGINS: "johndoh/contextmenu jfcherng-roundcube/show-folder-size"
+      cache_from:
+        - jeboehm/mailserver-web:latest
+        - type=gha
     restart: on-failure:5
     env_file: .env
     # For use with jwilder/nginx-proxy.
@@ -70,7 +85,11 @@ services:
   # in this service.
   filter:
     image: jeboehm/mailserver-filter:latest
-    build: ./filter
+    build:
+      context: ./filter
+      cache_from:
+        - jeboehm/mailserver-filter:latest
+        - type=gha
     restart: on-failure:5
     env_file: .env
     volumes:
@@ -82,7 +101,11 @@ services:
   # this service. Can be removed if FILTER_VIRUS is set to false.
   virus:
     image: jeboehm/mailserver-virus:latest
-    build: ./virus
+    build:
+      context: ./virus
+      cache_from:
+        - jeboehm/mailserver-filter:latest
+        - type=gha
     restart: on-failure:5
     env_file: .env
     volumes:
