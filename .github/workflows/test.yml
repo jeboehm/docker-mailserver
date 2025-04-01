@@ -20,6 +20,9 @@ jobs:
         run: |
           make .env
           cat .ci/matrix/${{ matrix.BUILD_CASE }}.env >> .env
+
+          # Replace WAITSTART_TIMEOUT variable in .env with 10m instead of 2m
+          sed -i 's/WAITSTART_TIMEOUT=2m/WAITSTART_TIMEOUT=10m/' .env
       - name: Pull and build images
         run: |
           bin/production.sh pull
@@ -81,3 +84,13 @@ jobs:
           VALIDATE_CHECKOV: false
           FIX_SHELL_SHFMT: false
           FIX_YAML_PRETTIER: false
+  validate_renovate_config:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: actions/checkout@v4
+      - name: Run renovate-config-validator
+        run: npx --yes --package renovate -- renovate-config-validator
