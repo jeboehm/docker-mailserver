@@ -22,32 +22,16 @@ jobs:
           cat .ci/matrix/${{ matrix.BUILD_CASE }}.env >> .env
       - name: Add WAITSTART_TIMEOUT variable in .env with 10m
         run: echo "WAITSTART_TIMEOUT=10m" >> .env
-      - name: Show current environment
-        run: cat .env
       - name: Pull and build images
         run: |
-          bin/production.sh pull
-          bin/test.sh build --builder ${{ steps.buildx.outputs.name }}
-      - name: Start one time services
-        run: |
-          bin/production.sh up ssl
-      - name: Start services
-        run: |
-          bin/production.sh up -d --wait \
-            db filter mda mta virus web
+          export BUILDX_BUILDER=${{ steps.buildx.outputs.name }}
+          make build
       - name: Run tests
-        run: |
-          bin/test.sh run --rm test
+        run: make test
       - name: Collect logs
         if: failure()
         run: |
-          bin/production.sh logs db
-          bin/production.sh logs ssl
-          bin/production.sh logs mta
-          bin/production.sh logs mda
-          bin/production.sh logs filter
-          bin/production.sh logs virus
-          bin/production.sh logs web
+          make logs
           docker ps -a
   test_build_unofficial_sigs:
     runs-on: ubuntu-latest
