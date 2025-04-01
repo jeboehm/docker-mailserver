@@ -20,8 +20,10 @@ jobs:
         run: |
           make .env
           cat .ci/matrix/${{ matrix.BUILD_CASE }}.env >> .env
-      - name: Replace WAITSTART_TIMEOUT variable in .env with 10m instead of 2m
-        run: sed -i -e 's/WAITSTART_TIMEOUT=2m/WAITSTART_TIMEOUT=10m/' .env
+      - name: Add WAITSTART_TIMEOUT variable in .env with 10m
+        run: echo "WAITSTART_TIMEOUT=10m" >> .env
+      - name: Show current environment
+        run: cat .env
       - name: Pull and build images
         run: |
           bin/production.sh pull
@@ -31,7 +33,7 @@ jobs:
           bin/production.sh up ssl
       - name: Start services
         run: |
-          bin/production.sh up -d --wait --wait-timeout 600 \
+          bin/production.sh up -d --wait \
             db filter mda mta virus web
       - name: Run tests
         run: |
