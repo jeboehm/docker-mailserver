@@ -69,7 +69,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          ref: ${{ github.head_ref }}
       - name: Super-Linter
         uses: super-linter/super-linter@v7.3.0
         env:
