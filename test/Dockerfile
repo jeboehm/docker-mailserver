@@ -29,14 +29,14 @@ RUN apk --no-cache add \
       openssl \
       perl \
       perl-net-ssleay \
-      php8 \
-      php8-dom \
-      php8-fileinfo \
-      php8-mbstring \
-      php8-iconv \
-      php8-phar \
-      php8-iconv \
-      php8-openssl \
+      php82 \
+      php82-dom \
+      php82-fileinfo \
+      php82-mbstring \
+      php82-iconv \
+      php82-phar \
+      php82-iconv \
+      php82-openssl \
       redis \
     && wget -q -O /usr/local/bin/swaks https://www.jetmore.org/john/code/swaks/files/swaks-20130209.0/swaks \
     && chmod +x /usr/local/bin/swaks \
