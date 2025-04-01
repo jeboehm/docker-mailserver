@@ -30,7 +30,7 @@ jobs:
       - name: Start services
         run: |
           bin/production.sh up -d --wait --wait-timeout 600 \
-            db fetchmail filter mda mta virus web
+            db filter mda mta virus web
       - name: Run tests
         run: |
           bin/test.sh run --rm test
@@ -44,7 +44,6 @@ jobs:
           bin/production.sh logs filter
           bin/production.sh logs virus
           bin/production.sh logs web
-          bin/production.sh logs fetchmail
           docker ps -a
   test_build_unofficial_sigs:
     runs-on: ubuntu-latest
@@ -63,13 +62,14 @@ jobs:
           cache-to: type=gha,mode=max
   lint_and_fix_issues:
     permissions:
-      contents: write
+      contents: read
+      packages: read
       statuses: write
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.pull_request.head.ref }}
+          fetch-depth: 0
       - name: Super-Linter
         uses: super-linter/super-linter@v7.3.0
         env:
@@ -79,15 +79,5 @@ jobs:
           VALIDATE_PHP_PSALM: false
           VALIDATE_PHP_PHPCS: false
           VALIDATE_CHECKOV: false
-          FIX_SHELL_SHFMT: true
-          FIX_YAML_PRETTIER: true
-      - name: Commit and push linting fixes
-        if: >
-          github.event_name == 'pull_request' &&
-          github.ref_name != github.event.repository.default_branch
-        uses: stefanzweifel/git-auto-commit-action@v5
-        with:
-          branch: ${{ github.event.pull_request.head.ref || github.head_ref || github.ref }}
-          commit_message: "chore: fix linting issues"
-          commit_user_name: super-linter
-          commit_user_email: super-linter@super-linter.dev
+          FIX_SHELL_SHFMT: false
+          FIX_YAML_PRETTIER: false
