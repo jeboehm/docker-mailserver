@@ -1,5 +1,4 @@
 ---
-
 services:
   mailpit:
     image: axllent/mailpit:v1.23

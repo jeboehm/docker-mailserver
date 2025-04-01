@@ -1,5 +1,4 @@
 ---
-
 services:
   # Creates self signed tls certificates. Remove if you
   # use your own.
