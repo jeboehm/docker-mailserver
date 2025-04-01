@@ -32,10 +32,6 @@ ENV MYSQL_HOST=db \
     DATABASE_URL="mysql://%env(MYSQL_USER)%:%env(MYSQL_PASSWORD)%@%env(MYSQL_HOST)%:%env(MYSQL_PORT)%/%env(MYSQL_DATABASE)%" \
     COMPOSER_ALLOW_SUPERUSER=1
 
-COPY --from=roundcube /usr/src/roundcubemail/ /var/www/html/webmail/
-COPY --from=dockerize /bin/dockerize /usr/local/bin/dockerize
-COPY --from=composer /usr/bin/composer /usr/bin/composer
-
 # shellcheck disable=SC2086
 RUN apk add --no-cache \
         acl \
@@ -62,6 +58,9 @@ RUN apk add --no-cache \
         libzip-dev \
         .phpize-deps
 
+COPY --from=roundcube /usr/src/roundcubemail/ /var/www/html/webmail/
+COPY --from=dockerize /bin/dockerize /usr/local/bin/dockerize
+COPY --from=composer /usr/bin/composer /usr/bin/composer
 COPY rootfs/ /
 
 WORKDIR /opt/manager
