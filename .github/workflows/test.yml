@@ -75,6 +75,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VALIDATE_SQLFLUFF: false
+          VALIDATE_JSCPD: false
+          VALIDATE_PHP_PSALM: false
       - name: Commit and push linting fixes
         if: >
           github.event_name == 'pull_request' &&

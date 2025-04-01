@@ -3,7 +3,7 @@
 PERCENT="$1"
 USER="$2"
 
-if [ "${PERCENT}" == "" ] || [ "${USER}" == "" ]
+if [ "${PERCENT}" = "" ] || [ "${USER}" = "" ]
 then
     echo "Error: Missing parameters!"
     echo
@@ -13,7 +13,7 @@ then
     exit 1
 fi
 
-cat << EOF | /usr/libexec/dovecot/dovecot-lda -d $USER -o "plugin/quota=maildir:User quota:noenforcing"
+cat << EOF | /usr/libexec/dovecot/dovecot-lda -d "${USER}" -o "plugin/quota=maildir:User quota:noenforcing"
 From: docker-mailserver <$USER>
 Subject: Quota warning - $PERCENT% reached
 
