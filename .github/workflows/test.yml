@@ -24,9 +24,13 @@ jobs:
         run: |
           bin/production.sh pull
           bin/test.sh build --builder ${{ steps.buildx.outputs.name }}
+      - name: Start one time services
+        run: |
+          bin/production.sh up ssl
       - name: Start services
         run: |
-          bin/production.sh up -d --wait --wait-timeout 600
+          bin/production.sh up -d --wait --wait-timeout 600 \
+            db fetchmail filter mda mta virus web
       - name: Run tests
         run: |
           bin/test.sh run --rm test
