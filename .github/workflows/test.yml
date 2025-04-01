@@ -79,6 +79,7 @@ jobs:
           VALIDATE_PHP_PSALM: false
           VALIDATE_PHP_PHPCS: false
           VALIDATE_CHECKOV: false
+          FIX_SHELL_SHFMT: true
       - name: Commit and push linting fixes
         if: >
           github.event_name == 'pull_request' &&
