@@ -1,0 +1,46 @@
+---
+name: Matrix test application
+on:
+  pull_request:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        BUILD_CASE:
+          - virus_disabled
+          - virus_enabled
+          - relayhost
+          - fts_disabled
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@b5ca514318bd6ebac0fb2aedd5d36ec1b5c232a2 # v3.10.0
+      - name: Prepare environment
+        run: |
+          make .env
+          cat .ci/matrix/${{ matrix.BUILD_CASE }}.env >> .env
+      - name: Pull and build images
+        run: |
+          bin/production.sh pull
+          bin/test.sh build --builder ${{ steps.buildx.outputs.name }}
+      - name: Start services
+        run: |
+          bin/production.sh up -d --wait --wait-timeout 600
+      - name: Run tests
+        run: |
+          bin/test.sh run --rm test
+      - name: Collect logs
+        if: failure()
+        run: |
+          bin/production.sh logs db
+          bin/production.sh logs ssl
+          bin/production.sh logs mta
+          bin/production.sh logs mda
+          bin/production.sh logs filter
+          bin/production.sh logs virus
+          bin/production.sh logs web
+          bin/production.sh logs fetchmail
+          docker ps -a

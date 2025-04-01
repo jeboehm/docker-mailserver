@@ -1,0 +1,39 @@
+---
+
+name: Create Release
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  create_release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Bump version and push tag
+        id: tag_version
+        uses: mathieudutour/github-tag-action@v6.2
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create a GitHub release
+        uses: ncipollo/release-action@v1
+        with:
+          tag: ${{ steps.tag_version.outputs.new_tag }}
+          name: Release ${{ steps.tag_version.outputs.new_tag }}
+          body: ${{ steps.tag_version.outputs.changelog }}
+
+      - name: Update Helm chart
+        uses: shini4i/helm-charts-updater@v1
+        with:
+          github_token: ${{ secrets.CHARTS_REPO_TOKEN }}
+          gh_user: jeboehm
+          gh_repo: mailserver-charts
+          chart_name: docker-mailserver
+          app_version: ${{ steps.tag_version.outputs.new_tag }}
+          generate_docs: true
+          update_readme: true

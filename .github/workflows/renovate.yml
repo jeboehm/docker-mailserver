@@ -1,18 +1,16 @@
 ---
-
-name: Validate renovate.json
-
-on:
-  pull_request:
-    paths:
-      - '**/renovate.json'
-
-jobs:
-  test:
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Run renovate-config-validator
-        run: docker run -v "$PWD/renovate.json:/usr/src/app/renovate.json" -e LOG_LEVEL=debug --rm renovate/renovate renovate-config-validator
+  name: Validate renovate.json
+  on:
+    pull_request:
+      paths: ['**/renovate.json']
+  jobs:
+    test:
+      runs-on: ubuntu-latest
+      steps:
+        - name: Setup Node.js
+          uses: actions/setup-node@v4
+          with:
+            node-version: 22
+        - uses: actions/checkout@v4
+        - name: Run renovate-config-validator
+          run: npx --yes --package renovate -- renovate-config-validator
