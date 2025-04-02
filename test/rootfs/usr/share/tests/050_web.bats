@@ -16,7 +16,7 @@ setup() {
 }
 
 @test "http connection to rspamd interface" {
-	run http://web/rspamd/
+	run curl http://web/rspamd/
 	assert_output --partial "Rspamd Web Interface"
 }
 
