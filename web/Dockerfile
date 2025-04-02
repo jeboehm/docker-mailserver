@@ -71,13 +71,13 @@ RUN wget -O /tmp/admin.tar.gz -q https://github.com/jeboehm/mailserver-admin/arc
     mkdir -p \
         /opt/manager/var/cache \
         /opt/manager/var/log && \
-    setfacl -dR -m u:"www-data":rwX \
-        /opt/manager/var/cache/ \
+    DATABASE_URL="${DATABASE_URL}?serverVersion=8.0" composer install --no-dev --prefer-dist -o --apcu-autoloader && \
+    composer symfony:dump-env prod && \
+    chown -R www-data:www-data \
+        /opt/manager/var/cache/prod \
         /opt/manager/var/log/ \
         /var/www/html/webmail/temp/ \
         /var/www/html/webmail/logs/ && \
-    DATABASE_URL="${DATABASE_URL}?serverVersion=8.0" composer install --no-dev --prefer-dist -o --apcu-autoloader && \
-    composer symfony:dump-env prod && \
     ln -s /opt/manager/public /var/www/html/manager
 
 WORKDIR /var/www/html
