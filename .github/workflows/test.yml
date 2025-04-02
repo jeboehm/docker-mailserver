@@ -48,7 +48,7 @@ jobs:
           tags: virus-unofficial-sigs:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
-  lint_and_fix_issues:
+  lint_files:
     permissions:
       contents: read
       packages: read
