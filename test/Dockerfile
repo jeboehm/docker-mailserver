@@ -39,7 +39,7 @@ RUN apk --no-cache add \
       php82-iconv \
       php82-openssl \
       redis \
-    && ln -sf /usr/bin/php82 /usr/bin/php
+    && ln -sf /usr/bin/php82 /usr/bin/php \
     && wget -q -O /usr/local/bin/swaks https://www.jetmore.org/john/code/swaks/files/swaks-20130209.0/swaks \
     && chmod +x /usr/local/bin/swaks \
     && wget -q -O /usr/local/bin/imap-tester https://github.com/jeboehm/imap-tester/releases/download/${IMAPTESTER_VER}/imap-tester.phar \
