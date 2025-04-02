@@ -1,6 +1,5 @@
 name: Build multiarch, buildx
 on:
-  pull_request:
   push:
     branches:
       - main
