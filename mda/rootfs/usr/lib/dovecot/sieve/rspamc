@@ -5,14 +5,13 @@ ACTION="${1}"
 HOST="${2}"
 PASSWORD="${3}"
 
-if [ "${ACTION}" == "" ] || [ "${HOST}" == "" ] || [ "${PASSWORD}" == "" ]
-then
-    echo "Error: Missing parameters!"
-    echo
-    echo "Usage:"
-    echo "$0 <learnham|learnspam> <filter host> <controller password> < yourmail.txt"
+if [ "${ACTION}" = "" ] || [ "${HOST}" = "" ] || [ "${PASSWORD}" = "" ]; then
+	echo "Error: Missing parameters!"
+	echo
+	echo "Usage:"
+	echo "$0 <learnham|learnspam> <filter host> <controller password> < yourmail.txt"
 
-    exit 1
+	exit 1
 fi
 
-curl -q -s -H "User: ${USER}" -H "Password: ${PASSWORD}" --connect-timeout 10 --data-binary @- http://${HOST}:11334/${ACTION}
+curl -q -s -H "User: ${USER}" -H "Password: ${PASSWORD}" --connect-timeout 10 --data-binary @- "http://${HOST}:11334/${ACTION}"
