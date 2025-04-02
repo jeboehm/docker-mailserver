@@ -3,6 +3,6 @@
 set -e
 
 dockerize \
-  -template /etc/nginx/nginx.conf.templ:/etc/nginx/nginx.conf \
-  -template /var/www/html/autoconfig/config-v1.1.xml.templ:/var/www/html/autoconfig/config-v1.1.xml \
-  /bin/true
+	-template /etc/nginx/nginx.conf.templ:/etc/nginx/nginx.conf \
+	-template /var/www/html/autoconfig/config-v1.1.xml.templ:/var/www/html/autoconfig/config-v1.1.xml \
+	/bin/true

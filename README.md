@@ -1,21 +1,19 @@
-docker-mailserver
-=================
+# docker-mailserver
 
 Docker Mailserver based on the famous [ISPMail guide](https://workaround.org/ispmail/).
 All images are based on [Alpine Linux](https://alpinelinux.org) and are so small as possible.
 
 [Changelog](https://github.com/jeboehm/docker-mailserver/releases)
 
-Build status
-------------
+## Build status
+
 [![Integration Tests](https://github.com/jeboehm/docker-mailserver/actions/workflows/integration-tests.yml/badge.svg)](https://github.com/jeboehm/docker-mailserver/actions/workflows/integration-tests.yml)
 [![Build unofficial-sigs](https://github.com/jeboehm/docker-mailserver/actions/workflows/build-unofficial-sigs.yml/badge.svg)](https://github.com/jeboehm/docker-mailserver/actions/workflows/build-unofficial-sigs.yml)
 [![Lint Code Base](https://github.com/jeboehm/docker-mailserver/actions/workflows/super-linter.yml/badge.svg)](https://github.com/jeboehm/docker-mailserver/actions/workflows/super-linter.yml)
 [![Publish release](https://github.com/jeboehm/docker-mailserver/actions/workflows/publish-release.yml/badge.svg)](https://github.com/jeboehm/docker-mailserver/actions/workflows/publish-release.yml)
 [![Update Helm repository](https://github.com/jeboehm/docker-mailserver/actions/workflows/update-helm.yaml/badge.svg)](https://github.com/jeboehm/docker-mailserver/actions/workflows/update-helm.yaml)
 
-Features
---------
+## Features
 
 - POP3, IMAP, SMTP with user authentication
 - TLS enforced
@@ -38,21 +36,19 @@ Features
 - Developed with high quality assurance standards
 - Address extension (-)
 
-Installation (basic setup)
---------------------------
+## Installation (basic setup)
 
-1. Run ```git clone git@github.com:jeboehm/docker-mailserver.git```
+1. Run `git clone git@github.com:jeboehm/docker-mailserver.git`
 2. Copy the file `.env.dist` to `.env` and change the variables in it according to your needs.
    The variables are described in the [Wiki](https://github.com/jeboehm/docker-mailserver/wiki/Configuration-variables).
-3. Run ```bin/production.sh pull``` to download the images.
-4. Run ```bin/production.sh up -d``` to start the services.
+3. Run `bin/production.sh pull` to download the images.
+4. Run `bin/production.sh up -d` to start the services.
 5. After a few seconds you can access the services listed in the paragraph [Services](#Services).
-6. Create your first email address and an admin user by running ```bin/production.sh run --rm web setup.sh```.
+6. Create your first email address and an admin user by running `bin/production.sh run --rm web setup.sh`.
    The wizard will ask you a few questions to set everything up.
-8. Now you can login to the management interface with your new account credentials.
+7. Now you can login to the management interface with your new account credentials.
 
-Installation on Kubernetes / k8s (beta)
----------------------------------------
+## Installation on Kubernetes / k8s (beta)
 
 ### TL;DR
 
@@ -62,10 +58,9 @@ helm search repo mailserver
 helm install my-release mailserver/docker-mailserver
 ```
 
-You can find ```values.yaml``` and more information in the [mailserver-charts repository](https://github.com/jeboehm/mailserver-charts/tree/main/charts/docker-mailserver).
+You can find `values.yaml` and more information in the [mailserver-charts repository](https://github.com/jeboehm/mailserver-charts/tree/main/charts/docker-mailserver).
 
-Screenshots
------------
+## Screenshots
 
 ### Manage users
 
@@ -79,8 +74,7 @@ Screenshots
 
 ![DKIM setup](https://raw.githubusercontent.com/jeboehm/mailserver-admin/master/.github/screenshots/dkim_edit.png)
 
-Documentation
--------------
+## Documentation
 
 - [Configuration](https://github.com/jeboehm/docker-mailserver/wiki/Configuration-variables)
 - Advanced setup:
@@ -94,18 +88,17 @@ Documentation
   - [Add plugins to Roundcube](https://github.com/jeboehm/docker-mailserver/wiki/Howto:-Add-Plugins-To-Roundcube-Webmail)
 - Features:
   - [Local address extension](https://github.com/jeboehm/docker-mailserver/wiki/Feature:-Local-Address-Extension)
-  - [Sender policy framework, SPF](https://github.com/jeboehm/docker-mailserver/wiki/Feature:-Sender-Policy-Framework-(SPF))
+  - [Sender policy framework, SPF](<https://github.com/jeboehm/docker-mailserver/wiki/Feature:-Sender-Policy-Framework-(SPF)>)
   - [DKIM](https://github.com/jeboehm/docker-mailserver/wiki/Feature:-DKIM)
 - Technical details:
-  - [Data storage](https://github.com/jeboehm/docker-mailserver/wiki/Info:-Volume-Management-(Where-Is-My-Data%3F))
+  - [Data storage](<https://github.com/jeboehm/docker-mailserver/wiki/Info:-Volume-Management-(Where-Is-My-Data%3F)>)
   - [Filtering](https://github.com/jeboehm/docker-mailserver/wiki/Info:-Mail-Filtering)
   - [Component overview](https://github.com/jeboehm/docker-mailserver/wiki/Info:-Component-Overview)
   - [DockerHub images](https://github.com/jeboehm/docker-mailserver/wiki/Info:-Images-On-DockerHub)
 - [Upgrading](https://github.com/jeboehm/docker-mailserver/wiki/Upgrading)
 - [Troubleshooting](https://github.com/jeboehm/docker-mailserver/wiki/Troubleshooting)
 
-Services
---------
+## Services
 
 | Service                                    | Address                      |
 | ------------------------------------------ | ---------------------------- |

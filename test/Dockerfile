@@ -1,5 +1,5 @@
-FROM jwilder/dockerize:v0.9.2 AS dockerize
-FROM alpine:3.16
+FROM ghcr.io/jeboehm/dockerize:0.9.3 AS dockerize
+FROM alpine:3.21
 
 LABEL maintainer="jeff@ressourcenkonflikt.de"
 LABEL vendor="https://github.com/jeboehm/docker-mailserver"
@@ -20,6 +20,8 @@ ARG IMAPTESTER_VER=v1.2.0 # renovate: depName=jeboehm/imap-tester
 RUN apk --no-cache add \
       bash \
       bats \
+      bats-assert \
+      bats-support \
       curl \
       docker \
       jq \
@@ -28,15 +30,16 @@ RUN apk --no-cache add \
       openssl \
       perl \
       perl-net-ssleay \
-      php8 \
-      php8-dom \
-      php8-fileinfo \
-      php8-mbstring \
-      php8-iconv \
-      php8-phar \
-      php8-iconv \
-      php8-openssl \
+      php82 \
+      php82-dom \
+      php82-fileinfo \
+      php82-mbstring \
+      php82-iconv \
+      php82-phar \
+      php82-iconv \
+      php82-openssl \
       redis \
+    && ln -sf /usr/bin/php82 /usr/bin/php \
     && wget -q -O /usr/local/bin/swaks https://www.jetmore.org/john/code/swaks/files/swaks-20130209.0/swaks \
     && chmod +x /usr/local/bin/swaks \
     && wget -q -O /usr/local/bin/imap-tester https://github.com/jeboehm/imap-tester/releases/download/${IMAPTESTER_VER}/imap-tester.phar \
