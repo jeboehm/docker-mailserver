@@ -20,4 +20,4 @@ services:
   #   volumes:
   #     - ./web/rootfs/etc/nginx/nginx.conf.templ:/etc/nginx/nginx.conf.templ:ro
   #   ports:
-  #     - "0.0.0.0:81:80"
+  #     - "0.0.0.0:81:8080"

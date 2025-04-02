@@ -34,7 +34,6 @@ ENV MYSQL_HOST=db \
 
 # shellcheck disable=SC2086
 RUN apk add --no-cache \
-        acl \
         icu \
         icu-dev \
         libzip \
@@ -71,11 +70,19 @@ RUN wget -O /tmp/admin.tar.gz -q https://github.com/jeboehm/mailserver-admin/arc
     mkdir -p \
         /opt/manager/var/cache \
         /opt/manager/var/log && \
-    setfacl -dR -m u:"www-data":rwX \
+    chmod 775 \
+        /etc/nginx/ \
         /opt/manager/var/cache/ \
         /opt/manager/var/log/ \
         /var/www/html/webmail/temp/ \
         /var/www/html/webmail/logs/ && \
+    chgrp www-data \
+        /etc/nginx/ \
+        /opt/manager/var/cache/ \
+        /opt/manager/var/log/ \
+        /var/www/html/webmail/temp/ \
+        /var/www/html/webmail/logs/ && \
+    chmod 664 /etc/nginx/nginx.conf && \
     DATABASE_URL="${DATABASE_URL}?serverVersion=8.0" composer install --no-dev --prefer-dist -o --apcu-autoloader && \
     composer symfony:dump-env prod && \
     ln -s /opt/manager/public /var/www/html/manager
@@ -88,6 +95,8 @@ ENV RC_PLUGINS $RC_PLUGINS
 RUN mv /var/www/html/webmail/composer.json-dist /var/www/html/webmail/composer.json && \
     /usr/local/bin/install_roundcube_plugins.sh
 
+USER www-data
+
 HEALTHCHECK CMD curl -s http://127.0.0.1/login | grep docker-mailserver
-EXPOSE 80
+EXPOSE 8080
 CMD ["/usr/local/bin/entrypoint.sh"]
