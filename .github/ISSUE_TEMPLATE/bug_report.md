@@ -1,10 +1,9 @@
 ---
 name: Bug report
 about: Create a report to help us improve
-title: ''
-labels: ''
-assignees: ''
-
+title: ""
+labels: ""
+assignees: ""
 ---
 
 ☺️ Please check the troubleshooting page before opening a new issue. ☺️
@@ -24,8 +23,9 @@ A clear and concise description of what you expected to happen.
 If applicable, add screenshots to help explain your problem.
 
 **Docker environment (please complete the following information):**
- - Output of ```docker info```
- - Output of ```docker-compose version```
+
+- Output of `docker info`
+- Output of `docker-compose version`
 
 **Additional context**
 Add any other context about the problem here.

@@ -13,29 +13,28 @@ BIN="docker compose"
 
 ## Guard against empty $DIR
 if [[ "$DIR" != */bin ]]; then
-    echo "Could not detect working directory."
-    exit 1
+	echo "Could not detect working directory."
+	exit 1
 fi
 
 $BIN version --short >/dev/null 2>&1 || {
-    BIN=$(which docker-compose)
+	BIN=$(which docker-compose)
 
-    if ! [ -x "${BIN}" ]; then
-        echo "Could not find docker-compose."
-        exit 1
-    fi
+	if ! [ -x "${BIN}" ]; then
+		echo "Could not find docker-compose."
+		exit 1
+	fi
 }
 
 cd "${DIR}/../" || exit
 
-if [ ! -r docker-compose.yml ] || [ ! -r docker-compose.production.yml ] || [ ! -r docker-compose.test.yml ]
-then
-    echo "Could not find docker-compose.yml or docker-compose.production.yml or docker-compose.test.yml in ${PWD}."
-    exit 1
+if [ ! -r docker-compose.yml ] || [ ! -r docker-compose.production.yml ] || [ ! -r docker-compose.test.yml ]; then
+	echo "Could not find docker-compose.yml or docker-compose.production.yml or docker-compose.test.yml in ${PWD}."
+	exit 1
 fi
 
 ${BIN} \
-  -f docker-compose.yml \
-  -f docker-compose.production.yml \
-  -f docker-compose.test.yml \
-  "$@"
+	-f docker-compose.yml \
+	-f docker-compose.production.yml \
+	-f docker-compose.test.yml \
+	"$@"

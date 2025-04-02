@@ -1,5 +1,4 @@
 ---
-
 services:
   mda:
     ports:
@@ -17,4 +16,4 @@ services:
 
   web:
     ports:
-      - "0.0.0.0:81:80"
+      - "0.0.0.0:81:8080"
