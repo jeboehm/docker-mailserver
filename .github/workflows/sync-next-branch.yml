@@ -1,17 +1,16 @@
 name: Sync branch main to next
-
 on:
   push:
     branches:
       - main
-
 jobs:
   sync-branch:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
       - name: Sync branch main to next
         uses: devmasx/merge-branch@1.4.0
         with:
