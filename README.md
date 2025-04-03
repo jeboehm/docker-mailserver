@@ -7,11 +7,9 @@ All images are based on [Alpine Linux](https://alpinelinux.org) and are so small
 
 ## Build status
 
-[![Integration Tests](https://github.com/jeboehm/docker-mailserver/actions/workflows/integration-tests.yml/badge.svg)](https://github.com/jeboehm/docker-mailserver/actions/workflows/integration-tests.yml)
-[![Build unofficial-sigs](https://github.com/jeboehm/docker-mailserver/actions/workflows/build-unofficial-sigs.yml/badge.svg)](https://github.com/jeboehm/docker-mailserver/actions/workflows/build-unofficial-sigs.yml)
-[![Lint Code Base](https://github.com/jeboehm/docker-mailserver/actions/workflows/super-linter.yml/badge.svg)](https://github.com/jeboehm/docker-mailserver/actions/workflows/super-linter.yml)
-[![Publish release](https://github.com/jeboehm/docker-mailserver/actions/workflows/publish-release.yml/badge.svg)](https://github.com/jeboehm/docker-mailserver/actions/workflows/publish-release.yml)
-[![Update Helm repository](https://github.com/jeboehm/docker-mailserver/actions/workflows/update-helm.yaml/badge.svg)](https://github.com/jeboehm/docker-mailserver/actions/workflows/update-helm.yaml)
+[![Build multiarch, buildx](https://github.com/jeboehm/docker-mailserver/actions/workflows/build-multiarch.yml/badge.svg)](https://github.com/jeboehm/docker-mailserver/actions/workflows/build-multiarch.yml)
+[![Matrix test application](https://github.com/jeboehm/docker-mailserver/actions/workflows/test.yml/badge.svg)](https://github.com/jeboehm/docker-mailserver/actions/workflows/test.yml)
+[![Create Release](https://github.com/jeboehm/docker-mailserver/actions/workflows/create-release.yml/badge.svg)](https://github.com/jeboehm/docker-mailserver/actions/workflows/create-release.yml)
 
 ## Features
 

@@ -19,9 +19,11 @@ jobs:
       - name: Prepare environment
         run: |
           make .env
-          cat .ci/matrix/${{ matrix.BUILD_CASE }}.env >> .env
+          cat .github/test-matrix/${{ matrix.BUILD_CASE }}.env >> .env
       - name: Add WAITSTART_TIMEOUT variable in .env with 10m
         run: echo "WAITSTART_TIMEOUT=10m" >> .env
+      - name: Output environment
+        run: cat .env
       - name: Pull and build images
         run: |
           export BUILDX_BUILDER=${{ steps.buildx.outputs.name }}
