@@ -108,9 +108,17 @@ services:
   # and deliver them to the local mail server. Can be removed
   # if you don't need it.
   fetchmail:
-    image: ghcr.io/jeboehm/fetchmailmgr:0.2.1
+    image: ghcr.io/jeboehm/fetchmailmgr:0.3.3
     restart: on-failure:5
+    command:
+      - --interval
+      - ${FETCHMAIL_INTERVAL}
     env_file: .env
+    environment:
+      DEBUG: "true"
+    tmpfs:
+      - /run/fetchmailmgr:mode=0755,uid=65534,gid=65534
+    read_only: true
 
   redis:
     image: redis:7.4-alpine
