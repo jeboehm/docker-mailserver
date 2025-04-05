@@ -3,6 +3,10 @@ services:
   mailpit:
     image: axllent/mailpit:v1.24
 
+  fetchmail:
+    links:
+      - mda:mda.local
+
   test:
     build: ./test
     volumes:
@@ -14,6 +18,7 @@ services:
     env_file: .env
     depends_on:
       - mailpit
+      - fetchmail
 
   # For development
   # web:

@@ -112,7 +112,12 @@
 	[ "$status" -eq 28 ]
 }
 
-@test "maildir was created" {
+@test "send mail to mta to fetchmail source account address" {
+	run swaks -s mta --port 25 --to fetchmailsource@example.org --body "$BATS_TEST_DESCRIPTION"
+	[ "$status" -eq 0 ]
+}
+
+@test "maildir was created (wait 10 seconds)" {
 	sleep 10 # MTA + MDA need some time. :)
 	[ -d /var/vmail/example.com/admin/Maildir/new/ ]
 }
