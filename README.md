@@ -1,7 +1,9 @@
 # docker-mailserver
 
-Docker Mailserver based on the famous [ISPMail guide](https://workaround.org/ispmail/).
-All images are based on [Alpine Linux](https://alpinelinux.org) and are so small as possible.
+`docker-mailserver` is inspired by the renowned [ISPMail guide](https://workaround.org/ispmail/).
+This project enables you to run your own email services, giving you independence and freedom from relying on large corporations. It provides a secure, customizable, and feature-rich solution for managing your email infrastructure.
+
+All Docker images are built on [Alpine Linux](https://alpinelinux.org), ensuring they remain as lightweight as possible.
 
 [Changelog](https://github.com/jeboehm/docker-mailserver/releases)
 
@@ -13,26 +15,27 @@ All images are based on [Alpine Linux](https://alpinelinux.org) and are so small
 
 ## Features
 
-- POP3, IMAP, SMTP with user authentication
-- TLS enforced
-- Webmail interface
-- Server-side mail filtering, rule configuration via web frontend
-- Spam- and malware filter
-- Catchall address support
-- Restricted sender addresses
-- Spamfilter is trained just by moving emails to or out of the junk folder
-- Uses RBL (real time black hole lists) to block already known spam senders
-- Greylisting only when incoming mail is likely spam
-- DKIM message signing
-- Quota support
-- Notifications when exceeding the quota
-- Web management interface to create / remove accounts, domains and aliases
-- Support of send only accounts which are not allowed to receive but send mails
-- IMAP, POP3 and malware filters can be disabled if they are not used
-- FTS (Full-Text Search) support using [fts-xapian](https://github.com/grosjo/fts-xapian) for fast message searching
-- Permanent self testing by Docker's healthcheck feature
-- Developed with high quality assurance standards
-- Address extension (-)
+- Secure email protocols: POP3, IMAP, and SMTP with user authentication
+- Enforced TLS for secure communication
+- Intuitive webmail interface
+- Server-side mail filtering with configurable rules via a web frontend
+- Advanced spam and malware filtering
+- Support for catchall email addresses
+- Restriction of sender addresses for enhanced security
+- Spam filter training by simply moving emails to or from the junk folder
+- Real-time spam prevention using RBL (Real-Time Blackhole Lists)
+- Greylisting applied only to emails likely to be spam
+- DKIM message signing for email authenticity
+- Quota management with notifications for quota exceedance
+- Web-based management interface for account, domain, and alias administration
+- Support for send-only accounts restricted from receiving emails
+- Optional disabling of IMAP, POP3, and malware filters if not required
+- Full-Text Search (FTS) support for efficient message searching
+- Continuous self-monitoring via Docker's healthcheck feature
+- Developed with a focus on high-quality assurance standards
+- Address extension support using the "-" delimiter
+- Kubernetes support via Helm charts for streamlined deployment on Kubernetes clusters
+- Fetchmail integration to retrieve emails from external providers
 
 ## Installation (basic setup)
 
@@ -110,3 +113,10 @@ You can find `values.yaml` and more information in the [mailserver-charts reposi
 | Management Interface                       | http://127.0.0.1:81/manager/ |
 | Webmail                                    | http://127.0.0.1:81/webmail/ |
 | Rspamd Webinterface                        | http://127.0.0.1:81/rspamd/  |
+
+## Links
+
+- [Issues](https://github.com/jeboehm/docker-mailserver/issues)
+- [Helm Charts](https://github.com/jeboehm/mailserver-charts)
+- [mailserver-admin](https://github.com/jeboehm/mailserver-admin)
+- [fetchmailmgr](https://github.com/jeboehm/fetchmailmgr)
