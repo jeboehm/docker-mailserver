@@ -1,7 +1,7 @@
 FROM ghcr.io/jeboehm/dockerize:0.9.3 AS dockerize
 FROM roundcube/roundcubemail:1.6.x-fpm AS roundcube
 FROM composer:2.8 AS composer
-FROM php:8.3-fpm-alpine
+FROM php:8.4-fpm-alpine
 
 ARG ADMIN_VER=5.3.0 # renovate: depName=jeboehm/mailserver-admin
 
