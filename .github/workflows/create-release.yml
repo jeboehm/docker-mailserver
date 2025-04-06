@@ -1,5 +1,6 @@
 name: Create Release
 on:
+  pull_request:
   push:
     branches:
       - main
@@ -8,6 +9,9 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+    outputs:
+      new_tag: ${{ steps.tag_version.outputs.new_tag }}
+      changelog: ${{ steps.tag_version.outputs.changelog }}
     steps:
       - uses: actions/checkout@v4
       - name: Bump version and push tag
@@ -16,12 +20,24 @@ jobs:
         with:
           # use this PAT to have other workflows triggered
           github_token: ${{ secrets.GH_RELEASE_PAT }}
+          dry_run: ${{ github.event_name == 'pull_request' }}
       - name: Create a GitHub release
         uses: ncipollo/release-action@v1
+        if: ${{ github.event_name != 'pull_request' }}
         with:
           tag: ${{ steps.tag_version.outputs.new_tag }}
           name: Release ${{ steps.tag_version.outputs.new_tag }}
           body: ${{ steps.tag_version.outputs.changelog }}
+      - name: Output generated version information
+        run: |
+          echo "# Version ${{ steps.tag_version.outputs.new_tag }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "## Changelog" >> "$GITHUB_STEP_SUMMARY"
+          echo "${{ steps.tag_version.outputs.changelog }}" >> "$GITHUB_STEP_SUMMARY"
+  update_helm_chart:
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name != 'pull_request' }}
+    needs: create_release
+    steps:
       - name: Update Helm chart
         uses: shini4i/helm-charts-updater@v1
         with:
@@ -29,6 +45,6 @@ jobs:
           gh_user: jeboehm
           gh_repo: mailserver-charts
           chart_name: docker-mailserver
-          app_version: ${{ steps.tag_version.outputs.new_tag }}
+          app_version: ${{ needs.create_release.outputs.new_tag }}
           generate_docs: true
           update_readme: true
