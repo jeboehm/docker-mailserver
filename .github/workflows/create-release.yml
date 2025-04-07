@@ -35,11 +35,11 @@ jobs:
           echo "${{ steps.tag_version.outputs.changelog }}" >> "$GITHUB_STEP_SUMMARY"
   update_helm_chart:
     runs-on: ubuntu-latest
-    if: ${{ github.event_name != 'pull_request' }}
     needs: create_release
     steps:
       - name: Update Helm chart
         uses: shini4i/helm-charts-updater@v1
+        if: ${{ github.event_name != 'pull_request' }}
         with:
           github_token: ${{ secrets.CHARTS_REPO_TOKEN }}
           gh_user: jeboehm
