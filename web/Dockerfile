@@ -1,13 +1,28 @@
-FROM ghcr.io/jeboehm/dockerize:0.9.3 AS dockerize
-FROM roundcube/roundcubemail:1.6.x-fpm AS roundcube
-FROM composer:2.8 AS composer
 FROM php:8.4-fpm-alpine
-
-ARG ADMIN_VER=5.3.1 # renovate: depName=jeboehm/mailserver-admin
 
 LABEL maintainer="jeff@ressourcenkonflikt.de"
 LABEL vendor="https://github.com/jeboehm/docker-mailserver"
 LABEL de.ressourcenkonflikt.docker-mailserver.autoheal="true"
+
+RUN curl -sSLf \
+        -o /usr/local/bin/install-php-extensions \
+        https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions && \
+    chmod +x /usr/local/bin/install-php-extensions && \
+    install-php-extensions \
+        @composer \
+        apcu \
+        intl \
+        opcache \
+        pdo_mysql \
+        redis \
+        zip && \
+    rm /usr/local/bin/install-php-extensions
+
+RUN apk add --no-cache \
+        nginx \
+        supervisor && \
+    ln -sf /dev/stdout /var/log/nginx/access.log && \
+    ln -sf /dev/stderr /var/log/nginx/error.log
 
 ENV MYSQL_HOST=db \
     MYSQL_PORT=3306 \
@@ -32,61 +47,45 @@ ENV MYSQL_HOST=db \
     DATABASE_URL="mysql://%env(MYSQL_USER)%:%env(MYSQL_PASSWORD)%@%env(MYSQL_HOST)%:%env(MYSQL_PORT)%/%env(MYSQL_DATABASE)%" \
     COMPOSER_ALLOW_SUPERUSER=1
 
-# shellcheck disable=SC2086
-RUN apk add --no-cache \
-        acl \
-        icu \
-        icu-dev \
-        libzip \
-        libzip-dev \
-        nginx \
-        supervisor && \
-    apk add --no-cache --virtual .phpize-deps ${PHPIZE_DEPS} && \
-    pecl install apcu && \
-    pecl install redis && \
-    docker-php-ext-install -j5 \
-        intl \
-        opcache \
-        pdo_mysql \
-        zip && \
-    docker-php-ext-enable apcu && \
-    docker-php-ext-enable redis && \
-    ln -sf /dev/stdout /var/log/nginx/access.log && \
-    ln -sf /dev/stderr /var/log/nginx/error.log && \
-    apk del --no-cache \
-        icu-dev \
-        libzip-dev \
-        .phpize-deps
+ARG RC_PLUGINS=""
+COPY --from=roundcube/roundcubemail:1.6.x-fpm /usr/src/roundcubemail/ /var/www/html/webmail/
+RUN --mount=type=cache,target=/root/.composer \
+    cd /var/www/html/webmail && \
+    mkdir -p \
+        temp/ \
+        logs/ && \
+    chown -R www-data:www-data \
+        temp/ \
+        logs/ && \
+    mv composer.json-dist composer.json && \
+    if [ "${RC_PLUGINS}" != "" ]; then \
+        composer require \
+        --ignore-platform-reqs --prefer-dist --prefer-stable \
+        --no-interaction --optimize-autoloader --apcu-autoloader \
+        ${RC_PLUGINS}; \
+    fi
 
-COPY --from=roundcube /usr/src/roundcubemail/ /var/www/html/webmail/
-COPY --from=dockerize /bin/dockerize /usr/local/bin/dockerize
-COPY --from=composer /usr/bin/composer /usr/bin/composer
-COPY rootfs/ /
-
-WORKDIR /opt/manager
-
-RUN wget -O /tmp/admin.tar.gz -q https://github.com/jeboehm/mailserver-admin/archive/${ADMIN_VER}.tar.gz && \
-    tar -xf /tmp/admin.tar.gz -C /opt/manager --strip=1 && \
+ARG ADMIN_VER=5.3.1 # renovate: depName=jeboehm/mailserver-admin
+RUN --mount=type=cache,target=/root/.composer \
+    mkdir /opt/manager && \
+    cd /opt/manager && \
+    curl -sSLf \
+        -o /tmp/admin.tar.gz \
+        https://github.com/jeboehm/mailserver-admin/archive/${ADMIN_VER}.tar.gz && \
+    tar -xf /tmp/admin.tar.gz --strip=1 && \
     rm /tmp/admin.tar.gz && \
     mkdir -p \
-        /opt/manager/var/cache \
-        /opt/manager/var/log && \
+        var/cache/ \
+        var/log/ && \
     DATABASE_URL="${DATABASE_URL}?serverVersion=8.0" composer install --no-dev --prefer-dist -o --apcu-autoloader && \
     composer symfony:dump-env prod && \
     chown -R www-data:www-data \
-        /opt/manager/var/cache/prod \
-        /opt/manager/var/log/ \
-        /var/www/html/webmail/temp/ \
-        /var/www/html/webmail/logs/ && \
+        var/cache/prod/ \
+        var/log/ && \
     ln -s /opt/manager/public /var/www/html/manager
 
-WORKDIR /var/www/html
-
-ARG RC_PLUGINS ""
-ENV RC_PLUGINS $RC_PLUGINS
-
-RUN mv /var/www/html/webmail/composer.json-dist /var/www/html/webmail/composer.json && \
-    /usr/local/bin/install_roundcube_plugins.sh
+COPY --from=ghcr.io/jeboehm/dockerize:0.9.3 /bin/dockerize /usr/local/bin/dockerize
+COPY rootfs/ /
 
 HEALTHCHECK CMD curl -s http://127.0.0.1/login | grep docker-mailserver
 EXPOSE 80
