@@ -4,9 +4,10 @@ LABEL maintainer="jeff@ressourcenkonflikt.de"
 LABEL vendor="https://github.com/jeboehm/docker-mailserver"
 LABEL de.ressourcenkonflikt.docker-mailserver.autoheal="true"
 
+ARG EXTENSION_INSTALLER_VER=2.7.30 # renovate: depName=mlocati/docker-php-extension-installer
 RUN curl -sSLf \
         -o /usr/local/bin/install-php-extensions \
-        https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions && \
+        https://github.com/mlocati/docker-php-extension-installer/releases/download/${EXTENSION_INSTALLER_VER}/install-php-extensions && \
     chmod +x /usr/local/bin/install-php-extensions && \
     install-php-extensions \
         @composer \
