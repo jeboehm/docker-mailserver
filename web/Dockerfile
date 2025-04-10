@@ -49,7 +49,7 @@ ENV MYSQL_HOST=db \
     COMPOSER_ALLOW_SUPERUSER=1
 
 ARG RC_PLUGINS=""
-COPY --from=roundcube/roundcubemail:1.6.x-fpm /usr/src/roundcubemail/ /var/www/html/webmail/
+COPY --from=docker.io/roundcube/roundcubemail:1.6.10-fpm /usr/src/roundcubemail/ /var/www/html/webmail/
 RUN --mount=type=cache,target=/root/.composer \
     cd /var/www/html/webmail && \
     mkdir -p \
