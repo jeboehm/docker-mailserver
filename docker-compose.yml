@@ -121,7 +121,7 @@ services:
     read_only: true
 
   redis:
-    image: redis:7.4-alpine
+    image: redis:8.0-alpine
     restart: on-failure:5
     command:
       - redis-server
