@@ -15,7 +15,7 @@ services:
   # Responsible for storing users and their aliases. Remove
   # if you already have a MySQL server.
   db:
-    image: mysql:lts
+    image: mysql:lts@sha256:85144db2a70009020bc161bb11c34064e80e8e951b983c5fe3905ef688b54de8
     restart: on-failure:5
     env_file: .env
     volumes:
@@ -108,7 +108,7 @@ services:
   # and deliver them to the local mail server. Can be removed
   # if you don't need it.
   fetchmail:
-    image: ghcr.io/jeboehm/fetchmailmgr:0.3.12
+    image: ghcr.io/jeboehm/fetchmailmgr:0.3.12@sha256:8f0cfe90c733e5e36daf65f4f67452c207742de6cbaf1d27ac2886df745373ab
     restart: on-failure:5
     command:
       - --interval
@@ -121,7 +121,7 @@ services:
     read_only: true
 
   redis:
-    image: redis:7.4-alpine
+    image: redis:7.4-alpine@sha256:ee9e8748ace004102a267f7b8265dab2c618317df22507b89d16a8add7154273
     restart: on-failure:5
     command:
       - redis-server
