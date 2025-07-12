@@ -1,5 +1,5 @@
 FROM ghcr.io/jeboehm/dockerize:0.9.3 AS dockerize
-FROM alpine:3.21
+FROM alpine:3.22@sha256:8a1f59ffb675680d47db6337b49d22281a139e9d709335b492be023728e11715
 
 LABEL maintainer="jeff@ressourcenkonflikt.de"
 LABEL vendor="https://github.com/jeboehm/docker-mailserver"
