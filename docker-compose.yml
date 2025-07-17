@@ -15,7 +15,7 @@ services:
   # Responsible for storing users and their aliases. Remove
   # if you already have a MySQL server.
   db:
-    image: mysql:lts
+    image: mysql:lts@sha256:679e7e924f38a3cbb62a3d7df32924b83f7321a602d3f9f967c01b3df18495d6
     restart: on-failure:5
     env_file: .env
     volumes:
@@ -121,7 +121,7 @@ services:
     read_only: true
 
   redis:
-    image: redis:7.4-alpine
+    image: redis:7.4-alpine@sha256:bb186d083732f669da90be8b0f975a37812b15e913465bb14d845db72a4e3e08
     restart: on-failure:5
     command:
       - redis-server

@@ -13,16 +13,16 @@ jobs:
       new_tag: ${{ steps.tag_version.outputs.new_tag }}
       changelog: ${{ steps.tag_version.outputs.changelog }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
       - name: Bump version and push tag
         id: tag_version
-        uses: mathieudutour/github-tag-action@v6.2
+        uses: mathieudutour/github-tag-action@a22cf08638b34d5badda920f9daf6e72c477b07b # v6.2
         with:
           # use this PAT to have other workflows triggered
           github_token: ${{ secrets.GH_RELEASE_PAT }}
           dry_run: ${{ github.event_name == 'pull_request' }}
       - name: Create a GitHub release
-        uses: ncipollo/release-action@v1
+        uses: ncipollo/release-action@bcfe5470707e8832e12347755757cec0eb3c22af # v1
         if: ${{ github.event_name != 'pull_request' }}
         with:
           tag: ${{ steps.tag_version.outputs.new_tag }}
@@ -46,7 +46,7 @@ jobs:
           # shellcheck disable=SC2016
           echo "STRIP_VERSION=$(php -r 'echo (str_starts_with($argv[1], "v") ? substr($argv[1], 1) : $argv[1]);' ${{ needs.create_release.outputs.new_tag }})" >> "$GITHUB_OUTPUT"
       - name: Update Helm chart
-        uses: shini4i/helm-charts-updater@v1
+        uses: shini4i/helm-charts-updater@f4854b054b83fac648681aa2db26cfe9c2f3529e # v1
         with:
           github_token: ${{ secrets.CHARTS_REPO_TOKEN }}
           gh_user: jeboehm
