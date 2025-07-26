@@ -66,7 +66,7 @@ RUN --mount=type=cache,target=/root/.composer \
         ${RC_PLUGINS}; \
     fi
 
-ARG ADMIN_VER=5.4.26 # renovate: depName=jeboehm/mailserver-admin
+ARG ADMIN_VER=5.4.27 # renovate: depName=jeboehm/mailserver-admin
 RUN --mount=type=cache,target=/root/.composer \
     mkdir /opt/manager && \
     cd /opt/manager && \
