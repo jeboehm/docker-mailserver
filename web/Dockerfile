@@ -1,4 +1,4 @@
-FROM php:8.4-fpm-alpine
+FROM php:8.4-fpm-alpine@sha256:983b2d9668d50e0b9d346d03290e7296537d10941c4a954af8d62ea5fc9ca463
 
 LABEL maintainer="jeff@ressourcenkonflikt.de"
 LABEL vendor="https://github.com/jeboehm/docker-mailserver"
@@ -49,7 +49,7 @@ ENV MYSQL_HOST=db \
     COMPOSER_ALLOW_SUPERUSER=1
 
 ARG RC_PLUGINS=""
-COPY --from=docker.io/roundcube/roundcubemail:1.6.11-fpm /usr/src/roundcubemail/ /var/www/html/webmail/
+COPY --from=docker.io/roundcube/roundcubemail:1.6.11-fpm@sha256:cf7ffffe8e905af6b745ac73b7ffe09c5cd5dc6b0823e076de4c3b32f2b4b3b1 /usr/src/roundcubemail/ /var/www/html/webmail/
 RUN --mount=type=cache,target=/root/.composer \
     cd /var/www/html/webmail && \
     mkdir -p \
@@ -85,7 +85,7 @@ RUN --mount=type=cache,target=/root/.composer \
         var/log/ && \
     ln -s /opt/manager/public /var/www/html/manager
 
-COPY --from=ghcr.io/jeboehm/dockerize:0.9.3 /bin/dockerize /usr/local/bin/dockerize
+COPY --from=ghcr.io/jeboehm/dockerize:0.9.3@sha256:d4e824aa120670658d7012421d2fdf1b2437be34a6acbb7a4ad92ed52edec8eb /bin/dockerize /usr/local/bin/dockerize
 COPY rootfs/ /
 
 HEALTHCHECK CMD curl -s http://127.0.0.1/login | grep docker-mailserver
