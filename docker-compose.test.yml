@@ -1,7 +1,7 @@
 ---
 services:
   mailpit:
-    image: axllent/mailpit:v1.27
+    image: axllent/mailpit:v1.27@sha256:df6c2541907e1be6fac21f509927cf6ed771617a1f4b361ef66d97bd05593d2d
 
   fetchmail:
     links:
