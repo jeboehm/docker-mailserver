@@ -108,7 +108,7 @@ services:
   # and deliver them to the local mail server. Can be removed
   # if you don't need it.
   fetchmail:
-    image: ghcr.io/jeboehm/fetchmailmgr:0.3.19@sha256:eec94b15a57b27f1ce3139a3a001a63c658db9272771b29736e12fc726e05c8c
+    image: ghcr.io/jeboehm/fetchmailmgr:0.3.20@sha256:ab516f0facba1d9edc9da62b3846843ff0972fa9d00613076a592e0e51d20a80
     restart: on-failure:5
     command:
       - --interval
