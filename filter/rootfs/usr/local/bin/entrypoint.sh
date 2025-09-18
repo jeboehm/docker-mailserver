@@ -1,16 +1,16 @@
 #!/bin/sh
 
-FILTER_VIRUS_ARGS=""
-if [ "${FILTER_VIRUS}" = "true" ]; then
-	FILTER_VIRUS_ARGS="-wait tcp://${FILTER_VIRUS_HOST}:3310"
+if [ "${CONTROLLER_PASSWORD}" = "" ]; then
+	# q1 is disabled in rspamd.
+	RSPAMD_CONTROLLER_PASSWORD_ENC="q1"
+else
+	RSPAMD_CONTROLLER_PASSWORD_ENC="$(rspamadm pw -e -p "${CONTROLLER_PASSWORD}")"
 fi
 
-if [ "${SKIP_INIT}" != "true" ]; then
-	/usr/local/bin/init.sh
-fi
+export RSPAMD_CONTROLLER_PASSWORD_ENC
 
-# shellcheck disable=SC2086
-dockerize \
-	${FILTER_VIRUS_ARGS} \
-	-timeout "${WAITSTART_TIMEOUT}" \
-	/usr/bin/rspamd -c /etc/rspamd/rspamd.conf -f
+export RSPAMD_REDIS_PASSWORD="${REDIS_PASSWORD}"
+export RSPAMD_REDIS_HOST="${REDIS_HOST}"
+export RSPAMD_REDIS_PORT="${REDIS_PORT}"
+
+/usr/bin/rspamd -f
