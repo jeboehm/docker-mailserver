@@ -30,7 +30,6 @@ logs:
 	$(COMPOSE_PRODUCTION) logs mta
 	$(COMPOSE_PRODUCTION) logs mda
 	$(COMPOSE_PRODUCTION) logs filter
-	$(COMPOSE_PRODUCTION) logs virus
 	$(COMPOSE_PRODUCTION) logs web
 	$(COMPOSE_PRODUCTION) logs fetchmail
 
@@ -54,10 +53,6 @@ fixtures:
 	$(COMPOSE_PRODUCTION) run --rm web /usr/local/bin/fixtures.sh /opt/manager/bin/console alias:add --catchall @example.com admin@example.com
 	$(COMPOSE_PRODUCTION) run --rm web /usr/local/bin/fixtures.sh /opt/manager/bin/console dkim:setup example.com --enable --selector dkim
 	$(COMPOSE_PRODUCTION) run --rm web /usr/local/bin/fixtures.sh /opt/manager/bin/console fetchmail:account:add --force fetchmailreceiver@example.org mda.local imap 143 fetchmailsource@example.org test1234
-
-.PHONY: unofficial-sigs
-unofficial-sigs:
-	cd virus/contrib/unofficial-sigs; docker build -t virus_unof_sig_updater .
 
 .PHONY: setup
 setup:

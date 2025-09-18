@@ -72,6 +72,8 @@ services:
         - type=registry,ref=ghcr.io/jeboehm/mailserver-web:buildcache
     restart: on-failure:5
     env_file: .env
+    depends_on:
+      - redis
     # For use with jwilder/nginx-proxy.
     # environment:
     #   - VIRTUAL_HOST=mail.example.com
@@ -88,21 +90,18 @@ services:
     env_file: .env
     volumes:
       - data-filter:/var/lib/rspamd
-    links:
-      - virus:virus.local
+    depends_on:
+      - unbound
+      - redis
 
-  # Incoming viruses or malware is detected and rejected by
-  # this service. Can be removed if FILTER_VIRUS is set to false.
-  virus:
-    image: jeboehm/mailserver-virus:latest
+  # Unbound is used to resolve DNS queries for the filter service.
+  unbound:
+    image: jeboehm/mailserver-unbound:latest
     build:
-      context: ./virus
+      context: ./unbound
       cache_from:
-        - type=registry,ref=ghcr.io/jeboehm/mailserver-virus:buildcache
+        - type=registry,ref=ghcr.io/jeboehm/mailserver-unbound:buildcache
     restart: on-failure:5
-    env_file: .env
-    volumes:
-      - data-virusdb:/var/lib/clamav
 
   # Fetchmail is used to fetch emails from external servers
   # and deliver them to the local mail server. Can be removed
@@ -119,9 +118,11 @@ services:
     tmpfs:
       - /run/fetchmailmgr:mode=0755,uid=65534,gid=65534
     read_only: true
+    depends_on:
+      - redis
 
   redis:
-    image: redis:7.4-alpine
+    image: redis:8.2-alpine
     restart: on-failure:5
     command:
       - redis-server
@@ -142,19 +143,9 @@ services:
   #   environment:
   #     - AUTOHEAL_CONTAINER_LABEL=de.ressourcenkonflikt.docker-mailserver.autoheal
 
-  # Optional service: extend ClamAV (used in the virus service)
-  # by downloading additional databases provided by different
-  # companys. Run it regulary.
-  # virus_unof_sig_updater:
-  #   build: ./virus/contrib/unofficial-sigs
-  #   env_file: .env
-  #   volumes:
-  #     - data-virusdb:/var/lib/clamav
-
 volumes:
   data-db:
   data-mail:
   data-tls:
   data-filter:
-  data-virusdb:
   data-redis:

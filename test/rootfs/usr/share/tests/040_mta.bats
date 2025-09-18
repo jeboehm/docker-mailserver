@@ -191,12 +191,3 @@
 	run swaks -s mta --to disabledsendonly@example.com --body "$BATS_TEST_DESCRIPTION"
 	[ "$status" -eq 24 ]
 }
-
-@test "virus is rejected" {
-	if [ "${FILTER_VIRUS}" = "false" ]; then
-		skip
-	fi
-
-	run swaks -s mta --to admin@example.com --attach - </usr/share/fixtures/eicar.com
-	[ "$status" -eq 26 ]
-}

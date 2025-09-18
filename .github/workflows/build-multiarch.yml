@@ -20,10 +20,10 @@ jobs:
             image: mailserver-filter
           - context: web
             image: mailserver-web
-          - context: virus
-            image: mailserver-virus
           - context: ssl
             image: mailserver-ssl
+          - context: unbound
+            image: mailserver-unbound
     permissions:
       contents: write
       packages: write
