@@ -1,10 +1,10 @@
 #!/bin/sh
 
 dockerize \
-	-wait tcp://db:3306 \
-	-wait tcp://mta:25 \
-	-wait tcp://web:80 \
-	-wait tcp://mda:143 \
-	-wait tcp://filter:11334 \
+	-wait "tcp://${MYSQL_HOST}:${MYSQL_PORT}" \
+	-wait "tcp://${WEB_HTTP_ADDRESS}" \
+	-wait "tcp://${IMAP_ADDRESS}" \
+	-wait "tcp://${SMTP_SUBMISSION_ADDRESS}" \
+	-wait "tcp://${FILTER_WEB_ADDRESS}" \
 	-timeout "${WAITSTART_TIMEOUT}" \
 	bats /usr/share/tests/*.bats

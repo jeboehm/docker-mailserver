@@ -33,11 +33,11 @@ services:
     restart: on-failure:5
     env_file: .env
     volumes:
-      - data-tls:/media/tls:ro
+      - data-tls:/etc/postfix/tls:ro
       # For using external certificates uncomment the following lines
       # and change the path on the left side of the colon.
-      # - /home/user/certs/mail.example.com.crt:/media/tls/mailserver.crt:ro
-      # - /home/user/certs/mail.example.com.key:/media/tls/mailserver.key:ro
+      # - /home/user/certs/mail.example.com.crt:/etc/postfix/tls.crt:ro
+      # - /home/user/certs/mail.example.com.key:/etc/postfix/tls.key:ro
 
   # The Mail Delivery Agent (Dovecot) is responsible for storing
   # incoming mail into a users mailbox and also delivers them
@@ -50,13 +50,21 @@ services:
         - type=registry,ref=ghcr.io/jeboehm/mailserver-mda:buildcache
     restart: on-failure:5
     env_file: .env
+    tmpfs:
+      - /tmp:mode=0755,uid=1000,gid=1000
+      - /run/dovecot:mode=0755,uid=1000,gid=1000
+    security_opt:
+      - no-new-privileges
+    read_only: true
+    depends_on:
+      - db
     volumes:
-      - data-mail:/var/vmail
-      - data-tls:/media/tls:ro
+      - data-mail:/srv/vmail
+      - data-tls:/etc/dovecot/tls:ro
       # For using external certificates uncomment the following lines
       # and change the path on the left side of the colon.
-      # - /home/user/certs/mail.example.com.crt:/media/tls/mailserver.crt:ro
-      # - /home/user/certs/mail.example.com.key:/media/tls/mailserver.key:ro
+      # - /home/user/certs/mail.example.com.crt:/etc/dovecot/tls/tls.crt:mode=0444
+      # - /home/user/certs/mail.example.com.key:/etc/dovecot/tls/tls.key:mode=0444
 
   # The admin (mailserver-admin) and webmail (roundcube) interfaces
   # live here. Can be removed if not needed.

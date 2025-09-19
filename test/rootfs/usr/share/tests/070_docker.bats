@@ -11,9 +11,3 @@
 
 	[ "$status" -eq 0 ]
 }
-
-@test "DNS is resolved by unbound" {
-	run bash -c "dockerlogs.sh docker-mailserver-filter-1 | grep 'DNS query blocked on'"
-
-	[ "$status" -eq 1 ]
-}

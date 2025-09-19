@@ -14,7 +14,7 @@ pull:
 
 .PHONY: test
 test: up fixtures
-	$(COMPOSE_TEST) run --rm test
+	$(COMPOSE_TEST) run --build --rm test
 
 .PHONY: clean
 clean:
@@ -32,6 +32,7 @@ logs:
 	$(COMPOSE_PRODUCTION) logs filter
 	$(COMPOSE_PRODUCTION) logs web
 	$(COMPOSE_PRODUCTION) logs fetchmail
+	$(COMPOSE_PRODUCTION) logs unbound
 
 .PHONY: up
 up: .env
@@ -52,7 +53,7 @@ fixtures:
 	$(COMPOSE_PRODUCTION) run --rm web /usr/local/bin/fixtures.sh /opt/manager/bin/console alias:add foo@example.org admin@example.com
 	$(COMPOSE_PRODUCTION) run --rm web /usr/local/bin/fixtures.sh /opt/manager/bin/console alias:add --catchall @example.com admin@example.com
 	$(COMPOSE_PRODUCTION) run --rm web /usr/local/bin/fixtures.sh /opt/manager/bin/console dkim:setup example.com --enable --selector dkim
-	$(COMPOSE_PRODUCTION) run --rm web /usr/local/bin/fixtures.sh /opt/manager/bin/console fetchmail:account:add --force fetchmailreceiver@example.org mda.local imap 143 fetchmailsource@example.org test1234
+	$(COMPOSE_PRODUCTION) run --rm web /usr/local/bin/fixtures.sh /opt/manager/bin/console fetchmail:account:add --force fetchmailreceiver@example.org mda.local imap 31143 fetchmailsource@example.org test1234
 
 .PHONY: setup
 setup:
