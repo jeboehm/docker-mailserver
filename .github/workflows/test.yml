@@ -7,8 +7,8 @@ jobs:
     strategy:
       matrix:
         BUILD_CASE:
+          - default
           - relayhost
-          - fts_disabled
     steps:
       - uses: actions/checkout@v4
       - name: Set up Docker Buildx

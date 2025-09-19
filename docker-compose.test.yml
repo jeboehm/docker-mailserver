@@ -10,7 +10,7 @@ services:
   test:
     build: ./test
     volumes:
-      - data-mail:/var/vmail:ro
+      - data-mail:/srv/vmail:ro
       - data-tls:/media/tls:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
       # For development

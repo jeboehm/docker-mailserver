@@ -1,6 +1,0 @@
-driver = mysql
-connect = host={{ .Env.MYSQL_HOST }} port={{ .Env.MYSQL_PORT }} dbname={{ .Env.MYSQL_DATABASE }} user={{ .Env.MYSQL_USER }} password={{ .Env.MYSQL_PASSWORD }}
-default_pass_scheme = SHA256-CRYPT
-password_query = SELECT mail_users.name AS user, mail_domains.name AS domain, password FROM mail_users JOIN mail_domains ON mail_users.domain_id = mail_domains.id WHERE mail_users.name = '%n' AND mail_domains.name = '%d' AND enabled = 1 AND NOT (send_only = 1 AND "%s" in ('imap', 'pop3'));
-user_query = SELECT concat('*:storage=', quota, 'M') AS quota_rule FROM mail_users JOIN mail_domains ON mail_users.domain_id = mail_domains.id WHERE mail_users.name = '%n' AND mail_domains.name = '%d';
-iterate_query = SELECT mail_users.name AS username, mail_domains.name AS domain FROM mail_users JOIN mail_domains ON mail_users.domain_id = mail_domains.id;

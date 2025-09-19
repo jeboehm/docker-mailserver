@@ -6,10 +6,10 @@ fi
 
 dockerize \
 	-wait "tcp://${MYSQL_HOST}:${MYSQL_PORT}" \
-	-wait "tcp://${MDA_HOST}:143" \
-	-wait "tcp://${MTA_HOST}:25" \
-	-wait "tcp://${FILTER_HOST}:11334" \
 	-wait "tcp://${REDIS_HOST}:${REDIS_PORT}" \
+	-wait "tcp://${IMAP_ADDRESS}" \
+	-wait "tcp://${SMTP_SUBMISSION_ADDRESS}" \
+	-wait "tcp://${FILTER_WEB_ADDRESS}" \
 	-timeout "${WAITSTART_TIMEOUT}" \
 	/usr/local/bin/init_database.sh
 

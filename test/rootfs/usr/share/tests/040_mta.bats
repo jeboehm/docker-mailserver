@@ -30,15 +30,15 @@
 	[ "$status" -eq 0 ]
 }
 
-@test "send mail with too big attachment to quota user" {
-	dd if=/dev/urandom of=/tmp/bigfile bs=1M count=5
-	run swaks -s mta --port 25 --to quota@example.com --body "$BATS_TEST_DESCRIPTION" --attach /tmp/bigfile
-	[ "$status" -eq 0 ]
-}
-
 @test "send mail to quota user to fill quota for about 80%" {
 	dd if=/dev/urandom of=/tmp/bigfile bs=100K count=8
 	run swaks -s mta --to quota@example.com --body "$BATS_TEST_DESCRIPTION" --attach /tmp/bigfile
+	[ "$status" -eq 0 ]
+}
+
+@test "send mail with too big attachment to quota user" {
+	dd if=/dev/urandom of=/tmp/bigfile bs=1M count=5
+	run swaks -s mta --port 25 --to quota@example.com --body "$BATS_TEST_DESCRIPTION" --attach /tmp/bigfile
 	[ "$status" -eq 0 ]
 }
 
@@ -119,61 +119,61 @@
 
 @test "maildir was created (wait 10 seconds)" {
 	sleep 10 # MTA + MDA need some time. :)
-	[ -d /var/vmail/example.com/admin/Maildir/new/ ]
+	[ -d /srv/vmail/example.com/admin/Maildir/new/ ]
 }
 
 @test "mail to local account address is stored" {
-	run grep -r "send mail to local account address" /var/vmail/example.com/admin/Maildir/
+	run grep -r "send mail to local account address" /srv/vmail/example.com/admin/Maildir/
 	[ "$status" -eq 0 ]
 }
 
 @test "mail to local alias is stored" {
-	run grep -r "send mail to local alias" /var/vmail/example.com/admin/Maildir/
+	run grep -r "send mail to local alias" /srv/vmail/example.com/admin/Maildir/
 	[ "$status" -eq 0 ]
 }
 
 @test "mail to local address with extension is stored" {
-	run grep -r "send mail to local address with extension" /var/vmail/example.com/admin/Maildir/
+	run grep -r "send mail to local address with extension" /srv/vmail/example.com/admin/Maildir/
 	[ "$status" -eq 0 ]
 }
 
 @test "mail to mta with smtp authentification (submission service) is stored" {
-	run grep -r "send mail to mta with smtp authentification (submission service)" /var/vmail/example.com/admin/Maildir/
+	run grep -r "send mail to mta with smtp authentification (submission service)" /srv/vmail/example.com/admin/Maildir/
 	[ "$status" -eq 0 ]
 }
 
 @test "mail to mta with smtp authentification, with address extension (submission service) is stored" {
-	run grep -r "send mail to mta with smtp authentification, with address extension (submission service)" /var/vmail/example.com/admin/Maildir/
+	run grep -r "send mail to mta with smtp authentification, with address extension (submission service)" /srv/vmail/example.com/admin/Maildir/
 	[ "$status" -eq 0 ]
 }
 
 @test "mail to mta from sendonly account with smtp authentification (submission service) is stored" {
-	run grep -r "send mail to mta from sendonly account with smtp authentification (submission service)" /var/vmail/example.com/admin/Maildir/
+	run grep -r "send mail to mta from sendonly account with smtp authentification (submission service)" /srv/vmail/example.com/admin/Maildir/
 	[ "$status" -eq 0 ]
 }
 
 @test "catchall mail is delivered" {
-	run grep -r "send mail to unknown address (catchall)" /var/vmail/example.com/admin/Maildir/
+	run grep -r "send mail to unknown address (catchall)" /srv/vmail/example.com/admin/Maildir/
 	[ "$status" -eq 0 ]
 }
 
 @test "junk mail is assorted to the junk folder" {
-	run grep -r "send junk mail to local address" /var/vmail/example.com/admin/Maildir/.Junk/
+	run grep -r "send junk mail to local address" /srv/vmail/example.com/admin/Maildir/.Junk/
 	[ "$status" -eq 0 ]
 }
 
 @test "mail with too big attachment is not found" {
-	run grep -r "send mail with too big attachment to quota user" /var/vmail/example.com/quota/Maildir/
+	run grep -r "send mail with too big attachment to quota user" /srv/vmail/example.com/quota/Maildir/
 	[ "$status" -ne 0 ]
 }
 
 @test "mail to disabled user is stored anyway" {
-	run grep -r "send mail to disabled user" /var/vmail/example.com/disabled/Maildir/
+	run grep -r "send mail to disabled user" /srv/vmail/example.com/disabled/Maildir/
 	[ "$status" -eq 0 ]
 }
 
 @test "quota warn mail was sent" {
-	run grep -r "Your mailbox can only store a limited amount of emails." /var/vmail/example.com/quota/Maildir/
+	run grep -r "Your mailbox can only store a limited amount of emails." /srv/vmail/example.com/quota/Maildir/
 	[ "$status" -eq 0 ]
 }
 

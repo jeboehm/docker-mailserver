@@ -12,7 +12,7 @@ if [ "${PERCENT}" = "" ] || [ "${USER}" = "" ]; then
 	exit 1
 fi
 
-cat <<EOF | /usr/libexec/dovecot/dovecot-lda -d "${USER}" -o "plugin/quota=maildir:User quota:noenforcing"
+cat <<EOF | /dovecot/libexec/dovecot/dovecot-lda -d "${USER}" -o "quota_enforce=no"
 From: docker-mailserver <$USER>
 Subject: Quota warning - $PERCENT% reached
 

@@ -1,48 +1,41 @@
 FROM ghcr.io/jeboehm/dockerize:0.9.3 AS dockerize
-FROM alpine:3.21
+FROM dovecot/dovecot:2.4.1-dev
 
 LABEL maintainer="jeff@ressourcenkonflikt.de"
 LABEL vendor="https://github.com/jeboehm/docker-mailserver"
 LABEL de.ressourcenkonflikt.docker-mailserver.autoheal="true"
+
+USER root
+RUN apt-get update && \
+    apt-get install --no-install-recommends -y curl && \
+    rm -rf /var/lib/apt/lists/*
+USER vmail
 
 ENV MYSQL_HOST=db \
     MYSQL_PORT=3306 \
     MYSQL_USER=root \
     MYSQL_PASSWORD=changeme \
     MYSQL_DATABASE=mailserver \
+    FILTER_WEB_ADDRESS=filter:11334 \
+    CONTROLLER_PASSWORD= \
+    RECIPIENT_DELIMITER=- \
     MAILNAME=mail.example.com \
     POSTMASTER=postmaster@example.com \
-    SUBMISSION_HOST=mta \
-    ENABLE_POP3=true \
-    ENABLE_IMAP=true \
-    ENABLE_FTS=true \
-    FILTER_HOST=filter \
-    SSL_CERT=/media/tls/mailserver.crt \
-    SSL_KEY=/media/tls/mailserver.key \
-    WAITSTART_TIMEOUT=1m \
-    RECIPIENT_DELIMITER=- \
-    FTS_ARGS="partial=3 full=20 verbose=0 lowmemory=256" \
-    FTS_VSZ_LIMIT=256M
+    SMTP_ADDRESS=mta:25
 
-RUN apk --no-cache add \
-         curl \
-         dovecot \
-         dovecot-lmtpd \
-         dovecot-mysql \
-         dovecot-pigeonhole-plugin \
-         dovecot-pop3d \
-         dovecot-fts-xapian && \
-    adduser -h /var/vmail -u 5000 -D vmail && \
-    rm -rf /etc/ssl/dovecot && \
-    openssl dhparam -out /etc/dovecot/dh.pem 2048
+# 2003: LMTP, 2004: AUTH
+EXPOSE 2003 2004
 
-COPY --from=dockerize /bin/dockerize /usr/local/bin/dockerize
-COPY rootfs/ /
+COPY --chown=root:root --from=dockerize /bin/dockerize /usr/local/bin/dockerize
+COPY --chown=root:root rootfs/ /
 
-RUN sievec /etc/dovecot/sieve/global/
+USER root
+RUN mv /etc/dovecot/conf.d/10-ssl.conf /tmp/10-ssl.conf && \
+    cd /etc/dovecot/sieve/global && \
+    sievec . && \
+    mv /tmp/10-ssl.conf /etc/dovecot/conf.d/10-ssl.conf
+USER vmail
 
-EXPOSE 2003 2004 4190 143 110 993 995
-VOLUME ["/var/vmail"]
+HEALTHCHECK CMD doveadm service status || exit 1
 
-HEALTHCHECK CMD echo "? LOGOUT" | nc 127.0.0.1 143 | grep "Dovecot ready."
 CMD ["/usr/local/bin/entrypoint.sh"]
