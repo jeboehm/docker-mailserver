@@ -4,4 +4,5 @@ failure-threshold: warning
 ignored:
   - DL3007
   - DL3003
+  - DL3008
   - DL3018

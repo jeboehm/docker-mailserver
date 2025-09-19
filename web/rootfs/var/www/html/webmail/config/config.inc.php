@@ -12,9 +12,8 @@ $config['db_dsnw'] = sprintf(
     getenv('MYSQL_PORT'),
     getenv('MYSQL_DATABASE')
 );
-$config['default_host'] = 'tls://' . getenv('MDA_HOST');
-$config['smtp_server'] = 'tls://' . getenv('MTA_HOST');
-$config['smtp_port'] = 587;
+$config['default_host'] = 'tls://' . getenv('IMAP_ADDRESS');
+$config['smtp_host'] = 'tls://' . getenv('SMTP_SUBMISSION_ADDRESS');
 $config['smtp_user'] = '%u';
 $config['smtp_pass'] = '%p';
 $config['support_url'] = getenv('SUPPORT_URL');

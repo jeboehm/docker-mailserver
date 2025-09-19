@@ -98,7 +98,7 @@ http {
         }
 
         location /rspamd/ {
-            proxy_pass http://{{ .Env.FILTER_HOST }}:11334/;
+            proxy_pass http://{{ .Env.FILTER_WEB_ADDRESS }}/;
             proxy_set_header Host $host;
             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         }

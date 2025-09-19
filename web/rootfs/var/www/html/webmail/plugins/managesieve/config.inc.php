@@ -1,7 +1,6 @@
 <?php
 
-$config['managesieve_port'] = 4190;
-$config['managesieve_host'] = 'tls://%h';
+$config['managesieve_host'] = 'tls://' . getenv('MANAGESIEVE_ADDRESS');
 $config['managesieve_auth_type'] = 'PLAIN';
 $config['managesieve_auth_cid'] = null;
 $config['managesieve_auth_pw'] = null;
