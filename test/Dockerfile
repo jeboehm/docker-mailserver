@@ -9,13 +9,21 @@ ENV MYSQL_HOST=db \
     MYSQL_USER=root \
     MYSQL_PASSWORD=changeme \
     MYSQL_DATABASE=mailserver \
-    WAITSTART_TIMEOUT=1m
+    WAITSTART_TIMEOUT=1m \
+    POP3_ADDRESS=mda:31110 \
+    IMAP_ADDRESS=mda:31143 \
+    POP3S_ADDRESS=mda:31995 \
+    IMAPS_ADDRESS=mda:31993 \
+    SMTP_ADDRESS=mta:25 \
+    SMTP_SUBMISSION_ADDRESS=mta:587 \
+    WEB_HTTP_ADDRESS=web:80 \
+    FILTER_WEB_ADDRESS=filter:11334
 
 # Iconv fix: https://github.com/docker-library/php/issues/240#issuecomment-305038173
 RUN apk add --no-cache --repository http://dl-cdn.alpinelinux.org/alpine/edge/community/ gnu-libiconv
 ENV LD_PRELOAD=/usr/lib/preloadable_libiconv.so
 
-ARG IMAPTESTER_VER=v1.2.0 # renovate: depName=jeboehm/imap-tester
+ARG IMAPTESTER_VER=v1.3.0 # renovate: depName=jeboehm/imap-tester
 
 RUN apk --no-cache add \
       bash \
@@ -38,6 +46,7 @@ RUN apk --no-cache add \
       php82-phar \
       php82-iconv \
       php82-openssl \
+      php82-tokenizer \
       redis \
     && ln -sf /usr/bin/php82 /usr/bin/php \
     && wget -q -O /usr/local/bin/swaks https://www.jetmore.org/john/code/swaks/files/swaks-20130209.0/swaks \

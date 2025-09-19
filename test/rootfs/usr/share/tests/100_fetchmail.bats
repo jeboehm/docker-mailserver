@@ -5,6 +5,6 @@
 }
 
 @test "fetchmail collected the mail from the fetchmailsource account and put it into fetchmailreceiver account" {
-	run grep -r "send mail to mta to fetchmail source account address" /var/vmail/example.org/fetchmailreceiver/Maildir/
+	run grep -r "send mail to mta to fetchmail source account address" /srv/vmail/example.org/fetchmailreceiver/Maildir/
 	[ "$status" -eq 0 ]
 }
