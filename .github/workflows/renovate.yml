@@ -1,0 +1,20 @@
+name: Validate Renovate config
+on:
+  pull_request:
+    paths:
+      - renovate.json
+jobs:
+  validate_renovate_config:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            renovate.json
+          sparse-checkout-cone-mode: false
+      - name: Run renovate-config-validator
+        run: npx --yes --package renovate -- renovate-config-validator
