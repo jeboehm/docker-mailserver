@@ -22,8 +22,8 @@ RUN curl -sSLf \
 RUN apk add --no-cache \
         nginx \
         supervisor && \
-    ln -sf /dev/stdout /var/log/nginx/access.log && \
-    ln -sf /dev/stderr /var/log/nginx/error.log
+    rm /etc/nginx/nginx.conf && \
+    rm -r /etc/nginx/http.d/
 
 ENV MYSQL_HOST=db \
     MYSQL_PORT=3306 \
@@ -37,16 +37,18 @@ ENV MYSQL_HOST=db \
     SMTP_SUBMISSION_ADDRESS=mta:587 \
     MANAGESIEVE_ADDRESS=mda:4190 \
     FILTER_WEB_ADDRESS=filter:11334 \
-    WEB_HTTP_ADDRESS=web:80 \
+    WEB_HTTP_ADDRESS=web:8080 \
+    WEB_PHP_ADDRESS=127.0.0.1:9000 \
     SUPPORT_URL=https://github.com/jeboehm/docker-mailserver \
     MAILNAME=mail.example.com \
     LABEL=docker-mailserver \
     LABEL_SHORT=docker-mailserver \
     APP_ENV=prod \
     TRUSTED_PROXIES=172.16.0.0/12 \
+    DOCTRINE_DEPRECATIONS=track \
     WAITSTART_TIMEOUT=1m \
     ADMIN_VER=${ADMIN_VER} \
-    DATABASE_URL="mysql://%env(MYSQL_USER)%:%env(MYSQL_PASSWORD)%@%env(MYSQL_HOST)%:%env(MYSQL_PORT)%/%env(MYSQL_DATABASE)%" \
+    DATABASE_URL="mysql://%env(MYSQL_USER)%:%env(MYSQL_PASSWORD)%@%env(MYSQL_HOST)%:%env(MYSQL_PORT)%/%env(MYSQL_DATABASE)%?serverVersion=8.4" \
     COMPOSER_ALLOW_SUPERUSER=1
 
 ARG RC_PLUGINS=""
@@ -88,7 +90,10 @@ RUN --mount=type=cache,target=/root/.composer \
 WORKDIR /
 COPY --from=ghcr.io/jeboehm/dockerize:0.9.3 /bin/dockerize /usr/local/bin/dockerize
 COPY rootfs/ /
+RUN chown -R www-data /var/www/html/autoconfig /etc/nginx /var/lib/nginx
 
-HEALTHCHECK CMD curl -s http://127.0.0.1/login | grep docker-mailserver
-EXPOSE 80
+USER www-data
+
+HEALTHCHECK CMD curl -s http://127.0.0.1:8080/login | grep docker-mailserver
+EXPOSE 8080
 CMD ["/usr/local/bin/entrypoint.sh"]

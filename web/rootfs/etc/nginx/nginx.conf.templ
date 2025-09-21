@@ -1,7 +1,8 @@
-user nginx;
+daemon off;
+pid off;
 worker_processes auto;
 pcre_jit on;
-error_log /var/log/nginx/error.log warn;
+error_log stderr warn;
 
 events {
 	worker_connections 1024;
@@ -30,10 +31,10 @@ http {
 			'$status $body_bytes_sent "$http_referer" '
 			'"$http_user_agent" "$http_x_forwarded_for"';
 
-	access_log /var/log/nginx/access.log main;
+	access_log /dev/stdout main;
 
     server {
-        listen 80;
+        listen 8080;
         absolute_redirect off;
 
         root /var/www/html/manager;
@@ -80,7 +81,7 @@ http {
                 client_max_body_size 64M;
                 client_body_buffer_size 128k;
                 fastcgi_param SCRIPT_FILENAME $request_filename;
-                fastcgi_pass 127.0.0.1:9000;
+                fastcgi_pass {{ .Env.WEB_PHP_ADDRESS }};
             }
         }
 
@@ -89,7 +90,7 @@ http {
         }
 
         location ~ ^/index\.php(/|$) {
-            fastcgi_pass 127.0.0.1:9000;
+            fastcgi_pass {{ .Env.WEB_PHP_ADDRESS }};
             fastcgi_split_path_info ^(.+\.php)(/.*)$;
             include fastcgi_params;
             fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
