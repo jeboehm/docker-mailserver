@@ -26,6 +26,7 @@ RUN apk --no-cache add \
       bats \
       bats-assert \
       bats-support \
+      bind-tools \
       curl \
       docker \
       jq \
