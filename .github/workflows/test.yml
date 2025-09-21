@@ -49,14 +49,9 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+      - name: Prepare environment
+        run: grep -v '^#' .github/linters/super-linter.env >> "$GITHUB_ENV"
       - name: Super-Linter
-        uses: super-linter/super-linter@v7.3.0
+        uses: super-linter/super-linter@v8.1.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          VALIDATE_SQLFLUFF: false
-          VALIDATE_JSCPD: false
-          VALIDATE_PHP_PSALM: false
-          VALIDATE_PHP_PHPCS: false
-          VALIDATE_CHECKOV: false
-          FIX_SHELL_SHFMT: false
-          FIX_YAML_PRETTIER: false

@@ -101,18 +101,17 @@ You can find `values.yaml` and more information in the [mailserver-charts reposi
 
 ## Services
 
-| Service                                    | Address                      |
-| ------------------------------------------ | ---------------------------- |
-| POP3 (starttls needed)                     | 127.0.0.1:110                |
-| POP3S                                      | 127.0.0.1:995                |
-| IMAP (starttls needed)                     | 127.0.0.1:143                |
-| IMAPS                                      | 127.0.0.1:993                |
-| SMTP                                       | 127.0.0.1:25                 |
-| Mail Submission (starttls needed)          | 127.0.0.1:587                |
-| Mail Submission (SSL, disabled by default) | 127.0.0.1:465                |
-| Management Interface                       | http://127.0.0.1:81/manager/ |
-| Webmail                                    | http://127.0.0.1:81/webmail/ |
-| Rspamd Webinterface                        | http://127.0.0.1:81/rspamd/  |
+| Service                           | Address                      |
+| --------------------------------- | ---------------------------- |
+| POP3 (starttls needed)            | 127.0.0.1:110                |
+| POP3S                             | 127.0.0.1:995                |
+| IMAP (starttls needed)            | 127.0.0.1:143                |
+| IMAPS                             | 127.0.0.1:993                |
+| SMTP                              | 127.0.0.1:25                 |
+| Mail Submission (starttls needed) | 127.0.0.1:587                |
+| Management Interface              | http://127.0.0.1:81/manager/ |
+| Webmail                           | http://127.0.0.1:81/webmail/ |
+| Rspamd Webinterface               | http://127.0.0.1:81/rspamd/  |
 
 ## Links
 
