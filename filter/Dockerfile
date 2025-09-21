@@ -8,7 +8,7 @@ ENV REDIS_HOST=redis \
     REDIS_PORT=6379 \
     REDIS_PASSWORD= \
     CONTROLLER_PASSWORD= \
-    RSPAMD_DNS_SERVERS="round-robin:unbound:53"
+    RSPAMD_DNS_SERVERS="round-robin:unbound:5353"
 
 COPY --chown=root:root rootfs/ /
 
