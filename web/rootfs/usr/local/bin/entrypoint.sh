@@ -1,4 +1,5 @@
 #!/bin/sh
+set -e
 
 if [ "${SKIP_INIT}" != "true" ]; then
 	/usr/local/bin/init.sh

@@ -80,8 +80,14 @@ services:
         - type=registry,ref=ghcr.io/jeboehm/mailserver-web:buildcache
     restart: on-failure:5
     env_file: .env
+    security_opt:
+      - no-new-privileges
     depends_on:
       - redis
+    read_only: false
+    tmpfs:
+      - /tmp:mode=0755,uid=82,gid=82
+      - /var/lib/nginx/tmp:mode=0755,uid=82,gid=82
     # For use with jwilder/nginx-proxy.
     # environment:
     #   - VIRTUAL_HOST=mail.example.com
@@ -118,7 +124,6 @@ services:
     security_opt:
       - no-new-privileges
     read_only: false
-
 
   # Fetchmail is used to fetch emails from external servers
   # and deliver them to the local mail server. Can be removed
