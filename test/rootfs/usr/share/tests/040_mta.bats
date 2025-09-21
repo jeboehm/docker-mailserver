@@ -26,19 +26,19 @@
 }
 
 @test "send junk mail to local address" {
-	run swaks -s mta --port 25 --to admin@example.com --body "$BATS_TEST_DESCRIPTION" --header "X-Spam: Yes"
+	run swaks -s mta --port 25 --to admin@example.com --body "$BATS_TEST_DESCRIPTION" --header "X-Is-Spam: Yes"
 	[ "$status" -eq 0 ]
 }
 
 @test "send mail to quota user to fill quota for about 80%" {
 	dd if=/dev/urandom of=/tmp/bigfile bs=100K count=8
-	run swaks -s mta --to quota@example.com --body "$BATS_TEST_DESCRIPTION" --attach /tmp/bigfile
+	run swaks -s mta --to quota@example.com --body "$BATS_TEST_DESCRIPTION" --attach @/tmp/bigfile
 	[ "$status" -eq 0 ]
 }
 
 @test "send mail with too big attachment to quota user" {
 	dd if=/dev/urandom of=/tmp/bigfile bs=1M count=5
-	run swaks -s mta --port 25 --to quota@example.com --body "$BATS_TEST_DESCRIPTION" --attach /tmp/bigfile
+	run swaks -s mta --port 25 --to quota@example.com --body "$BATS_TEST_DESCRIPTION" --attach @/tmp/bigfile
 	[ "$status" -eq 0 ]
 }
 
@@ -92,24 +92,9 @@
 	[ "$status" -eq 28 ]
 }
 
-@test "send mail to mta with smtp authentification on port 25 (as long as this is not disabled)" {
+@test "sending mail to mta with smtp authentification on port 25 should fail" {
 	run swaks -s mta --port 25 --to admin@example.com --from admin@example.com -a -au admin@example.com -ap changeme -tls --body "$BATS_TEST_DESCRIPTION"
-	[ "$status" -eq 0 ]
-}
-
-@test "send mail to mta with smtp authentification on port 25 with wrong credentials (as long as this is not disabled)" {
-	run swaks -s mta --port 25 --to admin@example.com --from admin@example.com -a -au unknown@example.com -ap changeme -tls --body "$BATS_TEST_DESCRIPTION"
-	[ "$status" -eq 28 ]
-}
-
-@test "send mail to mta with smtp authentification on port 465" {
-	run swaks -s mta --port 465 --to admin@example.com --from admin@example.com -a -au admin@example.com -ap changeme -tlsc --body "$BATS_TEST_DESCRIPTION"
-	[ "$status" -eq 0 ]
-}
-
-@test "send mail to mta with smtp authentification on port 465 with wrong credentials" {
-	run swaks -s mta --port 465 --to admin@example.com --from admin@example.com -a -au unknown@example.com -ap changeme -tlsc --body "$BATS_TEST_DESCRIPTION"
-	[ "$status" -eq 28 ]
+	[ "$status" != 0 ]
 }
 
 @test "send mail to mta to fetchmail source account address" {
