@@ -8,8 +8,9 @@ Before upgrading, ensure you have updated `docker-compose.yml` and `docker-compo
 
 - **virus**: The virus service has been removed. To add antivirus functionality, see the [Rspamd antivirus documentation](https://docs.rspamd.com/modules/antivirus/).
 - **unbound**: Added unbound as a DNS resolver for the filter service.
-- **web**: Set `CSRF_ENABLED=false` to disable CSRF protection in the web interface (default: `true`).
 - **filter**: The base image has been changed to `rspamd/rspamd`. This image is no longer based on Alpine Linux.
+- **web**: Set `CSRF_ENABLED=false` to disable CSRF protection in the web interface (default: `true`).
+- **web**: To run rootless, the web interface now runs on port 8080 internally.
 
 ### MTA (Mail Transfer Agent)
 

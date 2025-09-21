@@ -16,7 +16,7 @@ ENV MYSQL_HOST=db \
     IMAPS_ADDRESS=mda:31993 \
     SMTP_ADDRESS=mta:25 \
     SMTP_SUBMISSION_ADDRESS=mta:587 \
-    WEB_HTTP_ADDRESS=web:80 \
+    WEB_HTTP_ADDRESS=web:8080 \
     FILTER_WEB_ADDRESS=filter:11334
 
 ARG IMAPTESTER_VER=v1.3.0 # renovate: depName=jeboehm/imap-tester
