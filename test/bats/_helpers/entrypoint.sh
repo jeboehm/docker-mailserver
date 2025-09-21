@@ -7,4 +7,4 @@ dockerize \
 	-wait "tcp://${SMTP_SUBMISSION_ADDRESS}" \
 	-wait "tcp://${FILTER_WEB_ADDRESS}" \
 	-timeout "${WAITSTART_TIMEOUT}" \
-	bats /usr/share/tests/*.bats
+	"${@}"
