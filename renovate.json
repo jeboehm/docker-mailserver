@@ -11,7 +11,7 @@
   "customManagers": [
     {
       "customType": "regex",
-      "fileMatch": ["Dockerfile$"],
+      "managerFilePatterns": ["/Dockerfile$/"],
       "matchStrings": [
         "VER=(?<currentValue>.*?) # renovate: depName=(?<depName>.*?)\\n"
       ],

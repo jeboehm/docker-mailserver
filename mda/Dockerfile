@@ -1,7 +1,7 @@
 FROM ghcr.io/jeboehm/dockerize:0.9.3 AS dockerize
 FROM dovecot/dovecot:2.4.1-dev
 
-LABEL maintainer="jeff@ressourcenkonflikt.de"
+LABEL maintainer="https://github.com/jeboehm/docker-mailserver"
 LABEL vendor="https://github.com/jeboehm/docker-mailserver"
 LABEL de.ressourcenkonflikt.docker-mailserver.autoheal="true"
 
@@ -14,7 +14,7 @@ USER vmail
 ENV MYSQL_HOST=db \
     MYSQL_PORT=3306 \
     MYSQL_USER=root \
-    MYSQL_PASSWORD=changeme \
+    MYSQL_PASSWORD= \
     MYSQL_DATABASE=mailserver \
     FILTER_WEB_ADDRESS=filter:11334 \
     CONTROLLER_PASSWORD= \
@@ -30,11 +30,12 @@ COPY --chown=root:root --from=dockerize /bin/dockerize /usr/local/bin/dockerize
 COPY --chown=root:root rootfs/ /
 
 USER root
+WORKDIR /etc/dovecot/sieve/global
 RUN mv /etc/dovecot/conf.d/10-ssl.conf /tmp/10-ssl.conf && \
-    cd /etc/dovecot/sieve/global && \
     sievec . && \
     mv /tmp/10-ssl.conf /etc/dovecot/conf.d/10-ssl.conf
 USER vmail
+WORKDIR /
 
 HEALTHCHECK CMD doveadm service status || exit 1
 

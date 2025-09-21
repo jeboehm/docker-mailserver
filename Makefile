@@ -58,3 +58,7 @@ fixtures:
 .PHONY: setup
 setup:
 	$(COMPOSE_PRODUCTION) run --rm web /usr/local/bin/setup.sh
+
+.PHONY: lint
+lint:
+	docker run --platform linux/amd64 -e RUN_LOCAL=true --rm --env-file .github/linters/super-linter.env -v $(PWD):/tmp/lint ghcr.io/super-linter/super-linter:v8.1.0
