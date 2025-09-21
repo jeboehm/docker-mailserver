@@ -5,10 +5,10 @@ set -e
 postconf myhostname="${MAILNAME}"
 postconf mynetworks="${MYNETWORKS}"
 postconf recipient_delimiter="${RECIPIENT_DELIMITER}"
-postconf smtpd_milters="inet:${FILTER_HOST}:11332"
-postconf non_smtpd_milters="inet:${FILTER_HOST}:11332"
-postconf virtual_transport="lmtp:${MDA_HOST}:2003"
-postconf smtpd_sasl_path="inet:${MDA_HOST}:2004"
+postconf smtpd_milters="inet:${FILTER_MILTER_ADDRESS}"
+postconf non_smtpd_milters="inet:${FILTER_MILTER_ADDRESS}"
+postconf virtual_transport="lmtp:${MDA_LMTP_ADDRESS}"
+postconf smtpd_sasl_path="inet:${MDA_AUTH_ADDRESS}"
 
 if [ "${FILTER_MIME}" = "true" ]; then
 	postconf mime_header_checks=regexp:/etc/postfix/mime_header_checks

@@ -1,6 +1,6 @@
 FROM php:8.4-fpm-alpine
 
-LABEL maintainer="jeff@ressourcenkonflikt.de"
+LABEL maintainer="https://github.com/jeboehm/docker-mailserver"
 LABEL vendor="https://github.com/jeboehm/docker-mailserver"
 LABEL de.ressourcenkonflikt.docker-mailserver.autoheal="true"
 
@@ -29,7 +29,7 @@ ENV MYSQL_HOST=db \
     MYSQL_PORT=3306 \
     MYSQL_DATABASE=mailserver \
     MYSQL_USER=mailserver \
-    MYSQL_PASSWORD=changeme \
+    MYSQL_PASSWORD= \
     REDIS_HOST=redis \
     REDIS_PORT=6379 \
     REDIS_PASSWORD= \
@@ -51,8 +51,8 @@ ENV MYSQL_HOST=db \
 
 ARG RC_PLUGINS=""
 COPY --from=docker.io/roundcube/roundcubemail:1.6.11-fpm /usr/src/roundcubemail/ /var/www/html/webmail/
+WORKDIR /var/www/html/webmail
 RUN --mount=type=cache,target=/root/.composer \
-    cd /var/www/html/webmail && \
     mkdir -p \
         temp/ \
         logs/ && \
@@ -68,9 +68,8 @@ RUN --mount=type=cache,target=/root/.composer \
     fi
 
 ARG ADMIN_VER=5.5.0 # renovate: depName=jeboehm/mailserver-admin
+WORKDIR /opt/manager
 RUN --mount=type=cache,target=/root/.composer \
-    mkdir /opt/manager && \
-    cd /opt/manager && \
     curl -sSLf \
         -o /tmp/admin.tar.gz \
         https://github.com/jeboehm/mailserver-admin/archive/${ADMIN_VER}.tar.gz && \
@@ -86,6 +85,7 @@ RUN --mount=type=cache,target=/root/.composer \
         var/log/ && \
     ln -s /opt/manager/public /var/www/html/manager
 
+WORKDIR /
 COPY --from=ghcr.io/jeboehm/dockerize:0.9.3 /bin/dockerize /usr/local/bin/dockerize
 COPY rootfs/ /
 

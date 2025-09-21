@@ -14,6 +14,7 @@ Before upgrading, ensure you have updated `docker-compose.yml` and `docker-compo
 ### MTA (Mail Transfer Agent)
 
 - **TLS Certificate Paths**: Certificate paths have been updated to `/etc/postfix/tls/tls.crt` and `/etc/postfix/tls/tls.key`.
+- **Mail Submission**: Mail submission is now only possible on port 587.
 
 ### MDA (Mail Delivery Agent)
 

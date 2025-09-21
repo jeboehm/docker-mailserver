@@ -1,6 +1,6 @@
 FROM alpinelinux/unbound:latest
 
-LABEL maintainer="jeff@ressourcenkonflikt.de"
+LABEL maintainer="https://github.com/jeboehm/docker-mailserver"
 LABEL vendor="https://github.com/jeboehm/docker-mailserver"
 LABEL de.ressourcenkonflikt.docker-mailserver.autoheal="true"
 

@@ -1,6 +1,6 @@
 FROM alpine:3.21
 
-LABEL maintainer="jeff@ressourcenkonflikt.de"
+LABEL maintainer="https://github.com/jeboehm/docker-mailserver"
 LABEL vendor="https://github.com/jeboehm/docker-mailserver"
 
 ENV SSL_CERT=/media/tls/tls.crt \
