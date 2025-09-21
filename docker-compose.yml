@@ -5,29 +5,19 @@ services:
   ssl:
     image: jeboehm/mailserver-ssl:latest
     build:
-      context: ./ssl
+      context: ./target/ssl
       cache_from:
         - type=registry,ref=ghcr.io/jeboehm/mailserver-ssl:buildcache
     env_file: .env
     volumes:
       - data-tls:/media/tls:rw
 
-  # Responsible for storing users and their aliases. Remove
-  # if you already have a MySQL server.
-  db:
-    image: mysql:lts
-    restart: on-failure:5
-    env_file: .env
-    volumes:
-      - ./db/rootfs/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d:ro
-      - data-db:/var/lib/mysql
-
   # The Mail Transfer Agent (Postfix) receives incoming mail
   # on TCP port 25.
   mta:
     image: jeboehm/mailserver-mta:latest
     build:
-      context: ./mta
+      context: ./target/mta
       cache_from:
         - type=registry,ref=ghcr.io/jeboehm/mailserver-mta:buildcache
     restart: on-failure:5
@@ -45,7 +35,7 @@ services:
   mda:
     image: jeboehm/mailserver-mda:latest
     build:
-      context: ./mda
+      context: ./target/mda
       cache_from:
         - type=registry,ref=ghcr.io/jeboehm/mailserver-mda:buildcache
     restart: on-failure:5
@@ -67,11 +57,11 @@ services:
       # - /home/user/certs/mail.example.com.key:/etc/dovecot/tls/tls.key:mode=0444
 
   # The admin (mailserver-admin) and webmail (roundcube) interfaces
-  # live here. Can be removed if not needed.
+  # live in the web service. Required for provisioning the database.
   web:
     image: jeboehm/mailserver-web:latest
     build:
-      context: ./web
+      context: ./target/web
       args:
         # Roundcube plugins can be added here.
         # See https://packagist.org/?type=roundcube-plugin
@@ -93,11 +83,11 @@ services:
     #   - VIRTUAL_HOST=mail.example.com
 
   # Incoming spam is (hopefully) filtered by rspamd which runs
-  # in this service.
+  # in the filter service.
   filter:
     image: jeboehm/mailserver-filter:latest
     build:
-      context: ./filter
+      context: ./target/filter
       cache_from:
         - type=registry,ref=ghcr.io/jeboehm/mailserver-filter:buildcache
     restart: on-failure:5
@@ -112,19 +102,6 @@ services:
       - redis
     volumes:
       - data-filter:/var/lib/rspamd
-
-  # Unbound is used to resolve DNS queries for the filter service.
-  unbound:
-    image: jeboehm/mailserver-unbound:latest
-    build:
-      context: ./unbound
-      cache_from:
-        - type=registry,ref=ghcr.io/jeboehm/mailserver-unbound:buildcache
-    restart: on-failure:5
-    security_opt:
-      - no-new-privileges
-    read_only: false
-
   # Fetchmail is used to fetch emails from external servers
   # and deliver them to the local mail server. Can be removed
   # if you don't need it.
@@ -142,7 +119,26 @@ services:
     read_only: true
     depends_on:
       - redis
-
+  # Unbound is used to resolve DNS queries for the filter service.
+  unbound:
+    image: jeboehm/mailserver-unbound:latest
+    build:
+      context: ./target/unbound
+      cache_from:
+        - type=registry,ref=ghcr.io/jeboehm/mailserver-unbound:buildcache
+    restart: on-failure:5
+    security_opt:
+      - no-new-privileges
+    read_only: false
+  # Responsible for storing users and their aliases. Remove
+  # if you already have a MySQL server.
+  db:
+    image: mysql:lts
+    restart: on-failure:5
+    env_file: .env
+    volumes:
+      - ./target/db/rootfs/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d:ro
+      - data-db:/var/lib/mysql
   redis:
     image: redis:8.2-alpine
     restart: on-failure:5
