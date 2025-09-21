@@ -115,6 +115,10 @@ services:
       cache_from:
         - type=registry,ref=ghcr.io/jeboehm/mailserver-unbound:buildcache
     restart: on-failure:5
+    security_opt:
+      - no-new-privileges
+    read_only: false
+
 
   # Fetchmail is used to fetch emails from external servers
   # and deliver them to the local mail server. Can be removed
