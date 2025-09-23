@@ -34,7 +34,9 @@ The container images are built either on [Alpine Linux](https://alpinelinux.org)
 - Continuous self-monitoring via Docker's healthcheck feature
 - Developed with a focus on high-quality assurance standards
 
-## Installation with Docker Compose
+## Installation
+
+### with Docker Compose
 
 1. Run `git clone git@github.com:jeboehm/docker-mailserver.git`
 2. Copy the file `.env.dist` to `.env` and change the variables in it according to your needs.
@@ -46,7 +48,7 @@ The container images are built either on [Alpine Linux](https://alpinelinux.org)
    The wizard will ask you a few questions to set everything up.
 7. Now you can login to the management interface with your new account credentials.
 
-## Installation on Kubernetes / k8s
+### on Kubernetes / k8s
 
 Kubernetes installation is now a first class citizen. You can use the `kustomization.yaml` file to deploy the mailserver to your Kubernetes cluster.
 
@@ -54,6 +56,8 @@ Kubernetes installation is now a first class citizen. You can use the `kustomiza
 2. Copy the file `.env.dist` to `.env` and change the variables in it according to your needs.
    The variables are described in the [Wiki](https://github.com/jeboehm/docker-mailserver/wiki/Configuration-variables).
 3. Run `kubectl create namespace mail`
+4. Run `bin/create-tls-certs.sh`
+5. Run `kubectl create -n mail secret tls tls-certs --cert=config/tls/tls.crt --key=config/tls/tls.key`
 4. Run `kubectl apply -n mail -k .`
 
 ## Screenshots
