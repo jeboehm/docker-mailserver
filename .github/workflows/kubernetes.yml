@@ -49,8 +49,8 @@ jobs:
           kind load docker-image jeboehm/mailserver-unbound:latest
       - name: Prepare tls certs
         run: |
-          make-ssl-cert generate-default-snakeoil
-          kubectl create secret tls tls-certs --cert=/etc/ssl/certs/ssl-cert-snakeoil.pem --key=/etc/ssl/private/ssl-cert-snakeoil.key
+          bin/create-tls-certs.sh
+          kubectl create secret tls tls-certs --cert=config/tls/tls.crt --key=config/tls/tls.key
       - name: Start mysql in Kind network
         run: |
           docker run -d --name db --network kind --env-file .env \

@@ -68,15 +68,12 @@ spec:
             seccompProfile:
               type: RuntimeDefault
           volumeMounts:
-            - name: autoconfig
-              mountPath: /var/www/html/autoconfig
-              readOnly: true
-            - name: tmp
-              mountPath: /opt/manager/var/cache/prod
-              subPath: cache
             - name: tmp
               mountPath: /tmp
               subPath: tmp
+            - name: tmp
+              mountPath: /opt/manager/var/cache/prod
+              subPath: cache
             - name: tmp
               mountPath: /opt/manager/var/log
               subPath: log
@@ -86,6 +83,9 @@ spec:
             - name: tmp
               mountPath: /var/www/html/webmail/logs
               subPath: rc-logs
+            - name: autoconfig
+              mountPath: /var/www/html/autoconfig
+              readOnly: true
         - name: nginx
           image: jeboehm/mailserver-web:latest
           imagePullPolicy: IfNotPresent
@@ -128,15 +128,18 @@ spec:
             seccompProfile:
               type: RuntimeDefault
           volumeMounts:
-            - name: autoconfig
-              mountPath: /var/www/html/autoconfig
-              readOnly: true
             - name: nginx-config
               mountPath: /etc/nginx
               readOnly: true
             - name: tmp
+              mountPath: /tmp
+              subPath: tmp
+            - name: tmp
               mountPath: /var/lib/nginx/tmp
               subPath: nginx-tmp
+            - name: autoconfig
+              mountPath: /var/www/html/autoconfig
+              readOnly: true
       initContainers:
         - name: copy-config-to-volume
           image: jeboehm/mailserver-web:latest
@@ -164,10 +167,10 @@ spec:
             seccompProfile:
               type: RuntimeDefault
           volumeMounts:
-            - name: autoconfig
-              mountPath: /target-autoconfig
             - name: nginx-config
               mountPath: /target-nginx
+            - name: autoconfig
+              mountPath: /target-autoconfig
         - name: prepare-config
           image: jeboehm/mailserver-web:latest
           imagePullPolicy: IfNotPresent
@@ -189,10 +192,10 @@ spec:
             seccompProfile:
               type: RuntimeDefault
           volumeMounts:
-            - name: autoconfig
-              mountPath: /var/www/html/autoconfig
             - name: nginx-config
               mountPath: /etc/nginx
+            - name: autoconfig
+              mountPath: /var/www/html/autoconfig
         - name: init-database
           image: jeboehm/mailserver-web:latest
           imagePullPolicy: IfNotPresent
@@ -215,11 +218,11 @@ spec:
               type: RuntimeDefault
           volumeMounts:
             - name: tmp
-              mountPath: /opt/manager/var/cache/prod
-              subPath: cache
-            - name: tmp
               mountPath: /tmp
               subPath: tmp
+            - name: tmp
+              mountPath: /opt/manager/var/cache/prod
+              subPath: cache
             - name: tmp
               mountPath: /opt/manager/var/log
               subPath: log

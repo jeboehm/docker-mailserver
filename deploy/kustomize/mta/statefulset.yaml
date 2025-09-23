@@ -76,10 +76,8 @@ spec:
               mountPath: /var/spool/postfix
             - name: tls-certs
               mountPath: /etc/postfix/tls
-              readOnly: true
             - name: postfix-config
               mountPath: /etc/postfix
-              readOnly: true
       initContainers:
         - name: copy-config-to-volume
           image: jeboehm/mailserver-mta:latest
@@ -105,10 +103,6 @@ spec:
           volumeMounts:
             - name: postfix-config
               mountPath: /target-postfix
-            - name: tmp
-              mountPath: /var/lib/postfix
-            - name: mta-data
-              mountPath: /var/spool/postfix
         - name: prepare-postfix-runtime
           image: jeboehm/mailserver-mta:latest
           imagePullPolicy: IfNotPresent

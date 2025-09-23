@@ -6,7 +6,7 @@ data:
   FILTER_MILTER_ADDRESS: filter-headless:11332
   FILTER_WEB_ADDRESS: filter-headless:11334
   MDA_AUTH_ADDRESS: mda-headless:2004
-  MDA_IMAP_ADDRESS: mda-headless:143
+  MDA_IMAP_ADDRESS: mda-headless:31143
   MDA_LMTP_ADDRESS: mda-headless:2003
   MDA_MANAGESIEVE_ADDRESS: mda-headless:4190
   MTA_SMTP_ADDRESS: mta-headless:25

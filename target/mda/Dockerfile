@@ -17,11 +17,11 @@ ENV MYSQL_HOST=db \
     MYSQL_PASSWORD= \
     MYSQL_DATABASE=mailserver \
     FILTER_WEB_ADDRESS=filter:11334 \
+    MTA_SMTP_ADDRESS=mta:25 \
     CONTROLLER_PASSWORD= \
     RECIPIENT_DELIMITER=- \
     MAILNAME=mail.example.com \
-    POSTMASTER=postmaster@example.com \
-    MTA_SMTP_ADDRESS=mta:25
+    POSTMASTER=postmaster@example.com
 
 # 2003: LMTP, 2004: AUTH
 EXPOSE 2003 2004

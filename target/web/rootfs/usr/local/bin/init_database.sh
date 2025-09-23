@@ -21,7 +21,7 @@ wait_for_database() {
 		/bin/true
 }
 
-wait_for_database || echo "Failed to reach services. Aborting."; exit 1
+wait_for_database
 roundcube_init
 
 /opt/manager/bin/console doctrine:migrations:migrate -n

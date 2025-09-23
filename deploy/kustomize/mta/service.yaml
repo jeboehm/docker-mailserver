@@ -6,7 +6,7 @@ metadata:
     app.kubernetes.io/component: mta
     app.kubernetes.io/instance: mail
 spec:
-  type: LoadBalancer
+  type: ClusterIP
   ports:
     - name: smtp
       port: 25

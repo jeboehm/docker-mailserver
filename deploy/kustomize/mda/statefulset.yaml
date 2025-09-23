@@ -62,7 +62,7 @@ spec:
           livenessProbe:
             exec:
               command:
-                - /usr/bin/doveadm
+                - doveadm
                 - service
                 - status
             failureThreshold: 3
@@ -84,19 +84,17 @@ spec:
             runAsUser: 1000
             seccompProfile:
               type: RuntimeDefault
-            capabilities:
-              drop:
-                - ALL
           volumeMounts:
-            - name: run
-              mountPath: /run/dovecot
-            - name: tmp
-              mountPath: /tmp
             - name: mda-data
               mountPath: /srv/vmail
             - name: tls-certs
               mountPath: /etc/dovecot/tls
-              readOnly: true
+            - name: tmp
+              mountPath: /run/dovecot
+              subPath: run
+            - name: tmp
+              mountPath: /tmp
+              subPath: tmp
       securityContext:
         fsGroup: 1000
         fsGroupChangePolicy: OnRootMismatch
@@ -110,8 +108,6 @@ spec:
               - key: tls.key
                 path: tls.key
             secretName: tls-certs
-        - name: run
-          emptyDir: {}
         - name: tmp
           emptyDir: {}
   volumeClaimTemplates:
