@@ -12,7 +12,7 @@ resources:
 - deploy/kustomize/configmap.yaml
 configMapGenerator:
 - files:
-  - .env.dist
+  - .env
   name: configenv
 labels:
 - includeSelectors: true

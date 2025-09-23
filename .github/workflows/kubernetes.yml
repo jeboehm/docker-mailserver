@@ -3,6 +3,19 @@ on:
   pull_request:
   push:
 jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run kustomize build
+        run: |
+          make .env
+          kustomize build .
+      - name: Run kubeconform
+        uses: docker://ghcr.io/yannh/kubeconform:v0.7.0
+        with:
+          entrypoint: '/kubeconform'
+          args: "-summary -output json ./"
   test:
     runs-on: ubuntu-latest
     strategy:
@@ -26,9 +39,6 @@ jobs:
           cat .github/test-matrix/${{ matrix.BUILD_CASE }}.env >> .env
       - name: Output environment
         run: cat .env
-      - name: Test if kustomize can build
-        run: |
-          kustomize build || exit 1
       - name: Pull and build images
         run: |
           export BUILDX_BUILDER=${{ steps.buildx.outputs.name }}
@@ -44,7 +54,6 @@ jobs:
           kind load docker-image jeboehm/mailserver-filter:latest
           kind load docker-image jeboehm/mailserver-web:latest
           kind load docker-image jeboehm/mailserver-unbound:latest
-          kind load docker-image jeboehm/mailserver-test:latest
       - name: Deploy Kubernetes resources
         run: |
           kubectl apply -k .
