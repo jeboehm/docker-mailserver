@@ -111,6 +111,5 @@ Kubernetes installation is now a first class citizen. You can use the `kustomiza
 ## Links
 
 - [Issues](https://github.com/jeboehm/docker-mailserver/issues)
-- [Helm Charts](https://github.com/jeboehm/mailserver-charts)
 - [mailserver-admin](https://github.com/jeboehm/mailserver-admin)
 - [fetchmailmgr](https://github.com/jeboehm/fetchmailmgr)

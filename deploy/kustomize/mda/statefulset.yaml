@@ -30,7 +30,7 @@ spec:
               weight: 1
       containers:
         - name: dovecot
-          image: docker.io/jeboehm/mailserver-mda:latest
+          image: jeboehm/mailserver-mda:latest
           imagePullPolicy: IfNotPresent
           envFrom:
             - configMapRef:

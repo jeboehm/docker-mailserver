@@ -30,7 +30,7 @@ spec:
               weight: 1
       containers:
         - name: rspamd
-          image: docker.io/jeboehm/mailserver-filter:latest
+          image: jeboehm/mailserver-filter:latest
           imagePullPolicy: IfNotPresent
           envFrom:
             - configMapRef:

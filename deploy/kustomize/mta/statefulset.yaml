@@ -4,6 +4,7 @@ metadata:
   name: mta
   labels:
     app.kubernetes.io/component: mta
+    app.kubernetes.io/instance: mail
 spec:
   serviceName: mta-headless
   replicas: 1
@@ -29,7 +30,7 @@ spec:
               weight: 1
       containers:
         - name: postfix
-          image: docker.io/jeboehm/mailserver-mta:latest
+          image: jeboehm/mailserver-mta:latest
           imagePullPolicy: IfNotPresent
           envFrom:
             - configMapRef:
@@ -71,7 +72,7 @@ spec:
           volumeMounts:
             - name: tmp
               mountPath: /var/lib/postfix
-            - name: spool
+            - name: mta-data
               mountPath: /var/spool/postfix
             - name: tls-certs
               mountPath: /etc/postfix/tls
@@ -81,7 +82,7 @@ spec:
               readOnly: true
       initContainers:
         - name: copy-config-to-volume
-          image: docker.io/jeboehm/mailserver-mta:latest
+          image: jeboehm/mailserver-mta:latest
           imagePullPolicy: IfNotPresent
           command:
             - /bin/sh
@@ -109,7 +110,7 @@ spec:
             - name: mta-data
               mountPath: /var/spool/postfix
         - name: prepare-postfix-runtime
-          image: docker.io/jeboehm/mailserver-mta:latest
+          image: jeboehm/mailserver-mta:latest
           imagePullPolicy: IfNotPresent
           envFrom:
             - configMapRef:

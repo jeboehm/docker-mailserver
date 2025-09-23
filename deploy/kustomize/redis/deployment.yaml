@@ -28,6 +28,8 @@ spec:
           envFrom:
             - configMapRef:
                 name: configenv
+            - configMapRef:
+                name: config-service-map
           ports:
             - name: redis
               containerPort: 6379

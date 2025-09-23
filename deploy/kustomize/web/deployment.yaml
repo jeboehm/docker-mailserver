@@ -29,7 +29,7 @@ spec:
               weight: 1
       containers:
         - name: php-fpm
-          image: docker.io/jeboehm/mailserver-web:latest
+          image: jeboehm/mailserver-web:latest
           imagePullPolicy: IfNotPresent
           command:
             - /usr/local/sbin/php-fpm
@@ -87,7 +87,7 @@ spec:
               mountPath: /var/www/html/webmail/logs
               subPath: rc-logs
         - name: nginx
-          image: docker.io/jeboehm/mailserver-web:latest
+          image: jeboehm/mailserver-web:latest
           imagePullPolicy: IfNotPresent
           command:
             - /usr/sbin/nginx
@@ -139,7 +139,7 @@ spec:
               subPath: nginx-tmp
       initContainers:
         - name: copy-config-to-volume
-          image: docker.io/jeboehm/mailserver-web:latest
+          image: jeboehm/mailserver-web:latest
           imagePullPolicy: IfNotPresent
           command:
             - /bin/sh
@@ -169,7 +169,7 @@ spec:
             - name: nginx-config
               mountPath: /target-nginx
         - name: prepare-config
-          image: docker.io/jeboehm/mailserver-web:latest
+          image: jeboehm/mailserver-web:latest
           imagePullPolicy: IfNotPresent
           command:
             - /usr/local/bin/init.sh
@@ -194,7 +194,7 @@ spec:
             - name: nginx-config
               mountPath: /etc/nginx
         - name: init-database
-          image: docker.io/jeboehm/mailserver-web:latest
+          image: jeboehm/mailserver-web:latest
           imagePullPolicy: IfNotPresent
           command:
             - /usr/local/bin/init_database.sh

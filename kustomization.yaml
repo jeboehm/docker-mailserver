@@ -11,10 +11,23 @@ resources:
 - deploy/kustomize/ingress.yaml
 - deploy/kustomize/configmap.yaml
 configMapGenerator:
-- files:
+- envs:
   - .env
   name: configenv
 labels:
 - includeSelectors: true
   pairs:
     app.kubernetes.io/name: docker-mailserver
+images:
+- name: jeboehm/mailserver-filter
+  newTag: next
+- name: jeboehm/mailserver-mda
+  newTag: next
+- name: jeboehm/mailserver-mta
+  newTag: next
+- name: jeboehm/mailserver-web
+  newTag: next
+- name: jeboehm/mailserver-unbound
+  newTag: next
+- name: jeboehm/mailserver-redis
+  newTag: next
