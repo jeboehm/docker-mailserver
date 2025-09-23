@@ -240,5 +240,3 @@ spec:
           emptyDir: {}
         - name: tmp
           emptyDir: {}
-  updateStrategy:
-    type: RollingUpdate

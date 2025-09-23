@@ -44,6 +44,7 @@ jobs:
           kind load docker-image jeboehm/mailserver-filter:latest
           kind load docker-image jeboehm/mailserver-web:latest
           kind load docker-image jeboehm/mailserver-unbound:latest
+          kind load docker-image jeboehm/mailserver-test:latest
       - name: Deploy Kubernetes resources
         run: |
           kubectl apply -k .
