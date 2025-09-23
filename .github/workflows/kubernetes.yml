@@ -9,7 +9,6 @@ jobs:
       matrix:
         BUILD_CASE:
           - default
-          - relayhost
     env:
       CLUSTER_NAME: kind
     steps:
@@ -45,3 +44,9 @@ jobs:
           kind load docker-image jeboehm/mailserver-filter:latest
           kind load docker-image jeboehm/mailserver-web:latest
           kind load docker-image jeboehm/mailserver-unbound:latest
+      - name: Deploy Kubernetes resources
+        run: |
+          kubectl apply -k .
+      - name: Check if all resources are deployed
+        run: |
+          kubectl wait --for=condition=ready pod -l app.kubernetes.io/name=docker-mailserver
