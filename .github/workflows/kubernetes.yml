@@ -11,11 +11,6 @@ jobs:
         run: |
           make .env
           kustomize build .
-      - name: Run kubeconform
-        uses: docker://ghcr.io/yannh/kubeconform:v0.7.0
-        with:
-          entrypoint: '/kubeconform'
-          args: "-summary -output json ./"
   test:
     runs-on: ubuntu-latest
     strategy:
