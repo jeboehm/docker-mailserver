@@ -1,0 +1,33 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: filter-network-policy
+  labels:
+    app.kubernetes.io/component: filter
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/component: filter
+      app.kubernetes.io/instance: mail
+  policyTypes:
+    - Ingress
+  ingress:
+    # Allow all pod-to-pod communication within the namespace
+    - from:
+        - podSelector: {}
+      ports:
+        - protocol: TCP
+          port: 11334 # Controller
+        - protocol: TCP
+          port: 11332 # Worker
+    # Allow ingress from ingress-nginx namespace
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: ingress-nginx
+          podSelector:
+            matchLabels:
+              app.kubernetes.io/name: ingress-nginx
+      ports:
+        - protocol: TCP
+          port: 11334

@@ -3,7 +3,7 @@
 `docker-mailserver` is inspired by the renowned [ISPMail guide](https://workaround.org/ispmail/).
 This project enables you to run your own email services, giving you independence and freedom from relying on large corporations. It provides a secure, customizable, and feature-rich solution for managing your email infrastructure.
 
-All Docker images are built on [Alpine Linux](https://alpinelinux.org), ensuring they remain as lightweight as possible.
+The container images are built either on [Alpine Linux](https://alpinelinux.org) or with the vendor's own base image, always ensuring they remain as lightweight as possible.
 
 [Changelog](https://github.com/jeboehm/docker-mailserver/releases)
 
@@ -16,28 +16,25 @@ All Docker images are built on [Alpine Linux](https://alpinelinux.org), ensuring
 ## Features
 
 - Secure email protocols: POP3, IMAP, and SMTP with user authentication
-- Enforced TLS for secure communication
+- Web-based management interface for account, domain, and alias administration
 - Intuitive webmail interface
+- Fetchmail integration to retrieve emails from external providers
+- DKIM message signing for email authenticity
 - Server-side mail filtering with configurable rules via a web frontend
-- Advanced spam and malware filtering
-- Support for catchall email addresses
-- Restriction of sender addresses for enhanced security
 - Spam filter training by simply moving emails to or from the junk folder
 - Real-time spam prevention using RBL (Real-Time Blackhole Lists)
 - Greylisting applied only to emails likely to be spam
-- DKIM message signing for email authenticity
-- Quota management with notifications for quota exceedance
-- Web-based management interface for account, domain, and alias administration
+- Support for catchall email addresses
 - Support for send-only accounts restricted from receiving emails
-- Optional disabling of IMAP, POP3, and malware filters if not required
+- Restriction of sender addresses for enhanced security
+- Configurable address extension support using the "-" delimiter
+- Quota management with notifications for quota exceedance
+- Enforced TLS for secure communication
 - Full-Text Search (FTS) support for efficient message searching
 - Continuous self-monitoring via Docker's healthcheck feature
 - Developed with a focus on high-quality assurance standards
-- Address extension support using the "-" delimiter
-- Kubernetes support via Helm charts for streamlined deployment on Kubernetes clusters
-- Fetchmail integration to retrieve emails from external providers
 
-## Installation (basic setup)
+## Installation with Docker Compose
 
 1. Run `git clone git@github.com:jeboehm/docker-mailserver.git`
 2. Copy the file `.env.dist` to `.env` and change the variables in it according to your needs.
@@ -49,17 +46,15 @@ All Docker images are built on [Alpine Linux](https://alpinelinux.org), ensuring
    The wizard will ask you a few questions to set everything up.
 7. Now you can login to the management interface with your new account credentials.
 
-## Installation on Kubernetes / k8s (beta)
+## Installation on Kubernetes / k8s
 
-### TL;DR
+Kubernetes installation is now a first class citizen. You can use the `kustomization.yaml` file to deploy the mailserver to your Kubernetes cluster.
 
-```bash
-helm repo add mailserver https://jeboehm.github.io/mailserver-charts/
-helm search repo mailserver
-helm install my-release mailserver/docker-mailserver
-```
-
-You can find `values.yaml` and more information in the [mailserver-charts repository](https://github.com/jeboehm/mailserver-charts/tree/main/charts/docker-mailserver).
+1. Run `git clone git@github.com:jeboehm/docker-mailserver.git`
+2. Copy the file `.env.dist` to `.env` and change the variables in it according to your needs.
+   The variables are described in the [Wiki](https://github.com/jeboehm/docker-mailserver/wiki/Configuration-variables).
+3. Run `kubectl create namespace mail`
+4. Run `kubectl apply -n mail -k .`
 
 ## Screenshots
 

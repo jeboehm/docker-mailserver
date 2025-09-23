@@ -21,7 +21,7 @@ ENV MYSQL_HOST=db \
     RECIPIENT_DELIMITER=- \
     MAILNAME=mail.example.com \
     POSTMASTER=postmaster@example.com \
-    SMTP_ADDRESS=mta:25
+    MTA_SMTP_ADDRESS=mta:25
 
 # 2003: LMTP, 2004: AUTH
 EXPOSE 2003 2004

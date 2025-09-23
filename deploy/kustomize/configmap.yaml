@@ -1,0 +1,15 @@
+kind: ConfigMap
+metadata:
+  name: config-service-map
+data:
+  FILTER_MILTER_ADDRESS: filter-headless:11332
+  FILTER_WEB_ADDRESS: filter-headless:11334
+  MDA_AUTH_ADDRESS: mda-headless:2004
+  MDA_IMAP_ADDRESS: mda-headless:143
+  MDA_LMTP_ADDRESS: mda-headless:2003
+  MDA_MANAGESIEVE_ADDRESS: mda-headless:4190
+  MTA_SMTP_ADDRESS: mta-headless:25
+  MTA_SMTP_SUBMISSION_ADDRESS: mta-headless:587
+  RSPAMD_DNS_SERVERS: round-robin:unbound:53
+  WEB_HTTP_ADDRESS: web:80
+  WEB_PHP_ADDRESS: 127.0.0.1:9000

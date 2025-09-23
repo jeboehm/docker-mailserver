@@ -1,0 +1,44 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: mta
+  labels:
+    app.kubernetes.io/component: mta
+    app.kubernetes.io/instance: mail
+spec:
+  type: LoadBalancer
+  ports:
+    - name: smtp
+      port: 25
+      protocol: TCP
+      targetPort: smtp
+    - name: submission
+      port: 587
+      protocol: TCP
+      targetPort: submission
+  selector:
+    app.kubernetes.io/component: mta
+    app.kubernetes.io/instance: mail
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mta-headless
+  labels:
+    app.kubernetes.io/component: mta
+    app.kubernetes.io/instance: mail
+spec:
+  type: ClusterIP
+  clusterIP: None
+  ports:
+    - name: smtp
+      port: 25
+      protocol: TCP
+      targetPort: smtp
+    - name: submission
+      port: 587
+      protocol: TCP
+      targetPort: submission
+  selector:
+    app.kubernetes.io/component: mta
+    app.kubernetes.io/instance: mail

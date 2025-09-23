@@ -1,0 +1,127 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mda
+  labels:
+    app.kubernetes.io/component: mda
+    app.kubernetes.io/instance: mail
+spec:
+  serviceName: mda-headless
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: mda
+      app.kubernetes.io/instance: mail
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/component: mda
+        app.kubernetes.io/instance: mail
+    spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app.kubernetes.io/component: mda
+                    app.kubernetes.io/instance: mail
+                topologyKey: kubernetes.io/hostname
+              weight: 1
+      containers:
+        - name: dovecot
+          image: docker.io/jeboehm/mailserver-mda:latest
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - configMapRef:
+                name: configenv
+            - configMapRef:
+                name: config-service-map
+          ports:
+            - name: pop3
+              containerPort: 31110
+              protocol: TCP
+            - name: imap
+              containerPort: 31143
+              protocol: TCP
+            - name: pop3s
+              containerPort: 31995
+              protocol: TCP
+            - name: imaps
+              containerPort: 31993
+              protocol: TCP
+            - name: lmtp
+              containerPort: 2003
+              protocol: TCP
+            - name: auth
+              containerPort: 2004
+              protocol: TCP
+            - name: managesieve
+              containerPort: 4190
+              protocol: TCP
+          livenessProbe:
+            exec:
+              command:
+                - /usr/bin/doveadm
+                - service
+                - status
+            failureThreshold: 3
+            initialDelaySeconds: 15
+            periodSeconds: 20
+            successThreshold: 1
+            timeoutSeconds: 5
+          resources:
+            limits:
+              cpu: 200m
+              memory: 128Mi
+            requests:
+              cpu: 50m
+              memory: 64Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            runAsGroup: 1000
+            runAsUser: 1000
+            seccompProfile:
+              type: RuntimeDefault
+            capabilities:
+              drop:
+                - ALL
+          volumeMounts:
+            - name: run
+              mountPath: /run/dovecot
+            - name: tmp
+              mountPath: /tmp
+            - name: mda-data
+              mountPath: /srv/vmail
+            - name: tls-certs
+              mountPath: /etc/dovecot/tls
+              readOnly: true
+      securityContext:
+        fsGroup: 1000
+        fsGroupChangePolicy: OnRootMismatch
+        runAsNonRoot: true
+      volumes:
+        - name: tls-certs
+          secret:
+            items:
+              - key: tls.crt
+                path: mailserver.crt
+              - key: tls.key
+                path: mailserver.key
+            secretName: c.ressourcenkonflikt.de-tls
+        - name: run
+          emptyDir: {}
+        - name: tmp
+          emptyDir: {}
+  volumeClaimTemplates:
+    - metadata:
+        name: mda-data
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 8Gi
+  updateStrategy:
+    type: RollingUpdate

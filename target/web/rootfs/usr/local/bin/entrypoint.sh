@@ -5,14 +5,7 @@ if [ "${SKIP_INIT}" != "true" ]; then
 	/usr/local/bin/init.sh
 fi
 
-dockerize \
-	-wait "tcp://${MYSQL_HOST}:${MYSQL_PORT}" \
-	-wait "tcp://${REDIS_HOST}:${REDIS_PORT}" \
-	-wait "tcp://${IMAP_ADDRESS}" \
-	-wait "tcp://${SMTP_SUBMISSION_ADDRESS}" \
-	-wait "tcp://${FILTER_WEB_ADDRESS}" \
-	-timeout "${WAITSTART_TIMEOUT}" \
-	/usr/local/bin/init_database.sh
+/usr/local/bin/init_database.sh
 
 # shellcheck disable=SC3028,SC2155
 export APP_SECRET="$(echo $RANDOM | md5sum | head -c 20)"

@@ -1,0 +1,96 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: filter
+  labels:
+    app.kubernetes.io/component: filter
+    app.kubernetes.io/instance: mail
+spec:
+  serviceName: filter-headless
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: filter
+      app.kubernetes.io/instance: mail
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/component: filter
+        app.kubernetes.io/instance: mail
+    spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app.kubernetes.io/component: filter
+                    app.kubernetes.io/instance: mail
+                topologyKey: kubernetes.io/hostname
+              weight: 1
+      containers:
+        - name: rspamd
+          image: docker.io/jeboehm/mailserver-filter:latest
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - configMapRef:
+                name: configenv
+            - configMapRef:
+                name: config-service-map
+          ports:
+            - name: controller
+              containerPort: 11334
+              protocol: TCP
+            - name: worker
+              containerPort: 11332
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /
+              port: controller
+              scheme: HTTP
+            failureThreshold: 5
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 15
+          resources:
+            limits:
+              cpu: 1000m
+              memory: 384Mi
+            requests:
+              cpu: 50m
+              memory: 192Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            runAsUser: 11333
+            runAsGroup: 11333
+            seccompProfile:
+              type: RuntimeDefault
+            capabilities:
+              drop:
+                - ALL
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+            - name: filter-data
+              mountPath: /var/lib/rspamd
+      securityContext:
+        fsGroup: 11333
+        fsGroupChangePolicy: OnRootMismatch
+        runAsNonRoot: true
+      volumes:
+        - name: tmp
+          emptyDir: {}
+  volumeClaimTemplates:
+    - metadata:
+        name: filter-data
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 5Gi
+  updateStrategy:
+    type: RollingUpdate

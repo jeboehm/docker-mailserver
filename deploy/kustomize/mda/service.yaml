@@ -1,0 +1,84 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: mda
+  labels:
+    app.kubernetes.io/component: mda
+    app.kubernetes.io/instance: mail
+spec:
+  type: ClusterIP
+  ports:
+    - name: pop3
+      port: 110
+      protocol: TCP
+      targetPort: pop3
+    - name: pop3s
+      port: 995
+      protocol: TCP
+      targetPort: pop3s
+    - name: imap
+      port: 143
+      protocol: TCP
+      targetPort: imap
+    - name: imaps
+      port: 993
+      protocol: TCP
+      targetPort: imaps
+    - name: lmtp
+      port: 2003
+      protocol: TCP
+      targetPort: lmtp
+    - name: auth
+      port: 2004
+      protocol: TCP
+      targetPort: auth
+    - name: managesieve
+      port: 4190
+      protocol: TCP
+      targetPort: managesieve
+  selector:
+    app.kubernetes.io/component: mda
+    app.kubernetes.io/instance: mail
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mda-headless
+  labels:
+    app.kubernetes.io/component: mda
+    app.kubernetes.io/instance: mail
+spec:
+  type: ClusterIP
+  clusterIP: None
+  ports:
+    - name: pop3
+      port: 110
+      protocol: TCP
+      targetPort: pop3
+    - name: pop3s
+      port: 995
+      protocol: TCP
+      targetPort: pop3s
+    - name: imap
+      port: 143
+      protocol: TCP
+      targetPort: imap
+    - name: imaps
+      port: 993
+      protocol: TCP
+      targetPort: imaps
+    - name: lmtp
+      port: 2003
+      protocol: TCP
+      targetPort: lmtp
+    - name: auth
+      port: 2004
+      protocol: TCP
+      targetPort: auth
+    - name: managesieve
+      port: 4190
+      protocol: TCP
+      targetPort: managesieve
+  selector:
+    app.kubernetes.io/component: mda
+    app.kubernetes.io/instance: mail
