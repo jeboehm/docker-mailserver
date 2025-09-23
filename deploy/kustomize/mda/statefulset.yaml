@@ -106,10 +106,10 @@ spec:
           secret:
             items:
               - key: tls.crt
-                path: mailserver.crt
+                path: tls.crt
               - key: tls.key
-                path: mailserver.key
-            secretName: c.ressourcenkonflikt.de-tls
+                path: tls.key
+            secretName: tls-certs
         - name: run
           emptyDir: {}
         - name: tmp

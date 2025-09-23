@@ -20,14 +20,12 @@ labels:
     app.kubernetes.io/name: docker-mailserver
 images:
 - name: jeboehm/mailserver-filter
-  newTag: next
+  newTag: latest
 - name: jeboehm/mailserver-mda
-  newTag: next
+  newTag: latest
 - name: jeboehm/mailserver-mta
-  newTag: next
+  newTag: latest
 - name: jeboehm/mailserver-web
-  newTag: next
+  newTag: latest
 - name: jeboehm/mailserver-unbound
-  newTag: next
-- name: jeboehm/mailserver-redis
-  newTag: next
+  newTag: latest
