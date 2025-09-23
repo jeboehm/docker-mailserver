@@ -1,0 +1,265 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web
+  labels:
+    app.kubernetes.io/component: web
+    app.kubernetes.io/instance: mail
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: web
+      app.kubernetes.io/instance: mail
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/component: web
+        app.kubernetes.io/instance: mail
+    spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app.kubernetes.io/component: web
+                    app.kubernetes.io/instance: mail
+                topologyKey: kubernetes.io/hostname
+              weight: 1
+      containers:
+        - name: php-fpm
+          image: jeboehm/mailserver-web:latest
+          imagePullPolicy: IfNotPresent
+          command:
+            - /usr/local/sbin/php-fpm
+          envFrom:
+            - configMapRef:
+                name: config-env
+            - configMapRef:
+                name: config-service-map
+            - secretRef:
+                name: secret-config-env
+          ports:
+            - name: php-fpm
+              containerPort: 9000
+              protocol: TCP
+          livenessProbe:
+            tcpSocket:
+              port: php-fpm
+            initialDelaySeconds: 30
+            periodSeconds: 30
+            timeoutSeconds: 10
+            failureThreshold: 3
+            successThreshold: 1
+          readinessProbe:
+            tcpSocket:
+              port: php-fpm
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+            successThreshold: 1
+          resources:
+            limits:
+              cpu: 200m
+              memory: 256Mi
+            requests:
+              cpu: 50m
+              memory: 128Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+            runAsGroup: 82
+            runAsUser: 82
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+              subPath: tmp
+            - name: tmp
+              mountPath: /opt/manager/var/cache/prod
+              subPath: cache
+            - name: tmp
+              mountPath: /opt/manager/var/log
+              subPath: log
+            - name: tmp
+              mountPath: /var/www/html/webmail/temp
+              subPath: rc-temp
+            - name: tmp
+              mountPath: /var/www/html/webmail/logs
+              subPath: rc-logs
+            - name: autoconfig
+              mountPath: /var/www/html/autoconfig
+              readOnly: true
+        - name: nginx
+          image: jeboehm/mailserver-web:latest
+          imagePullPolicy: IfNotPresent
+          command:
+            - /usr/sbin/nginx
+          envFrom:
+            - configMapRef:
+                name: config-env
+            - configMapRef:
+                name: config-service-map
+            - secretRef:
+                name: secret-config-env
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /login
+              port: http
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 30
+            timeoutSeconds: 10
+            failureThreshold: 3
+            successThreshold: 1
+          readinessProbe:
+            httpGet:
+              path: /login
+              port: http
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+            successThreshold: 1
+          resources:
+            limits:
+              cpu: 200m
+              memory: 256Mi
+            requests:
+              cpu: 50m
+              memory: 128Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+            runAsGroup: 82
+            runAsUser: 82
+          volumeMounts:
+            - name: nginx-config
+              mountPath: /etc/nginx
+              readOnly: true
+            - name: tmp
+              mountPath: /tmp
+              subPath: tmp
+            - name: tmp
+              mountPath: /var/lib/nginx/tmp
+              subPath: nginx-tmp
+            - name: autoconfig
+              mountPath: /var/www/html/autoconfig
+              readOnly: true
+      initContainers:
+        - name: copy-config-to-volume
+          image: jeboehm/mailserver-web:latest
+          imagePullPolicy: IfNotPresent
+          command:
+            - /bin/sh
+          args:
+            - -ec
+            - |
+              cp -r /etc/nginx/* /target-nginx/
+              cp -r /var/www/html/autoconfig/* /target-autoconfig/
+          envFrom:
+            - configMapRef:
+                name: config-env
+            - configMapRef:
+                name: config-service-map
+            - secretRef:
+                name: secret-config-env
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+            runAsGroup: 82
+            runAsUser: 82
+          volumeMounts:
+            - name: nginx-config
+              mountPath: /target-nginx
+            - name: autoconfig
+              mountPath: /target-autoconfig
+        - name: prepare-config
+          image: jeboehm/mailserver-web:latest
+          imagePullPolicy: IfNotPresent
+          command:
+            - /usr/local/bin/init.sh
+          envFrom:
+            - configMapRef:
+                name: config-env
+            - configMapRef:
+                name: config-service-map
+            - secretRef:
+                name: secret-config-env
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+            runAsGroup: 82
+            runAsUser: 82
+          volumeMounts:
+            - name: nginx-config
+              mountPath: /etc/nginx
+            - name: autoconfig
+              mountPath: /var/www/html/autoconfig
+        - name: init-database
+          image: jeboehm/mailserver-web:latest
+          imagePullPolicy: IfNotPresent
+          command:
+            - /usr/local/bin/init_database.sh
+          envFrom:
+            - configMapRef:
+                name: config-env
+            - configMapRef:
+                name: config-service-map
+            - secretRef:
+                name: secret-config-env
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+            runAsGroup: 82
+            runAsUser: 82
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+              subPath: tmp
+            - name: tmp
+              mountPath: /opt/manager/var/cache/prod
+              subPath: cache
+            - name: tmp
+              mountPath: /opt/manager/var/log
+              subPath: log
+            - name: tmp
+              mountPath: /var/www/html/webmail/temp
+              subPath: rc-temp
+            - name: tmp
+              mountPath: /var/www/html/webmail/logs
+              subPath: rc-logs
+      securityContext:
+        fsGroup: 82
+        fsGroupChangePolicy: OnRootMismatch
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+      volumes:
+        - name: autoconfig
+          emptyDir: {}
+        - name: nginx-config
+          emptyDir: {}
+        - name: tmp
+          emptyDir: {}

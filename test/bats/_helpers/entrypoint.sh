@@ -2,9 +2,9 @@
 
 dockerize \
 	-wait "tcp://${MYSQL_HOST}:${MYSQL_PORT}" \
-	-wait "tcp://${WEB_HTTP_ADDRESS}" \
-	-wait "tcp://${IMAP_ADDRESS}" \
-	-wait "tcp://${SMTP_SUBMISSION_ADDRESS}" \
 	-wait "tcp://${FILTER_WEB_ADDRESS}" \
+	-wait "tcp://${MDA_IMAP_ADDRESS}" \
+	-wait "tcp://${MTA_SMTP_SUBMISSION_ADDRESS}" \
+	-wait "tcp://${WEB_HTTP_ADDRESS}" \
 	-timeout "${WAITSTART_TIMEOUT}" \
 	"${@}"

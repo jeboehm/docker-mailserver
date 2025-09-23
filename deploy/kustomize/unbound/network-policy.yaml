@@ -1,0 +1,22 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: unbound-network-policy
+  labels:
+    app.kubernetes.io/component: unbound
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/component: unbound
+      app.kubernetes.io/instance: mail
+  policyTypes:
+    - Ingress
+  ingress:
+    # Allow all pod-to-pod communication within the namespace
+    - from:
+        - podSelector: {}
+      ports:
+        - protocol: UDP
+          port: 5353 # DNS
+        - protocol: TCP
+          port: 5353 # DNS TCP

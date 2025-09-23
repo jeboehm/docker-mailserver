@@ -62,3 +62,12 @@ setup:
 .PHONY: lint
 lint:
 	docker run --platform linux/amd64 -e RUN_LOCAL=true --rm --env-file .github/linters/super-linter.env --env-file .github/linters/super-linter-fix.env -v $(PWD):/tmp/lint ghcr.io/super-linter/super-linter:v8.1.0
+
+.PHONY: kubernetes
+kubernetes:
+	$(COMPOSE_PRODUCTION) build
+	kind load docker-image jeboehm/mailserver-mda:latest
+	kind load docker-image jeboehm/mailserver-mta:latest
+	kind load docker-image jeboehm/mailserver-filter:latest
+	kind load docker-image jeboehm/mailserver-web:latest
+	kind load docker-image jeboehm/mailserver-unbound:latest

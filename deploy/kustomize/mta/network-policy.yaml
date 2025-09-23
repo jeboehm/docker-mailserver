@@ -1,0 +1,31 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: mta-network-policy
+  labels:
+    app.kubernetes.io/component: mta
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/component: mta
+      app.kubernetes.io/instance: mail
+  policyTypes:
+    - Ingress
+  ingress:
+    # Allow all pod-to-pod communication within the namespace
+    - from:
+        - podSelector: {}
+      ports:
+        - protocol: TCP
+          port: 25 # SMTP
+        - protocol: TCP
+          port: 587 # SMTP submission
+    # Allow external access (from internet)
+    - from:
+        - ipBlock:
+            cidr: 0.0.0.0/0
+      ports:
+        - protocol: TCP
+          port: 25
+        - protocol: TCP
+          port: 587

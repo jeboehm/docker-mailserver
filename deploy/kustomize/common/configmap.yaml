@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: config-service-map
+data:
+  FILTER_MILTER_ADDRESS: filter:11332
+  FILTER_WEB_ADDRESS: filter:11334
+  MDA_AUTH_ADDRESS: mda:2004
+  MDA_IMAP_ADDRESS: mda:143
+  MDA_LMTP_ADDRESS: mda:2003
+  MDA_MANAGESIEVE_ADDRESS: mda:4190
+  MTA_HOST: mta
+  MTA_SMTP_ADDRESS: mta:25
+  MTA_SMTP_SUBMISSION_ADDRESS: mta:587
+  REDIS_HOST: redis-master
+  REDIS_PORT: "6379"
+  RSPAMD_DNS_SERVERS: round-robin:unbound:53
+  WEB_HTTP_ADDRESS: web:80
+  WEB_PHP_ADDRESS: 127.0.0.1:9000
