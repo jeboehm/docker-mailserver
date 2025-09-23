@@ -49,11 +49,21 @@ spec:
               path: /
               port: controller
               scheme: HTTP
-            failureThreshold: 5
-            initialDelaySeconds: 15
-            periodSeconds: 10
+            initialDelaySeconds: 30
+            periodSeconds: 30
+            timeoutSeconds: 10
+            failureThreshold: 3
             successThreshold: 1
-            timeoutSeconds: 15
+          readinessProbe:
+            httpGet:
+              path: /
+              port: controller
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+            successThreshold: 1
           resources:
             limits:
               cpu: 1000m

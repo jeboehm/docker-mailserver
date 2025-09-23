@@ -44,11 +44,19 @@ spec:
               protocol: TCP
           livenessProbe:
             tcpSocket:
-              port: 9000
-            initialDelaySeconds: 15
+              port: php-fpm
+            initialDelaySeconds: 30
+            periodSeconds: 30
+            timeoutSeconds: 10
+            failureThreshold: 3
+            successThreshold: 1
+          readinessProbe:
+            tcpSocket:
+              port: php-fpm
+            initialDelaySeconds: 10
             periodSeconds: 10
-            timeoutSeconds: 15
-            failureThreshold: 5
+            timeoutSeconds: 5
+            failureThreshold: 3
             successThreshold: 1
           resources:
             limits:
@@ -105,10 +113,20 @@ spec:
               path: /login
               port: http
               scheme: HTTP
-            initialDelaySeconds: 15
+            initialDelaySeconds: 30
+            periodSeconds: 30
+            timeoutSeconds: 10
+            failureThreshold: 3
+            successThreshold: 1
+          readinessProbe:
+            httpGet:
+              path: /login
+              port: http
+              scheme: HTTP
+            initialDelaySeconds: 10
             periodSeconds: 10
-            timeoutSeconds: 15
-            failureThreshold: 5
+            timeoutSeconds: 5
+            failureThreshold: 3
             successThreshold: 1
           resources:
             limits:

@@ -58,7 +58,7 @@ Kubernetes installation is now a first class citizen. You can use the `kustomiza
 3. Run `kubectl create namespace mail`
 4. Run `bin/create-tls-certs.sh`
 5. Run `kubectl create -n mail secret tls tls-certs --cert=config/tls/tls.crt --key=config/tls/tls.key`
-4. Run `kubectl apply -n mail -k .`
+6. Run `kubectl apply -n mail -k .`
 
 ## Screenshots
 

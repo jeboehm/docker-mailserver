@@ -34,6 +34,22 @@ spec:
             - name: redis
               containerPort: 6379
               protocol: TCP
+          livenessProbe:
+            tcpSocket:
+              port: redis
+            initialDelaySeconds: 30
+            periodSeconds: 30
+            timeoutSeconds: 10
+            failureThreshold: 3
+            successThreshold: 1
+          readinessProbe:
+            tcpSocket:
+              port: redis
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+            successThreshold: 1
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: false

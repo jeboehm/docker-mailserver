@@ -65,11 +65,19 @@ spec:
                 - doveadm
                 - service
                 - status
+            initialDelaySeconds: 30
+            periodSeconds: 30
+            timeoutSeconds: 10
             failureThreshold: 3
-            initialDelaySeconds: 15
-            periodSeconds: 20
             successThreshold: 1
+          readinessProbe:
+            tcpSocket:
+              port: imap
+            initialDelaySeconds: 10
+            periodSeconds: 10
             timeoutSeconds: 5
+            failureThreshold: 3
+            successThreshold: 1
           resources:
             limits:
               cpu: 200m
