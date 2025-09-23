@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: filter
+  labels:
+    app.kubernetes.io/component: filter
+    app.kubernetes.io/instance: mail
+spec:
+  type: ClusterIP
+  ports:
+    - name: controller
+      port: 11334
+      protocol: TCP
+      targetPort: controller
+    - name: worker
+      port: 11332
+      protocol: TCP
+      targetPort: worker
+  selector:
+    app.kubernetes.io/component: filter
+    app.kubernetes.io/instance: mail

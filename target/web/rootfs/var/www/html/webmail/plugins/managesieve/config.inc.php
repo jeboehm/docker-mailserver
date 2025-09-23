@@ -1,6 +1,6 @@
 <?php
 
-$config['managesieve_host'] = 'tls://' . getenv('MANAGESIEVE_ADDRESS');
+$config['managesieve_host'] = 'tls://' . getenv('MDA_MANAGESIEVE_ADDRESS');
 $config['managesieve_auth_type'] = 'PLAIN';
 $config['managesieve_auth_cid'] = null;
 $config['managesieve_auth_pw'] = null;
