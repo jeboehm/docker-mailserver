@@ -1,0 +1,174 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mta
+  labels:
+    app.kubernetes.io/component: mta
+    app.kubernetes.io/instance: mail
+spec:
+  serviceName: mta
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: mta
+      app.kubernetes.io/instance: mail
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/component: mta
+        app.kubernetes.io/instance: mail
+    spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app.kubernetes.io/component: mta
+                    app.kubernetes.io/instance: mail
+                topologyKey: kubernetes.io/hostname
+              weight: 1
+      containers:
+        - name: postfix
+          image: jeboehm/mailserver-mta:latest
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - configMapRef:
+                name: config-env
+            - configMapRef:
+                name: config-service-map
+            - secretRef:
+                name: secret-config-env
+          ports:
+            - name: smtp
+              containerPort: 25
+              protocol: TCP
+            - name: submission
+              containerPort: 587
+              protocol: TCP
+          livenessProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - nc -w 1 127.0.0.1 25 | grep -qE "^220.*ESMTP Postfix"
+            initialDelaySeconds: 30
+            periodSeconds: 30
+            timeoutSeconds: 10
+            failureThreshold: 3
+            successThreshold: 1
+          readinessProbe:
+            tcpSocket:
+              port: smtp
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+            successThreshold: 1
+          resources:
+            limits:
+              cpu: 200m
+              memory: 128Mi
+            requests:
+              cpu: 50m
+              memory: 64Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: false
+            runAsUser: 0
+            runAsGroup: 0
+          volumeMounts:
+            - name: tmp
+              mountPath: /var/lib/postfix
+            - name: mta-data
+              mountPath: /var/spool/postfix
+            - name: tls-certs
+              mountPath: /etc/postfix/tls
+            - name: postfix-config
+              mountPath: /etc/postfix
+      initContainers:
+        - name: copy-config-to-volume
+          image: jeboehm/mailserver-mta:latest
+          imagePullPolicy: IfNotPresent
+          command:
+            - /bin/sh
+          args:
+            - -ec
+            - |
+              cp -r /etc/postfix/* /target-postfix/
+          envFrom:
+            - configMapRef:
+                name: config-env
+            - configMapRef:
+                name: config-service-map
+            - secretRef:
+                name: secret-config-env
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            runAsUser: 0
+            runAsGroup: 0
+          volumeMounts:
+            - name: postfix-config
+              mountPath: /target-postfix
+        - name: prepare-postfix-runtime
+          image: jeboehm/mailserver-mta:latest
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - configMapRef:
+                name: config-env
+            - configMapRef:
+                name: config-service-map
+            - secretRef:
+                name: secret-config-env
+          command:
+            - /bin/sh
+          args:
+            - -ec
+            - |
+              chown -R postfix /var/lib/postfix
+              chown postfix /var/spool/postfix
+              chmod 700 /var/lib/postfix /var/spool/postfix
+              # important! required for pod lookup in postfix
+              postconf smtp_host_lookup=native
+              postconf lmtp_host_lookup=native
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            runAsUser: 0
+            runAsGroup: 0
+          volumeMounts:
+            - name: postfix-config
+              mountPath: /etc/postfix
+            - name: tmp
+              mountPath: /var/lib/postfix
+            - name: mta-data
+              mountPath: /var/spool/postfix
+      securityContext:
+        runAsNonRoot: false
+        seccompProfile:
+          type: RuntimeDefault
+      volumes:
+        - name: tls-certs
+          secret:
+            items:
+              - key: tls.crt
+                path: tls.crt
+              - key: tls.key
+                path: tls.key
+            secretName: tls-certs
+        - name: postfix-config
+          emptyDir: {}
+        - name: tmp
+          emptyDir: {}
+  volumeClaimTemplates:
+    - metadata:
+        name: mta-data
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 1Gi
+  updateStrategy:
+    type: RollingUpdate

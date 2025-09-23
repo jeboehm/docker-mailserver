@@ -1,0 +1,26 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: mail-admin-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: 100m
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: server
+      http:
+        paths:
+          - path: /
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: web
+                port:
+                  number: 80
+          - path: /rspamd
+            pathType: Prefix
+            backend:
+              service:
+                name: filter
+                port:
+                  name: controller

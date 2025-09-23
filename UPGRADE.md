@@ -6,6 +6,9 @@ Before upgrading, ensure you have updated `docker-compose.yml` and `docker-compo
 
 ## v6.0
 
+Deployment on Kubernetes is now a first class citizen. You can use the `kustomization.yaml` file to deploy the mailserver to your Kubernetes cluster.
+The Helm chart has been deprecated and archived.
+
 - **virus**: The virus service has been removed. To add antivirus functionality, see the [Rspamd antivirus documentation](https://docs.rspamd.com/modules/antivirus/).
 - **unbound**: Added unbound as a DNS resolver for the filter service.
 - **filter**: The base image has been changed to `rspamd/rspamd`. This image is no longer based on Alpine Linux.

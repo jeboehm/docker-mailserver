@@ -12,17 +12,17 @@ jobs:
       fail-fast: true
       matrix:
         include:
-          - context: ./target/mda
+          - context: target/mda
             image: mailserver-mda
-          - context: ./target/mta
+          - context: target/mta
             image: mailserver-mta
-          - context: ./target/filter
+          - context: target/filter
             image: mailserver-filter
-          - context: ./target/web
+          - context: target/web
             image: mailserver-web
-          - context: ./target/ssl
+          - context: target/ssl
             image: mailserver-ssl
-          - context: ./target/unbound
+          - context: target/unbound
             image: mailserver-unbound
     permissions:
       contents: write

@@ -35,23 +35,3 @@ jobs:
             echo "## Release Notes"
             echo "${{ steps.tag_version.outputs.changelog }}"
           } >> "$GITHUB_STEP_SUMMARY"
-  update_helm_chart:
-    runs-on: ubuntu-latest
-    needs: create_release
-    if: ${{ github.event_name != 'pull_request' }}
-    steps:
-      - name: Strip leading "v" from version
-        id: strip_version
-        run: |
-          # shellcheck disable=SC2016
-          echo "STRIP_VERSION=$(php -r 'echo (str_starts_with($argv[1], "v") ? substr($argv[1], 1) : $argv[1]);' ${{ needs.create_release.outputs.new_tag }})" >> "$GITHUB_OUTPUT"
-      - name: Update Helm chart
-        uses: shini4i/helm-charts-updater@v1
-        with:
-          github_token: ${{ secrets.CHARTS_REPO_TOKEN }}
-          gh_user: jeboehm
-          gh_repo: mailserver-charts
-          chart_name: docker-mailserver
-          app_version: ${{ steps.strip_version.outputs.STRIP_VERSION }}
-          generate_docs: true
-          update_readme: true

@@ -1,0 +1,45 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: mda-network-policy
+  labels:
+    app.kubernetes.io/component: mda
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/component: mda
+      app.kubernetes.io/instance: mail
+  policyTypes:
+    - Ingress
+  ingress:
+    # Allow all pod-to-pod communication within the namespace
+    - from:
+        - podSelector: {}
+      ports:
+        - protocol: TCP
+          port: 31110 # POP3
+        - protocol: TCP
+          port: 31143 # IMAP
+        - protocol: TCP
+          port: 31995 # POP3S
+        - protocol: TCP
+          port: 31993 # IMAPS
+        - protocol: TCP
+          port: 2003 # LMTP
+        - protocol: TCP
+          port: 2004 # Auth
+        - protocol: TCP
+          port: 4190 # ManageSieve
+    # Allow external access (from internet)
+    - from:
+        - ipBlock:
+            cidr: 0.0.0.0/0
+      ports:
+        - protocol: TCP
+          port: 31110
+        - protocol: TCP
+          port: 31143
+        - protocol: TCP
+          port: 31995
+        - protocol: TCP
+          port: 31993

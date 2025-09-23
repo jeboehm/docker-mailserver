@@ -1,0 +1,94 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fetchmail
+  labels:
+    app.kubernetes.io/component: fetchmail
+    app.kubernetes.io/instance: mail
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: fetchmail
+      app.kubernetes.io/instance: mail
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/component: fetchmail
+        app.kubernetes.io/instance: mail
+    spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app.kubernetes.io/component: fetchmail
+                    app.kubernetes.io/instance: mail
+                topologyKey: kubernetes.io/hostname
+              weight: 1
+      containers:
+        - name: fetchmailmgr
+          image: ghcr.io/jeboehm/fetchmailmgr:latest
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - configMapRef:
+                name: config-env
+            - configMapRef:
+                name: config-service-map
+            - secretRef:
+                name: secret-config-env
+          env:
+            - name: REDIS_URL
+              value: "redis://$(REDIS_HOST):$(REDIS_PORT)?password=$(REDIS_PASSWORD)"
+          ports:
+            - name: http
+              containerPort: 3000
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 30
+            timeoutSeconds: 10
+            failureThreshold: 3
+            successThreshold: 1
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+            successThreshold: 1
+          resources:
+            limits:
+              cpu: 100m
+              memory: 64Mi
+            requests:
+              cpu: 50m
+              memory: 32Mi
+          securityContext:
+            readOnlyRootFilesystem: true
+            allowPrivilegeEscalation: false
+            runAsUser: 65534
+            runAsGroup: 65534
+            capabilities:
+              drop:
+                - ALL
+          volumeMounts:
+            - name: tmp
+              mountPath: /run/fetchmailmgr
+      securityContext:
+        fsGroup: 65534
+        fsGroupChangePolicy: OnRootMismatch
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+      volumes:
+        - name: tmp
+          emptyDir: {}

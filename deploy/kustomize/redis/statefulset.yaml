@@ -1,0 +1,83 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: redis
+  labels:
+    app.kubernetes.io/component: redis
+    app.kubernetes.io/instance: mail
+spec:
+  serviceName: redis-master
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: redis
+      app.kubernetes.io/instance: mail
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/component: redis
+        app.kubernetes.io/instance: mail
+    spec:
+      containers:
+        - name: redis
+          image: redis:8.2-alpine
+          imagePullPolicy: IfNotPresent
+          command:
+            - redis-server
+            - --requirepass
+            - $(REDIS_PASSWORD)
+          envFrom:
+            - configMapRef:
+                name: config-env
+            - configMapRef:
+                name: config-service-map
+            - secretRef:
+                name: secret-config-env
+          ports:
+            - name: redis
+              containerPort: 6379
+              protocol: TCP
+          livenessProbe:
+            tcpSocket:
+              port: redis
+            initialDelaySeconds: 30
+            periodSeconds: 30
+            timeoutSeconds: 10
+            failureThreshold: 3
+            successThreshold: 1
+          readinessProbe:
+            tcpSocket:
+              port: redis
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+            successThreshold: 1
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: false
+            runAsUser: 999
+            runAsGroup: 1000
+            capabilities:
+              drop:
+                - ALL
+          volumeMounts:
+            - name: redis-data
+              mountPath: /data
+      securityContext:
+        fsGroup: 1000
+        fsGroupChangePolicy: OnRootMismatch
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+  volumeClaimTemplates:
+    - metadata:
+        name: redis-data
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 1Gi
+  updateStrategy:
+    type: RollingUpdate
