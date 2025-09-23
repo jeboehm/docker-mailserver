@@ -83,7 +83,7 @@ spec:
             - name: tmp
               mountPath: /var/www/html/webmail/temp
               subPath: rc-temp
-            - name: log
+            - name: tmp
               mountPath: /var/www/html/webmail/logs
               subPath: rc-logs
         - name: nginx
@@ -226,7 +226,7 @@ spec:
             - name: tmp
               mountPath: /var/www/html/webmail/temp
               subPath: rc-temp
-            - name: log
+            - name: tmp
               mountPath: /var/www/html/webmail/logs
               subPath: rc-logs
       securityContext:
