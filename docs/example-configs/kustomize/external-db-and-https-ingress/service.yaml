@@ -1,0 +1,40 @@
+# Here we have the LoadBalancer services for the SMTP and IMAP ports.
+# All this is exposed to the internet.
+apiVersion: v1
+kind: Service
+metadata:
+  name: mail-mta-lb
+  annotations:
+    external-dns.alpha.kubernetes.io/hostname: mail.example.org,c.example.org
+spec:
+  type: LoadBalancer
+  # Local traffic policy is used to route traffic to the local node.
+  # Its important to Postfix to see remote server's ip address. Make sure to set the correct network policy.
+  internalTrafficPolicy: Local
+  externalTrafficPolicy: Local
+  selector:
+    app.kubernetes.io/instance: mail
+    app.kubernetes.io/component: mta
+  ports:
+    - name: smtp
+      port: 25
+      targetPort: smtp
+    - name: submission
+      port: 587
+      targetPort: submission
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mail-mda-lb
+  annotations:
+    external-dns.alpha.kubernetes.io/hostname: mail.example.org,c.example.org
+spec:
+  type: LoadBalancer
+  selector:
+    app.kubernetes.io/instance: mail
+    app.kubernetes.io/component: mda
+  ports:
+    - name: imap
+      port: 143
+      targetPort: imap
