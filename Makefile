@@ -88,7 +88,7 @@ kubernetes-tls:
 
 .PHONY: kubernetes-wait
 kubernetes-wait:
-	kubectl wait --timeout=5m --for=condition=ready pod -l app.kubernetes.io/name=docker-mailserver
+	kubectl wait --timeout=5m --for=condition=ready pod -l app.kubernetes.io/part-of=docker-mailserver
 
 .PHONY: kubernetes-test
 kubernetes-test:

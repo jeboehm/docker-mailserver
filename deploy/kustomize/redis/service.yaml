@@ -3,8 +3,9 @@ kind: Service
 metadata:
   name: redis-master
   labels:
-    app.kubernetes.io/component: redis
-    app.kubernetes.io/instance: mail
+    app.kubernetes.io/name: redis
+    app.kubernetes.io/component: storage
+    app.kubernetes.io/part-of: docker-mailserver
 spec:
   type: ClusterIP
   ports:
@@ -13,5 +14,6 @@ spec:
       protocol: TCP
       targetPort: redis
   selector:
-    app.kubernetes.io/component: redis
-    app.kubernetes.io/instance: mail
+    app.kubernetes.io/name: redis
+    app.kubernetes.io/component: storage
+    app.kubernetes.io/part-of: docker-mailserver
