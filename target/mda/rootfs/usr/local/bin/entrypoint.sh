@@ -1,4 +1,9 @@
 #!/bin/sh
+set -e
+
+if [ -r /run/dovecot/master.pid ]; then
+	rm /run/dovecot/master.pid
+fi
 
 dockerize \
 	-wait "tcp://${MYSQL_HOST}:${MYSQL_PORT}" \
