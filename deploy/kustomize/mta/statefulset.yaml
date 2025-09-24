@@ -66,9 +66,6 @@ spec:
             failureThreshold: 3
             successThreshold: 1
           resources:
-            limits:
-              cpu: 200m
-              memory: 128Mi
             requests:
               cpu: 50m
               memory: 64Mi
@@ -103,6 +100,10 @@ spec:
                 name: config-service-map
             - secretRef:
                 name: secret-config-env
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true
@@ -132,6 +133,10 @@ spec:
               # important! required for pod lookup in postfix
               postconf smtp_host_lookup=native
               postconf lmtp_host_lookup=native
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true
