@@ -1,0 +1,12 @@
+# Namespace definition with pod security policies set to baseline level for enhanced security.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: mail
+  labels:
+    pod-security.kubernetes.io/enforce: baseline
+    pod-security.kubernetes.io/enforce-version: v1.29
+    pod-security.kubernetes.io/audit: baseline
+    pod-security.kubernetes.io/audit-version: v1.29
+    pod-security.kubernetes.io/warn: baseline
+    pod-security.kubernetes.io/warn-version: v1.29

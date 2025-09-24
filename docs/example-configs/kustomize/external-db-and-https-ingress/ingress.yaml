@@ -1,0 +1,26 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: mail-admin-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: 100m
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+spec:
+  ingressClassName: nginx-int
+  tls:
+    - hosts:
+        - mail.i.example.org
+        - mail.example.org
+        - c.example.org
+      secretName: tls-certs
+  rules:
+    - host: mail.i.example.org
+      http:
+        paths:
+          - path: /
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: web
+                port:
+                  number: 80

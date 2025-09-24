@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: config-env
+data:
+  MAILNAME: mail.example.org
+  MYSQL_DATABASE: mail_db
+  MYSQL_HOST: pxc-operator-pxc-db-haproxy.mysql.svc.cluster.local
+  MYSQL_PORT: "3306"
+  MYSQL_USER: database_user
+  OAUTH_ENABLED: "true"
+  OAUTH_CLIENT_SCOPES: openid email profile groups
+  OAUTH_MAPPING_IDENTIFIER: preferred_username
+  OAUTH_AUTHORIZATION_URL: https://id.example.org/authorize
+  OAUTH_ACCESS_TOKEN_URL: https://id.example.org/api/oidc/token
+  OAUTH_INFOS_URL: https://id.example.org/api/oidc/userinfo
+  OAUTH_ADMIN_GROUP: "admin"
+  HTTPS: "on"
+  TRUSTED_PROXIES: 10.42.0.0/16
+  WAITSTART_TIMEOUT: 1m
