@@ -14,9 +14,6 @@ wait_for_database() {
 	dockerize \
 		-wait "tcp://${MYSQL_HOST}:${MYSQL_PORT}" \
 		-wait "tcp://${REDIS_HOST}:${REDIS_PORT}" \
-		-wait "tcp://${MDA_IMAP_ADDRESS}" \
-		-wait "tcp://${MTA_SMTP_SUBMISSION_ADDRESS}" \
-		-wait "tcp://${FILTER_WEB_ADDRESS}" \
 		-timeout "${WAITSTART_TIMEOUT}" \
 		/bin/true
 }
