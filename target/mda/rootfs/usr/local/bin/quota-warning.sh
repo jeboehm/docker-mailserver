@@ -1,4 +1,5 @@
 #!/bin/sh
+set -e
 
 PERCENT="$1"
 USER="$2"
