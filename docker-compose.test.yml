@@ -14,7 +14,7 @@ services:
       - data-tls:/media/tls:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
       # For development
-      - ./test/rootfs/usr/share/tests:/usr/share/tests:ro
+      - ./test/bats/integration:/app/tests:ro
     env_file: .env
     depends_on:
       - mailpit

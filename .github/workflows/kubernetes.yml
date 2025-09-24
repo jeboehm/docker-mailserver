@@ -28,7 +28,12 @@ jobs:
       - name: Prepare environment
         run: |
           make .env
-          cat .github/test-matrix/kubernetes.env >> .env
+          # Merge environment files with default.env taking precedence
+          # Create a temporary file with merged content (default.env last)
+          cat .env .github/test-matrix/default.env > .env.tmp
+          # Keep only the last occurrence of each key (default.env wins)
+          awk -F= '{seen[$1]=$0} END {for (key in seen) print seen[key]}' .env.tmp > .env
+          rm .env.tmp
       - name: Use kubectl context
         run: |
           kind get clusters
@@ -46,18 +51,13 @@ jobs:
             --env-file .env \
             mysql:lts
       - name: Deploy Kubernetes resources
-        run: |
-          kubectl apply -k .
+        run: kubectl apply -k .
       - name: Wait for all pods to be ready
         run: make kubernetes-wait
+      - name: Run tests
+        run: make kubernetes-test
       - name: Get pod status on failure
         if: failure()
         run: |
           kubectl get pods -o wide
-          kubectl logs --ignore-errors -l app.kubernetes.io/component=fetchmail
-          kubectl logs --ignore-errors -l app.kubernetes.io/component=filter
-          kubectl logs --ignore-errors -l app.kubernetes.io/component=mda
-          kubectl logs --ignore-errors -l app.kubernetes.io/component=mta
-          kubectl logs --ignore-errors -l app.kubernetes.io/component=redis
-          kubectl logs --ignore-errors -l app.kubernetes.io/component=unbound
-          kubectl logs --ignore-errors -l app.kubernetes.io/component=web
+          make kubernetes-logs

@@ -90,7 +90,20 @@ kubernetes-tls:
 kubernetes-wait:
 	kubectl wait --timeout=5m --for=condition=ready pod -l app.kubernetes.io/part-of=docker-mailserver
 
+.PHONY: kubernetes-logs
+kubernetes-logs:
+	kubectl logs --ignore-errors -l app.kubernetes.io/name=fetchmail
+	kubectl logs --ignore-errors -l app.kubernetes.io/name=filter
+	kubectl logs --ignore-errors -l app.kubernetes.io/name=mda
+	kubectl logs --ignore-errors -l app.kubernetes.io/name=mta
+	kubectl logs --ignore-errors -l app.kubernetes.io/name=redis
+	kubectl logs --ignore-errors -l app.kubernetes.io/name=unbound
+	kubectl logs --ignore-errors -l app.kubernetes.io/name=web
+	kubectl logs --ignore-errors -l app.kubernetes.io/name=test-runner-job
+
 .PHONY: kubernetes-test
 kubernetes-test:
 	kubectl delete -f test/bats/job.yaml --ignore-not-found
 	kubectl apply -f test/bats/job.yaml
+	kubectl wait --timeout=10m --for=condition=complete job -l app.kubernetes.io/name=test-runner-job
+
