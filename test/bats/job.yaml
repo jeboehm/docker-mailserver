@@ -1,0 +1,109 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: test-runner-job
+  labels:
+    app.kubernetes.io/name: test-runner-job
+    app.kubernetes.io/component: test
+    app.kubernetes.io/part-of: docker-mailserver
+spec:
+  backoffLimit: 1
+  ttlSecondsAfterFinished: 900
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: test-runner-job
+        app.kubernetes.io/component: test
+        app.kubernetes.io/part-of: docker-mailserver
+    spec:
+      restartPolicy: Never
+      initContainers:
+        - name: load-fixtures
+          image: jeboehm/mailserver-web:latest
+          imagePullPolicy: IfNotPresent
+          command:
+            - /bin/sh
+            - -ec
+          args:
+            - |
+              /usr/local/bin/wait-and-exec.sh /opt/manager/bin/console domain:add example.com
+              /usr/local/bin/wait-and-exec.sh /opt/manager/bin/console domain:add example.org
+              /usr/local/bin/wait-and-exec.sh /opt/manager/bin/console user:add --admin --password=changeme --enable admin example.com
+              /usr/local/bin/wait-and-exec.sh /opt/manager/bin/console user:add --password=test1234 --enable --sendonly sendonly example.com
+              /usr/local/bin/wait-and-exec.sh /opt/manager/bin/console user:add --password=test1234 --enable --quota=1 quota example.com
+              /usr/local/bin/wait-and-exec.sh /opt/manager/bin/console user:add --password=test1234 disabled example.com
+              /usr/local/bin/wait-and-exec.sh /opt/manager/bin/console user:add --password=test1234 --sendonly disabledsendonly example.com
+              /usr/local/bin/wait-and-exec.sh /opt/manager/bin/console user:add --password=test1234 --enable fetchmailsource example.org
+              /usr/local/bin/wait-and-exec.sh /opt/manager/bin/console user:add --password=test1234 --enable fetchmailreceiver example.org
+              /usr/local/bin/wait-and-exec.sh /opt/manager/bin/console alias:add foo@example.com admin@example.com
+              /usr/local/bin/wait-and-exec.sh /opt/manager/bin/console alias:add foo@example.org admin@example.com
+              /usr/local/bin/wait-and-exec.sh /opt/manager/bin/console alias:add --catchall @example.com admin@example.com
+              /usr/local/bin/wait-and-exec.sh /opt/manager/bin/console dkim:setup example.com --enable --selector dkim
+              # Kubernetes specific fetchmail hostname
+              /usr/local/bin/wait-and-exec.sh /opt/manager/bin/console fetchmail:account:add --force fetchmailreceiver@example.org mda.default imap 143 fetchmailsource@example.org test1234
+          envFrom:
+            - configMapRef:
+                name: config-env
+            - configMapRef:
+                name: config-service-map
+            - secretRef:
+                name: secret-config-env
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: false
+            runAsNonRoot: true
+            capabilities:
+              drop:
+                - ALL
+            runAsGroup: 82
+            runAsUser: 82
+      containers:
+        - name: integration-tests
+          image: jeboehm/mailserver-test:latest
+          imagePullPolicy: Never
+          envFrom:
+            - configMapRef:
+                name: config-env
+            - configMapRef:
+                name: config-service-map
+            - secretRef:
+                name: secret-config-env
+          env:
+            - name: IS_KUBERNETES
+              value: "1"
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: false
+            runAsNonRoot: false
+            runAsGroup: 0
+            runAsUser: 0
+          volumeMounts:
+            - name: tls-certs
+              mountPath: /media/tls
+            - name: vmail
+              mountPath: /srv/vmail
+              readOnly: true
+      securityContext:
+        runAsNonRoot: false
+        seccompProfile:
+          type: RuntimeDefault
+      volumes:
+        - name: tls-certs
+          secret:
+            items:
+              - key: tls.crt
+                path: tls.crt
+              - key: tls.key
+                path: tls.key
+            secretName: tls-certs
+        - name: vmail
+          persistentVolumeClaim:
+            claimName: mda-data-mda-0
