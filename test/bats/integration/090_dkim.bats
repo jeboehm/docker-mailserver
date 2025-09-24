@@ -6,6 +6,6 @@ setup() {
 }
 
 @test "check DKIM key for example.com exists" {
-	run redis-cli -a "${REDIS_PASSWORD}" -h redis hmget dkim_keys dkim.example.com
+	run redis-cli -a "${REDIS_PASSWORD}" -h "${REDIS_HOST}" -p "${REDIS_PORT}" hmget dkim_keys dkim.example.com
 	assert_output --partial "BEGIN PRIVATE KEY"
 }
