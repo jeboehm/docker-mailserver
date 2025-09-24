@@ -75,14 +75,17 @@ Kubernetes installation is now a first class citizen. You can use the `kustomiza
 ![DKIM setup](https://raw.githubusercontent.com/jeboehm/mailserver-admin/master/.github/screenshots/dkim_edit.png)
 
 ## Documentation
-- [Upgrade Guide](UPGRADE.md)
+
+- [Upgrade Guide](docs/UPGRADE.md)
+- [Environment Variables](docs/ENVIRONMENT_VARIABLES.md)
 - Installation:
   - [Kustomize External Database and HTTPS Ingress Example](docs/example-configs/kustomize/external-db-and-https-ingress/README.md)
   - [Compose Traefik Reverse Proxy Example](docs/example-configs/compose/traefik-reverse-proxy/README.md)
-
+- [Developer Guide](docs/DEVELOPMENT.md)
+- [Service Architecture](docs/ARCHITECTURE.md)
 
 ### Wiki
-- [Configuration](https://github.com/jeboehm/docker-mailserver/wiki/Configuration-variables)
+
 - Advanced setup:
   - [Use own TLS certficates](https://github.com/jeboehm/docker-mailserver/wiki/Howto:-Use-Your-Own-TLS-Certificates)
   - [Use another MySQL instance](https://github.com/jeboehm/docker-mailserver/wiki/Howto:-Use-Another-MySQL-Instance)
@@ -101,10 +104,9 @@ Kubernetes installation is now a first class citizen. You can use the `kustomiza
   - [Filtering](https://github.com/jeboehm/docker-mailserver/wiki/Info:-Mail-Filtering)
   - [Component overview](https://github.com/jeboehm/docker-mailserver/wiki/Info:-Component-Overview)
   - [DockerHub images](https://github.com/jeboehm/docker-mailserver/wiki/Info:-Images-On-DockerHub)
-- [Upgrading](https://github.com/jeboehm/docker-mailserver/wiki/Upgrading)
 - [Troubleshooting](https://github.com/jeboehm/docker-mailserver/wiki/Troubleshooting)
 
-## Services
+## Ports overview
 
 | Service                           | Address                      |
 | --------------------------------- | ---------------------------- |
