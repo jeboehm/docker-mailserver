@@ -3,16 +3,14 @@ kind: Kustomization
 resources:
   - deploy/kustomize/
 configMapGenerator:
-  - envs:
+  - name: config-env
+    envs:
       - .env
-    name: config-env
 secretGenerator:
   - name: secret-config-env
     literals: []
-labels:
-  - includeSelectors: true
-    pairs:
-      app.kubernetes.io/name: docker-mailserver
+generatorOptions:
+  disableNameSuffixHash: true
 images:
   - name: jeboehm/mailserver-filter
     newTag: latest

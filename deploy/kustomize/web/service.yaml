@@ -3,8 +3,9 @@ kind: Service
 metadata:
   name: web
   labels:
-    app.kubernetes.io/component: web
-    app.kubernetes.io/instance: mail
+    app.kubernetes.io/name: web
+    app.kubernetes.io/component: admin
+    app.kubernetes.io/part-of: docker-mailserver
 spec:
   type: ClusterIP
   ports:
@@ -13,5 +14,6 @@ spec:
       protocol: TCP
       targetPort: http
   selector:
-    app.kubernetes.io/component: web
-    app.kubernetes.io/instance: mail
+    app.kubernetes.io/name: web
+    app.kubernetes.io/component: admin
+    app.kubernetes.io/part-of: docker-mailserver

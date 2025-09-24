@@ -3,8 +3,9 @@ kind: Service
 metadata:
   name: filter
   labels:
-    app.kubernetes.io/component: filter
-    app.kubernetes.io/instance: mail
+    app.kubernetes.io/name: filter
+    app.kubernetes.io/component: mail
+    app.kubernetes.io/part-of: docker-mailserver
 spec:
   type: ClusterIP
   ports:
@@ -17,5 +18,6 @@ spec:
       protocol: TCP
       targetPort: worker
   selector:
-    app.kubernetes.io/component: filter
-    app.kubernetes.io/instance: mail
+    app.kubernetes.io/name: filter
+    app.kubernetes.io/component: mail
+    app.kubernetes.io/part-of: docker-mailserver

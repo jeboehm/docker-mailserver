@@ -3,21 +3,35 @@ kind: StatefulSet
 metadata:
   name: redis
   labels:
-    app.kubernetes.io/component: redis
-    app.kubernetes.io/instance: mail
+    app.kubernetes.io/name: redis
+    app.kubernetes.io/component: storage
+    app.kubernetes.io/part-of: docker-mailserver
 spec:
   serviceName: redis-master
   replicas: 1
   selector:
     matchLabels:
-      app.kubernetes.io/component: redis
-      app.kubernetes.io/instance: mail
+      app.kubernetes.io/name: redis
+      app.kubernetes.io/component: storage
+      app.kubernetes.io/part-of: docker-mailserver
   template:
     metadata:
       labels:
-        app.kubernetes.io/component: redis
-        app.kubernetes.io/instance: mail
+        app.kubernetes.io/name: redis
+        app.kubernetes.io/component: storage
+        app.kubernetes.io/part-of: docker-mailserver
     spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app.kubernetes.io/name: redis
+                    app.kubernetes.io/component: storage
+                    app.kubernetes.io/part-of: docker-mailserver
+                topologyKey: kubernetes.io/hostname
+              weight: 1
       containers:
         - name: redis
           image: redis:8.2-alpine
