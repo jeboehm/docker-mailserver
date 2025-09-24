@@ -3,19 +3,22 @@ kind: Deployment
 metadata:
   name: unbound
   labels:
-    app.kubernetes.io/component: unbound
-    app.kubernetes.io/instance: mail
+    app.kubernetes.io/name: unbound
+    app.kubernetes.io/component: dns
+    app.kubernetes.io/part-of: docker-mailserver
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app.kubernetes.io/component: unbound
-      app.kubernetes.io/instance: mail
+      app.kubernetes.io/name: unbound
+      app.kubernetes.io/component: dns
+      app.kubernetes.io/part-of: docker-mailserver
   template:
     metadata:
       labels:
-        app.kubernetes.io/component: unbound
-        app.kubernetes.io/instance: mail
+        app.kubernetes.io/name: unbound
+        app.kubernetes.io/component: dns
+        app.kubernetes.io/part-of: docker-mailserver
     spec:
       containers:
         - name: unbound

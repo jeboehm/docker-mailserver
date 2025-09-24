@@ -3,8 +3,9 @@ kind: Service
 metadata:
   name: unbound
   labels:
-    app.kubernetes.io/component: unbound
-    app.kubernetes.io/instance: mail
+    app.kubernetes.io/name: unbound
+    app.kubernetes.io/component: dns
+    app.kubernetes.io/part-of: docker-mailserver
 spec:
   type: ClusterIP
   ports:
@@ -17,5 +18,6 @@ spec:
       protocol: TCP
       targetPort: dns-tcp
   selector:
-    app.kubernetes.io/component: unbound
-    app.kubernetes.io/instance: mail
+    app.kubernetes.io/name: unbound
+    app.kubernetes.io/component: dns
+    app.kubernetes.io/part-of: docker-mailserver
