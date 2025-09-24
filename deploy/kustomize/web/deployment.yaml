@@ -61,9 +61,6 @@ spec:
             failureThreshold: 3
             successThreshold: 1
           resources:
-            limits:
-              cpu: 200m
-              memory: 256Mi
             requests:
               cpu: 50m
               memory: 128Mi
@@ -131,9 +128,6 @@ spec:
             failureThreshold: 3
             successThreshold: 1
           resources:
-            limits:
-              cpu: 200m
-              memory: 256Mi
             requests:
               cpu: 50m
               memory: 128Mi
@@ -176,6 +170,10 @@ spec:
                 name: config-service-map
             - secretRef:
                 name: secret-config-env
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true
@@ -201,6 +199,10 @@ spec:
                 name: config-service-map
             - secretRef:
                 name: secret-config-env
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true
@@ -226,6 +228,10 @@ spec:
                 name: config-service-map
             - secretRef:
                 name: secret-config-env
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true

@@ -61,6 +61,10 @@ spec:
             capabilities:
               drop:
                 - ALL
+          resources:
+            requests:
+              cpu: 50m
+              memory: 32Mi
           volumeMounts:
             - name: redis-data
               mountPath: /data
