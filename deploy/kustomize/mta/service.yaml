@@ -3,8 +3,9 @@ kind: Service
 metadata:
   name: mta
   labels:
-    app.kubernetes.io/component: mta
-    app.kubernetes.io/instance: mail
+    app.kubernetes.io/name: mta
+    app.kubernetes.io/component: mail
+    app.kubernetes.io/part-of: docker-mailserver
 spec:
   type: ClusterIP
   ports:
@@ -17,5 +18,6 @@ spec:
       protocol: TCP
       targetPort: submission
   selector:
-    app.kubernetes.io/component: mta
-    app.kubernetes.io/instance: mail
+    app.kubernetes.io/name: mta
+    app.kubernetes.io/component: mail
+    app.kubernetes.io/part-of: docker-mailserver

@@ -10,13 +10,15 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app.kubernetes.io/component: filter
-      app.kubernetes.io/instance: mail
+      app.kubernetes.io/name: filter
+      app.kubernetes.io/component: mail
+      app.kubernetes.io/part-of: docker-mailserver
   template:
     metadata:
       labels:
-        app.kubernetes.io/component: filter
-        app.kubernetes.io/instance: mail
+        app.kubernetes.io/name: filter
+        app.kubernetes.io/component: mail
+        app.kubernetes.io/part-of: docker-mailserver
     spec:
       affinity:
         podAntiAffinity:
@@ -24,8 +26,9 @@ spec:
             - podAffinityTerm:
                 labelSelector:
                   matchLabels:
-                    app.kubernetes.io/component: filter
-                    app.kubernetes.io/instance: mail
+                    app.kubernetes.io/name: filter
+                    app.kubernetes.io/component: mail
+                    app.kubernetes.io/part-of: docker-mailserver
                 topologyKey: kubernetes.io/hostname
               weight: 1
       containers:

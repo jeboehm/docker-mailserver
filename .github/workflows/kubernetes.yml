@@ -48,9 +48,8 @@ jobs:
       - name: Deploy Kubernetes resources
         run: |
           kubectl apply -k .
-      - name: Check if all resources are deployed
-        run: |
-          kubectl wait --timeout=5m --for=condition=ready pod -l app.kubernetes.io/name=docker-mailserver
+      - name: Wait for all pods to be ready
+        run: make kubernetes-wait
       - name: Get pod status on failure
         if: failure()
         run: |

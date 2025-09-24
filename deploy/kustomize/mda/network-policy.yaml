@@ -3,12 +3,15 @@ kind: NetworkPolicy
 metadata:
   name: mda-network-policy
   labels:
-    app.kubernetes.io/component: mda
+    app.kubernetes.io/name: mda
+    app.kubernetes.io/component: mail
+    app.kubernetes.io/part-of: docker-mailserver
 spec:
   podSelector:
     matchLabels:
-      app.kubernetes.io/component: mda
-      app.kubernetes.io/instance: mail
+      app.kubernetes.io/name: mda
+      app.kubernetes.io/component: mail
+      app.kubernetes.io/part-of: docker-mailserver
   policyTypes:
     - Ingress
   ingress:
