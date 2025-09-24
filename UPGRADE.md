@@ -4,7 +4,7 @@ Upgrade guide for docker-mailserver.
 
 Before upgrading, ensure you have updated `docker-compose.yml` and `docker-compose.production.yml` files.
 
-## v6.0
+## v5.x to v6.0
 
 Deployment on Kubernetes is now a first class citizen. You can use the `kustomization.yaml` file to deploy the mailserver to your Kubernetes cluster.
 The Helm chart has been deprecated and archived.

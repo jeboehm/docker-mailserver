@@ -75,7 +75,13 @@ Kubernetes installation is now a first class citizen. You can use the `kustomiza
 ![DKIM setup](https://raw.githubusercontent.com/jeboehm/mailserver-admin/master/.github/screenshots/dkim_edit.png)
 
 ## Documentation
+- [Upgrade Guide](UPGRADE.md)
+- Installation:
+  - [Kustomize External Database and HTTPS Ingress Example](docs/example-configs/kustomize/external-db-and-https-ingress/README.md)
+  - [Compose Traefik Reverse Proxy Example](docs/example-configs/compose/traefik-reverse-proxy/README.md)
 
+
+### Wiki
 - [Configuration](https://github.com/jeboehm/docker-mailserver/wiki/Configuration-variables)
 - Advanced setup:
   - [Use own TLS certficates](https://github.com/jeboehm/docker-mailserver/wiki/Howto:-Use-Your-Own-TLS-Certificates)
