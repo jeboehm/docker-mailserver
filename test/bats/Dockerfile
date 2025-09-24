@@ -9,15 +9,17 @@ ENV MYSQL_HOST=db \
     MYSQL_USER=root \
     MYSQL_PASSWORD= \
     MYSQL_DATABASE=mailserver \
-    WAITSTART_TIMEOUT=1m \
+    FILTER_WEB_ADDRESS=filter:11334 \
+    IS_KUBERNETES=0 \
     MDA_POP3_ADDRESS=mda:31110 \
     MDA_IMAP_ADDRESS=mda:31143 \
     MDA_POP3S_ADDRESS=mda:31995 \
     MDA_IMAPS_ADDRESS=mda:31993 \
     MTA_SMTP_ADDRESS=mta:25 \
     MTA_SMTP_SUBMISSION_ADDRESS=mta:587 \
-    WEB_HTTP_ADDRESS=web:8080 \
-    FILTER_WEB_ADDRESS=filter:11334
+    UNBOUND_DNS_ADDRESS=unbound:5353 \
+    WAITSTART_TIMEOUT=1m \
+    WEB_HTTP_ADDRESS=web:8080
 
 ARG IMAPTESTER_VER=v1.3.0 # renovate: depName=jeboehm/imap-tester
 
@@ -55,7 +57,7 @@ RUN apk add --no-cache --repository http://dl-cdn.alpinelinux.org/alpine/edge/te
 COPY --from=dockerize /bin/dockerize /usr/local/bin/dockerize
 COPY _helpers/ /usr/local/bin/
 
-WORKDIR /app/tests/
+WORKDIR /app/tests
 COPY integration/ /app/tests/
 
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
