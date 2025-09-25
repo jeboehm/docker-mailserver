@@ -43,7 +43,7 @@ The container images are built either on [Alpine Linux](https://alpinelinux.org)
    The variables are described in the [Wiki](https://github.com/jeboehm/docker-mailserver/wiki/Configuration-variables).
 3. Run `bin/production.sh pull` to download the images.
 4. Run `bin/production.sh up -d` to start the services.
-5. After a few seconds you can access the services listed in the paragraph [Services](#Services).
+5. After a few seconds you can access the services listed in the section [Ports overview](#ports-overview).
 6. Create your first email address and an admin user by running `bin/production.sh run --rm web setup.sh`.
    The wizard will ask you a few questions to set everything up.
 7. Now you can login to the management interface with your new account credentials.
@@ -51,6 +51,14 @@ The container images are built either on [Alpine Linux](https://alpinelinux.org)
 ### on Kubernetes / k8s
 
 Kubernetes installation is now a first class citizen. You can use the `kustomization.yaml` file to deploy the mailserver to your Kubernetes cluster.
+
+**Important:** Installing on Kubernetes requires an existing MySQL-compatible database (for example MySQL or Percona
+XtraDB). The provided kustomization does not provision a database. Configure the database connection via your `.env`
+and supply credentials as Kubernetes Secrets before applying the manifests. See the
+[Kustomize External Database and HTTPS Ingress Example](docs/example-configs/kustomize/external-db-and-https-ingress/README.md)
+and the Wiki guide
+[Use another MySQL instance](https://github.com/jeboehm/docker-mailserver/wiki/Howto:-Use-Another-MySQL-Instance) for
+details.
 
 1. Run `git clone git@github.com:jeboehm/docker-mailserver.git`
 2. Copy the file `.env.dist` to `.env` and change the variables in it according to your needs.
