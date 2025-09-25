@@ -1,8 +1,9 @@
-name: Matrix test application
+name: Application test
 on:
   pull_request:
+  merge_group:
 jobs:
-  test:
+  test_docker_matrix:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -17,9 +18,9 @@ jobs:
       - name: Prepare environment
         run: |
           make .env
-          cat .github/test-matrix/${{ matrix.BUILD_CASE }}.env >> .env
-      - name: Add WAITSTART_TIMEOUT variable in .env with 10m
-        run: echo "WAITSTART_TIMEOUT=10m" >> .env
+          cat .env .github/test-matrix/${{ matrix.BUILD_CASE }}.env > .env.tmp
+          awk -F= '{seen[$1]=$0} END {for (key in seen) print seen[key]}' .env.tmp > .env
+          rm .env.tmp
       - name: Output environment
         run: cat .env
       - name: Pull and build images
@@ -27,7 +28,7 @@ jobs:
           export BUILDX_BUILDER=${{ steps.buildx.outputs.name }}
           make build
       - name: Start docker-mailserver services
-        run: bin/production.sh up -d
+        run: make up
       - name: Load database fixtures
         run: make fixtures
       - name: Run tests
@@ -55,3 +56,61 @@ jobs:
         uses: super-linter/super-linter@v8.1.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  test_kustomize_build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run kustomize build
+        run: |
+          make .env
+          kustomize build .
+  test_kubernetes_matrix:
+    runs-on: ubuntu-latest
+    env:
+      CLUSTER_NAME: kind
+    strategy:
+      matrix:
+        BUILD_CASE:
+          - default
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@e468171a9de216ec08956ac3ada2f0791b6bd435 # v3.11.1
+      - name: Setup Kind
+        uses: helm/kind-action@v1
+        with:
+          cluster_name: ${{ env.CLUSTER_NAME }}
+      - name: Use kubectl context
+        run: |
+          kind get clusters
+          kubectl config use-context kind-${{ env.CLUSTER_NAME }}
+      - name: Prepare environment
+        run: |
+          make .env
+          cat .env .github/test-matrix/${{ matrix.BUILD_CASE }}.env > .env.tmp
+          awk -F= '{seen[$1]=$0} END {for (key in seen) print seen[key]}' .env.tmp > .env
+          rm .env.tmp
+      - name: Pull and build images
+        run: |
+          export BUILDX_BUILDER=${{ steps.buildx.outputs.name }}
+          make kubernetes-kind-images
+      - name: Prepare tls certs
+        run: make kubernetes-tls
+      - name: Start mysql in Kind network
+        run: |
+          docker run -d --name db --network kind --env-file .env \
+            -v ./target/db/rootfs/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d:ro \
+            --env-file .env \
+            mysql:lts
+      - name: Deploy Kubernetes resources
+        run: kubectl apply -k .
+      - name: Wait for all pods to be ready
+        run: make kubernetes-wait
+      - name: Run tests
+        run: make kubernetes-test
+      - name: Get pod status on failure
+        if: failure()
+        run: |
+          kubectl get pods -o wide
+          make kubernetes-logs
