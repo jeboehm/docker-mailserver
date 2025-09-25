@@ -4,9 +4,16 @@
     "config:best-practices",
     "schedule:automergeEarlyMondays",
     "schedule:weekends",
+    ":approveMajorUpdates",
+    "group:allDigest",
+    "group:allNonMajor",
     ":automergeMinor",
+    ":automergePatch",
     ":automergeDigest",
-    ":automergePr"
+    ":automergePr",
+    ":docker",
+    ":semanticCommits",
+    ":label(renovate)"
   ],
   "customManagers": [
     {

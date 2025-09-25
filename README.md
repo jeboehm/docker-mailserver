@@ -7,11 +7,8 @@ The container images are built either on [Alpine Linux](https://alpinelinux.org)
 
 [Changelog](https://github.com/jeboehm/docker-mailserver/releases)
 
-## Build status
-
-[![Build multiarch, buildx](https://github.com/jeboehm/docker-mailserver/actions/workflows/build-multiarch.yml/badge.svg)](https://github.com/jeboehm/docker-mailserver/actions/workflows/build-multiarch.yml)
-[![Matrix test application](https://github.com/jeboehm/docker-mailserver/actions/workflows/test.yml/badge.svg)](https://github.com/jeboehm/docker-mailserver/actions/workflows/test.yml)
-[![Create Release](https://github.com/jeboehm/docker-mailserver/actions/workflows/create-release.yml/badge.svg)](https://github.com/jeboehm/docker-mailserver/actions/workflows/create-release.yml)
+[![Tests](https://github.com/jeboehm/docker-mailserver/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/jeboehm/docker-mailserver/actions/workflows/test.yml)
+[![Build](https://github.com/jeboehm/docker-mailserver/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/jeboehm/docker-mailserver/actions/workflows/build.yml)
 
 ## Features
 
@@ -40,7 +37,7 @@ The container images are built either on [Alpine Linux](https://alpinelinux.org)
 
 1. Run `git clone git@github.com:jeboehm/docker-mailserver.git`
 2. Copy the file `.env.dist` to `.env` and change the variables in it according to your needs.
-   The variables are described in the [Wiki](https://github.com/jeboehm/docker-mailserver/wiki/Configuration-variables).
+   The variables are described in the [docs](docs/ENVIRONMENT_VARIABLES.md).
 3. Run `bin/production.sh pull` to download the images.
 4. Run `bin/production.sh up -d` to start the services.
 5. After a few seconds you can access the services listed in the section [Ports overview](#ports-overview).
@@ -62,11 +59,25 @@ details.
 
 1. Run `git clone git@github.com:jeboehm/docker-mailserver.git`
 2. Copy the file `.env.dist` to `.env` and change the variables in it according to your needs.
-   The variables are described in the [Wiki](https://github.com/jeboehm/docker-mailserver/wiki/Configuration-variables).
+   The variables are described in the [docs](docs/ENVIRONMENT_VARIABLES.md).
 3. Run `kubectl create namespace mail`
 4. Run `bin/create-tls-certs.sh`
 5. Run `kubectl create -n mail secret tls tls-certs --cert=config/tls/tls.crt --key=config/tls/tls.key`
 6. Run `kubectl apply -n mail -k .`
+
+## Ports overview
+
+| Service                           | Address                      |
+| --------------------------------- | ---------------------------- |
+| POP3 (starttls needed)            | 127.0.0.1:110                |
+| POP3S                             | 127.0.0.1:995                |
+| IMAP (starttls needed)            | 127.0.0.1:143                |
+| IMAPS                             | 127.0.0.1:993                |
+| SMTP                              | 127.0.0.1:25                 |
+| Mail Submission (starttls needed) | 127.0.0.1:587                |
+| Management Interface              | http://127.0.0.1:81/manager/ |
+| Webmail                           | http://127.0.0.1:81/webmail/ |
+| Rspamd Webinterface               | http://127.0.0.1:81/rspamd/  |
 
 ## Screenshots
 
@@ -92,7 +103,7 @@ details.
 - [Developer Guide](docs/DEVELOPMENT.md)
 - [Service Architecture](docs/ARCHITECTURE.md)
 
-### Wiki
+### Wiki (outdated, will be moved to the docs directory)
 
 - Advanced setup:
   - [Use own TLS certficates](https://github.com/jeboehm/docker-mailserver/wiki/Howto:-Use-Your-Own-TLS-Certificates)
@@ -113,20 +124,6 @@ details.
   - [Component overview](https://github.com/jeboehm/docker-mailserver/wiki/Info:-Component-Overview)
   - [DockerHub images](https://github.com/jeboehm/docker-mailserver/wiki/Info:-Images-On-DockerHub)
 - [Troubleshooting](https://github.com/jeboehm/docker-mailserver/wiki/Troubleshooting)
-
-## Ports overview
-
-| Service                           | Address                      |
-| --------------------------------- | ---------------------------- |
-| POP3 (starttls needed)            | 127.0.0.1:110                |
-| POP3S                             | 127.0.0.1:995                |
-| IMAP (starttls needed)            | 127.0.0.1:143                |
-| IMAPS                             | 127.0.0.1:993                |
-| SMTP                              | 127.0.0.1:25                 |
-| Mail Submission (starttls needed) | 127.0.0.1:587                |
-| Management Interface              | http://127.0.0.1:81/manager/ |
-| Webmail                           | http://127.0.0.1:81/webmail/ |
-| Rspamd Webinterface               | http://127.0.0.1:81/rspamd/  |
 
 ## Links
 

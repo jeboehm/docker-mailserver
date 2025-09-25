@@ -1,4 +1,4 @@
-name: Build multiarch, buildx
+name: Build container images
 on:
   push:
     branches:
@@ -6,7 +6,7 @@ on:
       - next
     tags: [v*]
 jobs:
-  build_images:
+  build_buildx:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: true
@@ -25,9 +25,10 @@ jobs:
           - context: target/unbound
             image: mailserver-unbound
     permissions:
-      contents: write
+      contents: read
       packages: write
       id-token: write
+      attestations: write
     steps:
       - uses: actions/checkout@v4
       - name: Install cosign
@@ -38,13 +39,13 @@ jobs:
         uses: docker/setup-qemu-action@29109295f81e9208d7d86ff1c6c12d2833863392 # v3.6.0
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@e468171a9de216ec08956ac3ada2f0791b6bd435 # v3.11.1
-      - name: Login to GitHub Container Registry
+      - name: Log in to Container Registry (ghcr.io)
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Log in to Docker Hub
+      - name: Log in to Container Registry (docker.io)
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
@@ -81,3 +82,17 @@ jobs:
           TAGS: ${{ steps.meta.outputs.tags }}
           DIGEST: ${{ steps.build-and-push.outputs.digest }}
         run: echo "${TAGS}" | xargs -I {} cosign sign --yes "{}@${DIGEST}"
+      - name: Generate artifact attestation (ghcr.io)
+        if: ${{ github.event_name != 'pull_request' }}
+        uses: actions/attest-build-provenance@v3
+        with:
+          subject-name: ghcr.io/jeboehm/${{ matrix.image }}
+          subject-digest: ${{ steps.build-and-push.outputs.digest }}
+          push-to-registry: true
+      - name: Generate artifact attestation (docker.io)
+        if: ${{ github.event_name != 'pull_request' }}
+        uses: actions/attest-build-provenance@v3
+        with:
+          subject-name: index.docker.io/jeboehm/${{ matrix.image }}
+          subject-digest: ${{ steps.build-and-push.outputs.digest }}
+          push-to-registry: true
