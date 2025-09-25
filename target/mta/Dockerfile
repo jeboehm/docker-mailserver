@@ -62,6 +62,10 @@ RUN apk --no-cache add \
     postconf smtpd_tls_protocols="TLSv1.3, TLSv1.2, !TLSv1.1, !TLSv1, !SSLv3, !SSLv2" && \
     postconf smtp_tls_mandatory_protocols="TLSv1.3, TLSv1.2, !TLSv1.1, !TLSv1, !SSLv3, !SSLv2" && \
     postconf smtp_tls_protocols="TLSv1.3, TLSv1.2, !TLSv1.1, !TLSv1, !SSLv3, !SSLv2" && \
+    postconf smtpd_client_connection_rate_limit=20 && \
+    postconf smtpd_error_sleep_time=10s && \
+    postconf smtpd_soft_error_limit=3 && \
+    postconf smtpd_hard_error_limit=5 && \
     newaliases && \
     echo "submission inet n - n - - smtpd" >> /etc/postfix/master.cf && \
     echo " -o syslog_name=postfix/submission" >> /etc/postfix/master.cf && \
