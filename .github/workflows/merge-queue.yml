@@ -1,0 +1,23 @@
+name: Merge Queue (labels)
+
+on:
+  pull_request:
+    types: [labeled]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  enqueue:
+    if: contains(github.event.pull_request.labels.*.name, 'queue')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Add PR to merge queue via comment
+        uses: peter-evans/create-or-update-comment@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          issue-number: ${{ github.event.pull_request.number }}
+          body: |
+            @github-actions add-to-merge-queue
+

@@ -1,0 +1,24 @@
+name: CI (merge queue)
+
+on:
+  merge_group:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run tests for merge queue
+        shell: bash
+        run: |
+          if [ -x bin/test.sh ]; then
+            bin/test.sh
+          elif [ -f Makefile ] && grep -qE '^test:' Makefile; then
+            make test
+          else
+            echo "No test runner found; skipping";
+          fi
+

@@ -4,9 +4,25 @@
     "config:best-practices",
     "schedule:automergeEarlyMondays",
     "schedule:weekends",
-    ":automergeMinor",
     ":automergeDigest",
     ":automergePr"
+  ],
+  "prConcurrentLimit": 10,
+  "branchConcurrentLimit": 5,
+  "packageRules": [
+    {
+      "matchUpdateTypes": ["minor", "major"],
+      "automerge": false
+    },
+    {
+      "matchUpdateTypes": ["patch", "digest", "pin"],
+      "groupName": "patch and digest dependencies",
+      "groupSlug": "patch-digest-deps",
+      "automerge": true,
+      "automergeType": "pr",
+      "platformAutomerge": true,
+      "labels": ["renovate", "dependencies", "batch"]
+    }
   ],
   "customManagers": [
     {

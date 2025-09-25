@@ -1,0 +1,42 @@
+name: Release on tag
+
+on:
+  push:
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Determine release type (patch vs minor/major)
+        id: semver
+        shell: bash
+        run: |
+          ref="${GITHUB_REF##*/}"
+          version="${ref#v}"
+          IFS='.' read -r major minor patch <<< "$version"
+          if [ -z "$major" ] || [ -z "$minor" ] || [ -z "$patch" ]; then
+            echo "Invalid semver tag: $ref" >&2
+            exit 1
+          fi
+          draft="false"
+          if [ "$patch" -eq 0 ]; then
+            draft="true"
+          fi
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "draft=$draft" >> "$GITHUB_OUTPUT"
+
+      - name: Create GitHub Release (draft for minor/major)
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: ${{ github.ref_name }}
+          draft: ${{ steps.semver.outputs.draft }}
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
