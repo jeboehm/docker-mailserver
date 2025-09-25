@@ -1,6 +1,5 @@
 name: Create Release
 on:
-  pull_request:
   push:
     branches:
       - main
@@ -9,29 +8,22 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-    outputs:
-      new_tag: ${{ steps.tag_version.outputs.new_tag }}
-      changelog: ${{ steps.tag_version.outputs.changelog }}
     steps:
       - uses: actions/checkout@v4
-      - name: Bump version and push tag
-        id: tag_version
-        uses: mathieudutour/github-tag-action@v6.2
         with:
-          # use this PAT to have other workflows triggered
-          github_token: ${{ secrets.GH_RELEASE_PAT }}
-          dry_run: ${{ github.event_name == 'pull_request' }}
-      - name: Create a GitHub release
+          fetch-depth: 0
+      - name: Generate changelog and determine version
+        id: changelog
+        uses: TriPSs/conventional-changelog-action@v6
+        with:
+          github-token: ${{ secrets.GH_RELEASE_PAT }}
+          skip-on-empty: true
+          skip-version-file: true
+      - name: Create GitHub Release
         uses: ncipollo/release-action@v1
-        if: ${{ github.event_name != 'pull_request' }}
+        if: ${{ steps.changelog.outputs.skipped == 'false' }}
         with:
-          tag: ${{ steps.tag_version.outputs.new_tag }}
-          name: Release ${{ steps.tag_version.outputs.new_tag }}
-          body: ${{ steps.tag_version.outputs.changelog }}
-      - name: Output generated version information
-        run: |
-          { echo "# Tag ${{ steps.tag_version.outputs.new_tag }}"
-            echo ""
-            echo "## Release Notes"
-            echo "${{ steps.tag_version.outputs.changelog }}"
-          } >> "$GITHUB_STEP_SUMMARY"
+          tag: ${{ steps.changelog.outputs.tag }}
+          name: Release ${{ steps.changelog.outputs.version }}
+          body: ${{ steps.changelog.outputs.clean_changelog }}
+          token: ${{ secrets.GH_RELEASE_PAT }}
