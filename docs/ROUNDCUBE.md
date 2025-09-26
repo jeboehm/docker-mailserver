@@ -13,6 +13,7 @@ The web service Dockerfile accepts the `RC_PLUGINS` build argument, which allows
 **Format**: Space-separated list of plugin names in the format `vendor/plugin-name`
 
 **Example plugins**:
+
 - `johndoh/contextmenu` - Enhanced context menu functionality
 - `jfcherng-roundcube/show-folder-size` - Display folder sizes
 - `kolab/calendar` - Calendar integration
@@ -36,6 +37,7 @@ services:
 To add or modify Roundcube plugins:
 
 1. **Edit the web.yaml file**:
+
    ```yaml
    services:
      web:
@@ -46,6 +48,7 @@ To add or modify Roundcube plugins:
    ```
 
 2. **Rebuild the web service**:
+
    ```bash
    docker-compose build web
    ```
@@ -68,6 +71,7 @@ services:
 ```
 
 Then rebuild:
+
 ```bash
 docker-compose build web && docker-compose up -d web
 ```
@@ -75,6 +79,7 @@ docker-compose build web && docker-compose up -d web
 ## Plugin Sources
 
 Plugins are typically installed from:
+
 - [Packagist.org](https://packagist.org/?type=roundcube-plugin) - Official Roundcube plugin repository
 - GitHub repositories
 - Custom plugin sources
