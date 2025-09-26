@@ -31,10 +31,6 @@ jobs:
       attestations: write
     steps:
       - uses: actions/checkout@v4
-      - name: Install cosign
-        uses: sigstore/cosign-installer@d7543c93d881b35a8faa02e8e3605f69b7a1ce62 # v3.10.0
-        with:
-          cosign-release: v2.4.0
       - name: Set up QEMU
         uses: docker/setup-qemu-action@29109295f81e9208d7d86ff1c6c12d2833863392 # v3.6.0
       - name: Set up Docker Buildx
@@ -76,12 +72,6 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=registry,ref=ghcr.io/jeboehm/${{ matrix.image }}:buildcache
           cache-to: type=registry,ref=ghcr.io/jeboehm/${{ matrix.image }}:buildcache,mode=max
-      - name: Sign the published Docker image
-        if: ${{ github.event_name != 'pull_request' }}
-        env:
-          TAGS: ${{ steps.meta.outputs.tags }}
-          DIGEST: ${{ steps.build-and-push.outputs.digest }}
-        run: echo "${TAGS}" | xargs -I {} cosign sign --yes "{}@${DIGEST}"
       - name: Generate artifact attestation (ghcr.io)
         if: ${{ github.event_name != 'pull_request' }}
         uses: actions/attest-build-provenance@v3
