@@ -18,6 +18,7 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           skip-on-empty: true
+          git-push: false
           skip-git-pull: true
           skip-version-file: true
           skip-commit: true
