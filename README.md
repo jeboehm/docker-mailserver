@@ -6,8 +6,9 @@ This project enables you to run your own email services, giving you independence
 The container images are built either on [Alpine Linux](https://alpinelinux.org) or with the vendor's own base image, always ensuring they remain as lightweight as possible.
 
 [Changelog](https://github.com/jeboehm/docker-mailserver/releases)
+[Upgrade Guide](docs/UPGRADE.md)
 
-[![Tests](https://github.com/jeboehm/docker-mailserver/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/jeboehm/docker-mailserver/actions/workflows/test.yml)
+[![Tests](https://github.com/jeboehm/docker-mailserver/actions/workflows/test.yml/badge.svg?branch=next)](https://github.com/jeboehm/docker-mailserver/actions/workflows/test.yml)
 [![Build](https://github.com/jeboehm/docker-mailserver/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/jeboehm/docker-mailserver/actions/workflows/build.yml)
 
 ## Features

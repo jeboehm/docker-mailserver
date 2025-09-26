@@ -15,6 +15,12 @@
     ":semanticCommits",
     ":label(renovate)"
   ],
+  "ignorePaths": [
+    "deploy/**",
+    "docker-compose*.yml",
+    "docs/**",
+    "kustomization.yaml"
+  ],
   "customManagers": [
     {
       "customType": "regex",
