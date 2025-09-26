@@ -11,13 +11,14 @@ Local address extension allows multiple unique email addresses to be delivered t
 The feature appends a configurable delimiter followed by any string to the base email address. All emails sent to extended addresses are delivered to the original mailbox. The default delimiter is `-` (dash).
 
 Alternative names for this feature:
+
 - Plus-addressing (traditional `+` delimiter)
 - Subaddressing (RFC 5233 standard)
 - Address tagging
 
 ### Examples
 
-```
+```text
 user1-friends@example.com
 user1-1382@example.com
 user1-newsletter@example.com
@@ -41,7 +42,8 @@ This changes the delimiter from `-` to `+`, allowing addresses like `user1+frien
 Extended addresses can be used in Sieve filtering rules for automated email processing. Sieve rules can sort emails into folders, apply actions, or forward based on the extension used.
 
 Example Sieve rule for `user1-newsletter@example.com`:
-```
+
+```sieve
 if address :matches :localpart "to" "user1-newsletter*" {
     fileinto "Newsletters";
 }
@@ -59,13 +61,13 @@ if address :matches :localpart "to" "user1-newsletter*" {
 
 DKIM (DomainKeys Identified Mail) signing provides cryptographic authentication for outgoing emails. This feature signs all outgoing emails from configured domains with a private key, allowing recipients to verify email authenticity through DNS records.
 
-### Implementation
+### Implementation details
 
 DKIM signing is implemented using the Rspamd DKIM module. Each domain requires a separate DKIM key pair consisting of a private key (stored in docker-mailserver) and a public key (published in DNS).
 
 Rspamd verifies the DNS record for each domain before signing outgoing messages. This ensures that only domains with valid DKIM DNS records will have their emails signed, preventing false signatures.
 
-### Configuration
+### Configuration steps
 
 Configure DKIM through the management interface:
 
