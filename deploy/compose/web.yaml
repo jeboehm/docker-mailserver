@@ -1,4 +1,3 @@
----
 services:
   # The admin (mailserver-admin) and webmail (roundcube) interfaces
   # live in the web service. Required for provisioning the database.

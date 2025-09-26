@@ -1,4 +1,3 @@
----
 services:
   # The Mail Transfer Agent (Postfix) receives incoming mail
   # on TCP port 25.

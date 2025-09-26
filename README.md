@@ -1,5 +1,7 @@
 # docker-mailserver
 
+![Logo](https://raw.githubusercontent.com/jeboehm/docker-mailserver/refs/heads/features/docs/docs/logo/logo.png)
+
 `docker-mailserver` is inspired by the renowned [ISPMail guide](https://workaround.org/ispmail/).
 This project enables you to run your own email services, giving you independence and freedom from relying on large corporations. It provides a secure, customizable, and feature-rich solution for managing your email infrastructure.
 
@@ -54,8 +56,8 @@ Kubernetes installation is now a first class citizen. You can use the `kustomiza
 XtraDB). The provided kustomization does not provision a database. Configure the database connection via your `.env`
 and supply credentials as Kubernetes Secrets before applying the manifests. See the
 [Kustomize External Database and HTTPS Ingress Example](docs/example-configs/kustomize/external-db-and-https-ingress/README.md)
-and the Wiki guide
-[Use another MySQL instance](https://github.com/jeboehm/docker-mailserver/wiki/Howto:-Use-Another-MySQL-Instance) for
+and the documentation
+[Use another MySQL instance](docs/EXTERNAL_MYSQL.md) for
 details.
 
 1. Run `git clone git@github.com:jeboehm/docker-mailserver.git`
@@ -98,33 +100,15 @@ details.
 
 - [Upgrade Guide](docs/UPGRADE.md)
 - [Environment Variables](docs/ENVIRONMENT_VARIABLES.md)
+- [Features](docs/FEATURES.md)
+- [Service Architecture](docs/ARCHITECTURE.md)
+- [Roundcube Configuration](docs/ROUNDCUBE.md)
+- [TLS Configuration](docs/TLS.md)
+- [External MySQL](docs/EXTERNAL_MYSQL.md)
 - Installation:
   - [Kustomize External Database and HTTPS Ingress Example](docs/example-configs/kustomize/external-db-and-https-ingress/README.md)
   - [Compose Traefik Reverse Proxy Example](docs/example-configs/compose/traefik-reverse-proxy/README.md)
 - [Developer Guide](docs/DEVELOPMENT.md)
-- [Service Architecture](docs/ARCHITECTURE.md)
-
-### Wiki (outdated, will be moved to the docs directory)
-
-- Advanced setup:
-  - [Use own TLS certficates](https://github.com/jeboehm/docker-mailserver/wiki/Howto:-Use-Your-Own-TLS-Certificates)
-  - [Use another MySQL instance](https://github.com/jeboehm/docker-mailserver/wiki/Howto:-Use-Another-MySQL-Instance)
-  - [Use the web service behind nginx-proxy](https://github.com/jeboehm/docker-mailserver/wiki/Howto:-Use-The-Web-Service-Behind-nginx-proxy)
-  - [Container health monitoring](https://github.com/jeboehm/docker-mailserver/wiki/Howto:-Container-Health-Monitoring)
-  - [Disable malware scanning](https://github.com/jeboehm/docker-mailserver/wiki/Howto:-Disable-Malware-Scanning)
-  - [Advanced malware signatures](https://github.com/jeboehm/docker-mailserver/wiki/Howto:-Advanced-Malware-Signatures)
-  - [Use an external mail relay](https://github.com/jeboehm/docker-mailserver/wiki/Howto:-Use-External-Mail-Relay-For-Sending-Mails)
-  - [Add plugins to Roundcube](https://github.com/jeboehm/docker-mailserver/wiki/Howto:-Add-Plugins-To-Roundcube-Webmail)
-- Features:
-  - [Local address extension](https://github.com/jeboehm/docker-mailserver/wiki/Feature:-Local-Address-Extension)
-  - [Sender policy framework, SPF](<https://github.com/jeboehm/docker-mailserver/wiki/Feature:-Sender-Policy-Framework-(SPF)>)
-  - [DKIM](https://github.com/jeboehm/docker-mailserver/wiki/Feature:-DKIM)
-- Technical details:
-  - [Data storage](<https://github.com/jeboehm/docker-mailserver/wiki/Info:-Volume-Management-(Where-Is-My-Data%3F)>)
-  - [Filtering](https://github.com/jeboehm/docker-mailserver/wiki/Info:-Mail-Filtering)
-  - [Component overview](https://github.com/jeboehm/docker-mailserver/wiki/Info:-Component-Overview)
-  - [DockerHub images](https://github.com/jeboehm/docker-mailserver/wiki/Info:-Images-On-DockerHub)
-- [Troubleshooting](https://github.com/jeboehm/docker-mailserver/wiki/Troubleshooting)
 
 ## Links
 

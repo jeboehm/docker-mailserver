@@ -1,0 +1,15 @@
+# Project Memory
+
+This file stores project-specific knowledge, conventions, and user preferences learned by the AI assistant.
+
+## User Preferences
+
+- **Documentation Writing Style**: Use technical documentation language instead of marketing speak. Avoid subjective language like "powerful", "particularly useful", "sophisticated". Use direct, factual statements about functionality. Include technical references (like RFC standards) and concrete examples. Focus on implementation details rather than promotional content. Make language concise and direct, suitable for technical documentation.
+
+## Technical Decisions
+
+- **Documentation Format**: Markdown files in /docs should contain technical feature descriptions with implementation details, configuration options, and concrete examples rather than marketing language.
+
+## Project Conventions
+
+- **Documentation Standards**: Write documentation for complex software with technical precision, avoiding promotional language and focusing on functional descriptions.
