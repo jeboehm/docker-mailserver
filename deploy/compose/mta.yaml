@@ -1,0 +1,18 @@
+---
+services:
+  # The Mail Transfer Agent (Postfix) receives incoming mail
+  # on TCP port 25.
+  mta:
+    image: jeboehm/mailserver-mta:latest
+    build:
+      context: ../../target/mta
+      cache_from:
+        - type=registry,ref=ghcr.io/jeboehm/mailserver-mta:buildcache
+    restart: on-failure:5
+    env_file: ../../.env
+    volumes:
+      - data-tls:/etc/postfix/tls:ro
+      # For using external certificates uncomment the following lines
+      # and change the path on the left side of the colon.
+      # - /home/user/certs/mail.example.com.crt:/etc/postfix/tls.crt:ro
+      # - /home/user/certs/mail.example.com.key:/etc/postfix/tls.key:ro

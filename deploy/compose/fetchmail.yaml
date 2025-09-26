@@ -1,0 +1,19 @@
+---
+services:
+  # Fetchmail is used to fetch emails from external servers
+  # and deliver them to the local mail server. Can be removed
+  # if you don't need it.
+  fetchmail:
+    image: ghcr.io/jeboehm/fetchmailmgr:0.3.23@sha256:d584d3ac5126b56ec5f2099c411ab18160789dcf3ee5f593e18a63ed1b187850
+    restart: on-failure:5
+    command:
+      - --interval
+      - ${FETCHMAIL_INTERVAL}
+    env_file: ../../.env
+    environment:
+      DEBUG: "true"
+    tmpfs:
+      - /run/fetchmailmgr:mode=0755,uid=65534,gid=65534
+    read_only: true
+    depends_on:
+      - redis

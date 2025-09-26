@@ -137,7 +137,7 @@ The typical development workflow is:
 2. **Build and start services:**
 
    ```bash
-   make up
+   make build up
    ```
 
 3. **Run tests:**
@@ -164,14 +164,14 @@ When making changes to a specific service (e.g., MDA, MTA, Web, Filter), you can
 2. **Rebuild and restart services:**
 
    ```bash
-   make up
+   make build up
    ```
 
    This will rebuild the changed service and restart all services.
 
 3. **Run a specific test** to verify your changes:
    ```bash
-   ./bin/test.sh bats 070_docker.bats
+   ./bin/test.sh run --rm test bats 070_docker.bats
    ```
    This runs only the Docker-related tests instead of the full test suite.
 

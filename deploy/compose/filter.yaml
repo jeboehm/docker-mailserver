@@ -1,0 +1,22 @@
+---
+services:
+  # Incoming spam is (hopefully) filtered by rspamd which runs
+  # in the filter service.
+  filter:
+    image: jeboehm/mailserver-filter:latest
+    build:
+      context: ../../target/filter
+      cache_from:
+        - type=registry,ref=ghcr.io/jeboehm/mailserver-filter:buildcache
+    restart: on-failure:5
+    env_file: ../../.env
+    tmpfs:
+      - /tmp:mode=0755,uid=11333,gid=11333
+    security_opt:
+      - no-new-privileges
+    read_only: true
+    depends_on:
+      - unbound
+      - redis
+    volumes:
+      - data-filter:/var/lib/rspamd
