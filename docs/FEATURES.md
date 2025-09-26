@@ -12,7 +12,6 @@ The feature appends a configurable delimiter followed by any string to the base 
 
 Alternative names for this feature:
 
-
 - Plus-addressing (traditional `+` delimiter)
 - Subaddressing (RFC 5233 standard)
 - Address tagging

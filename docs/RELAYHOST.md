@@ -26,6 +26,7 @@ RELAY_PASSWD_FILE=/etc/postfix/sasl_passwd_ext
 ### File Format
 
 Create a credentials file with the following format:
+
 ```
 [hostname]:port username:password
 ```
@@ -129,6 +130,7 @@ RELAY_PASSWD_FILE=/etc/postfix/sasl_passwd_ext
 
 1. **Send a test email** through the webmail interface
 2. **Check MTA logs** for successful relay:
+
    ```bash
    # Docker Compose
    bin/production.sh logs mta
