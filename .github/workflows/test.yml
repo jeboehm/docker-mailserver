@@ -64,6 +64,27 @@ jobs:
         run: |
           make .env
           kustomize build .
+  test_yaml_schema:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+      - uses: actions/cache@v4
+        with:
+          path: test/pajv/node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('test/pajv/package.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+      - name: Install packages
+        run: |
+          cd test/pajv
+          npm install
+      - name: Run yaml schema test
+        run: |
+          cd test/pajv
+          ./run-tests.sh
   test_kubernetes_matrix:
     runs-on: ubuntu-latest
     env:
