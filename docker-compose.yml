@@ -1,169 +1,27 @@
 ---
-services:
-  # Creates self signed tls certificates. Remove if you
-  # use your own.
-  ssl:
-    image: jeboehm/mailserver-ssl:latest
-    build:
-      context: ./target/ssl
-      cache_from:
-        - type=registry,ref=ghcr.io/jeboehm/mailserver-ssl:buildcache
-    env_file: .env
-    volumes:
-      - data-tls:/media/tls:rw
-
-  # The Mail Transfer Agent (Postfix) receives incoming mail
-  # on TCP port 25.
-  mta:
-    image: jeboehm/mailserver-mta:latest
-    build:
-      context: ./target/mta
-      cache_from:
-        - type=registry,ref=ghcr.io/jeboehm/mailserver-mta:buildcache
-    restart: on-failure:5
-    env_file: .env
-    volumes:
-      - data-tls:/etc/postfix/tls:ro
-      # For using external certificates uncomment the following lines
-      # and change the path on the left side of the colon.
-      # - /home/user/certs/mail.example.com.crt:/etc/postfix/tls.crt:ro
-      # - /home/user/certs/mail.example.com.key:/etc/postfix/tls.key:ro
-
-  # The Mail Delivery Agent (Dovecot) is responsible for storing
-  # incoming mail into a users mailbox and also delivers them
-  # via POP3 or IMAP4.
-  mda:
-    image: jeboehm/mailserver-mda:latest
-    build:
-      context: ./target/mda
-      cache_from:
-        - type=registry,ref=ghcr.io/jeboehm/mailserver-mda:buildcache
-    restart: on-failure:5
-    env_file: .env
-    tmpfs:
-      - /tmp:mode=0755,uid=1000,gid=1000
-      - /run/dovecot:mode=0755,uid=1000,gid=1000
-    security_opt:
-      - no-new-privileges
-    read_only: true
-    depends_on:
-      - db
-    volumes:
-      - data-mail:/srv/vmail
-      - data-tls:/etc/dovecot/tls:ro
-      # For using external certificates uncomment the following lines
-      # and change the path on the left side of the colon.
-      # - /home/user/certs/mail.example.com.crt:/etc/dovecot/tls/tls.crt:mode=0444
-      # - /home/user/certs/mail.example.com.key:/etc/dovecot/tls/tls.key:mode=0444
-
-  # The admin (mailserver-admin) and webmail (roundcube) interfaces
-  # live in the web service. Required for provisioning the database.
-  web:
-    image: jeboehm/mailserver-web:latest
-    build:
-      context: ./target/web
-      args:
-        # Roundcube plugins can be added here.
-        # See https://packagist.org/?type=roundcube-plugin
-        RC_PLUGINS: "johndoh/contextmenu jfcherng-roundcube/show-folder-size"
-      cache_from:
-        - type=registry,ref=ghcr.io/jeboehm/mailserver-web:buildcache
-    restart: on-failure:5
-    env_file: .env
-    security_opt:
-      - no-new-privileges
-    depends_on:
-      - redis
-    read_only: false
-    tmpfs:
-      - /tmp:mode=0755,uid=82,gid=82
-      - /var/lib/nginx/tmp:mode=0755,uid=82,gid=82
-      - /opt/manager/var/cache/prod:mode=0755,uid=82,gid=82
-      - /opt/manager/var/log:mode=0755,uid=82,gid=82
-      - /var/www/html/webmail/temp:mode=0755,uid=82,gid=82
-      - /var/www/html/webmail/logs:mode=0755,uid=82,gid=82
-    # For use with jwilder/nginx-proxy.
-    # environment:
-    #   - VIRTUAL_HOST=mail.example.com
-
-  # Incoming spam is (hopefully) filtered by rspamd which runs
-  # in the filter service.
-  filter:
-    image: jeboehm/mailserver-filter:latest
-    build:
-      context: ./target/filter
-      cache_from:
-        - type=registry,ref=ghcr.io/jeboehm/mailserver-filter:buildcache
-    restart: on-failure:5
-    env_file: .env
-    tmpfs:
-      - /tmp:mode=0755,uid=11333,gid=11333
-    security_opt:
-      - no-new-privileges
-    read_only: true
-    depends_on:
-      - unbound
-      - redis
-    volumes:
-      - data-filter:/var/lib/rspamd
-  # Fetchmail is used to fetch emails from external servers
-  # and deliver them to the local mail server. Can be removed
-  # if you don't need it.
-  fetchmail:
-    image: ghcr.io/jeboehm/fetchmailmgr:0.3.23@sha256:d584d3ac5126b56ec5f2099c411ab18160789dcf3ee5f593e18a63ed1b187850
-    restart: on-failure:5
-    command:
-      - --interval
-      - ${FETCHMAIL_INTERVAL}
-    env_file: .env
-    environment:
-      DEBUG: "true"
-    tmpfs:
-      - /run/fetchmailmgr:mode=0755,uid=65534,gid=65534
-    read_only: true
-    depends_on:
-      - redis
-  # Unbound is used to resolve DNS queries for the filter service.
-  unbound:
-    image: jeboehm/mailserver-unbound:latest
-    build:
-      context: ./target/unbound
-      cache_from:
-        - type=registry,ref=ghcr.io/jeboehm/mailserver-unbound:buildcache
-    restart: on-failure:5
-    security_opt:
-      - no-new-privileges
-    read_only: false
-  # Responsible for storing users and their aliases. Remove
-  # if you already have a MySQL server.
-  db:
-    image: mysql:lts
-    restart: on-failure:5
-    env_file: .env
-    volumes:
-      - ./target/db/rootfs/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d:ro
-      - data-db:/var/lib/mysql
-  redis:
-    image: redis:8.2-alpine
-    restart: on-failure:5
-    command:
-      - redis-server
-      - --requirepass
-      - ${REDIS_PASSWORD}
-    env_file: .env
-    volumes:
-      - data-redis:/data
+# Include all service definitions from separate files
+include:
+  - deploy/compose/ssl.yaml
+  - deploy/compose/mta.yaml
+  - deploy/compose/mda.yaml
+  - deploy/compose/web.yaml
+  - deploy/compose/filter.yaml
+  - deploy/compose/fetchmail.yaml
+  - deploy/compose/unbound.yaml
+  - deploy/compose/db.yaml
+  - deploy/compose/redis.yaml
 
   # If you want unhealthy containers to be restarted automatically
   # just uncomment the following lines.
-  # autoheal:
-  #   image: willfarrell/autoheal:latest
-  #   restart: always
-  #   networks: []
-  #   volumes:
-  #     - /var/run/docker.sock:/var/run/docker.sock:ro
-  #   environment:
-  #     - AUTOHEAL_CONTAINER_LABEL=de.ressourcenkonflikt.docker-mailserver.autoheal
+  # services:
+  #   autoheal:
+  #     image: willfarrell/autoheal:latest
+  #     restart: always
+  #     networks: []
+  #     volumes:
+  #       - /var/run/docker.sock:/var/run/docker.sock:ro
+  #     environment:
+  #       - AUTOHEAL_CONTAINER_LABEL=de.ressourcenkonflikt.docker-mailserver.autoheal
 
 volumes:
   data-db:

@@ -1,0 +1,13 @@
+---
+services:
+  # Creates self signed tls certificates. Remove if you
+  # use your own.
+  ssl:
+    image: jeboehm/mailserver-ssl:latest
+    build:
+      context: ../../target/ssl
+      cache_from:
+        - type=registry,ref=ghcr.io/jeboehm/mailserver-ssl:buildcache
+    env_file: ../../.env
+    volumes:
+      - data-tls:/media/tls:rw

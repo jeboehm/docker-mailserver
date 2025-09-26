@@ -1,0 +1,13 @@
+---
+services:
+  # Unbound is used to resolve DNS queries for the filter service.
+  unbound:
+    image: jeboehm/mailserver-unbound:latest
+    build:
+      context: ../../target/unbound
+      cache_from:
+        - type=registry,ref=ghcr.io/jeboehm/mailserver-unbound:buildcache
+    restart: on-failure:5
+    security_opt:
+      - no-new-privileges
+    read_only: false
