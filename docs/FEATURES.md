@@ -43,7 +43,7 @@ Extended addresses can be used in Sieve filtering rules for automated email proc
 
 Example Sieve rule for `user1-newsletter@example.com`:
 
-```
+```sieve
 if address :matches :localpart "to" "user1-newsletter*" {
     fileinto "Newsletters";
 }

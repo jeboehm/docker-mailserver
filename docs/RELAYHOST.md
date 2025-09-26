@@ -27,7 +27,7 @@ RELAY_PASSWD_FILE=/etc/postfix/sasl_passwd_ext
 
 Create a credentials file with the following format:
 
-```
+```text
 [hostname]:port username:password
 ```
 
@@ -35,7 +35,7 @@ Create a credentials file with the following format:
 
 For a relayhost at `mailpit` on port `1025` with user `user1` and password `password1`:
 
-```
+```text
 [mailpit]:1025 user1:password1
 ```
 
@@ -140,6 +140,6 @@ RELAY_PASSWD_FILE=/etc/postfix/sasl_passwd_ext
    ```
 
 3. **Look for successful relay messages** in the logs:
-   ```
+   ```text
    postfix/smtp[1234]: 1A2B3C4D5E: to=<recipient@example.com>, relay=mailpit[127.0.0.1]:1025, delay=0.1, delays=0.05/0.01/0.01/0.03, dsn=2.0.0, status=sent (250 2.0.0 Ok: queued as 1A2B3C4D5E)
    ```
