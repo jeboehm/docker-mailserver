@@ -1,0 +1,134 @@
+{
+  "title": "Kubernetes Security Context Validation Schema",
+  "description": "Schema to ensure all Pods and Containers have securityContext specified",
+  "type": "object",
+  "properties": {
+    "apiVersion": {
+      "type": "string"
+    },
+    "kind": {
+      "type": "string",
+      "enum": [
+        "Pod",
+        "Deployment",
+        "StatefulSet",
+        "DaemonSet",
+        "Job",
+        "CronJob"
+      ]
+    },
+    "metadata": {
+      "type": "object"
+    },
+    "spec": {
+      "type": "object",
+      "properties": {
+        "template": {
+          "type": "object",
+          "properties": {
+            "spec": {
+              "type": "object",
+              "properties": {
+                "securityContext": {
+                  "type": "object",
+                  "description": "Pod-level security context is required"
+                },
+                "containers": {
+                  "type": "array",
+                  "minItems": 1,
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      },
+                      "securityContext": {
+                        "type": "object",
+                        "description": "Container-level security context is required"
+                      }
+                    },
+                    "required": ["name", "securityContext"]
+                  }
+                },
+                "initContainers": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      },
+                      "securityContext": {
+                        "type": "object",
+                        "description": "Init container security context is required"
+                      }
+                    },
+                    "required": ["name", "securityContext"]
+                  }
+                }
+              },
+              "required": ["securityContext", "containers"]
+            }
+          },
+          "required": ["spec"]
+        }
+      },
+      "required": ["template"]
+    }
+  },
+  "required": ["apiVersion", "kind", "spec"],
+  "if": {
+    "properties": {
+      "kind": {
+        "const": "Pod"
+      }
+    }
+  },
+  "then": {
+    "properties": {
+      "spec": {
+        "type": "object",
+        "properties": {
+          "securityContext": {
+            "type": "object",
+            "description": "Pod-level security context is required"
+          },
+          "containers": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "securityContext": {
+                  "type": "object",
+                  "description": "Container-level security context is required"
+                }
+              },
+              "required": ["name", "securityContext"]
+            }
+          },
+          "initContainers": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "securityContext": {
+                  "type": "object",
+                  "description": "Init container security context is required"
+                }
+              },
+              "required": ["name", "securityContext"]
+            }
+          }
+        },
+        "required": ["securityContext", "containers"]
+      }
+    }
+  }
+}
