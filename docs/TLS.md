@@ -9,12 +9,14 @@ The `docker-mailserver` uses TLS certificates for secure email communication. Th
 ### MDA Service (Dovecot)
 
 The Mail Delivery Agent expects TLS certificates at:
+
 - **Certificate**: `/etc/dovecot/tls/tls.crt`
 - **Private Key**: `/etc/dovecot/tls/tls.key`
 
 ### MTA Service (Postfix)
 
 The Mail Transfer Agent expects TLS certificates at:
+
 - **Certificate**: `/etc/postfix/tls/tls.crt`
 - **Private Key**: `/etc/postfix/tls/tls.key`
 
@@ -102,6 +104,7 @@ services:
 ### File Permissions
 
 Ensure your certificate files have appropriate permissions:
+
 - **Certificate files**: Readable by the container user (typically `root` or the service user)
 - **Private key files**: Secure permissions (e.g., `600` or `644`)
 
@@ -114,6 +117,7 @@ Ensure your certificate files have appropriate permissions:
 ### Logs
 
 Check service logs for TLS-related errors:
+
 ```bash
 bin/production.sh logs mda
 bin/production.sh logs mta

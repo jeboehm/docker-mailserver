@@ -37,11 +37,13 @@ The mailserver requires two SQL initialization files to be imported into your ex
 #### Option 1: Manual Import
 
 1. **Connect to your MySQL server**:
+
    ```bash
    mysql -h your-mysql-host.example.com -u root -p
    ```
 
 2. **Create the database** (if it doesn't exist):
+
    ```sql
    CREATE DATABASE mailserver CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
    ```
@@ -71,6 +73,7 @@ docker run --rm -v $(pwd)/target/db/rootfs/docker-entrypoint-initdb.d:/sql mysql
 To use an external MySQL database with Docker Compose, remove the database service:
 
 1. **Edit `deploy/compose/db.yaml`**:
+
    ```yaml
    # Comment out or remove the entire db service
    # services:
