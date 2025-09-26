@@ -7,7 +7,7 @@ jobs:
   create_release:
     runs-on: ubuntu-latest
     permissions:
-      contents: write
+      contents: read
     steps:
       - uses: actions/checkout@v4
         with:
@@ -16,9 +16,13 @@ jobs:
         id: changelog
         uses: TriPSs/conventional-changelog-action@v6
         with:
-          github-token: ${{ secrets.GH_RELEASE_PAT }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           skip-on-empty: true
+          skip-git-pull: true
           skip-version-file: true
+          skip-commit: true
+          skip-tag: true
+          output-file: "false"
       - name: Create GitHub Release
         uses: ncipollo/release-action@v1
         if: ${{ steps.changelog.outputs.skipped == 'false' }}
