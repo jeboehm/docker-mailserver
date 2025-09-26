@@ -106,4 +106,5 @@ kubernetes-test:
 	kubectl delete -f test/bats/job.yaml --ignore-not-found
 	kubectl apply -f test/bats/job.yaml
 	kubectl wait --timeout=10m --for=condition=complete job -l app.kubernetes.io/name=test-runner-job
+	kubectl logs --ignore-errors -l app.kubernetes.io/name=test-runner-job
 
