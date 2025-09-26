@@ -12,13 +12,14 @@ The feature appends a configurable delimiter followed by any string to the base 
 
 Alternative names for this feature:
 
+
 - Plus-addressing (traditional `+` delimiter)
 - Subaddressing (RFC 5233 standard)
 - Address tagging
 
 ### Examples
 
-```
+```text
 user1-friends@example.com
 user1-1382@example.com
 user1-newsletter@example.com
@@ -61,13 +62,13 @@ if address :matches :localpart "to" "user1-newsletter*" {
 
 DKIM (DomainKeys Identified Mail) signing provides cryptographic authentication for outgoing emails. This feature signs all outgoing emails from configured domains with a private key, allowing recipients to verify email authenticity through DNS records.
 
-### Implementation
+### Implementation details
 
 DKIM signing is implemented using the Rspamd DKIM module. Each domain requires a separate DKIM key pair consisting of a private key (stored in docker-mailserver) and a public key (published in DNS).
 
 Rspamd verifies the DNS record for each domain before signing outgoing messages. This ensures that only domains with valid DKIM DNS records will have their emails signed, preventing false signatures.
 
-### Configuration
+### Configuration steps
 
 Configure DKIM through the management interface:
 
