@@ -1,0 +1,11 @@
+---
+services:
+  # Responsible for storing users and their aliases. Remove
+  # if you already have a MySQL server.
+  db:
+    image: mysql:lts
+    restart: on-failure:5
+    env_file: ../../.env
+    volumes:
+      - ../../target/db/rootfs/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d:ro
+      - data-db:/var/lib/mysql
