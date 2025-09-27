@@ -1,4 +1,3 @@
----
 services:
   # Incoming spam is (hopefully) filtered by rspamd which runs
   # in the filter service.
