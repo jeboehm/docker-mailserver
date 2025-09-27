@@ -1,9 +1,11 @@
 # docker-mailserver
 
-`docker-mailserver` is inspired by the renowned [ISPMail guide](https://workaround.org/ispmail/).
-This project enables you to run your own email services, giving you independence and freedom from relying on large corporations. It provides a secure, customizable, and feature-rich solution for managing your email infrastructure.
+![Logo](https://raw.githubusercontent.com/jeboehm/docker-mailserver/refs/heads/features/docs/docs/logo/logo.png)
 
-The container images are built either on [Alpine Linux](https://alpinelinux.org) or with the vendor's own base image, always ensuring they remain as lightweight as possible.
+`docker-mailserver` is inspired by the renowned [ISPMail guide](https://workaround.org/ispmail/).
+This project lets you run your own email services, giving you independence from large providers. It is a secure, customizable, and feature-rich solution for managing your email infrastructure.
+
+Container images are built on [Alpine Linux](https://alpinelinux.org) or vendor base images and are kept lightweight.
 
 [Changelog](https://github.com/jeboehm/docker-mailserver/releases)
 [Upgrade Guide](docs/UPGRADE.md)
@@ -20,43 +22,41 @@ The container images are built either on [Alpine Linux](https://alpinelinux.org)
 - DKIM message signing for email authenticity
 - Server-side mail filtering with configurable rules via a web frontend
 - Spam filter training by simply moving emails to or from the junk folder
-- Real-time spam prevention using RBL (Real-Time Blackhole Lists)
-- Greylisting applied only to emails likely to be spam
-- Support for catchall email addresses
+- Real-time spam prevention using RBLs (Real-Time Blackhole Lists)
+- Selective greylisting for likely spam
+- Support for catch-all email addresses
 - Support for send-only accounts restricted from receiving emails
 - Restriction of sender addresses for enhanced security
-- Configurable address extension support using the "-" delimiter
-- Quota management with notifications for quota exceedance
+- Configurable address extensions using the '-' delimiter
+- Quota management with notifications when quotas are exceeded
 - Enforced TLS for secure communication
-- Full-Text Search (FTS) support for efficient message searching
-- Continuous self-monitoring via Docker's healthcheck feature
-- Developed with a focus on high-quality assurance standards
+- Full-text search (FTS) support for efficient message searching
+- Continuous self-monitoring via Docker healthcheck
+- Developed with a strong focus on quality assurance
 
 ## Installation
 
-### with Docker Compose
+### With Docker Compose
 
 1. Run `git clone git@github.com:jeboehm/docker-mailserver.git`
 2. Copy the file `.env.dist` to `.env` and change the variables in it according to your needs.
    The variables are described in the [docs](docs/ENVIRONMENT_VARIABLES.md).
 3. Run `bin/production.sh pull` to download the images.
 4. Run `bin/production.sh up -d` to start the services.
-5. After a few seconds you can access the services listed in the section [Ports overview](#ports-overview).
+5. After a few seconds, you can access the services listed in the section [Ports overview](#ports-overview).
 6. Create your first email address and an admin user by running `bin/production.sh run --rm web setup.sh`.
    The wizard will ask you a few questions to set everything up.
-7. Now you can login to the management interface with your new account credentials.
+7. Now you can log in to the management interface with your new account credentials.
 
-### on Kubernetes / k8s
+### On Kubernetes (K8s)
 
-Kubernetes installation is now a first class citizen. You can use the `kustomization.yaml` file to deploy the mailserver to your Kubernetes cluster.
+Kubernetes installation is a first-class citizen. You can use the `kustomization.yaml` file to deploy the mailserver to your Kubernetes cluster.
 
-**Important:** Installing on Kubernetes requires an existing MySQL-compatible database (for example MySQL or Percona
-XtraDB). The provided kustomization does not provision a database. Configure the database connection via your `.env`
-and supply credentials as Kubernetes Secrets before applying the manifests. See the
+**Important:** Installing on Kubernetes requires an existing MySQL-compatible database (for example, MySQL or Percona XtraDB).
+The provided kustomization does not provision a database. Configure the database connection in your `.env` and supply
+credentials as Kubernetes Secrets before applying the manifests. See the
 [Kustomize External Database and HTTPS Ingress Example](docs/example-configs/kustomize/external-db-and-https-ingress/README.md)
-and the Wiki guide
-[Use another MySQL instance](https://github.com/jeboehm/docker-mailserver/wiki/Howto:-Use-Another-MySQL-Instance) for
-details.
+and the documentation [Use another MySQL instance](docs/EXTERNAL_MYSQL.md) for details.
 
 1. Run `git clone git@github.com:jeboehm/docker-mailserver.git`
 2. Copy the file `.env.dist` to `.env` and change the variables in it according to your needs.
@@ -68,17 +68,17 @@ details.
 
 ## Ports overview
 
-| Service                           | Address                      |
-| --------------------------------- | ---------------------------- |
-| POP3 (starttls needed)            | 127.0.0.1:110                |
-| POP3S                             | 127.0.0.1:995                |
-| IMAP (starttls needed)            | 127.0.0.1:143                |
-| IMAPS                             | 127.0.0.1:993                |
-| SMTP                              | 127.0.0.1:25                 |
-| Mail Submission (starttls needed) | 127.0.0.1:587                |
-| Management Interface              | http://127.0.0.1:81/manager/ |
-| Webmail                           | http://127.0.0.1:81/webmail/ |
-| Rspamd Webinterface               | http://127.0.0.1:81/rspamd/  |
+| Service                             | Address                      |
+| ----------------------------------- | ---------------------------- |
+| POP3 (STARTTLS required)            | 127.0.0.1:110                |
+| POP3S                               | 127.0.0.1:995                |
+| IMAP (STARTTLS required)            | 127.0.0.1:143                |
+| IMAPS                               | 127.0.0.1:993                |
+| SMTP                                | 127.0.0.1:25                 |
+| Mail Submission (STARTTLS required) | 127.0.0.1:587                |
+| Management Interface                | http://127.0.0.1:81/manager/ |
+| Webmail                             | http://127.0.0.1:81/webmail/ |
+| Rspamd web interface                | http://127.0.0.1:81/rspamd/  |
 
 ## Screenshots
 
@@ -98,33 +98,16 @@ details.
 
 - [Upgrade Guide](docs/UPGRADE.md)
 - [Environment Variables](docs/ENVIRONMENT_VARIABLES.md)
+- [Features](docs/FEATURES.md)
+- [Service Architecture](docs/ARCHITECTURE.md)
+- [Roundcube Configuration](docs/ROUNDCUBE.md)
+- [TLS Configuration](docs/TLS.md)
+- [External MySQL](docs/EXTERNAL_MYSQL.md)
+- [Relayhost Configuration](docs/RELAYHOST.md)
 - Installation:
   - [Kustomize External Database and HTTPS Ingress Example](docs/example-configs/kustomize/external-db-and-https-ingress/README.md)
   - [Compose Traefik Reverse Proxy Example](docs/example-configs/compose/traefik-reverse-proxy/README.md)
 - [Developer Guide](docs/DEVELOPMENT.md)
-- [Service Architecture](docs/ARCHITECTURE.md)
-
-### Wiki (outdated, will be moved to the docs directory)
-
-- Advanced setup:
-  - [Use own TLS certficates](https://github.com/jeboehm/docker-mailserver/wiki/Howto:-Use-Your-Own-TLS-Certificates)
-  - [Use another MySQL instance](https://github.com/jeboehm/docker-mailserver/wiki/Howto:-Use-Another-MySQL-Instance)
-  - [Use the web service behind nginx-proxy](https://github.com/jeboehm/docker-mailserver/wiki/Howto:-Use-The-Web-Service-Behind-nginx-proxy)
-  - [Container health monitoring](https://github.com/jeboehm/docker-mailserver/wiki/Howto:-Container-Health-Monitoring)
-  - [Disable malware scanning](https://github.com/jeboehm/docker-mailserver/wiki/Howto:-Disable-Malware-Scanning)
-  - [Advanced malware signatures](https://github.com/jeboehm/docker-mailserver/wiki/Howto:-Advanced-Malware-Signatures)
-  - [Use an external mail relay](https://github.com/jeboehm/docker-mailserver/wiki/Howto:-Use-External-Mail-Relay-For-Sending-Mails)
-  - [Add plugins to Roundcube](https://github.com/jeboehm/docker-mailserver/wiki/Howto:-Add-Plugins-To-Roundcube-Webmail)
-- Features:
-  - [Local address extension](https://github.com/jeboehm/docker-mailserver/wiki/Feature:-Local-Address-Extension)
-  - [Sender policy framework, SPF](<https://github.com/jeboehm/docker-mailserver/wiki/Feature:-Sender-Policy-Framework-(SPF)>)
-  - [DKIM](https://github.com/jeboehm/docker-mailserver/wiki/Feature:-DKIM)
-- Technical details:
-  - [Data storage](<https://github.com/jeboehm/docker-mailserver/wiki/Info:-Volume-Management-(Where-Is-My-Data%3F)>)
-  - [Filtering](https://github.com/jeboehm/docker-mailserver/wiki/Info:-Mail-Filtering)
-  - [Component overview](https://github.com/jeboehm/docker-mailserver/wiki/Info:-Component-Overview)
-  - [DockerHub images](https://github.com/jeboehm/docker-mailserver/wiki/Info:-Images-On-DockerHub)
-- [Troubleshooting](https://github.com/jeboehm/docker-mailserver/wiki/Troubleshooting)
 
 ## Links
 

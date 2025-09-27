@@ -1,4 +1,3 @@
----
 services:
   # Unbound is used to resolve DNS queries for the filter service.
   unbound:

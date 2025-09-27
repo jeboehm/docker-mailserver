@@ -1,4 +1,3 @@
----
 services:
   # The Mail Delivery Agent (Dovecot) is responsible for storing
   # incoming mail into a users mailbox and also delivers them

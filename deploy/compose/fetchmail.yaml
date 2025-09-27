@@ -1,4 +1,3 @@
----
 services:
   # Fetchmail is used to fetch emails from external servers
   # and deliver them to the local mail server. Can be removed
