@@ -104,6 +104,7 @@ and the documentation [Use another MySQL instance](docs/EXTERNAL_MYSQL.md) for d
 - [TLS Configuration](docs/TLS.md)
 - [External MySQL](docs/EXTERNAL_MYSQL.md)
 - [Relayhost Configuration](docs/RELAYHOST.md)
+- [PHP Sessions](docs/PHP_SESSIONS.md)
 - Installation:
   - [Kustomize External Database and HTTPS Ingress Example](docs/example-configs/kustomize/external-db-and-https-ingress/README.md)
   - [Compose Traefik Reverse Proxy Example](docs/example-configs/compose/traefik-reverse-proxy/README.md)

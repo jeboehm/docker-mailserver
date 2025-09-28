@@ -49,7 +49,8 @@ ENV MYSQL_HOST=db \
     WAITSTART_TIMEOUT=1m \
     ADMIN_VER=${ADMIN_VER} \
     DATABASE_URL="mysql://%env(MYSQL_USER)%:%env(MYSQL_PASSWORD)%@%env(MYSQL_HOST)%:%env(MYSQL_PORT)%/%env(MYSQL_DATABASE)%?serverVersion=8.4" \
-    COMPOSER_ALLOW_SUPERUSER=1
+    COMPOSER_ALLOW_SUPERUSER=1 \
+    PHP_SESSION_SAVE_HANDLER=redis
 
 ARG RC_PLUGINS=""
 COPY --from=docker.io/roundcube/roundcubemail:1.6.11-fpm@sha256:c7ca21fc0d617e1b866f112250a2b9638a0e237d5a0b345c7b74258ef8fba704 /usr/src/roundcubemail/ /var/www/html/webmail/
