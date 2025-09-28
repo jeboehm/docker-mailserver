@@ -17,7 +17,8 @@ RUN curl -sSLf \
         pdo_mysql \
         redis \
         zip && \
-    rm /usr/local/bin/install-php-extensions
+    rm /usr/local/bin/install-php-extensions && \
+    cp /usr/local/etc/php/php.ini-production /usr/local/etc/php/php.ini
 
 RUN apk add --no-cache \
         nginx \
@@ -47,7 +48,6 @@ ENV MYSQL_HOST=db \
     TRUSTED_PROXIES=172.16.0.0/12 \
     DOCTRINE_DEPRECATIONS=track \
     WAITSTART_TIMEOUT=1m \
-    ADMIN_VER=${ADMIN_VER} \
     DATABASE_URL="mysql://%env(MYSQL_USER)%:%env(MYSQL_PASSWORD)%@%env(MYSQL_HOST)%:%env(MYSQL_PORT)%/%env(MYSQL_DATABASE)%?serverVersion=8.4" \
     COMPOSER_ALLOW_SUPERUSER=1 \
     PHP_SESSION_SAVE_HANDLER=redis
