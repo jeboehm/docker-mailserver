@@ -1,6 +1,6 @@
 # docker-mailserver
 
-![Logo](https://raw.githubusercontent.com/jeboehm/docker-mailserver/refs/heads/features/docs/docs/logo/logo.png)
+![Logo](/docs/logo/logo.png?raw=true)
 
 `docker-mailserver` is inspired by the renowned [ISPMail guide](https://workaround.org/ispmail/).
 This project lets you run your own email services, giving you independence from large providers. It is a secure, customizable, and feature-rich solution for managing your email infrastructure.
