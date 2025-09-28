@@ -1,4 +1,4 @@
-FROM php:8.4-fpm-alpine@sha256:5f98f40cfce3e24705ed0ebddc04f9d366d4d41d438947db07cba1c276db7772
+FROM php:8.4-fpm-alpine@sha256:c4e122105b22e71ca28d5db60223a331d77473f52ec6a1d7d69c6d612ef9b2c2
 
 LABEL maintainer="https://github.com/jeboehm/docker-mailserver"
 LABEL vendor="https://github.com/jeboehm/docker-mailserver"
