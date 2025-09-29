@@ -49,9 +49,10 @@ spec:
               containerPort: 9000
               protocol: TCP
           livenessProbe:
-            tcpSocket:
-              port: php-fpm
-            initialDelaySeconds: 30
+            exec:
+              command:
+                - /usr/local/bin/healthcheck.sh
+            initialDelaySeconds: 45
             periodSeconds: 30
             timeoutSeconds: 10
             failureThreshold: 3

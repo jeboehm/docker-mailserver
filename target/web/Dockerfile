@@ -95,6 +95,6 @@ RUN chown -R www-data /var/www/html/autoconfig /etc/nginx /var/lib/nginx
 
 USER www-data
 
-HEALTHCHECK CMD curl -s http://127.0.0.1:8080/login | grep docker-mailserver
+HEALTHCHECK CMD /usr/local/bin/healthcheck.sh
 EXPOSE 8080
 CMD ["/usr/local/bin/entrypoint.sh"]

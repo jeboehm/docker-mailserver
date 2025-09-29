@@ -10,7 +10,13 @@ ENV REDIS_HOST=redis \
     CONTROLLER_PASSWORD= \
     RSPAMD_DNS_SERVERS="round-robin:unbound:5353"
 
+USER root
 COPY --chown=root:root rootfs/ /
+RUN apt-get update && \
+    apt-get install --no-install-recommends -y netcat-openbsd && \
+    rm -rf /var/lib/apt/lists/*
 
-HEALTHCHECK CMD rspamadm control stat || exit 1
+USER _rspamd
+
+HEALTHCHECK CMD /usr/local/bin/healthcheck.sh
 CMD ["/usr/local/bin/entrypoint.sh"]

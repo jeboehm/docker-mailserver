@@ -50,11 +50,10 @@ spec:
               containerPort: 11332
               protocol: TCP
           livenessProbe:
-            httpGet:
-              path: /
-              port: controller
-              scheme: HTTP
-            initialDelaySeconds: 30
+            exec:
+              command:
+                - /usr/local/bin/healthcheck.sh
+            initialDelaySeconds: 45
             periodSeconds: 30
             timeoutSeconds: 10
             failureThreshold: 3
