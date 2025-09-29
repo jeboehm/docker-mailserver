@@ -27,3 +27,5 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
           repository: ${{ matrix.repository }}
+          enable-url-completion: true
+          short-description: Docker Mailserver based on the famous ISPMail guide
