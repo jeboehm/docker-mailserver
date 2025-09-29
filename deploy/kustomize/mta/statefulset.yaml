@@ -53,10 +53,8 @@ spec:
           livenessProbe:
             exec:
               command:
-                - sh
-                - -c
-                - nc -w 1 127.0.0.1 25 | grep -qE "^220.*ESMTP Postfix"
-            initialDelaySeconds: 30
+                - /usr/local/bin/healthcheck.sh
+            initialDelaySeconds: 45
             periodSeconds: 30
             timeoutSeconds: 10
             failureThreshold: 3

@@ -87,3 +87,10 @@ when you use Kubernetes or decide to rename services somehow.
 ### mailserver-admin Configuration
 
 See [mailserver-admin](https://github.com/jeboehm/mailserver-admin?tab=readme-ov-file#environment-variables) for more information.
+
+### PHP Configuration
+
+| Variable                   | Default                                                    | Description          |
+| -------------------------- | ---------------------------------------------------------- | -------------------- |
+| `PHP_SESSION_SAVE_HANDLER` | `redis`                                                    | Session save handler |
+| `PHP_SESSION_SAVE_PATH`    | `tcp://${REDIS_HOST}:${REDIS_PORT}?auth=${REDIS_PASSWORD}` | Session save path    |

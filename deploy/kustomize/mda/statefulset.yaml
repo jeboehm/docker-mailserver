@@ -68,10 +68,8 @@ spec:
           livenessProbe:
             exec:
               command:
-                - doveadm
-                - service
-                - status
-            initialDelaySeconds: 30
+                - /usr/local/bin/healthcheck.sh
+            initialDelaySeconds: 45
             periodSeconds: 30
             timeoutSeconds: 10
             failureThreshold: 3

@@ -38,6 +38,6 @@ RUN mv /etc/dovecot/conf.d/10-ssl.conf /tmp/10-ssl.conf && \
 USER vmail
 WORKDIR /
 
-HEALTHCHECK CMD doveadm service status || exit 1
+HEALTHCHECK CMD /usr/local/bin/healthcheck.sh
 
 CMD ["/usr/local/bin/entrypoint.sh"]

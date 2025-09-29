@@ -97,17 +97,18 @@ and the documentation [Use another MySQL instance](docs/EXTERNAL_MYSQL.md) for d
 ## Documentation
 
 - [Upgrade Guide](docs/UPGRADE.md)
-- [Environment Variables](docs/ENVIRONMENT_VARIABLES.md)
 - [Features](docs/FEATURES.md)
 - [Service Architecture](docs/ARCHITECTURE.md)
-- [Roundcube Configuration](docs/ROUNDCUBE.md)
-- [TLS Configuration](docs/TLS.md)
-- [External MySQL](docs/EXTERNAL_MYSQL.md)
-- [Relayhost Configuration](docs/RELAYHOST.md)
-- [PHP Sessions](docs/PHP_SESSIONS.md)
 - Installation:
   - [Kustomize External Database and HTTPS Ingress Example](docs/example-configs/kustomize/external-db-and-https-ingress/README.md)
   - [Compose Traefik Reverse Proxy Example](docs/example-configs/compose/traefik-reverse-proxy/README.md)
+- Configuration:
+  - [Environment Variables](docs/ENVIRONMENT_VARIABLES.md)
+  - [Roundcube](docs/ROUNDCUBE.md)
+  - [TLS](docs/TLS.md)
+  - [External MySQL](docs/EXTERNAL_MYSQL.md)
+  - [External relay host](docs/RELAYHOST.md)
+  - [PHP Sessions](docs/PHP_SESSIONS.md)
 - [Developer Guide](docs/DEVELOPMENT.md)
 
 ## Links

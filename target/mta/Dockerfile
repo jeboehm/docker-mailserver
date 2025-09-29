@@ -83,5 +83,5 @@ COPY rootfs/ /
 EXPOSE 25 587
 VOLUME ["/var/spool/postfix"]
 
-HEALTHCHECK CMD postfix status || exit 1
+HEALTHCHECK CMD /usr/local/bin/healthcheck.sh
 CMD ["/usr/local/bin/entrypoint.sh"]
