@@ -15,9 +15,9 @@ jobs:
           - jeboehm/mailserver-filter
           - jeboehm/mailserver-mda
           - jeboehm/mailserver-mta
-          - jeboehn/mailserver-web
-          - jeboehn/mailserver-unbound
-          - jeboehn/mailserver-ssl
+          - jeboehm/mailserver-web
+          - jeboehm/mailserver-unbound
+          - jeboehm/mailserver-ssl
     steps:
       - name: Checkout
         uses: actions/checkout@v5
