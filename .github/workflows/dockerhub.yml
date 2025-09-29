@@ -1,0 +1,29 @@
+name: Sync Dockerhub Readme
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - README.md
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        repository:
+          - jeboehm/mailserver-filter
+          - jeboehm/mailserver-mda
+          - jeboehm/mailserver-mta
+          - jeboehn/mailserver-web
+          - jeboehn/mailserver-unbound
+          - jeboehn/mailserver-ssl
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+      - name: Docker Hub Description
+        uses: peter-evans/dockerhub-description@v4
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          repository: ${{ matrix.repository }}
