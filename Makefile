@@ -108,3 +108,24 @@ kubernetes-test:
 	kubectl wait --timeout=10m --for=condition=complete job -l app.kubernetes.io/name=test-runner-job
 	kubectl logs --ignore-errors -l app.kubernetes.io/name=test-runner-job
 
+.PHONY: kind-provision
+kind-provision:
+	kind create cluster --name mail --wait 60s
+
+.PHONY: kind-load
+kind-load: build
+	kind load docker-image jeboehm/mailserver-mda:latest
+	kind load docker-image jeboehm/mailserver-mta:latest
+	kind load docker-image jeboehm/mailserver-filter:latest
+	kind load docker-image jeboehm/mailserver-web:latest
+	kind load docker-image jeboehm/mailserver-unbound:latest
+
+.PHONY: kind-up
+kind-up:
+	kubectl apply -k .
+
+.PHONY: kind-test
+kind-test:
+	kubectl delete -f test/bats/job.yaml --ignore-not-found
+	kubectl apply -f test/bats/job.yaml
+
