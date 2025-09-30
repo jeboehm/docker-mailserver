@@ -9,4 +9,3 @@ resources:
   - redis/
   - unbound/
   - web/
-  - ingress/traefik/

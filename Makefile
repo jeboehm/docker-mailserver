@@ -74,12 +74,12 @@ kubernetes-kind-images:
 	docker tag docker-mailserver-test jeboehm/mailserver-test:latest
 	kind load docker-image jeboehm/mailserver-test:latest
 
-.PHONY: kubernetes-mysql
-kubernetes-mysql:
-	docker run -d --name db --network kind --env-file .env \
-		-v ./target/db/rootfs/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d:ro \
-		--env-file .env \
-		mysql:lts
+
+.PHONY: kind-deploy-helper
+kind-deploy-helper:
+	kubectl create namespace mail --dry-run=client -o yaml | kubectl apply -f -
+	kubectl create namespace traefik --dry-run=client -o yaml | kubectl apply -f -
+	kubectl apply -k test/k8s
 
 .PHONY: kubernetes-tls
 kubernetes-tls:

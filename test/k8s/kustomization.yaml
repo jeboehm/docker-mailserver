@@ -1,0 +1,58 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: mail
+generatorOptions:
+  disableNameSuffixHash: true
+configMapGenerator:
+  - name: mysql-initdb
+    files:
+      - ../../target/db/rootfs/docker-entrypoint-initdb.d/001_mailserver.sql
+      - ../../target/db/rootfs/docker-entrypoint-initdb.d/002_webmail.sql
+helmCharts:
+  - name: traefik
+    repo: https://traefik.github.io/charts
+    version: 28.0.0
+    releaseName: traefik
+    namespace: traefik
+    includeCRDs: true
+    valuesInline:
+      deployment:
+        replicas: 1
+      service:
+        enabled: true
+      providers:
+        kubernetesCRD:
+          enabled: true
+        kubernetesIngress:
+          enabled: true
+      ports:
+        web:
+          port: 80
+          expose: true
+        websecure:
+          port: 443
+          expose: true
+        smtp:
+          port: 25
+          expose: true
+          entryPoint: smtp
+        submission:
+          port: 587
+          expose: true
+          entryPoint: submission
+        imap:
+          port: 143
+          expose: true
+          entryPoint: imap
+        imaps:
+          port: 993
+          expose: true
+          entryPoint: imaps
+      additionalArguments:
+        - --entrypoints.smtp.address=:25/tcp
+        - --entrypoints.submission.address=:587/tcp
+        - --entrypoints.imap.address=:143/tcp
+        - --entrypoints.imaps.address=:993/tcp
+resources:
+  - mysql.yaml
+  - mailpit.yaml
