@@ -1,0 +1,45 @@
+name: create-release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version tag to set (e.g., v1.2.3)"
+        required: true
+        type: string
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  prepare-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Update image tags
+        run: |
+          python3 bin/update_image_tags.py "${{ inputs.version }}" --verbose
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: chore(release): update image tags to ${{ inputs.version }}
+          title: chore(release): update image tags to ${{ inputs.version }}
+          body: |
+            This PR updates image tags from 'latest' to '${{ inputs.version }}' in:
+            - `docker-compose.yml` and `deploy/compose/*.yaml`
+            - root `kustomization.yaml` (`images[].newTag`)
+            - `README.md` files (for `jeboehm/*` and `ghcr.io/jeboehm/*` references)
+          branch: release/${{ inputs.version }}
+          base: main
+          draft: false
+

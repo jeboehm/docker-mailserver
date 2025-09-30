@@ -37,11 +37,10 @@ def find_target_files(repo_root: Path) -> List[Path]:
     # compose fragments
     targets.extend(sorted((repo_root / "deploy" / "compose").glob("*.yaml")))
 
-    # root kustomize files
-    for name in ("kustomization.yaml", "kustomize.yaml"):
-        p = repo_root / name
-        if p.exists():
-            targets.append(p)
+    # root kustomization file only
+    p = repo_root / "kustomization.yaml"
+    if p.exists():
+        targets.append(p)
 
     # README.md files anywhere
     targets.extend(sorted(repo_root.glob("**/README.md")))
@@ -131,7 +130,7 @@ def process_file(path: Path, new_tag: str) -> Tuple[int, int]:
         total_replacements += c
         content = new_content
 
-    if path.name in {"kustomization.yaml", "kustomize.yaml"} and path.parent == REPO_ROOT:
+    if path.name == "kustomization.yaml" and path.parent == REPO_ROOT:
         new_content, c = replace_in_kustomization(content, new_tag)
         total_replacements += c
         content = new_content
@@ -169,7 +168,7 @@ def main(argv: Iterable[str] | None = None) -> int:
             new_content, c = replace_in_compose_yaml(new_content, new_tag)
             replacements += c
 
-        if path.name in {"kustomization.yaml", "kustomize.yaml"} and path.parent == REPO_ROOT:
+        if path.name == "kustomization.yaml" and path.parent == REPO_ROOT:
             new_content, c = replace_in_kustomization(new_content, new_tag)
             replacements += c
 
