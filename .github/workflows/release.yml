@@ -24,6 +24,31 @@ jobs:
           skip-commit: true
           skip-tag: true
           output-file: "false"
+      - uses: actions/setup-python@v5
+        if: ${{ steps.changelog.outputs.skipped == 'false' }}
+        with:
+          python-version: "3.11"
+      - uses: fregante/setup-git-token@v1
+        if: ${{ steps.changelog.outputs.skipped == 'false' }}
+        with:
+          token: ${{ secrets.GH_RELEASE_PAT }}
+      - name: Update image tags in repository files
+        if: ${{ steps.changelog.outputs.skipped == 'false' }}
+        run: |
+          git checkout --detach
+          python3 .github/bin/update_image_tags.py "${{ steps.changelog.outputs.tag }}" --verbose
+      - name: Create commit and push tag only
+        if: ${{ steps.changelog.outputs.skipped == 'false' }}
+        run: |
+          CHANGES=$(git status --porcelain)
+          if ! [ -n "$CHANGES" ]; then
+            echo "No changes to commit"
+            exit 1
+          fi
+          git add -A
+          git commit -m "chore(release): update image references to ${{ steps.changelog.outputs.tag }}"
+          git tag -a "${{ steps.changelog.outputs.tag }}" -m "Release ${{ steps.changelog.outputs.version }}"
+          git push origin "${{ steps.changelog.outputs.tag }}"
       - name: Create GitHub Release
         uses: ncipollo/release-action@b7eabc95ff50cbeeedec83973935c8f306dfcd0b # v1
         if: ${{ steps.changelog.outputs.skipped == 'false' }}
