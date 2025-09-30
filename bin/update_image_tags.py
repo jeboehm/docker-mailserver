@@ -113,9 +113,10 @@ def replace_in_readme(content: str, new_tag: str) -> Tuple[str, int]:
     We target:
       - jeboehm/<name>:latest
       - ghcr.io/jeboehm/<name>:latest
+      - docker.io/jeboehm/<name>:latest
     """
     pattern = re.compile(
-        r"(?P<name>\b(?:ghcr\.io/)?jeboehm/[\w\-\.]+):latest\b"
+        r"(?P<name>\b(?:(?:ghcr|docker)\.io/)?jeboehm/[\w\-\.]+):latest\b"
     )
     new_content, count = pattern.subn(lambda m: f"{m.group('name')}:{new_tag}", content)
     return new_content, count
