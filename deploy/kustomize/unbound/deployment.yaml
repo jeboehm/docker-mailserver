@@ -38,6 +38,8 @@ spec:
             capabilities:
               drop:
                 - ALL
+              add:
+                - NET_BIND_SERVICE
           ports:
             - name: dns
               containerPort: 53
@@ -66,10 +68,6 @@ spec:
             requests:
               cpu: 50m
               memory: 32Mi
-          securityContext:
-            capabilities:
-              add:
-                - NET_BIND_SERVICE
       securityContext:
         fsGroup: 101
         fsGroupChangePolicy: OnRootMismatch
