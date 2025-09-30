@@ -7,7 +7,7 @@ jobs:
   create_release:
     runs-on: ubuntu-latest
     permissions:
-      contents: write
+      contents: read
     steps:
       - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
         with:
@@ -28,6 +28,12 @@ jobs:
         if: ${{ steps.changelog.outputs.skipped == 'false' }}
         with:
           python-version: "3.11"
+      - uses: fregante/setup-git-token@v1
+        if: ${{ steps.changelog.outputs.skipped == 'false' }}
+        with:
+          token: ${{ secrets.GH_RELEASE_PAT }}
+      - uses: fregante/setup-git-user@v2
+        if: ${{ steps.changelog.outputs.skipped == 'false' }}
       - name: Update image tags in repository files
         if: ${{ steps.changelog.outputs.skipped == 'false' }}
         run: |
@@ -36,9 +42,6 @@ jobs:
       - name: Create commit and push tag only
         if: ${{ steps.changelog.outputs.skipped == 'false' }}
         run: |
-          set -e
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           CHANGES=$(git status --porcelain)
           if [ -n "$CHANGES" ]; then
             git add -A
