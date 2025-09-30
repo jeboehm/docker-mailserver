@@ -4,11 +4,11 @@ Update Docker image tags from :latest to a provided version across selected file
 
 Targets:
 - docker-compose.yml and compose fragments under deploy/compose/*.yaml
-- kustomization.yaml or kustomize.yaml at repo root (updates images[].newTag)
+- kustomization.yaml at repo root (updates images[].newTag)
 - Any README.md files (only project image references: jeboehm/* or ghcr.io/jeboehm/*)
 
 Usage:
-  bin/update_image_tags.py <new_tag> [--dry-run] [--verbose]
+  .github/bin/update_image_tags.py <new_tag> [--dry-run] [--verbose]
 
 Notes:
 - Skips commented lines in YAML when updating image: ...:latest
@@ -23,7 +23,8 @@ from pathlib import Path
 from typing import Iterable, List, Tuple
 
 
-REPO_ROOT = Path(__file__).resolve().parents[1]
+# When located in .github/bin, the repository root is two directories up
+REPO_ROOT = Path(__file__).resolve().parents[2]
 
 
 def find_target_files(repo_root: Path) -> List[Path]:
@@ -120,31 +121,6 @@ def replace_in_readme(content: str, new_tag: str) -> Tuple[str, int]:
     )
     new_content, count = pattern.subn(lambda m: f"{m.group('name')}:{new_tag}", content)
     return new_content, count
-
-
-def process_file(path: Path, new_tag: str) -> Tuple[int, int]:
-    content = path.read_text(encoding="utf-8")
-    total_replacements = 0
-
-    if path.name in {"docker-compose.yml"} or path.match("**/deploy/compose/*.yaml"):
-        new_content, c = replace_in_compose_yaml(content, new_tag)
-        total_replacements += c
-        content = new_content
-
-    if path.name == "kustomization.yaml" and path.parent == REPO_ROOT:
-        new_content, c = replace_in_kustomization(content, new_tag)
-        total_replacements += c
-        content = new_content
-
-    if path.name == "README.md":
-        new_content, c = replace_in_readme(content, new_tag)
-        total_replacements += c
-        content = new_content
-
-    if total_replacements > 0:
-        path.write_text(content, encoding="utf-8")
-
-    return total_replacements, len(content)
 
 
 def main(argv: Iterable[str] | None = None) -> int:
