@@ -22,6 +22,8 @@ metadata:
 spec:
   entryPoints:
     - imaps
+  tls:
+    passthrough: true
   routes:
     - match: HostSNI(`*`)
       services:
