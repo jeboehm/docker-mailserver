@@ -7,7 +7,8 @@ jobs:
   create_release:
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: write
+      pull-requests: write
     steps:
       - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
         with:
@@ -24,6 +25,30 @@ jobs:
           skip-commit: true
           skip-tag: true
           output-file: "false"
+      - name: Set up Python
+        if: ${{ steps.changelog.outputs.skipped == 'false' }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Update image tags in repo files
+        if: ${{ steps.changelog.outputs.skipped == 'false' }}
+        run: |
+          python3 bin/update_image_tags.py "${{ steps.changelog.outputs.tag }}" --verbose
+      - name: Create Pull Request for versioned tags
+        if: ${{ steps.changelog.outputs.skipped == 'false' }}
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: chore(release): update image tags to ${{ steps.changelog.outputs.tag }}
+          title: chore(release): update image tags to ${{ steps.changelog.outputs.tag }}
+          body: |
+            This PR updates image tags from 'latest' to '${{ steps.changelog.outputs.tag }}' in:
+            - `docker-compose.yml` and `deploy/compose/*.yaml`
+            - root `kustomization.yaml` (`images[].newTag`)
+            - `README.md` files (for `jeboehm/*`, `docker.io/jeboehm/*`, and `ghcr.io/jeboehm/*` references)
+          branch: release/update-tags-${{ steps.changelog.outputs.tag }}
+          base: main
+          draft: false
       - name: Create GitHub Release
         uses: ncipollo/release-action@b7eabc95ff50cbeeedec83973935c8f306dfcd0b # v1
         if: ${{ steps.changelog.outputs.skipped == 'false' }}
