@@ -24,18 +24,14 @@ jobs:
           skip-commit: true
           skip-tag: true
           output-file: "false"
-      - name: Set up Python
+      - uses: actions/setup-python@v5
         if: ${{ steps.changelog.outputs.skipped == 'false' }}
-        uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
-      - name: Detach HEAD to avoid changing main
+          python-version: "3.11"
+      - name: Update image tags in repository files
         if: ${{ steps.changelog.outputs.skipped == 'false' }}
         run: |
           git checkout --detach
-      - name: Update image tags in repo files
-        if: ${{ steps.changelog.outputs.skipped == 'false' }}
-        run: |
           python3 .github/bin/update_image_tags.py "${{ steps.changelog.outputs.tag }}" --verbose
       - name: Create commit and push tag only
         if: ${{ steps.changelog.outputs.skipped == 'false' }}

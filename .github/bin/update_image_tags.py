@@ -20,14 +20,27 @@ from __future__ import annotations
 import argparse
 import re
 from pathlib import Path
-from typing import Iterable, List, Tuple
-
+from typing import List, Sequence, Tuple
 
 # When located in .github/bin, the repository root is two directories up
 REPO_ROOT = Path(__file__).resolve().parents[2]
 
 
 def find_target_files(repo_root: Path) -> List[Path]:
+    """Find all target files to update with new image tags.
+
+    Searches for:
+    - docker-compose.yml in the repo root
+    - All .yaml files in deploy/compose/
+    - kustomization.yaml in the repo root
+    - All README.md files throughout the repository
+
+    Args:
+        repo_root: Path to the repository root directory
+
+    Returns:
+        List of unique file paths that should be processed
+    """
     targets: List[Path] = []
 
     # docker-compose root file
@@ -94,7 +107,11 @@ def replace_in_kustomization(content: str, new_tag: str) -> Tuple[str, int]:
 
         if in_images_block:
             current_indent = len(line) - len(line.lstrip(" \t"))
-            if images_indent is not None and current_indent <= images_indent and line.strip():
+            if (
+                images_indent is not None
+                and current_indent <= images_indent
+                and line.strip()
+            ):
                 # Left the images block
                 in_images_block = False
                 images_indent = None
@@ -123,10 +140,27 @@ def replace_in_readme(content: str, new_tag: str) -> Tuple[str, int]:
     return new_content, count
 
 
-def main(argv: Iterable[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description="Update :latest image tags to a specific version")
+def main(argv: Sequence[str] | None = None) -> int:
+    """Main entry point for updating Docker image tags.
+
+    Processes command line arguments and updates image tags from :latest
+    to the specified version across target files in the repository.
+
+    Args:
+        argv: Command line arguments. If None, uses sys.argv
+
+    Returns:
+        Exit code (0 for success)
+    """
+    parser = argparse.ArgumentParser(
+        description="Update :latest image tags to a specific version"
+    )
     parser.add_argument("new_tag", help="New tag to set (e.g., v1.2.3)")
-    parser.add_argument("--dry-run", action="store_true", help="Show what would change without writing files")
+    parser.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="Show what would change without writing files",
+    )
     parser.add_argument("--verbose", action="store_true", help="Print per-file details")
     args = parser.parse_args(argv)
 
@@ -141,7 +175,9 @@ def main(argv: Iterable[str] | None = None) -> int:
         replacements = 0
         new_content = original
 
-        if path.name in {"docker-compose.yml"} or path.match("**/deploy/compose/*.yaml"):
+        if path.name in {"docker-compose.yml"} or path.match(
+            "**/deploy/compose/*.yaml"
+        ):
             new_content, c = replace_in_compose_yaml(new_content, new_tag)
             replacements += c
 
@@ -173,4 +209,3 @@ def main(argv: Iterable[str] | None = None) -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-
