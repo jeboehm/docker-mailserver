@@ -40,10 +40,10 @@ spec:
                 - ALL
           ports:
             - name: dns
-              containerPort: 5353
+              containerPort: 53
               protocol: UDP
             - name: dns-tcp
-              containerPort: 5353
+              containerPort: 53
               protocol: TCP
           livenessProbe:
             exec:
@@ -66,6 +66,10 @@ spec:
             requests:
               cpu: 50m
               memory: 32Mi
+          securityContext:
+            capabilities:
+              add:
+                - NET_BIND_SERVICE
       securityContext:
         fsGroup: 101
         fsGroupChangePolicy: OnRootMismatch

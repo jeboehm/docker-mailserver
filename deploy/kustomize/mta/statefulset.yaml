@@ -135,6 +135,8 @@ spec:
               # important! required for pod lookup in postfix
               postconf smtp_host_lookup=native
               postconf lmtp_host_lookup=native
+              # ensure no leftover resolver override from earlier versions
+              rm -f /var/spool/postfix/etc/resolv.conf || true
           resources:
             requests:
               cpu: 50m
