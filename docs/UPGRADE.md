@@ -4,6 +4,14 @@ Upgrade guide for docker-mailserver.
 
 Before upgrading, ensure you have updated `docker-compose.yml` and `docker-compose.production.yml` files.
 
+## v6.0 to v6.1
+
+- **Unbound port change and capability requirement (breaking)**: Unbound now listens on port `53` (UDP/TCP) instead of `5353`.
+  - Compose: the `unbound` service now requires `cap_add: [NET_BIND_SERVICE]` to bind <1024 as non-root.
+  - Kubernetes: the `unbound` deployment exposes containerPorts `53/TCP` and `53/UDP` and adds the `NET_BIND_SERVICE` capability.
+  - Rspamd and internal components should use `unbound:53`. Any hardcoded `:5353` must be updated.
+  - If you previously customized Postfix to use `127.0.0.1:5353`, remove that customization. Postfix and other services should resolve via standard port 53.
+
 ## v5.x to v6.0
 
 Deployment on Kubernetes is now a first class citizen. You can use the `kustomization.yaml` file to deploy the mailserver to your Kubernetes cluster.
@@ -35,11 +43,3 @@ The Helm chart has been deprecated and archived.
 
 - **Full Text Search**: Enabled by default. All `FTS_` environment variables have been removed.
 - **Protocol Support**: POP3 and IMAP are always enabled. The `POP3_ENABLED` and `IMAP_ENABLED` environment variables have been removed.
-
-## v6.0 to v6.1
-
-- **Unbound port change and capability requirement (breaking)**: Unbound now listens on port `53` (UDP/TCP) instead of `5353`.
-  - Compose: the `unbound` service now requires `cap_add: [NET_BIND_SERVICE]` to bind <1024 as non-root.
-  - Kubernetes: the `unbound` deployment exposes containerPorts `53/TCP` and `53/UDP` and adds the `NET_BIND_SERVICE` capability.
-  - Rspamd and internal components should use `unbound:53`. Any hardcoded `:5353` must be updated.
-  - If you previously customized Postfix to use `127.0.0.1:5353`, remove that customization. Postfix and other services should resolve via standard port 53.
