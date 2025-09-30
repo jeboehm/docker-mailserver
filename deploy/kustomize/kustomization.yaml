@@ -9,4 +9,4 @@ resources:
   - redis/
   - unbound/
   - web/
-  - traefik-tcp/
+  - ingress/traefik/
