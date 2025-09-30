@@ -32,8 +32,6 @@ jobs:
         if: ${{ steps.changelog.outputs.skipped == 'false' }}
         with:
           token: ${{ secrets.GH_RELEASE_PAT }}
-      - uses: fregante/setup-git-user@v2
-        if: ${{ steps.changelog.outputs.skipped == 'false' }}
       - name: Update image tags in repository files
         if: ${{ steps.changelog.outputs.skipped == 'false' }}
         run: |
@@ -43,12 +41,12 @@ jobs:
         if: ${{ steps.changelog.outputs.skipped == 'false' }}
         run: |
           CHANGES=$(git status --porcelain)
-          if [ -n "$CHANGES" ]; then
-            git add -A
-            git commit -m "chore(release): update image references to ${{ steps.changelog.outputs.tag }}"
-          else
+          if ! [ -n "$CHANGES" ]; then
             echo "No changes to commit"
+            exit 1
           fi
+          git add -A
+          git commit -m "chore(release): update image references to ${{ steps.changelog.outputs.tag }}"
           git tag -a "${{ steps.changelog.outputs.tag }}" -m "Release ${{ steps.changelog.outputs.version }}"
           git push origin "${{ steps.changelog.outputs.tag }}"
       - name: Create GitHub Release
