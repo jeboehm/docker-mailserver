@@ -55,3 +55,23 @@ dockerize \
 	-template /etc/postfix/mysql-recipient-access.cf.templ:/etc/postfix/mysql-recipient-access.cf \
 	-template /etc/postfix/mysql-email-submission.cf.templ:/etc/postfix/mysql-email-submission.cf \
 	/bin/true
+
+# Configure resolver for Postfix to use $UNBOUND_DNS_ADDRESS
+# Accept formats like "host:port" or "ip:port"; default port 53 if omitted
+if [ -n "${UNBOUND_DNS_ADDRESS}" ]; then
+	UNBOUND_DNS_HOST=$(echo "${UNBOUND_DNS_ADDRESS}" | cut -d: -f1)
+	UNBOUND_DNS_PORT=$(echo "${UNBOUND_DNS_ADDRESS}" | cut -s -d: -f2)
+	if [ -z "${UNBOUND_DNS_PORT}" ]; then
+		UNBOUND_DNS_PORT=53
+	fi
+
+	# Resolve hostname to IP if necessary
+	UNBOUND_DNS_IP=$(getent hosts "${UNBOUND_DNS_HOST}" | awk '{print $1}' | head -n1)
+	if [ -z "${UNBOUND_DNS_IP}" ]; then
+		UNBOUND_DNS_IP=${UNBOUND_DNS_HOST}
+	fi
+
+	mkdir -p /var/spool/postfix/etc
+	echo "nameserver ${UNBOUND_DNS_IP}" > /var/spool/postfix/etc/resolv.conf
+	# glibc resolv.conf does not support custom port; rely on Unbound standard port 53
+fi

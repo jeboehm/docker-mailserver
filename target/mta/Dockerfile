@@ -65,7 +65,27 @@ RUN apk --no-cache add \
     postconf smtpd_error_sleep_time=10s && \
     postconf smtpd_soft_error_limit=3 && \
     postconf smtpd_hard_error_limit=5 && \
-    newaliases
+    newaliases && \
+    # enable postscreen on port 25 and supporting services
+    sed -i 's/^smtp\s\+inet\s\+n\s\+-\s\+y\s\+-\s\+-\s\+smtpd/smtp      inet  n       -       y       -       1       postscreen/' /etc/postfix/master.cf && \
+    printf '%s\n' \
+      'smtpd     pass  -       -       y       -       -       smtpd' \
+      'dnsblog   unix  -       -       y       -       0       dnsblog' \
+      'tlsproxy  unix  -       -       y       -       0       tlsproxy' \
+      >> /etc/postfix/master.cf && \
+    postconf postscreen_dnsbl_sites='bl.spamcop.net*2' && \
+    postconf postscreen_dnsbl_threshold=2 && \
+    postconf postscreen_dnsbl_action=enforce && \
+    echo "submission inet n - n - - smtpd" >> /etc/postfix/master.cf && \
+    echo " -o syslog_name=postfix/submission" >> /etc/postfix/master.cf && \
+    echo " -o smtpd_tls_security_level=encrypt" >> /etc/postfix/master.cf && \
+    echo " -o smtpd_sasl_auth_enable=yes" >> /etc/postfix/master.cf && \
+    echo " -o smtpd_tls_auth_only=yes" >> /etc/postfix/master.cf && \
+    echo " -o smtpd_reject_unlisted_recipient=no" >> /etc/postfix/master.cf && \
+    echo " -o smtpd_sender_restrictions=reject_sender_login_mismatch,permit_sasl_authenticated,reject" >> /etc/postfix/master.cf && \
+    echo " -o smtpd_relay_restrictions=" >> /etc/postfix/master.cf && \
+    echo " -o smtpd_recipient_restrictions=permit_sasl_authenticated,reject" >> /etc/postfix/master.cf && \
+    echo " -o milter_macro_daemon_name=ORIGINATING" >> /etc/postfix/master.cf
 COPY --from=dockerize /bin/dockerize /usr/local/bin/dockerize
 COPY rootfs/ /
 
