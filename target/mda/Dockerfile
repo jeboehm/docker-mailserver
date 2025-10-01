@@ -21,7 +21,7 @@ ENV MYSQL_HOST=db \
     CONTROLLER_PASSWORD= \
     RECIPIENT_DELIMITER=- \
     MAILNAME=mail.example.com \
-    MDA_UPSTREAM_PROXY=false \
+    MDA_UPSTREAM_PROXY=no \
     POSTMASTER=postmaster@example.com \
     WAITSTART_TIMEOUT=1m
 
