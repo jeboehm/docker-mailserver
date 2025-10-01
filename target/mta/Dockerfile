@@ -66,17 +66,7 @@ RUN apk --no-cache add \
     postconf smtpd_error_sleep_time=10s && \
     postconf smtpd_soft_error_limit=3 && \
     postconf smtpd_hard_error_limit=5 && \
-    newaliases && \
-    echo "submission inet n - n - - smtpd" >> /etc/postfix/master.cf && \
-    echo " -o syslog_name=postfix/submission" >> /etc/postfix/master.cf && \
-    echo " -o smtpd_tls_security_level=encrypt" >> /etc/postfix/master.cf && \
-    echo " -o smtpd_sasl_auth_enable=yes" >> /etc/postfix/master.cf && \
-    echo " -o smtpd_tls_auth_only=yes" >> /etc/postfix/master.cf && \
-    echo " -o smtpd_reject_unlisted_recipient=no" >> /etc/postfix/master.cf && \
-    echo " -o smtpd_sender_restrictions=reject_sender_login_mismatch,permit_sasl_authenticated,reject" >> /etc/postfix/master.cf && \
-    echo " -o smtpd_relay_restrictions=" >> /etc/postfix/master.cf && \
-    echo " -o smtpd_recipient_restrictions=permit_sasl_authenticated,reject" >> /etc/postfix/master.cf && \
-    echo " -o milter_macro_daemon_name=ORIGINATING" >> /etc/postfix/master.cf
+    newaliases
 COPY --from=dockerize /bin/dockerize /usr/local/bin/dockerize
 COPY rootfs/ /
 

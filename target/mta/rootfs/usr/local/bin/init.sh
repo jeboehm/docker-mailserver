@@ -31,6 +31,12 @@ if [ "${RELAYHOST}" != "false" ]; then
 	fi
 fi
 
+if [ "${MTA_UPSTREAM_PROXY}" = "true" ]; then
+	postconf smtpd_upstream_proxy_protocol=haproxy
+	postconf postscreen_upstream_proxy_protocol=haproxy
+	postconf submission_upstream_proxy_protocol=haproxy
+fi
+
 dockerize \
 	-template /etc/postfix/mysql-email2email.cf.templ:/etc/postfix/mysql-email2email.cf \
 	-template /etc/postfix/mysql-virtual-alias-maps.cf.templ:/etc/postfix/mysql-virtual-alias-maps.cf \

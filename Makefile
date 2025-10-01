@@ -63,18 +63,6 @@ setup:
 lint:
 	docker run --platform linux/amd64 -e RUN_LOCAL=true --rm --env-file .github/linters/super-linter.env --env-file .github/linters/super-linter-fix.env -v $(PWD):/tmp/lint ghcr.io/super-linter/super-linter:v8.1.0
 
-.PHONY: kubernetes-kind-images
-kubernetes-kind-images:
-	$(COMPOSE_TEST) build
-	kind load docker-image jeboehm/mailserver-mda:latest
-	kind load docker-image jeboehm/mailserver-mta:latest
-	kind load docker-image jeboehm/mailserver-filter:latest
-	kind load docker-image jeboehm/mailserver-web:latest
-	kind load docker-image jeboehm/mailserver-unbound:latest
-	docker tag docker-mailserver-test jeboehm/mailserver-test:latest
-	kind load docker-image jeboehm/mailserver-test:latest
-
-
 .PHONY: kind-deploy-helper
 kind-deploy-helper:
 	kubectl create namespace mail --dry-run=client -o yaml | kubectl apply -f -
@@ -119,13 +107,9 @@ kind-load: build
 	kind load docker-image jeboehm/mailserver-filter:latest
 	kind load docker-image jeboehm/mailserver-web:latest
 	kind load docker-image jeboehm/mailserver-unbound:latest
+	docker tag docker-mailserver-test jeboehm/mailserver-test:latest
+	kind load docker-image jeboehm/mailserver-test:latest
 
 .PHONY: kind-up
 kind-up:
 	kubectl apply -k .
-
-.PHONY: kind-test
-kind-test:
-	kubectl delete -f test/bats/job.yaml --ignore-not-found
-	kubectl apply -f test/bats/job.yaml
-
