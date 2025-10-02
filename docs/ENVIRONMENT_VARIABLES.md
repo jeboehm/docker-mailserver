@@ -52,7 +52,6 @@ This is the password for the RSpamd controller access. It is required to **alway
 | ------------------- | ------- | --------------------------------- |
 | `RELAYHOST`         | `false` | SMTP relay host for outgoing mail |
 | `RELAY_PASSWD_FILE` | `false` | Path to relay authentication file |
-| `RELAY_OPTIONS`     | `false` | Additional relay security options |
 
 ### Filter Configuration
 
@@ -94,3 +93,30 @@ See [mailserver-admin](https://github.com/jeboehm/mailserver-admin?tab=readme-ov
 | -------------------------- | ---------------------------------------------------------- | -------------------- |
 | `PHP_SESSION_SAVE_HANDLER` | `redis`                                                    | Session save handler |
 | `PHP_SESSION_SAVE_PATH`    | `tcp://${REDIS_HOST}:${REDIS_PORT}?auth=${REDIS_PASSWORD}` | Session save path    |
+
+### Proxy Protocol Configuration
+
+These variables enable HAProxy PROXY protocol support for load balancer integration.
+
+| Variable             | Default | Description                                                                  |
+| -------------------- | ------- | ---------------------------------------------------------------------------- |
+| `MDA_UPSTREAM_PROXY` | `false` | Enable Traefik / HAProxy PROXY protocol for MDA (Dovecot) IMAP/POP3 services |
+| `MTA_UPSTREAM_PROXY` | `false` | Enable Traefik / HAProxy PROXY protocol for MTA (Postfix) SMTP services      |
+
+#### Usage
+
+When set to `true`, these variables enable the HAProxy / Traefik PROXY protocol, which allows the mail server to receive the original client IP address when behind a load balancer or reverse proxy.
+
+**MDA_UPSTREAM_PROXY** affects:
+
+- IMAP service
+- IMAPS service
+- POP3 service
+- POP3S service
+
+**MTA_UPSTREAM_PROXY** affects:
+
+- SMTP service
+- SMTP submission service
+
+This is typically used when deploying behind load balancers like HAProxy, Traefik, or cloud load balancers that support the PROXY protocol.
