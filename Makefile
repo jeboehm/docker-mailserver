@@ -65,8 +65,8 @@ lint:
 
 .PHONY: kind-deploy-helper
 kind-deploy-helper:
-	kubectl create namespace test
-	kustomize build --enable-helm test/k8s | kubectl apply -f -
+	kubectl create namespace test || true
+	kustomize build --load-restrictor=LoadRestrictionsNone --enable-helm test/k8s | kubectl apply -f -
 
 .PHONY: kubernetes-tls
 kubernetes-tls:

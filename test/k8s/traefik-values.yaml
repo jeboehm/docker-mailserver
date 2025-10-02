@@ -1,0 +1,21 @@
+ports:
+  smtp:
+    port: 3325
+    expose:
+      default: true
+    exposedPort: 25
+  submission:
+    port: 33587
+    expose:
+      default: true
+    exposedPort: 587
+  imap:
+    port: 33143
+    expose:
+      default: true
+    exposedPort: 143
+  imaps:
+    port: 33993
+    expose:
+      default: true
+    exposedPort: 993

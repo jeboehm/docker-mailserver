@@ -4,7 +4,6 @@ metadata:
   name: mailpit
   labels:
     app.kubernetes.io/name: mailpit
-    app.kubernetes.io/part-of: docker-mailserver
 spec:
   type: ClusterIP
   ports:
@@ -25,18 +24,15 @@ metadata:
   name: mailpit
   labels:
     app.kubernetes.io/name: mailpit
-    app.kubernetes.io/part-of: docker-mailserver
 spec:
   replicas: 1
   selector:
     matchLabels:
       app.kubernetes.io/name: mailpit
-      app.kubernetes.io/part-of: docker-mailserver
   template:
     metadata:
       labels:
         app.kubernetes.io/name: mailpit
-        app.kubernetes.io/part-of: docker-mailserver
     spec:
       containers:
         - name: mailpit
