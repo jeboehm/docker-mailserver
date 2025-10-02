@@ -21,6 +21,7 @@ jobs:
         uses: docker/setup-buildx-action@e468171a9de216ec08956ac3ada2f0791b6bd435 # v3.11.1
       - name: Prepare environment
         run: |
+          echo "BUILDX_BUILDER=${{ steps.buildx.outputs.name }}" >> $GITHUB_ENV
           make .env
           cat .env .github/test-matrix/${{ matrix.BUILD_CASE }}.env > .env.tmp
           awk -F= '{seen[$1]=$0} END {for (key in seen) print seen[key]}' .env.tmp > .env
@@ -28,17 +29,13 @@ jobs:
       - name: Output environment
         run: cat .env
       - name: Pull and build images
-        run: |
-          export BUILDX_BUILDER=${{ steps.buildx.outputs.name }}
-          make build
+        run: make build
       - name: Start docker-mailserver services
         run: make up
       - name: Load database fixtures
         run: make fixtures
       - name: Run tests
-        run: |
-          export BUILDX_BUILDER=${{ steps.buildx.outputs.name }}
-          bin/test.sh run --rm test
+        run: bin/test.sh run --rm test
       - name: Collect logs
         if: failure()
         run: |
