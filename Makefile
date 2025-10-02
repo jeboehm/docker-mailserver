@@ -33,6 +33,7 @@ logs:
 	$(COMPOSE_PRODUCTION) logs web
 	$(COMPOSE_PRODUCTION) logs fetchmail
 	$(COMPOSE_PRODUCTION) logs unbound
+	$(COMPOSE_TEST) logs mailpit
 
 .PHONY: up
 up: .env
@@ -85,6 +86,7 @@ kubernetes-logs:
 	kubectl logs --ignore-errors -l app.kubernetes.io/name=redis
 	kubectl logs --ignore-errors -l app.kubernetes.io/name=unbound
 	kubectl logs --ignore-errors -l app.kubernetes.io/name=web
+	kubectl logs --ignore-errors -l app.kubernetes.io/name=mailpit
 	kubectl logs --ignore-errors -l app.kubernetes.io/name=test-runner-job
 
 .PHONY: kubernetes-test

@@ -52,7 +52,6 @@ This is the password for the RSpamd controller access. It is required to **alway
 | ------------------- | ------- | --------------------------------- |
 | `RELAYHOST`         | `false` | SMTP relay host for outgoing mail |
 | `RELAY_PASSWD_FILE` | `false` | Path to relay authentication file |
-| `RELAY_OPTIONS`     | `false` | Additional relay security options |
 
 ### Filter Configuration
 

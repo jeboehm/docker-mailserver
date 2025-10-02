@@ -38,8 +38,28 @@ spec:
         - name: mailpit
           image: axllent/mailpit:v1.27
           imagePullPolicy: IfNotPresent
+          envFrom:
+            - configMapRef:
+                name: config-env
+          env:
+            - name: MP_SMTP_TLS_CERT
+              value: /etc/mailpit/tls/tls.crt
+            - name: MP_SMTP_TLS_KEY
+              value: /etc/mailpit/tls/tls.key
           ports:
             - containerPort: 1025
               name: smtp
             - containerPort: 8025
               name: http
+          volumeMounts:
+            - name: tls-certs
+              mountPath: /etc/mailpit/tls
+      volumes:
+        - name: tls-certs
+          secret:
+            items:
+              - key: tls.crt
+                path: tls.crt
+              - key: tls.key
+                path: tls.key
+            secretName: tls-certs

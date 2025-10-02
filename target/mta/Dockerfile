@@ -18,7 +18,6 @@ ENV MAILNAME=mail.example.com \
     FILTER_MIME=false \
     RELAYHOST=false \
     RELAY_PASSWD_FILE=false \
-    RELAY_OPTIONS=false \
     SSL_CERT=/etc/postfix/tls/tls.crt \
     SSL_KEY=/etc/postfix/tls/tls.key \
     WAITSTART_TIMEOUT=1m \
