@@ -8,10 +8,8 @@ fi
 if [ -n "${MDA_UPSTREAM_PROXY}" ]; then
 	if [ "${MDA_UPSTREAM_PROXY}" = "true" ]; then
 		export MDA_UPSTREAM_PROXY="yes"
-	elif [ "${MDA_UPSTREAM_PROXY}" = "false" ]; then
-		export MDA_UPSTREAM_PROXY="no"
 	else
-		export MDA_UPSTREAM_PROXY
+		export MDA_UPSTREAM_PROXY="no"
 	fi
 fi
 
