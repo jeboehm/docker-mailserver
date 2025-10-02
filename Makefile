@@ -63,9 +63,8 @@ setup:
 lint:
 	docker run --platform linux/amd64 -e RUN_LOCAL=true --rm --env-file .github/linters/super-linter.env --env-file .github/linters/super-linter-fix.env -v $(PWD):/tmp/lint ghcr.io/super-linter/super-linter:v8.1.0
 
-.PHONY: kind-deploy-helper
-kind-deploy-helper:
-	kubectl create namespace test || true
+.PHONY: kubernetes-deploy-helper
+kubernetes-deploy-helper:
 	kustomize build --load-restrictor=LoadRestrictionsNone --enable-helm test/k8s | kubectl apply -f -
 
 .PHONY: kubernetes-tls
@@ -95,9 +94,9 @@ kubernetes-test:
 	kubectl wait --timeout=10m --for=condition=complete job -l app.kubernetes.io/name=test-runner-job
 	kubectl logs --ignore-errors -l app.kubernetes.io/name=test-runner-job
 
-.PHONY: kind-provision
-kind-provision:
-	kind create cluster --name mail --wait 60s
+.PHONY: kubernetes-up
+kubernetes-up:
+	kubectl apply -k .
 
 .PHONY: kind-load
 kind-load: build
@@ -108,7 +107,3 @@ kind-load: build
 	kind load docker-image jeboehm/mailserver-unbound:latest
 	docker tag docker-mailserver-test jeboehm/mailserver-test:latest
 	kind load docker-image jeboehm/mailserver-test:latest
-
-.PHONY: kind-up
-kind-up:
-	kubectl apply -k .

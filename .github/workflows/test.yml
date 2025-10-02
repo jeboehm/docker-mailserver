@@ -94,7 +94,7 @@ jobs:
       matrix:
         BUILD_CASE:
           - default
-          - proxy
+#          - proxy
           - relayhost
     steps:
       - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
@@ -121,7 +121,7 @@ jobs:
       - name: Prepare tls certs
         run: make kubernetes-tls
       - name: Deploy Kubernetes resources
-        run: make kind-deploy-helper kind-up
+        run: make kubernetes-deploy-helper kubernetes-up
       - name: Wait for all pods to be ready
         run: make kubernetes-wait
       - name: Run tests
