@@ -33,6 +33,7 @@ logs:
 	$(COMPOSE_PRODUCTION) logs web
 	$(COMPOSE_PRODUCTION) logs fetchmail
 	$(COMPOSE_PRODUCTION) logs unbound
+	$(COMPOSE_TEST) logs mailpit
 
 .PHONY: up
 up: .env
@@ -63,23 +64,9 @@ setup:
 lint:
 	docker run --platform linux/amd64 -e RUN_LOCAL=true --rm --env-file .github/linters/super-linter.env --env-file .github/linters/super-linter-fix.env -v $(PWD):/tmp/lint ghcr.io/super-linter/super-linter:v8.1.0
 
-.PHONY: kubernetes-kind-images
-kubernetes-kind-images:
-	$(COMPOSE_TEST) build
-	kind load docker-image jeboehm/mailserver-mda:latest
-	kind load docker-image jeboehm/mailserver-mta:latest
-	kind load docker-image jeboehm/mailserver-filter:latest
-	kind load docker-image jeboehm/mailserver-web:latest
-	kind load docker-image jeboehm/mailserver-unbound:latest
-	docker tag docker-mailserver-test jeboehm/mailserver-test:latest
-	kind load docker-image jeboehm/mailserver-test:latest
-
-.PHONY: kubernetes-mysql
-kubernetes-mysql:
-	docker run -d --name db --network kind --env-file .env \
-		-v ./target/db/rootfs/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d:ro \
-		--env-file .env \
-		mysql:lts
+.PHONY: kubernetes-deploy-helper
+kubernetes-deploy-helper:
+	kustomize build --load-restrictor=LoadRestrictionsNone --enable-helm test/k8s | kubectl apply -f -
 
 .PHONY: kubernetes-tls
 kubernetes-tls:
@@ -99,6 +86,7 @@ kubernetes-logs:
 	kubectl logs --ignore-errors -l app.kubernetes.io/name=redis
 	kubectl logs --ignore-errors -l app.kubernetes.io/name=unbound
 	kubectl logs --ignore-errors -l app.kubernetes.io/name=web
+	kubectl logs --ignore-errors -l app.kubernetes.io/name=mailpit
 	kubectl logs --ignore-errors -l app.kubernetes.io/name=test-runner-job
 
 .PHONY: kubernetes-test
@@ -108,3 +96,16 @@ kubernetes-test:
 	kubectl wait --timeout=10m --for=condition=complete job -l app.kubernetes.io/name=test-runner-job
 	kubectl logs --ignore-errors -l app.kubernetes.io/name=test-runner-job
 
+.PHONY: kubernetes-up
+kubernetes-up:
+	kubectl apply -k .
+
+.PHONY: kind-load
+kind-load: build
+	kind load docker-image jeboehm/mailserver-mda:latest
+	kind load docker-image jeboehm/mailserver-mta:latest
+	kind load docker-image jeboehm/mailserver-filter:latest
+	kind load docker-image jeboehm/mailserver-web:latest
+	kind load docker-image jeboehm/mailserver-unbound:latest
+	docker tag docker-mailserver-test jeboehm/mailserver-test:latest
+	kind load docker-image jeboehm/mailserver-test:latest

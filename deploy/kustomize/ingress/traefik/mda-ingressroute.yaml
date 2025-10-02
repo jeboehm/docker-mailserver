@@ -1,0 +1,31 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRouteTCP
+metadata:
+  name: imap
+  labels:
+    app.kubernetes.io/part-of: docker-mailserver
+spec:
+  entryPoints:
+    - imap
+  routes:
+    - match: HostSNI(`*`)
+      services:
+        - name: mda
+          port: imap
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRouteTCP
+metadata:
+  name: imaps
+  labels:
+    app.kubernetes.io/part-of: docker-mailserver
+spec:
+  entryPoints:
+    - imaps
+  tls:
+    passthrough: true
+  routes:
+    - match: HostSNI(`*`)
+      services:
+        - name: mda
+          port: imaps

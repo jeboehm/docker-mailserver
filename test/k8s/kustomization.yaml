@@ -1,0 +1,22 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+generatorOptions:
+  disableNameSuffixHash: true
+configMapGenerator:
+  - name: mysql-initdb
+    files:
+      - ../../target/db/rootfs/docker-entrypoint-initdb.d/001_mailserver.sql
+      - ../../target/db/rootfs/docker-entrypoint-initdb.d/002_webmail.sql
+  - name: config-env
+    envs:
+      - ../../.env
+resources:
+  - mysql.yaml
+  - mailpit.yaml
+helmCharts:
+  - name: traefik
+    repo: https://traefik.github.io/charts
+    version: 37.1.1
+    releaseName: traefik
+    includeCRDs: true
+    valuesFile: traefik-values.yaml

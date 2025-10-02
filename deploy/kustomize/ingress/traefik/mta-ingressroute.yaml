@@ -1,0 +1,29 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRouteTCP
+metadata:
+  name: smtp
+  labels:
+    app.kubernetes.io/part-of: docker-mailserver
+spec:
+  entryPoints:
+    - smtp
+  routes:
+    - match: HostSNI(`*`)
+      services:
+        - name: mta
+          port: smtp
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRouteTCP
+metadata:
+  name: submission
+  labels:
+    app.kubernetes.io/part-of: docker-mailserver
+spec:
+  entryPoints:
+    - submission
+  routes:
+    - match: HostSNI(`*`)
+      services:
+        - name: mta
+          port: submission

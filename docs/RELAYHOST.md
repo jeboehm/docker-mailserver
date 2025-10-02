@@ -28,7 +28,7 @@ RELAY_PASSWD_FILE=/etc/postfix/sasl_passwd_ext
 Create a credentials file with the following format:
 
 ```text
-[hostname]:port username:password
+hostname username:password
 ```
 
 ### Example Credentials File
@@ -36,7 +36,7 @@ Create a credentials file with the following format:
 For a relayhost at `mailpit` on port `1025` with user `user1` and password `password1`:
 
 ```text
-[mailpit]:1025 user1:password1
+mailpit user1:password1
 ```
 
 ### File Location
@@ -51,7 +51,7 @@ Create your credentials file locally (e.g., `sasl_passwd`):
 
 ```bash
 # Create credentials file
-echo "[mailpit]:1025 user1:password1" > sasl_passwd
+echo "mailpit user1:password1" > sasl_passwd
 
 # Set secure permissions
 chmod 600 sasl_passwd
@@ -110,7 +110,7 @@ RELAYHOST=[smtp.gmail.com]:587
 RELAY_PASSWD_FILE=/etc/postfix/sasl_passwd_ext
 
 # Credentials file content
-[smtp.gmail.com]:587 your-email@gmail.com:your-app-password
+smtp.gmail.com your-email@gmail.com:your-app-password
 ```
 
 ### Office 365
@@ -121,7 +121,7 @@ RELAYHOST=[smtp.office365.com]:587
 RELAY_PASSWD_FILE=/etc/postfix/sasl_passwd_ext
 
 # Credentials file content
-[smtp.office365.com]:587 your-email@yourdomain.com:your-password
+smtp.office365.com your-email@yourdomain.com:your-password
 ```
 
 ## Verification

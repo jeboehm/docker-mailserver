@@ -2,7 +2,12 @@
 services:
   mailpit:
     image: axllent/mailpit:v1.27
-
+    env_file: .env
+    volumes:
+      - data-tls:/etc/mailpit/tls:ro
+    environment:
+      - MP_SMTP_TLS_CERT=/etc/mailpit/tls/tls.crt
+      - MP_SMTP_TLS_KEY=/etc/mailpit/tls/tls.key
   fetchmail:
     links:
       - mda:mda.local
