@@ -1,6 +1,6 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-namespace: mail
+namespace: test
 generatorOptions:
   disableNameSuffixHash: true
 configMapGenerator:
@@ -13,7 +13,7 @@ helmCharts:
     repo: https://traefik.github.io/charts
     version: 28.0.0
     releaseName: traefik
-    namespace: traefik
+    namespace: test
     includeCRDs: true
     valuesInline:
       deployment:

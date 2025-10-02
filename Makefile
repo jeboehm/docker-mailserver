@@ -65,9 +65,8 @@ lint:
 
 .PHONY: kind-deploy-helper
 kind-deploy-helper:
-	kubectl create namespace mail --dry-run=client -o yaml | kubectl apply -f -
-	kubectl create namespace traefik --dry-run=client -o yaml | kubectl apply -f -
-	kubectl apply -k test/k8s
+	kubectl create namespace test
+	kustomize build --enable-helm test/k8s | kubectl apply -f -
 
 .PHONY: kubernetes-tls
 kubernetes-tls:
