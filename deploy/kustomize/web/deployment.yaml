@@ -39,9 +39,9 @@ spec:
             - /usr/local/sbin/php-fpm
           envFrom:
             - configMapRef:
-                name: config-env
-            - configMapRef:
                 name: config-service-map
+            - configMapRef:
+                name: config-env
             - secretRef:
                 name: secret-config-env
           ports:
@@ -103,9 +103,9 @@ spec:
             - /usr/sbin/nginx
           envFrom:
             - configMapRef:
-                name: config-env
-            - configMapRef:
                 name: config-service-map
+            - configMapRef:
+                name: config-env
             - secretRef:
                 name: secret-config-env
           ports:
@@ -170,9 +170,9 @@ spec:
               cp -r /var/www/html/autoconfig/* /target-autoconfig/
           envFrom:
             - configMapRef:
-                name: config-env
-            - configMapRef:
                 name: config-service-map
+            - configMapRef:
+                name: config-env
             - secretRef:
                 name: secret-config-env
           resources:
@@ -199,9 +199,9 @@ spec:
             - /usr/local/bin/init.sh
           envFrom:
             - configMapRef:
-                name: config-env
-            - configMapRef:
                 name: config-service-map
+            - configMapRef:
+                name: config-env
             - secretRef:
                 name: secret-config-env
           resources:
@@ -228,9 +228,9 @@ spec:
             - /usr/local/bin/init_database.sh
           envFrom:
             - configMapRef:
-                name: config-env
-            - configMapRef:
                 name: config-service-map
+            - configMapRef:
+                name: config-env
             - secretRef:
                 name: secret-config-env
           resources:
