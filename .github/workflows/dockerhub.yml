@@ -7,7 +7,7 @@ on:
     paths:
       - README.md
 concurrency:
-  group: "${{ github.ref }}"
+  group: "dockerhub-${{ github.ref }}"
   cancel-in-progress: true
 jobs:
   sync:

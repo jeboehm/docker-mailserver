@@ -4,7 +4,7 @@ on:
     branches:
       - main
 concurrency:
-  group: "${{ github.ref }}"
+  group: "release-${{ github.ref }}"
   cancel-in-progress: true
 jobs:
   create_release:
@@ -19,7 +19,7 @@ jobs:
         id: changelog
         uses: TriPSs/conventional-changelog-action@5f00b899ccbbcbc112bd6d715d5e76e7a9e4501d # v6
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ secrets.GH_RELEASE_PAT }}
           skip-on-empty: true
           git-push: false
           skip-git-pull: true
