@@ -28,3 +28,8 @@
 	run bash -c 'echo -e "QUIT\r\n" | openssl s_client -quiet -brief -connect ${MTA_SMTP_ADDRESS} -starttls smtp'
 	[ "$status" -eq 0 ]
 }
+
+@test "connection to submission with starttls" {
+	run bash -c 'echo -e "QUIT\r\n" | openssl s_client -quiet -brief -connect ${MTA_SMTP_SUBMISSION_ADDRESS} -starttls smtp'
+	[ "$status" -eq 0 ]
+}

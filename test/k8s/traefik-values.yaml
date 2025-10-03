@@ -3,19 +3,41 @@ ports:
     port: 3325
     expose:
       default: true
-    exposedPort: 25
+      internal: true
+    exposedPort: 3325
   submission:
     port: 33587
     expose:
       default: true
-    exposedPort: 587
+      internal: true
+    exposedPort: 33587
   imap:
     port: 33143
     expose:
       default: true
-    exposedPort: 143
+      internal: true
+    exposedPort: 33143
   imaps:
     port: 33993
     expose:
       default: true
-    exposedPort: 993
+      internal: true
+    exposedPort: 33993
+  pop3:
+    port: 33110
+    expose:
+      default: true
+      internal: true
+    exposedPort: 33110
+  pop3s:
+    port: 33995
+    expose:
+      default: true
+      internal: true
+    exposedPort: 33995
+service:
+  additionalServices:
+    internal:
+      type: ClusterIP
+      labels:
+        traefik-service-label: internal

@@ -66,7 +66,10 @@ lint:
 
 .PHONY: kubernetes-deploy-helper
 kubernetes-deploy-helper:
-	kustomize build --load-restrictor=LoadRestrictionsNone --enable-helm test/k8s | kubectl apply -f -
+	helm repo add traefik https://traefik.github.io/charts
+	helm repo update
+	helm upgrade --install traefik traefik/traefik --version 37.1.2 --namespace default --values test/k8s/traefik-values.yaml
+	kustomize build --load-restrictor=LoadRestrictionsNone test/k8s | kubectl apply -f -
 
 .PHONY: kubernetes-tls
 kubernetes-tls:
@@ -91,14 +94,19 @@ kubernetes-logs:
 
 .PHONY: kubernetes-test
 kubernetes-test:
-	kubectl delete -f test/bats/job.yaml --ignore-not-found
-	kubectl apply -f test/bats/job.yaml
+	kubectl delete -f test/k8s/test-job.yaml --ignore-not-found
+	kubectl apply -f test/k8s/test-job.yaml
 	kubectl wait --timeout=10m --for=condition=complete job -l app.kubernetes.io/name=test-runner-job
 	kubectl logs --ignore-errors -l app.kubernetes.io/name=test-runner-job
 
 .PHONY: kubernetes-up
 kubernetes-up:
 	kubectl apply -k .
+
+.PHONY: kubernetes-down
+kubernetes-down:
+	kubectl delete -f test/k8s/test-job.yaml --ignore-not-found
+	kubectl delete -k .
 
 .PHONY: kind-load
 kind-load: build
