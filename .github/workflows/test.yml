@@ -3,7 +3,7 @@ on:
   pull_request:
   merge_group:
 concurrency:
-  group: "${{ github.ref }}"
+  group: "test-${{ github.ref }}"
   cancel-in-progress: true
 jobs:
   test_docker_matrix:

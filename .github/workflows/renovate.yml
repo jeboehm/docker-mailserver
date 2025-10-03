@@ -3,6 +3,9 @@ on:
   pull_request:
     paths:
       - renovate.json
+concurrency:
+  group: "renovate-${{ github.ref }}"
+  cancel-in-progress: true
 jobs:
   validate_renovate_config:
     runs-on: ubuntu-latest
