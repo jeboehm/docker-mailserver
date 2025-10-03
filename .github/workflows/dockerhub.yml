@@ -6,6 +6,9 @@ on:
       - main
     paths:
       - README.md
+concurrency:
+  group: "${{ github.ref }}"
+  cancel-in-progress: true
 jobs:
   sync:
     runs-on: ubuntu-latest
