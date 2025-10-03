@@ -30,7 +30,7 @@ jobs:
       - uses: actions/setup-python@e797f83bcb11b83ae66e0230d6156d7c80228e7c # v6
         if: ${{ steps.changelog.outputs.skipped == 'false' }}
         with:
-          python-version: "3.11"
+          python-version: "3.13"
       - uses: fregante/setup-git-token@614530a4b03f263cd0cc72b3217b7bac2806c342 # v1
         if: ${{ steps.changelog.outputs.skipped == 'false' }}
         with:
