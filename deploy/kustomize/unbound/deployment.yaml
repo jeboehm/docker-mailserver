@@ -26,9 +26,9 @@ spec:
           imagePullPolicy: IfNotPresent
           envFrom:
             - configMapRef:
-                name: config-env
-            - configMapRef:
                 name: config-service-map
+            - configMapRef:
+                name: config-env
             - secretRef:
                 name: secret-config-env
           securityContext:
