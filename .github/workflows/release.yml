@@ -4,7 +4,7 @@ on:
     branches:
       - main
 concurrency:
-  group: "${{ github.ref }}"
+  group: "release-${{ github.ref }}"
   cancel-in-progress: true
 jobs:
   create_release:
@@ -19,7 +19,7 @@ jobs:
         id: changelog
         uses: TriPSs/conventional-changelog-action@5f00b899ccbbcbc112bd6d715d5e76e7a9e4501d # v6
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ secrets.GH_RELEASE_PAT }}
           skip-on-empty: true
           git-push: false
           skip-git-pull: true
@@ -51,7 +51,7 @@ jobs:
           git add -A
           git commit -m "chore(release): update image references to ${{ steps.changelog.outputs.tag }}"
           git tag -a "${{ steps.changelog.outputs.tag }}" -m "Release ${{ steps.changelog.outputs.version }}"
-          git push origin "${{ steps.changelog.outputs.tag }}"
+          git push -vv origin "${{ steps.changelog.outputs.tag }}"
       - name: Create GitHub Release
         uses: ncipollo/release-action@b7eabc95ff50cbeeedec83973935c8f306dfcd0b # v1
         if: ${{ steps.changelog.outputs.skipped == 'false' }}
