@@ -15,7 +15,7 @@ data:
   MTA_HOST: mta
   MTA_SMTP_ADDRESS: mta:25
   MTA_SMTP_SUBMISSION_ADDRESS: mta:587
-  REDIS_HOST: redis-master
+  REDIS_HOST: redis
   REDIS_PORT: "6379"
   RSPAMD_DNS_SERVERS: round-robin:unbound:53
   UNBOUND_DNS_ADDRESS: unbound:53

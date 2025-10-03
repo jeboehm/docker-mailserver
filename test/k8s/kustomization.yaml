@@ -13,10 +13,4 @@ configMapGenerator:
 resources:
   - mysql.yaml
   - mailpit.yaml
-helmCharts:
-  - name: traefik
-    repo: https://traefik.github.io/charts
-    version: 37.1.1
-    releaseName: traefik
-    includeCRDs: true
-    valuesFile: traefik-values.yaml
+  - ../../deploy/kustomize/ingress/traefik/

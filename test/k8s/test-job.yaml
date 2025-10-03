@@ -43,9 +43,9 @@ spec:
               /usr/local/bin/wait-and-exec.sh /opt/manager/bin/console fetchmail:account:add --force fetchmailreceiver@example.org mda.default imap 143 fetchmailsource@example.org test1234
           envFrom:
             - configMapRef:
-                name: config-env
-            - configMapRef:
                 name: config-service-map
+            - configMapRef:
+                name: config-env
             - secretRef:
                 name: secret-config-env
           resources:
@@ -67,9 +67,9 @@ spec:
           imagePullPolicy: Never
           envFrom:
             - configMapRef:
-                name: config-env
-            - configMapRef:
                 name: config-service-map
+            - configMapRef:
+                name: config-env
             - secretRef:
                 name: secret-config-env
           env:
