@@ -1,7 +1,15 @@
 name: Application test
 on:
   pull_request:
-  merge_group:
+    paths:
+      - ".env.dist"
+      - "bin/**"
+      - "deploy/**"
+      - "docker-compose*.yml"
+      - "kustomization.yaml"
+      - "Makefile"
+      - "target/**"
+      - "test/**"
 concurrency:
   group: "test-${{ github.ref }}"
   cancel-in-progress: true
