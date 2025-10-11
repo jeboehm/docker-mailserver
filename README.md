@@ -108,6 +108,7 @@ and the documentation [Use another MySQL instance](docs/EXTERNAL_MYSQL.md) for d
   - [TLS](docs/TLS.md)
   - [External MySQL](docs/EXTERNAL_MYSQL.md)
   - [External relay host](docs/RELAYHOST.md)
+  - [Reverse Proxy](docs/REVERSE_PROXY.md)
   - [PHP Sessions](docs/PHP_SESSIONS.md)
 - [Developer Guide](docs/DEVELOPMENT.md)
 
