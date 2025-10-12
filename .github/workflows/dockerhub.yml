@@ -21,6 +21,8 @@ jobs:
           - jeboehm/mailserver-web
           - jeboehm/mailserver-unbound
           - jeboehm/mailserver-ssl
+          - jeboehm/mailserver-db # deprecated
+          - jeboehm/mailserver-virus # deprecated
     steps:
       - name: Checkout
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
@@ -31,4 +33,4 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
           repository: ${{ matrix.repository }}
           enable-url-completion: true
-          short-description: Docker Mailserver based on the famous ISPMail guide
+          short-description: docker-mailserver is inspired by the renowned ISPMail guide.

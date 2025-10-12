@@ -62,7 +62,7 @@ setup:
 
 .PHONY: lint
 lint:
-	docker run --platform linux/amd64 -e RUN_LOCAL=true --rm --env-file .github/linters/super-linter.env --env-file .github/linters/super-linter-fix.env -v $(PWD):/tmp/lint ghcr.io/super-linter/super-linter:v8.1.0
+	docker compose -f test/super-linter/compose.yaml run --rm super-linter
 
 .PHONY: kubernetes-deploy-helper
 kubernetes-deploy-helper:

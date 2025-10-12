@@ -1,0 +1,11 @@
+services:
+  super-linter:
+    platform: linux/amd64
+    image: ghcr.io/super-linter/super-linter:v8.2.0
+    env_file:
+      - ../../.github/linters/super-linter.env
+      - ../../.github/linters/super-linter-fix.env
+    environment:
+      - RUN_LOCAL=true
+    volumes:
+      - ../../:/tmp/lint

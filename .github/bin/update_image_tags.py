@@ -107,11 +107,7 @@ def replace_in_kustomization(content: str, new_tag: str) -> Tuple[str, int]:
 
         if in_images_block:
             current_indent = len(line) - len(line.lstrip(" \t"))
-            if (
-                images_indent is not None
-                and current_indent <= images_indent
-                and line.strip()
-            ):
+            if images_indent is not None and current_indent <= images_indent and line.strip():
                 # Left the images block
                 in_images_block = False
                 images_indent = None
@@ -133,9 +129,7 @@ def replace_in_readme(content: str, new_tag: str) -> Tuple[str, int]:
       - ghcr.io/jeboehm/<name>:latest
       - docker.io/jeboehm/<name>:latest
     """
-    pattern = re.compile(
-        r"(?P<name>\b(?:(?:ghcr|docker)\.io/)?jeboehm/[\w\-\.]+):latest\b"
-    )
+    pattern = re.compile(r"(?P<name>\b(?:(?:ghcr|docker)\.io/)?jeboehm/[\w\-\.]+):latest\b")
     new_content, count = pattern.subn(lambda m: f"{m.group('name')}:{new_tag}", content)
     return new_content, count
 
@@ -152,9 +146,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     Returns:
         Exit code (0 for success)
     """
-    parser = argparse.ArgumentParser(
-        description="Update :latest image tags to a specific version"
-    )
+    parser = argparse.ArgumentParser(description="Update :latest image tags to a specific version")
     parser.add_argument("new_tag", help="New tag to set (e.g., v1.2.3)")
     parser.add_argument(
         "--dry-run",
@@ -175,9 +167,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         replacements = 0
         new_content = original
 
-        if path.name in {"docker-compose.yml"} or path.match(
-            "**/deploy/compose/*.yaml"
-        ):
+        if path.name in {"docker-compose.yml"} or path.match("**/deploy/compose/*.yaml"):
             new_content, c = replace_in_compose_yaml(new_content, new_tag)
             replacements += c
 
