@@ -3,3 +3,5 @@ kind: Kustomization
 resources:
   - mda-ingressroute.yaml
   - mta-ingressroute.yaml
+  - middleware.yaml
+  - ingress.yaml
