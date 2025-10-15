@@ -80,6 +80,25 @@ and the documentation [Use another MySQL instance](docs/EXTERNAL_MYSQL.md) for d
 | Webmail                             | http://127.0.0.1:81/webmail/ |
 | Rspamd web interface                | http://127.0.0.1:81/rspamd/  |
 
+## Documentation
+
+- [Upgrade Guide](docs/UPGRADE.md)
+- [Service Architecture](docs/ARCHITECTURE.md)
+- Installation:
+  - [Kustomize External Database and HTTPS Ingress Example](docs/example-configs/kustomize/external-db-and-https-ingress/README.md)
+  - [Compose Traefik Reverse Proxy Example](docs/example-configs/compose/traefik-reverse-proxy/README.md)
+- Configuration:
+  - [DKIM Signing](docs/DKIM_SIGNING.md)
+  - [Environment Variables](docs/ENVIRONMENT_VARIABLES.md)
+  - [External MySQL](docs/EXTERNAL_MYSQL.md)
+  - [External relay host](docs/RELAYHOST.md)
+  - [Local Address Extension](docs/LOCAL_ADDRESS_EXTENSION.md)
+  - [PHP Sessions](docs/PHP_SESSIONS.md)
+  - [Reverse Proxy](docs/REVERSE_PROXY.md)
+  - [Roundcube](docs/ROUNDCUBE.md)
+  - [TLS](docs/TLS.md)
+- [Developer Guide](docs/DEVELOPMENT.md)
+
 ## Screenshots
 
 ### Manage users
@@ -94,26 +113,18 @@ and the documentation [Use another MySQL instance](docs/EXTERNAL_MYSQL.md) for d
 
 ![DKIM setup](https://raw.githubusercontent.com/jeboehm/mailserver-admin/master/.github/screenshots/dkim_edit.png)
 
-## Documentation
-
-- [Upgrade Guide](docs/UPGRADE.md)
-- [Features](docs/FEATURES.md)
-- [Service Architecture](docs/ARCHITECTURE.md)
-- Installation:
-  - [Kustomize External Database and HTTPS Ingress Example](docs/example-configs/kustomize/external-db-and-https-ingress/README.md)
-  - [Compose Traefik Reverse Proxy Example](docs/example-configs/compose/traefik-reverse-proxy/README.md)
-- Configuration:
-  - [Environment Variables](docs/ENVIRONMENT_VARIABLES.md)
-  - [Roundcube](docs/ROUNDCUBE.md)
-  - [TLS](docs/TLS.md)
-  - [External MySQL](docs/EXTERNAL_MYSQL.md)
-  - [External relay host](docs/RELAYHOST.md)
-  - [Reverse Proxy](docs/REVERSE_PROXY.md)
-  - [PHP Sessions](docs/PHP_SESSIONS.md)
-- [Developer Guide](docs/DEVELOPMENT.md)
-
 ## Links
 
 - [Issues](https://github.com/jeboehm/docker-mailserver/issues)
-- [mailserver-admin](https://github.com/jeboehm/mailserver-admin)
-- [fetchmailmgr](https://github.com/jeboehm/fetchmailmgr)
+- Container Images:
+  - [ghcr.io](https://github.com/jeboehm?tab=packages&repo_name=docker-mailserver)
+  - [Docker Hub](https://hub.docker.com/u/jeboehm?page=1&search=mailserver)
+- Components:
+  - [dovecot](https://doc.dovecot.org/2.4.1/)
+  - [fetchmailmgr](https://github.com/jeboehm/fetchmailmgr)
+  - [mailserver-admin](https://github.com/jeboehm/mailserver-admin)
+  - [postfix](https://www.postfix.org/documentation.html)
+  - [redis](https://redis.io/docs/latest/)
+  - [roundcube](https://docs.roundcube.net/doc/help/1.1/en_US/)
+  - [rspamd](https://docs.rspamd.com/)
+  - [unbound](https://unbound.docs.nlnetlabs.nl/en/latest/)
