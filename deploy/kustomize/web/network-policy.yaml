@@ -20,8 +20,6 @@ spec:
         - podSelector: {}
       ports:
         - protocol: TCP
-          port: 9000 # PHP-FPM
-        - protocol: TCP
           port: 8080 # HTTP
     # Allow ingress from ingress-nginx namespace
     - from:
@@ -31,6 +29,19 @@ spec:
           podSelector:
             matchLabels:
               app.kubernetes.io/name: ingress-nginx
+      ports:
+        - protocol: TCP
+          port: 8080
+        - protocol: TCP
+          port: 80
+    # Allow ingress from traefik namespace
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: traefik
+          podSelector:
+            matchLabels:
+              app.kubernetes.io/name: traefik
       ports:
         - protocol: TCP
           port: 8080
