@@ -20,7 +20,7 @@ spec:
         - podSelector: {}
       ports:
         - protocol: TCP
-          port: 8080 # HTTP
+          port: 8080
     # Allow ingress from ingress-nginx namespace
     - from:
         - namespaceSelector:
@@ -32,8 +32,6 @@ spec:
       ports:
         - protocol: TCP
           port: 8080
-        - protocol: TCP
-          port: 80
     # Allow ingress from traefik namespace
     - from:
         - namespaceSelector:
@@ -45,5 +43,3 @@ spec:
       ports:
         - protocol: TCP
           port: 8080
-        - protocol: TCP
-          port: 80
