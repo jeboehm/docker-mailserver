@@ -9,5 +9,5 @@ RUN chown -R unbound:unbound /etc/unbound && \
 COPY --chown=unbound:unbound rootfs/ /
 USER unbound
 
-EXPOSE 5353/TCP 5353/UDP
+EXPOSE 5353/tcp 5353/udp
 HEALTHCHECK CMD dig @127.0.0.1 -p 5353 github.com || exit 1
