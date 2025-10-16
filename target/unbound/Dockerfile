@@ -10,4 +10,4 @@ COPY --chown=unbound:unbound rootfs/ /
 USER unbound
 
 EXPOSE 5353/tcp 5353/udp
-HEALTHCHECK CMD dig @127.0.0.1 -p 5353 github.com || exit 1
+HEALTHCHECK CMD /usr/local/bin/healthcheck.sh
