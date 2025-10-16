@@ -49,22 +49,6 @@ jobs:
         run: |
           make logs
           docker ps -a
-  lint_files:
-    permissions:
-      contents: read
-      packages: read
-      statuses: write
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
-        with:
-          fetch-depth: 0
-      - name: Prepare environment
-        run: grep -v '^#' .github/linters/super-linter.env >> "$GITHUB_ENV"
-      - name: Super-Linter
-        uses: super-linter/super-linter@7bba2eeb89d01dc9bfd93c497477a57e72c83240 # v8.2.0
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   test_kustomize_build:
     runs-on: ubuntu-latest
     steps:

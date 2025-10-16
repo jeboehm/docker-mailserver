@@ -3,20 +3,12 @@ kind: Ingress
 metadata:
   name: mail-admin-ingress
   annotations:
-    nginx.ingress.kubernetes.io/proxy-body-size: 100m
+    traefik.ingress.kubernetes.io/router.middlewares: mail-stripprefix@kubernetescrd
 spec:
-  ingressClassName: nginx
   rules:
     - host: server
       http:
         paths:
-          - path: /
-            pathType: ImplementationSpecific
-            backend:
-              service:
-                name: web
-                port:
-                  number: 80
           - path: /rspamd
             pathType: Prefix
             backend:
@@ -24,3 +16,10 @@ spec:
                 name: filter
                 port:
                   name: controller
+          - path: /
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: web
+                port:
+                  name: http
