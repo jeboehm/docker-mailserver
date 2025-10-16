@@ -46,8 +46,9 @@ spec:
               containerPort: 5353
               protocol: TCP
           livenessProbe:
-            tcpSocket:
-              port: dns-tcp
+            exec:
+              command:
+                - /usr/local/bin/healthcheck.sh
             initialDelaySeconds: 30
             periodSeconds: 30
             timeoutSeconds: 10
