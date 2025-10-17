@@ -45,6 +45,10 @@ spec:
           env:
             - name: REDIS_URL
               value: "redis://$(REDIS_HOST):$(REDIS_PORT)?password=$(REDIS_PASSWORD)"
+            - name: FETCHMAIL_USE_LMTP
+              value: "true"
+            - name: FETCHMAIL_SMTP_ADDRESS
+              value: "$(MDA_LMTP_ADDRESS)"
           ports:
             - name: http
               containerPort: 3000

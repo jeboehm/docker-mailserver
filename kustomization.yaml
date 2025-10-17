@@ -22,3 +22,5 @@ images:
     newTag: latest
   - name: jeboehm/mailserver-unbound
     newTag: latest
+  - name: ghcr.io/jeboehm/fetchmailmgr
+    newTag: "0.4.0"
