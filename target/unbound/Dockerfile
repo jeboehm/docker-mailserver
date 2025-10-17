@@ -5,7 +5,8 @@ LABEL vendor="https://github.com/jeboehm/docker-mailserver"
 LABEL de.ressourcenkonflikt.docker-mailserver.autoheal="true"
 
 RUN chown -R unbound:unbound /etc/unbound && \
-    apk add --no-cache bind-tools
+    apk add --no-cache bind-tools libcap && \
+    setcap 'cap_net_bind_service=+ep' /usr/sbin/unbound
 COPY --chown=unbound:unbound rootfs/ /
 USER unbound
 
