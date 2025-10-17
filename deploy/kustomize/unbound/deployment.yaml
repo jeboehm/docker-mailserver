@@ -32,12 +32,10 @@ spec:
             - secretRef:
                 name: secret-config-env
           securityContext:
-            allowPrivilegeEscalation: false
+            allowPrivilegeEscalation: true
             runAsUser: 100
             runAsGroup: 101
             capabilities:
-              drop:
-                - ALL
               add:
                 - NET_BIND_SERVICE
           ports:
