@@ -9,5 +9,5 @@ RUN chown -R unbound:unbound /etc/unbound && \
 COPY --chown=unbound:unbound rootfs/ /
 USER unbound
 
-EXPOSE 53/TCP 53/UDP
+EXPOSE 53/tcp 53/udp
 HEALTHCHECK CMD /usr/local/bin/healthcheck.sh
