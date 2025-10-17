@@ -32,12 +32,14 @@ spec:
             - secretRef:
                 name: secret-config-env
           securityContext:
-            allowPrivilegeEscalation: true
-            runAsUser: 100
-            runAsGroup: 101
             capabilities:
+              drop:
+                - ALL
               add:
                 - NET_BIND_SERVICE
+                - CHOWN
+                - SETUID
+                - SETGID
           ports:
             - name: dns
               containerPort: 53
@@ -67,8 +69,5 @@ spec:
               cpu: 50m
               memory: 32Mi
       securityContext:
-        fsGroup: 101
-        fsGroupChangePolicy: OnRootMismatch
-        runAsNonRoot: true
         seccompProfile:
           type: RuntimeDefault

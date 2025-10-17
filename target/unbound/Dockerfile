@@ -4,11 +4,8 @@ LABEL maintainer="https://github.com/jeboehm/docker-mailserver"
 LABEL vendor="https://github.com/jeboehm/docker-mailserver"
 LABEL de.ressourcenkonflikt.docker-mailserver.autoheal="true"
 
-RUN chown -R unbound:unbound /etc/unbound && \
-    apk add --no-cache bind-tools libcap && \
-    setcap 'cap_net_bind_service=+ep' /usr/sbin/unbound
-COPY --chown=unbound:unbound rootfs/ /
-USER unbound
+RUN apk add --no-cache bind-tools
+COPY rootfs/ /
 
 EXPOSE 53/tcp 53/udp
 HEALTHCHECK CMD /usr/local/bin/healthcheck.sh
