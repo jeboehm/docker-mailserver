@@ -1,7 +1,7 @@
 services:
   super-linter:
     platform: linux/amd64
-    image: ghcr.io/super-linter/super-linter:slim-v8.2.0
+    image: ghcr.io/super-linter/super-linter:slim-v8.2.0@sha256:dff329180673d82b000aea97c64d85cc9dc76dcd4e0d6051c7f163cd1b346a32
     env_file:
       - ../../.github/linters/super-linter.env
       - ../../.github/linters/super-linter-fix.env
