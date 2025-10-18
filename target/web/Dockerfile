@@ -70,7 +70,7 @@ RUN --mount=type=cache,target=/root/.composer \
         ${RC_PLUGINS}; \
     fi
 
-ARG ADMIN_VER=5.5.3 # renovate: depName=jeboehm/mailserver-admin
+ARG ADMIN_VER=5.5.4 # renovate: depName=jeboehm/mailserver-admin
 WORKDIR /opt/manager
 RUN --mount=type=cache,target=/root/.composer \
     curl -sSLf \
