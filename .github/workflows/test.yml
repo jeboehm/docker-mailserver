@@ -38,7 +38,7 @@ jobs:
         run: cat .env
       - name: Pull and build images
         run: make build
-      - name: Start docker-mailserver services
+      - name: Start components
         run: make up
       - name: Load database fixtures
         run: make fixtures
@@ -64,12 +64,8 @@ jobs:
       - uses: actions/setup-node@2028fbc5c25fe9cf00d9f06a71cc4710d4507903 # v6
         with:
           node-version: 24
-      - uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
-        with:
-          path: test/pajv/node_modules
-          key: ${{ runner.os }}-node-${{ hashFiles('test/pajv/package.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
+          cache: npm
+          cache-dependency-path: test/pajv/package-lock.json
       - name: Install packages
         run: |
           cd test/pajv
@@ -121,5 +117,5 @@ jobs:
       - name: Get pod status on failure
         if: failure()
         run: |
-          kubectl get pods -o wide
           make kubernetes-logs
+          kubectl get pods -o wide
