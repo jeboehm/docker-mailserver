@@ -1,5 +1,4 @@
 .env
 docker-compose.override.yml
 /config/
-package-lock.json
 node_modules/
