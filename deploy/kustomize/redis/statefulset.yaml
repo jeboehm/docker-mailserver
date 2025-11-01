@@ -21,6 +21,7 @@ spec:
         app.kubernetes.io/component: storage
         app.kubernetes.io/part-of: docker-mailserver
     spec:
+      automountServiceAccountToken: false
       affinity:
         podAntiAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
