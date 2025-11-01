@@ -78,6 +78,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       CLUSTER_NAME: kind
+      POPEYE_VERSION: v0.22.1
     strategy:
       matrix:
         BUILD_CASE:
@@ -93,6 +94,10 @@ jobs:
         uses: helm/kind-action@a1b0e391336a6ee6713a0583f8c6240d70863de3 # v1
         with:
           cluster_name: ${{ env.CLUSTER_NAME }}
+      - name: Install Popeye
+        run: |
+          curl -LO https://github.com/derailed/popeye/releases/download/${{ env.POPEYE_VERSION }}/popeye_linux_amd64.deb
+          sudo dpkg -i popeye_linux_amd64.deb
       - name: Use kubectl context
         run: |
           kind get clusters
@@ -114,6 +119,8 @@ jobs:
         run: make kubernetes-wait
       - name: Run tests
         run: make kubernetes-test
+      - name: Run Popeye
+        run: make popeye-score
       - name: Get pod status on failure
         if: failure()
         run: |
