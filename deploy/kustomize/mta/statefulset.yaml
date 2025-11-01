@@ -21,6 +21,7 @@ spec:
         app.kubernetes.io/component: mail
         app.kubernetes.io/part-of: docker-mailserver
     spec:
+      automountServiceAccountToken: false
       affinity:
         podAntiAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
@@ -106,6 +107,9 @@ spec:
             requests:
               cpu: 50m
               memory: 64Mi
+            limits:
+              cpu: 50m
+              memory: 64Mi
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true
@@ -137,6 +141,9 @@ spec:
               postconf lmtp_host_lookup=native
           resources:
             requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
               cpu: 50m
               memory: 64Mi
           securityContext:

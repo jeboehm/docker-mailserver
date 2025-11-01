@@ -9,11 +9,11 @@ spec:
   ports:
     - name: smtp
       port: 1025
-      targetPort: 1025
+      targetPort: smtp
       protocol: TCP
     - name: http
       port: 8025
-      targetPort: 8025
+      targetPort: http
       protocol: TCP
   selector:
     app.kubernetes.io/name: mailpit
@@ -34,6 +34,7 @@ spec:
       labels:
         app.kubernetes.io/name: mailpit
     spec:
+      automountServiceAccountToken: false
       containers:
         - name: mailpit
           image: axllent/mailpit:v1.27
@@ -54,6 +55,13 @@ spec:
           volumeMounts:
             - name: tls-certs
               mountPath: /etc/mailpit/tls
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 500m
+              memory: 128Mi
       volumes:
         - name: tls-certs
           secret:

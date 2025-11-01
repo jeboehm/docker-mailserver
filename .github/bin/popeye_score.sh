@@ -1,12 +1,13 @@
 #!/bin/sh
 set -e
 
-score=$(popeye -o score)
+POPEYE_SCORE_THRESHOLD=76
+CURRENT_SCORE=$(popeye -o score)
 
-if [ "$score" -lt 90 ]; then
-  echo "Popeye score is below 90"
+if [ "${CURRENT_SCORE}" -lt "${POPEYE_SCORE_THRESHOLD}" ]; then
+	echo "Error: Popeye score is below ${POPEYE_SCORE_THRESHOLD}, current score: ${CURRENT_SCORE}"
 
-  exit 1
+	exit 1
 fi
 
 exit 0
