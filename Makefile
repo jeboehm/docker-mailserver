@@ -117,3 +117,8 @@ kind-load: build
 	kind load docker-image jeboehm/mailserver-unbound:latest
 	docker tag docker-mailserver-test jeboehm/mailserver-test:latest
 	kind load docker-image jeboehm/mailserver-test:latest
+
+.PHONY: popeye-score
+popeye-score:
+	popeye
+	.github/bin/popeye_score.sh
