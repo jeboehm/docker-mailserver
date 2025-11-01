@@ -10,7 +10,7 @@ spec:
     - name: mysql
       port: 3306
       protocol: TCP
-      targetPort: 3306
+      targetPort: mysql
   selector:
     app.kubernetes.io/name: db
 ---
@@ -30,6 +30,7 @@ spec:
       labels:
         app.kubernetes.io/name: db
     spec:
+      automountServiceAccountToken: false
       containers:
         - name: mysql
           image: mysql:lts
@@ -46,6 +47,13 @@ spec:
             - name: mysql-init
               mountPath: /docker-entrypoint-initdb.d
               readOnly: true
+          resources:
+            requests:
+              cpu: 50m
+              memory: 200Mi
+            limits:
+              cpu: 1000m
+              memory: 512Mi
       volumes:
         - name: mysql-data
           emptyDir: {}
