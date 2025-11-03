@@ -28,7 +28,7 @@ ENV MYSQL_HOST=db \
 # 2003: LMTP, 2004: AUTH
 EXPOSE 2003 2004
 
-COPY --chown=root:root --from=dockerize /bin/dockerize /usr/local/bin/dockerize
+COPY --chown=root:root --from=dockerize /bin/dockerize /bin/dockerize
 COPY --chown=root:root rootfs/ /
 
 USER root
