@@ -16,6 +16,7 @@ spec:
         app.kubernetes.io/component: test
         app.kubernetes.io/part-of: docker-mailserver
     spec:
+      automountServiceAccountToken: false
       restartPolicy: Never
       initContainers:
         - name: load-fixtures
