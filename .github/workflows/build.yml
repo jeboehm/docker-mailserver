@@ -6,7 +6,7 @@ on:
       - next
     tags: [v*]
 concurrency:
-  group: "build-${{ github.ref }}"
+  group: "${{ github.workflow }}-${{ github.ref }}"
   cancel-in-progress: true
 jobs:
   build_buildx:
