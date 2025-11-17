@@ -39,12 +39,14 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@e468171a9de216ec08956ac3ada2f0791b6bd435 # v3.11.1
       - name: Log in to Container Registry (ghcr.io)
+        if: ${{ github.event_name != 'pull_request' }}
         uses: docker/login-action@5e57cd118135c172c3672efd75eb46360885c0ef # v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Log in to Container Registry (docker.io)
+        if: ${{ github.event_name != 'pull_request' }}
         uses: docker/login-action@5e57cd118135c172c3672efd75eb46360885c0ef # v3
         with:
           username: ${{ vars.DOCKER_USERNAME }}
@@ -73,8 +75,8 @@ jobs:
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=registry,ref=ghcr.io/jeboehm/${{ matrix.image }}:buildcache
-          cache-to: type=registry,ref=ghcr.io/jeboehm/${{ matrix.image }}:buildcache,mode=max
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
       - name: Generate artifact attestation (ghcr.io)
         if: ${{ github.event_name != 'pull_request' }}
         uses: actions/attest-build-provenance@977bb373ede98d70efdf65b84cb5f73e068dcc2a # v3
