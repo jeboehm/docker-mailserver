@@ -136,7 +136,7 @@ jobs:
           push-to-registry: true
       - name: Upload Docker image to artifacts
         if: ${{ github.event_name == 'pull_request' }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5
         with:
           name: docker-image-${{ matrix.image }}
           path: ${{ runner.temp }}/${{ matrix.image }}.tar
@@ -153,7 +153,7 @@ jobs:
     steps:
       - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
       - name: Download Docker image artifacts
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6
         with:
           path: images
           pattern: docker-image-*
@@ -252,7 +252,7 @@ jobs:
             fi
           done
       - name: Download docker image artifacts
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6
         with:
           path: images
           pattern: docker-image-*
