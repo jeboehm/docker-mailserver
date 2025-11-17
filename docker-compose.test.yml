@@ -13,6 +13,7 @@ services:
       - mda:mda.local
 
   test:
+    image: jeboehm/mailserver-test:latest
     build: ./test/bats
     volumes:
       - data-mail:/srv/vmail:ro

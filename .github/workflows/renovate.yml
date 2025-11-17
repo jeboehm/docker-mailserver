@@ -4,7 +4,7 @@ on:
     paths:
       - renovate.json
 concurrency:
-  group: "renovate-${{ github.ref }}"
+  group: "${{ github.workflow }}-${{ github.ref }}"
   cancel-in-progress: true
 jobs:
   validate_renovate_config:
