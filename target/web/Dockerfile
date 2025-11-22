@@ -1,4 +1,4 @@
-FROM php:8.4-fpm-alpine@sha256:994527feb1fe228e1f28f657abb6ae0e835b68b2dc0c8ef3d05c3fa06416371a
+FROM php:8.4-fpm-alpine@sha256:ad846930aa226fad969e037bf14845bca0fae2371e7c53c49f160b27aa4540c9
 
 LABEL maintainer="https://github.com/jeboehm/docker-mailserver"
 LABEL vendor="https://github.com/jeboehm/docker-mailserver"
@@ -53,7 +53,7 @@ ENV MYSQL_HOST=db \
     PHP_SESSION_SAVE_HANDLER=redis
 
 ARG RC_PLUGINS=""
-COPY --from=docker.io/roundcube/roundcubemail:1.6.11-fpm@sha256:e9cb1fd4c0c9f01f0773c727ac24acaa3fcd7347f726822332b6657d002acf48 /usr/src/roundcubemail/ /var/www/html/webmail/
+COPY --from=docker.io/roundcube/roundcubemail:1.6.11-fpm@sha256:6a35d467c9b7391a1e9b6077be9f074b3eecc56b88a11de689274ce48d580bee /usr/src/roundcubemail/ /var/www/html/webmail/
 WORKDIR /var/www/html/webmail
 RUN --mount=type=cache,target=/root/.composer \
     mkdir -p \
