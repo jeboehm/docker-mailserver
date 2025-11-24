@@ -1,4 +1,4 @@
-FROM php:8.4-fpm-alpine@sha256:ad846930aa226fad969e037bf14845bca0fae2371e7c53c49f160b27aa4540c9
+FROM php:8.5-fpm-alpine@sha256:ec716b3d7e4d6bb719c5cdaae4ea62de6605e2fd506876adf234613d808854b4
 
 LABEL maintainer="https://github.com/jeboehm/docker-mailserver"
 LABEL vendor="https://github.com/jeboehm/docker-mailserver"
@@ -70,7 +70,7 @@ RUN --mount=type=cache,target=/root/.composer \
         ${RC_PLUGINS}; \
     fi
 
-ARG ADMIN_VER=5.5.6 # renovate: depName=jeboehm/mailserver-admin
+ARG ADMIN_VER=5.6.1 # renovate: depName=jeboehm/mailserver-admin
 WORKDIR /opt/manager
 RUN --mount=type=cache,target=/root/.composer \
     curl -sSLf \
