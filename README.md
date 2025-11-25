@@ -10,8 +10,7 @@ Container images are built on [Alpine Linux](https://alpinelinux.org) or vendor 
 [Changelog](https://github.com/jeboehm/docker-mailserver/releases)
 [Upgrade Guide](docs/UPGRADE.md)
 
-[![Tests](https://github.com/jeboehm/docker-mailserver/actions/workflows/test.yml/badge.svg?branch=next)](https://github.com/jeboehm/docker-mailserver/actions/workflows/test.yml)
-[![Build](https://github.com/jeboehm/docker-mailserver/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/jeboehm/docker-mailserver/actions/workflows/build.yml)
+[![Build & Tests](https://github.com/jeboehm/docker-mailserver/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/jeboehm/docker-mailserver/actions/workflows/build.yml)
 
 ## Features
 
@@ -36,21 +35,31 @@ Container images are built on [Alpine Linux](https://alpinelinux.org) or vendor 
 
 ## Installation
 
-### With Docker Compose
+### Download
 
-1. Run `git clone git@github.com:jeboehm/docker-mailserver.git`
-2. Copy the file `.env.dist` to `.env` and change the variables in it according to your needs.
-   The variables are described in the [docs](docs/ENVIRONMENT_VARIABLES.md).
-3. Run `bin/production.sh pull` to download the images.
-4. Run `bin/production.sh up -d` to start the services.
-5. After a few seconds, you can access the services listed in the section [Ports overview](#ports-overview).
-6. Create your first email address and an admin user by running `bin/production.sh run --rm web setup.sh`.
-   The wizard will ask you a few questions to set everything up.
-7. Now you can log in to the management interface with your new account credentials.
+Download the latest release from the [Releases](https://github.com/jeboehm/docker-mailserver/releases) page and unpack the archive (release-vX.X.X.tar.gz).
+If you are an advanced user, you can also download the source code from GitHub:
 
-### On Kubernetes (K8s)
+```bash
+git clone https://github.com/jeboehm/docker-mailserver.git
+```
 
-Kubernetes installation is a first-class citizen. You can use the `kustomization.yaml` file to deploy the mailserver to your Kubernetes cluster.
+Do not use the `latest` container image tag for production deployments. Use a specific version instead.
+For example, use `jeboehm/mailserver-mta:6.3` instead of `jeboehm/mailserver-mta:latest`.
+
+### Run on Docker
+
+1. Copy the file `.env.dist` to `.env` and open it in a text editor.
+   Change the variables in it according to your needs. They are described in the [docs](docs/ENVIRONMENT_VARIABLES.md).
+2. To download the Docker images, run `bin/production.sh pull`.
+3. To start the services, run `bin/production.sh up -d --wait`. This will wait for all services to be ready before continuing.
+4. After a few seconds, you can access the services listed in the section [Ports overview](#ports-overview).
+5. Start the installation wizard by running `bin/production.sh run --rm web setup.sh`. This will ask you a few questions to set everything up and create your first email address and an admin user.
+6. Now you can log in to the management interface with your new account credentials.
+
+### Run On Kubernetes (K8s)
+
+Kubernetes deployment is fully supported. You can use the `kustomization.yaml` file to deploy the mailserver to your Kubernetes cluster.
 
 **Important:** Installing on Kubernetes requires an existing MySQL-compatible database (for example, MySQL or Percona XtraDB).
 The provided kustomization does not provision a database. Configure the database connection in your `.env` and supply
@@ -58,13 +67,14 @@ credentials as Kubernetes Secrets before applying the manifests. See the
 [Kustomize External Database and HTTPS Ingress Example](docs/example-configs/kustomize/external-db-and-https-ingress/README.md)
 and the documentation [Use another MySQL instance](docs/EXTERNAL_MYSQL.md) for details.
 
-1. Run `git clone git@github.com:jeboehm/docker-mailserver.git`
-2. Copy the file `.env.dist` to `.env` and change the variables in it according to your needs.
-   The variables are described in the [docs](docs/ENVIRONMENT_VARIABLES.md).
-3. Run `kubectl create namespace mail`
-4. Run `bin/create-tls-certs.sh`
-5. Run `kubectl create -n mail secret tls tls-certs --cert=config/tls/tls.crt --key=config/tls/tls.key`
-6. Run `kubectl apply -n mail -k .`
+1. Copy the file `.env.dist` to `.env` and open it in a text editor.
+   Change the variables in it according to your needs. They are described in the [docs](docs/ENVIRONMENT_VARIABLES.md).
+2. Create a namespace for the mailserver by running `kubectl create namespace mail`.
+3. To create self-signed TLS certificates, run `bin/create-tls-certs.sh`. You'll need them when you don't plan to use tools like `cert-manager`.
+4. Create a Kubernetes secret for the TLS certificates by running `kubectl create -n mail secret tls tls-certs --cert=config/tls/tls.crt --key=config/tls/tls.key`.
+5. Apply the kustomize manifests by running `kubectl apply -n mail -k .`.
+6. When the pods are up and healthy, start the installation wizard by executing `setup.sh` in the php-fpm container of the web pod. This will ask you a few questions to set everything up and create your first email address and an admin user.
+7. Now you can log in to the management interface with your new account credentials on the configured ingress.
 
 ## Ports overview
 

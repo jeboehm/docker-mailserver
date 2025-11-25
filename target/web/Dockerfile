@@ -1,10 +1,10 @@
-FROM php:8.4-fpm-alpine@sha256:aee4a044beefc7d88d0419aee8825491e02391f37707b8fc0d8edba1a29c1165
+FROM php:8.4-fpm-alpine@sha256:ad846930aa226fad969e037bf14845bca0fae2371e7c53c49f160b27aa4540c9
 
 LABEL maintainer="https://github.com/jeboehm/docker-mailserver"
 LABEL vendor="https://github.com/jeboehm/docker-mailserver"
 LABEL de.ressourcenkonflikt.docker-mailserver.autoheal="true"
 
-ARG EXTENSION_INSTALLER_VER=2.9.13 # renovate: depName=mlocati/docker-php-extension-installer
+ARG EXTENSION_INSTALLER_VER=2.9.18 # renovate: depName=mlocati/docker-php-extension-installer
 RUN curl -sSLf \
         -o /usr/local/bin/install-php-extensions \
         https://github.com/mlocati/docker-php-extension-installer/releases/download/${EXTENSION_INSTALLER_VER}/install-php-extensions && \
@@ -53,7 +53,7 @@ ENV MYSQL_HOST=db \
     PHP_SESSION_SAVE_HANDLER=redis
 
 ARG RC_PLUGINS=""
-COPY --from=docker.io/roundcube/roundcubemail:1.6.11-fpm@sha256:af6a71e7b6c4aa0e235b036a5162b7b676dcb457058c98e953959230a7399adf /usr/src/roundcubemail/ /var/www/html/webmail/
+COPY --from=docker.io/roundcube/roundcubemail:1.6.11-fpm@sha256:6a35d467c9b7391a1e9b6077be9f074b3eecc56b88a11de689274ce48d580bee /usr/src/roundcubemail/ /var/www/html/webmail/
 WORKDIR /var/www/html/webmail
 RUN --mount=type=cache,target=/root/.composer \
     mkdir -p \
@@ -70,7 +70,7 @@ RUN --mount=type=cache,target=/root/.composer \
         ${RC_PLUGINS}; \
     fi
 
-ARG ADMIN_VER=5.5.3 # renovate: depName=jeboehm/mailserver-admin
+ARG ADMIN_VER=5.6.1 # renovate: depName=jeboehm/mailserver-admin
 WORKDIR /opt/manager
 RUN --mount=type=cache,target=/root/.composer \
     curl -sSLf \
