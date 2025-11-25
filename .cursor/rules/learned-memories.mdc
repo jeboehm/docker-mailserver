@@ -1,3 +1,7 @@
+---
+alwaysApply: true
+---
+
 # Project Memory
 
 This file stores project-specific knowledge, conventions, and user preferences learned by the AI assistant.
@@ -13,3 +17,13 @@ This file stores project-specific knowledge, conventions, and user preferences l
 ## Project Conventions
 
 - **Documentation Standards**: Write documentation for complex software with technical precision, avoiding promotional language and focusing on functional descriptions.
+
+## Project Structure
+
+- **Architecture**: The docker-mailserver consists of multiple Docker containers or Kubernetes pods that work together to provide a mail service.
+- **Container Images**: Each container image is built in `target/`. Each subdirectory in `target/` represents a separate service component (e.g., `target/mta/`, `target/mda/`, `target/filter/`, `target/web/`, `target/db/`, `target/unbound/`, `target/ssl/`).
+- **Deployment Manifests**: The project supports both Docker Compose and Kubernetes deployments:
+  - Docker Compose manifests are located in `deploy/compose/`
+  - Kubernetes manifests using Kustomize are located in `deploy/kustomize/`
+- **Multi-Platform Support**: The same container images can be deployed either as Docker containers (via Compose) or as Kubernetes pods (via Kustomize), with deployment-specific configuration in the respective directories.
+- **Deployment Consistency**: When changes are made to deployment manifests in `deploy/compose/` or `deploy/kustomize/`, the same changes must be applied to the corresponding manifests in the other deployment method to maintain feature parity between Docker Compose and Kubernetes deployments.
