@@ -4,6 +4,14 @@ Upgrade guide for docker-mailserver.
 
 Before upgrading, ensure you have updated `docker-compose.yml` and `docker-compose.production.yml` files.
 
+## v6.0 to v6.1
+
+- **Unbound port change and capability requirement (breaking)**: Unbound now listens on port `53` (UDP/TCP) instead of `5353`.
+  - Compose: the `unbound` service now requires `cap_add: [NET_BIND_SERVICE]` to bind <1024 as non-root.
+  - Kubernetes: the `unbound` deployment exposes containerPorts `53/TCP` and `53/UDP` and adds the `NET_BIND_SERVICE` capability.
+  - Rspamd and internal components should use `unbound:53`. Any hardcoded `:5353` must be updated.
+  - If you previously customized Postfix to use `127.0.0.1:5353`, remove that customization. Postfix and other services should resolve via standard port 53.
+
 ## v5.x to v6.0
 
 Deployment on Kubernetes is now a first class citizen. You can use the `kustomization.yaml` file to deploy the mailserver to your Kubernetes cluster.
@@ -21,7 +29,6 @@ The Helm chart has been deprecated and archived.
 - **Mail Submission**: Mail submission is now only possible on port 587.
 
 ### MDA (Mail Delivery Agent)
-
 - **Base Image**: Changed to `dovecot/dovecot`. This image is no longer based on Alpine Linux.
 - **TLS Certificate Paths**: Updated to `/etc/dovecot/tls/tls.crt` and `/etc/dovecot/tls/tls.key`. A Diffie-Hellman file is no longer required.
 - **Mail Storage**: Now mounted to `/srv/vmail` instead of `/var/vmail`.
