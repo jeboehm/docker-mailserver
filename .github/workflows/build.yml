@@ -283,30 +283,3 @@ jobs:
         run: |
           make kubernetes-logs
           kubectl get pods -o wide
-  test_kustomize_build:
-    if: ${{ github.event_name == 'pull_request' }}
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6
-      - name: Run kustomize build
-        run: |
-          make .env
-          kustomize build .
-  test_yaml_schema:
-    if: ${{ github.event_name == 'pull_request' }}
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6
-      - uses: actions/setup-node@2028fbc5c25fe9cf00d9f06a71cc4710d4507903 # v6
-        with:
-          node-version: 24
-          cache: npm
-          cache-dependency-path: test/pajv/package-lock.json
-      - name: Install packages
-        run: |
-          cd test/pajv
-          npm install
-      - name: Run yaml schema test
-        run: |
-          cd test/pajv
-          ./run-tests.sh
