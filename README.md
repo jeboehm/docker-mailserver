@@ -10,8 +10,7 @@ Container images are built on [Alpine Linux](https://alpinelinux.org) or vendor 
 [Changelog](https://github.com/jeboehm/docker-mailserver/releases)
 [Upgrade Guide](docs/UPGRADE.md)
 
-[![Tests](https://github.com/jeboehm/docker-mailserver/actions/workflows/test.yml/badge.svg?branch=next)](https://github.com/jeboehm/docker-mailserver/actions/workflows/test.yml)
-[![Build](https://github.com/jeboehm/docker-mailserver/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/jeboehm/docker-mailserver/actions/workflows/build.yml)
+[![Build & Tests](https://github.com/jeboehm/docker-mailserver/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/jeboehm/docker-mailserver/actions/workflows/build.yml)
 
 ## Features
 
