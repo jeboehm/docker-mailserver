@@ -53,7 +53,7 @@ ENV MYSQL_HOST=db \
     PHP_SESSION_SAVE_HANDLER=redis
 
 ARG RC_PLUGINS=""
-COPY --from=docker.io/roundcube/roundcubemail:1.6.11-fpm@sha256:6a35d467c9b7391a1e9b6077be9f074b3eecc56b88a11de689274ce48d580bee /usr/src/roundcubemail/ /var/www/html/webmail/
+COPY --from=docker.io/roundcube/roundcubemail:1.6.11-fpm@sha256:db3a1abe6d330146700814573d2888185d85e4b82b513e7a9fc4ae9723941624 /usr/src/roundcubemail/ /var/www/html/webmail/
 WORKDIR /var/www/html/webmail
 RUN --mount=type=cache,target=/root/.composer \
     mkdir -p \
