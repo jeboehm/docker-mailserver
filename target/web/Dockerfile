@@ -1,30 +1,8 @@
-FROM php:8.4-fpm-alpine@sha256:ad846930aa226fad969e037bf14845bca0fae2371e7c53c49f160b27aa4540c9
+FROM php:8.4-fpm-alpine@sha256:ad846930aa226fad969e037bf14845bca0fae2371e7c53c49f160b27aa4540c9 AS builder
 
 LABEL maintainer="https://github.com/jeboehm/docker-mailserver"
 LABEL vendor="https://github.com/jeboehm/docker-mailserver"
 LABEL de.ressourcenkonflikt.docker-mailserver.autoheal="true"
-
-ARG EXTENSION_INSTALLER_VER=2.9.18 # renovate: depName=mlocati/docker-php-extension-installer
-RUN curl -sSLf \
-        -o /usr/local/bin/install-php-extensions \
-        https://github.com/mlocati/docker-php-extension-installer/releases/download/${EXTENSION_INSTALLER_VER}/install-php-extensions && \
-    chmod +x /usr/local/bin/install-php-extensions && \
-    install-php-extensions \
-        @composer \
-        apcu \
-        intl \
-        opcache \
-        pdo_mysql \
-        redis \
-        zip && \
-    rm /usr/local/bin/install-php-extensions && \
-    cp /usr/local/etc/php/php.ini-production /usr/local/etc/php/php.ini
-
-RUN apk add --no-cache \
-        nginx \
-        supervisor && \
-    rm /etc/nginx/nginx.conf && \
-    rm -r /etc/nginx/http.d/
 
 ENV MYSQL_HOST=db \
     MYSQL_PORT=3306 \
@@ -52,14 +30,37 @@ ENV MYSQL_HOST=db \
     COMPOSER_ALLOW_SUPERUSER=1 \
     PHP_SESSION_SAVE_HANDLER=redis
 
+ARG EXTENSION_INSTALLER_VER=2.9.18 # renovate: depName=mlocati/docker-php-extension-installer
+RUN curl -sSLf \
+        -o /usr/local/bin/install-php-extensions \
+        https://github.com/mlocati/docker-php-extension-installer/releases/download/${EXTENSION_INSTALLER_VER}/install-php-extensions && \
+    chmod +x /usr/local/bin/install-php-extensions && \
+    install-php-extensions \
+        apcu \
+        intl \
+        opcache \
+        pdo_mysql \
+        redis \
+        zip && \
+    cp /usr/local/etc/php/php.ini-production /usr/local/etc/php/php.ini
+
+RUN apk add --no-cache \
+        nginx \
+        supervisor && \
+    rm /etc/nginx/nginx.conf && \
+    rm -r /etc/nginx/http.d/
+
+FROM builder AS composer
+RUN install-php-extensions @composer
+
+FROM composer AS roundcube-builder
+
 ARG RC_PLUGINS=""
 COPY --from=docker.io/roundcube/roundcubemail:1.6.11-fpm@sha256:db3a1abe6d330146700814573d2888185d85e4b82b513e7a9fc4ae9723941624 /usr/src/roundcubemail/ /var/www/html/webmail/
+
 WORKDIR /var/www/html/webmail
 RUN --mount=type=cache,target=/root/.composer \
     mkdir -p \
-        temp/ \
-        logs/ && \
-    chown -R www-data:www-data \
         temp/ \
         logs/ && \
     mv composer.json-dist composer.json && \
@@ -68,19 +69,31 @@ RUN --mount=type=cache,target=/root/.composer \
         --ignore-platform-reqs --prefer-dist --prefer-stable \
         --no-interaction --optimize-autoloader --apcu-autoloader \
         ${RC_PLUGINS}; \
-    fi
+    fi && \
+    composer install --no-dev --prefer-dist -o \
+        --apcu-autoloader --ignore-platform-reqs && \
+    rm -f composer.lock
 
-ARG ADMIN_VER=5.6.4 # renovate: depName=jeboehm/mailserver-admin
+FROM composer AS admin-builder
+
+ARG ADMIN_VER=5.6.2 # renovate: depName=jeboehm/mailserver-admin
 WORKDIR /opt/manager
 RUN curl -sSLf \
         -o /tmp/admin.tar.gz \
         https://github.com/jeboehm/mailserver-admin/releases/download/${ADMIN_VER}/release-${ADMIN_VER}.tar.gz && \
     tar -xf /tmp/admin.tar.gz --strip=1 && \
     rm /tmp/admin.tar.gz && \
-    composer symfony:dump-env prod && \
-    chown -R www-data:www-data \
-        var/cache/prod/ \
-        var/log/ && \
+    composer symfony:dump-env prod
+
+FROM builder AS prod
+
+COPY --from=roundcube-builder /var/www/html/webmail/ /var/www/html/webmail/
+RUN chown -R www-data:www-data /var/www/html/webmail/temp/ /var/www/html/webmail/logs/
+
+COPY --from=admin-builder /opt/manager/ /opt/manager/
+RUN chown -R www-data:www-data \
+        /opt/manager/var/cache/prod/ \
+        /opt/manager/var/log/ && \
     ln -s /opt/manager/public /var/www/html/manager
 
 WORKDIR /
