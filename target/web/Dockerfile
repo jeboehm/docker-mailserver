@@ -70,18 +70,13 @@ RUN --mount=type=cache,target=/root/.composer \
         ${RC_PLUGINS}; \
     fi
 
-ARG ADMIN_VER=5.6.2 # renovate: depName=jeboehm/mailserver-admin
+ARG ADMIN_VER=5.6.4 # renovate: depName=jeboehm/mailserver-admin
 WORKDIR /opt/manager
-RUN --mount=type=cache,target=/root/.composer \
-    curl -sSLf \
+RUN curl -sSLf \
         -o /tmp/admin.tar.gz \
-        https://github.com/jeboehm/mailserver-admin/archive/${ADMIN_VER}.tar.gz && \
+        https://github.com/jeboehm/mailserver-admin/releases/download/${ADMIN_VER}/release-${ADMIN_VER}.tar.gz && \
     tar -xf /tmp/admin.tar.gz --strip=1 && \
     rm /tmp/admin.tar.gz && \
-    mkdir -p \
-        var/cache/ \
-        var/log/ && \
-    DATABASE_URL="${DATABASE_URL}?serverVersion=8.0" composer install --no-dev --prefer-dist -o --apcu-autoloader && \
     composer symfony:dump-env prod && \
     chown -R www-data:www-data \
         var/cache/prod/ \
