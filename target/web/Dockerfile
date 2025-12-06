@@ -1,4 +1,4 @@
-FROM php:8.4-fpm-alpine@sha256:ad846930aa226fad969e037bf14845bca0fae2371e7c53c49f160b27aa4540c9 AS builder
+FROM php:8.5-fpm-alpine@sha256:5ed9ba668b6eef9b5a64bd5ce64d2d055c57778a68845ae819d93af5c75fd493 AS builder
 
 LABEL maintainer="https://github.com/jeboehm/docker-mailserver"
 LABEL vendor="https://github.com/jeboehm/docker-mailserver"
@@ -76,7 +76,7 @@ RUN --mount=type=cache,target=/root/.composer \
 
 FROM composer AS admin-builder
 
-ARG ADMIN_VER=5.6.4 # renovate: depName=jeboehm/mailserver-admin
+ARG ADMIN_VER=5.7.0 # renovate: depName=jeboehm/mailserver-admin
 WORKDIR /opt/manager
 RUN curl -sSLf \
         -o /tmp/admin.tar.gz \
