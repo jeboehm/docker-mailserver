@@ -30,7 +30,7 @@ ENV MYSQL_HOST=db \
     COMPOSER_ALLOW_SUPERUSER=1 \
     PHP_SESSION_SAVE_HANDLER=redis
 
-ARG EXTENSION_INSTALLER_VER=2.9.18 # renovate: depName=mlocati/docker-php-extension-installer
+ARG EXTENSION_INSTALLER_VER=2.9.19 # renovate: depName=mlocati/docker-php-extension-installer
 RUN curl -sSLf \
         -o /usr/local/bin/install-php-extensions \
         https://github.com/mlocati/docker-php-extension-installer/releases/download/${EXTENSION_INSTALLER_VER}/install-php-extensions && \
