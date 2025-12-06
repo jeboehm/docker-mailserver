@@ -1,4 +1,4 @@
-FROM php:8.4-fpm-alpine@sha256:ad846930aa226fad969e037bf14845bca0fae2371e7c53c49f160b27aa4540c9 AS builder
+FROM php:8.4-fpm-alpine@sha256:74d654eccf3a4d2b132d2ddcd7ee14eb1340095fd3374bc1bd45fd06635406fe AS builder
 
 LABEL maintainer="https://github.com/jeboehm/docker-mailserver"
 LABEL vendor="https://github.com/jeboehm/docker-mailserver"
@@ -56,7 +56,7 @@ RUN install-php-extensions @composer
 FROM composer AS roundcube-builder
 
 ARG RC_PLUGINS=""
-COPY --from=docker.io/roundcube/roundcubemail:1.6.11-fpm@sha256:db3a1abe6d330146700814573d2888185d85e4b82b513e7a9fc4ae9723941624 /usr/src/roundcubemail/ /var/www/html/webmail/
+COPY --from=docker.io/roundcube/roundcubemail:1.6.11-fpm@sha256:1bfaa3a373b9a02476322e0e3b6afa8604a6627f2fb685c56eb5aa8f0d68fe54 /usr/src/roundcubemail/ /var/www/html/webmail/
 
 WORKDIR /var/www/html/webmail
 RUN --mount=type=cache,target=/root/.composer \
