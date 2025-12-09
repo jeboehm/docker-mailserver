@@ -1,0 +1,37 @@
+{
+	skip_install_trust
+
+	frankenphp {
+		{$FRANKENPHP_CONFIG}
+	}
+
+	order php_server before file_server
+}
+
+http://:8080 {
+	root {$SERVER_ROOT}
+	encode zstd br gzip
+
+	handle_path /.well-known/autoconfig/mail/* {
+		root {$SERVER_ROOT}/autoconfig
+		file_server
+	}
+
+	handle_path /webmail* {
+		root {$SERVER_ROOT}/webmail
+		php_server {
+			env PATH_INFO {http.matchers.file.remainder}
+		}
+	}
+
+	redir /rspamd /rspamd/
+	handle_path /rspamd/* {
+		reverse_proxy {$FILTER_WEB_ADDRESS}
+	}
+
+	redir /manager/* /
+	handle /* {
+		root {$SERVER_ROOT}/manager
+		php_server
+	}
+}

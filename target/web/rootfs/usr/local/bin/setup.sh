@@ -1,4 +1,5 @@
 #!/bin/sh
+set -e
 
-/usr/local/bin/wait-and-exec.sh \
-	/opt/manager/bin/console init:setup
+/opt/admin/bin/console system:check --wait
+/opt/admin/bin/console init:setup

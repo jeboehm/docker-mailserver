@@ -1,4 +1,4 @@
-FROM php:8.4-fpm-alpine@sha256:74d654eccf3a4d2b132d2ddcd7ee14eb1340095fd3374bc1bd45fd06635406fe AS builder
+FROM alpine:3.22@sha256:4b7ce07002c69e8f3d704a9c5d6fd3053be500b7f1c69fc0d80990c2ad8dd412 AS base
 
 LABEL maintainer="https://github.com/jeboehm/docker-mailserver"
 LABEL vendor="https://github.com/jeboehm/docker-mailserver"
@@ -8,10 +8,8 @@ ENV MYSQL_HOST=db \
     MYSQL_PORT=3306 \
     MYSQL_DATABASE=mailserver \
     MYSQL_USER=mailserver \
-    MYSQL_PASSWORD= \
     REDIS_HOST=redis \
     REDIS_PORT=6379 \
-    REDIS_PASSWORD= \
     FILTER_WEB_ADDRESS=filter:11334 \
     MDA_IMAP_ADDRESS=mda:31143 \
     MDA_MANAGESIEVE_ADDRESS=mda:4190 \
@@ -22,87 +20,96 @@ ENV MYSQL_HOST=db \
     MAILNAME=mail.example.com \
     LABEL=docker-mailserver \
     LABEL_SHORT=docker-mailserver \
-    APP_ENV=prod \
-    TRUSTED_PROXIES=172.16.0.0/12 \
-    DOCTRINE_DEPRECATIONS=track \
     WAITSTART_TIMEOUT=1m \
     DATABASE_URL="mysql://%env(MYSQL_USER)%:%env(MYSQL_PASSWORD)%@%env(MYSQL_HOST)%:%env(MYSQL_PORT)%/%env(MYSQL_DATABASE)%?serverVersion=8.4" \
-    COMPOSER_ALLOW_SUPERUSER=1 \
-    PHP_SESSION_SAVE_HANDLER=redis
+    SERVER_ROOT=/var/www/html
 
-ARG EXTENSION_INSTALLER_VER=2.9.19 # renovate: depName=mlocati/docker-php-extension-installer
-RUN curl -sSLf \
-        -o /usr/local/bin/install-php-extensions \
-        https://github.com/mlocati/docker-php-extension-installer/releases/download/${EXTENSION_INSTALLER_VER}/install-php-extensions && \
-    chmod +x /usr/local/bin/install-php-extensions && \
-    install-php-extensions \
-        apcu \
-        intl \
-        opcache \
-        pdo_mysql \
-        redis \
-        zip && \
-    cp /usr/local/etc/php/php.ini-production /usr/local/etc/php/php.ini
-
+ARG FRANKENPHP_VER=v1.10.1 # renovate: depName=php/frankenphp
 RUN apk add --no-cache \
-        nginx \
-        supervisor && \
-    rm /etc/nginx/nginx.conf && \
-    rm -r /etc/nginx/http.d/
+        curl && \
+    curl -sfOL https://github.com/php/frankenphp/releases/download/${FRANKENPHP_VER}/frankenphp-linux-x86_64 && \
+    chmod +x frankenphp-linux-x86_64 && \
+    mv frankenphp-linux-x86_64 /usr/bin/frankenphp && \
+    mkdir -p ${SERVER_ROOT} && \
+    ln -sf /tmp /home/app && \
+    apk del --no-cache apk-tools
 
-FROM builder AS composer
-RUN install-php-extensions @composer
+RUN printf '#!/bin/sh\nexec frankenphp php-cli "$@"\n' > /usr/bin/php && \
+    chmod +x /usr/bin/php
+
+FROM base AS composer
+
+ENV COMPOSER_ALLOW_SUPERUSER=1
+COPY --from=composer/composer:2.9.2 /usr/bin/composer /usr/local/bin/composer
 
 FROM composer AS roundcube-builder
 
 ARG RC_PLUGINS=""
-COPY --from=docker.io/roundcube/roundcubemail:1.6.11-fpm@sha256:70eeb5dee39375a92637a191702355df544cfd29bf167477bc5fd3c92f1627aa /usr/src/roundcubemail/ /var/www/html/webmail/
-
-WORKDIR /var/www/html/webmail
+ARG RC_VER=1.7-beta2 # renovate: depName=roundcube/roundcubemail
+WORKDIR /opt/roundcube
 RUN --mount=type=cache,target=/root/.composer \
+    curl -sSLf \
+        -o /tmp/webmail.tar.gz \
+        https://github.com/roundcube/roundcubemail/releases/download/${RC_VER}/roundcubemail-${RC_VER}-complete.tar.gz && \
+    tar -oxf /tmp/webmail.tar.gz --strip=1 && \
+    rm /tmp/webmail.tar.gz && \
+    rm -rf \
+        temp/ \
+        logs/ && \
     mkdir -p \
         temp/ \
         logs/ && \
-    mv composer.json-dist composer.json && \
     if [ "${RC_PLUGINS}" != "" ]; then \
         composer require \
-        --ignore-platform-reqs --prefer-dist --prefer-stable \
-        --no-interaction --optimize-autoloader --apcu-autoloader \
-        ${RC_PLUGINS}; \
+            --ignore-platform-reqs --prefer-dist --prefer-stable \
+            --no-interaction --classmap-authoritative \
+            --minimal-changes \
+            ${RC_PLUGINS}; \
     fi && \
-    composer install --no-dev --prefer-dist -o \
-        --apcu-autoloader --ignore-platform-reqs && \
-    rm -f composer.lock
+    composer install \
+        --no-dev --prefer-dist \
+        --classmap-authoritative --ignore-platform-reqs && \
+    rm -f \
+        composer.lock \
+        public_html/installer.php && \
+    find . -type f -name '.htaccess' -delete
 
 FROM composer AS admin-builder
 
-ARG ADMIN_VER=5.6.4 # renovate: depName=jeboehm/mailserver-admin
-WORKDIR /opt/manager
+ARG ADMIN_VER=5.8.0 # renovate: depName=jeboehm/mailserver-admin
+WORKDIR /opt/admin
 RUN curl -sSLf \
         -o /tmp/admin.tar.gz \
         https://github.com/jeboehm/mailserver-admin/releases/download/${ADMIN_VER}/release-${ADMIN_VER}.tar.gz && \
-    tar -xf /tmp/admin.tar.gz --strip=1 && \
+    tar -oxf /tmp/admin.tar.gz --strip=1 && \
     rm /tmp/admin.tar.gz && \
     composer symfony:dump-env prod
 
-FROM builder AS prod
-
-COPY --from=roundcube-builder /var/www/html/webmail/ /var/www/html/webmail/
-RUN chown -R www-data:www-data /var/www/html/webmail/temp/ /var/www/html/webmail/logs/
-
-COPY --from=admin-builder /opt/manager/ /opt/manager/
-RUN chown -R www-data:www-data \
-        /opt/manager/var/cache/prod/ \
-        /opt/manager/var/log/ && \
-    ln -s /opt/manager/public /var/www/html/manager
+FROM base AS prod
 
 WORKDIR /
-COPY --from=ghcr.io/jeboehm/dockerize:0.9.3@sha256:d4e824aa120670658d7012421d2fdf1b2437be34a6acbb7a4ad92ed52edec8eb /bin/dockerize /usr/local/bin/dockerize
-COPY rootfs/ /
-RUN chown -R www-data /var/www/html/autoconfig /etc/nginx /var/lib/nginx
+COPY --chown=root:root --from=roundcube-builder /opt/roundcube/ /opt/roundcube/
+COPY --chown=root:root --from=admin-builder /opt/admin/ /opt/admin/
+# TODO: Remove when autoconfig is served by admin.
+COPY --chown=root:root --from=ghcr.io/jeboehm/dockerize:0.9.3@sha256:d4e824aa120670658d7012421d2fdf1b2437be34a6acbb7a4ad92ed52edec8eb /bin/dockerize /usr/local/bin/dockerize
+COPY --chown=root:root rootfs/ /
 
-USER www-data
+RUN ln -s /opt/roundcube/public_html ${SERVER_ROOT}/webmail && \
+    ln -s /opt/admin/public ${SERVER_ROOT}/manager
+
+ARG USER=app
+RUN mkdir ${SERVER_ROOT}/autoconfig && \
+    adduser -DH ${USER} && \
+	chown -R ${USER}:${USER} \
+        /opt/admin/var/cache/prod \
+        /opt/admin/var/log \
+        /opt/roundcube/logs \
+        /opt/roundcube/temp \
+        ${SERVER_ROOT}/autoconfig
+USER ${USER}
 
 HEALTHCHECK CMD /usr/local/bin/healthcheck.sh
 EXPOSE 8080
+
+ENTRYPOINT []
 CMD ["/usr/local/bin/entrypoint.sh"]

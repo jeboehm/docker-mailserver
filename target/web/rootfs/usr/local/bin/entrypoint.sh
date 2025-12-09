@@ -2,12 +2,10 @@
 set -e
 
 if [ "${SKIP_INIT}" != "true" ]; then
-	/usr/local/bin/init.sh
+	/usr/local/lib/init.sh
 fi
-
-/usr/local/bin/init_database.sh
 
 # shellcheck disable=SC3028,SC2155
 export APP_SECRET="$(echo $RANDOM | md5sum | head -c 20)"
 
-/usr/bin/supervisord -c /etc/supervisord.conf
+exec frankenphp run --config /etc/frankenphp/Caddyfile --adapter caddyfile
