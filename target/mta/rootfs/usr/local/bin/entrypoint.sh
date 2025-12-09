@@ -1,8 +1,6 @@
 #!/bin/sh
 
-if [ "${SKIP_INIT}" != "true" ]; then
-	/usr/local/bin/init.sh
-fi
+/usr/local/bin/init.sh
 
 dockerize \
 	-wait "tcp://${MYSQL_HOST}:${MYSQL_PORT}" \

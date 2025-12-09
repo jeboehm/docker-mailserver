@@ -27,21 +27,22 @@ spec:
             - -ec
           args:
             - |
-              /usr/local/bin/wait-and-exec.sh /opt/manager/bin/console domain:add example.com
-              /usr/local/bin/wait-and-exec.sh /opt/manager/bin/console domain:add example.org
-              /usr/local/bin/wait-and-exec.sh /opt/manager/bin/console user:add --admin --password=changeme --enable admin example.com
-              /usr/local/bin/wait-and-exec.sh /opt/manager/bin/console user:add --password=test1234 --enable --sendonly sendonly example.com
-              /usr/local/bin/wait-and-exec.sh /opt/manager/bin/console user:add --password=test1234 --enable --quota=1 quota example.com
-              /usr/local/bin/wait-and-exec.sh /opt/manager/bin/console user:add --password=test1234 disabled example.com
-              /usr/local/bin/wait-and-exec.sh /opt/manager/bin/console user:add --password=test1234 --sendonly disabledsendonly example.com
-              /usr/local/bin/wait-and-exec.sh /opt/manager/bin/console user:add --password=test1234 --enable fetchmailsource example.org
-              /usr/local/bin/wait-and-exec.sh /opt/manager/bin/console user:add --password=test1234 --enable fetchmailreceiver example.org
-              /usr/local/bin/wait-and-exec.sh /opt/manager/bin/console alias:add foo@example.com admin@example.com
-              /usr/local/bin/wait-and-exec.sh /opt/manager/bin/console alias:add foo@example.org admin@example.com
-              /usr/local/bin/wait-and-exec.sh /opt/manager/bin/console alias:add --catchall @example.com admin@example.com
-              /usr/local/bin/wait-and-exec.sh /opt/manager/bin/console dkim:setup example.com --enable --selector dkim
+              /opt/admin/bin/console system:check --wait
+              /opt/admin/bin/console domain:add example.com
+              /opt/admin/bin/console domain:add example.org
+              /opt/admin/bin/console user:add --admin --password=changeme --enable admin example.com
+              /opt/admin/bin/console user:add --password=test1234 --enable --sendonly sendonly example.com
+              /opt/admin/bin/console user:add --password=test1234 --enable --quota=1 quota example.com
+              /opt/admin/bin/console user:add --password=test1234 disabled example.com
+              /opt/admin/bin/console user:add --password=test1234 --sendonly disabledsendonly example.com
+              /opt/admin/bin/console user:add --password=test1234 --enable fetchmailsource example.org
+              /opt/admin/bin/console user:add --password=test1234 --enable fetchmailreceiver example.org
+              /opt/admin/bin/console alias:add foo@example.com admin@example.com
+              /opt/admin/bin/console alias:add foo@example.org admin@example.com
+              /opt/admin/bin/console alias:add --catchall @example.com admin@example.com
+              /opt/admin/bin/console dkim:setup example.com --enable --selector dkim
               # Kubernetes specific fetchmail hostname
-              /usr/local/bin/wait-and-exec.sh /opt/manager/bin/console fetchmail:account:add --force fetchmailreceiver@example.org mda.default imap 143 fetchmailsource@example.org test1234
+              /opt/admin/bin/console fetchmail:account:add --force fetchmailreceiver@example.org mda.default imap 143 fetchmailsource@example.org test1234
           envFrom:
             - configMapRef:
                 name: config-service-map
@@ -60,8 +61,8 @@ spec:
             capabilities:
               drop:
                 - ALL
-            runAsGroup: 82
-            runAsUser: 82
+            runAsGroup: 1000
+            runAsUser: 1000
       containers:
         - name: integration-tests
           image: jeboehm/mailserver-test:latest
