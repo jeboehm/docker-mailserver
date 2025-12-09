@@ -17,14 +17,14 @@ services:
       - no-new-privileges
     depends_on:
       - redis
-    read_only: false
+    read_only: true
     tmpfs:
-      - /tmp:mode=0755,uid=82,gid=82
-      - /var/lib/nginx/tmp:mode=0755,uid=82,gid=82
-      - /opt/manager/var/cache/prod:mode=0755,uid=82,gid=82
-      - /opt/manager/var/log:mode=0755,uid=82,gid=82
-      - /var/www/html/webmail/temp:mode=0755,uid=82,gid=82
-      - /var/www/html/webmail/logs:mode=0755,uid=82,gid=82
+      - /var/www/html/autoconfig:mode=0777
+      - /opt/admin/var/cache/prod:mode=0777
+      - /opt/admin/var/log:mode=0777
+      - /opt/roundcube/temp:mode=0777
+      - /opt/roundcube/logs:mode=0777
+      - /tmp:mode=0777
     # For use with jwilder/nginx-proxy.
     # environment:
     #   - VIRTUAL_HOST=mail.example.com

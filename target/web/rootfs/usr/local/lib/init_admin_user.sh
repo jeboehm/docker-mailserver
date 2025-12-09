@@ -6,7 +6,7 @@ if [ -z "${INIT_ADMIN_DOMAIN}" ] || [ -z "${INIT_ADMIN_NAME}" ] || [ -z "${INIT_
 	exit 1
 fi
 
-/opt/manager/bin/console domain:add "${INIT_ADMIN_DOMAIN}"
-/opt/manager/bin/console user:add --admin --password="${INIT_ADMIN_PASSWORD}" --enable "${INIT_ADMIN_NAME}" "${INIT_ADMIN_DOMAIN}"
+/opt/admin/bin/console domain:add "${INIT_ADMIN_DOMAIN}"
+/opt/admin/bin/console user:add --admin --password="${INIT_ADMIN_PASSWORD}" --enable "${INIT_ADMIN_NAME}" "${INIT_ADMIN_DOMAIN}"
 
 exit 0

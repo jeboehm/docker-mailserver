@@ -289,7 +289,7 @@ jobs:
       - name: Load downloaded docker images
         run: |
           for image in $(ls images/); do
-            echo "::group::Loading $IMAGE from downloaded artifacts into kind cluster"
+            echo "::group::Loading $image from downloaded artifacts into kind cluster"
             kind load image-archive images/${image}
             echo "::endgroup::"
           done

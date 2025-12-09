@@ -33,11 +33,9 @@ spec:
                 topologyKey: kubernetes.io/hostname
               weight: 1
       containers:
-        - name: php-fpm
+        - name: web
           image: jeboehm/mailserver-web:latest
           imagePullPolicy: IfNotPresent
-          command:
-            - /usr/local/sbin/php-fpm
           envFrom:
             - configMapRef:
                 name: config-service-map
@@ -45,9 +43,12 @@ spec:
                 name: config-env
             - secretRef:
                 name: secret-config-env
+          env:
+            - name: SKIP_INIT
+              value: "true"
           ports:
-            - name: php-fpm
-              containerPort: 9000
+            - name: http
+              containerPort: 8080
               protocol: TCP
           livenessProbe:
             exec:
@@ -59,8 +60,10 @@ spec:
             failureThreshold: 3
             successThreshold: 1
           readinessProbe:
-            tcpSocket:
-              port: php-fpm
+            httpGet:
+              path: /login
+              port: http
+              scheme: HTTP
             initialDelaySeconds: 10
             periodSeconds: 10
             timeoutSeconds: 5
@@ -76,99 +79,34 @@ spec:
             capabilities:
               drop:
                 - ALL
-            runAsGroup: 82
-            runAsUser: 82
+            runAsGroup: 1000
+            runAsUser: 1000
           volumeMounts:
             - name: tmp
               mountPath: /tmp
               subPath: tmp
             - name: tmp
-              mountPath: /opt/manager/var/cache/prod
+              mountPath: /opt/admin/var/cache/prod
               subPath: cache
             - name: tmp
-              mountPath: /opt/manager/var/log
+              mountPath: /opt/admin/var/log
               subPath: log
             - name: tmp
-              mountPath: /var/www/html/webmail/temp
+              mountPath: /opt/roundcube/temp
               subPath: rc-temp
             - name: tmp
-              mountPath: /var/www/html/webmail/logs
+              mountPath: /opt/roundcube/logs
               subPath: rc-logs
-            - name: autoconfig
-              mountPath: /var/www/html/autoconfig
-              readOnly: true
-        - name: nginx
-          image: jeboehm/mailserver-web:latest
-          imagePullPolicy: IfNotPresent
-          command:
-            - /usr/sbin/nginx
-          envFrom:
-            - configMapRef:
-                name: config-service-map
-            - configMapRef:
-                name: config-env
-            - secretRef:
-                name: secret-config-env
-          ports:
-            - name: http
-              containerPort: 8080
-              protocol: TCP
-          livenessProbe:
-            httpGet:
-              path: /login
-              port: http
-              scheme: HTTP
-            initialDelaySeconds: 30
-            periodSeconds: 30
-            timeoutSeconds: 10
-            failureThreshold: 3
-            successThreshold: 1
-          readinessProbe:
-            httpGet:
-              path: /login
-              port: http
-              scheme: HTTP
-            initialDelaySeconds: 10
-            periodSeconds: 10
-            timeoutSeconds: 5
-            failureThreshold: 3
-            successThreshold: 1
-          resources:
-            requests:
-              cpu: 50m
-              memory: 128Mi
-          securityContext:
-            allowPrivilegeEscalation: false
-            readOnlyRootFilesystem: true
-            capabilities:
-              drop:
-                - ALL
-            runAsGroup: 82
-            runAsUser: 82
-          volumeMounts:
-            - name: nginx-config
-              mountPath: /etc/nginx
-              readOnly: true
             - name: tmp
-              mountPath: /tmp
-              subPath: tmp
-            - name: tmp
-              mountPath: /var/lib/nginx/tmp
-              subPath: nginx-tmp
-            - name: autoconfig
               mountPath: /var/www/html/autoconfig
+              subPath: autoconfig
               readOnly: true
       initContainers:
-        - name: copy-config-to-volume
+        - name: prepare-service
           image: jeboehm/mailserver-web:latest
           imagePullPolicy: IfNotPresent
           command:
-            - /bin/sh
-          args:
-            - -ec
-            - |
-              cp -r /etc/nginx/* /target-nginx/
-              cp -r /var/www/html/autoconfig/* /target-autoconfig/
+            - /usr/local/lib/init.sh
           envFrom:
             - configMapRef:
                 name: config-service-map
@@ -186,92 +124,33 @@ spec:
             capabilities:
               drop:
                 - ALL
-            runAsGroup: 82
-            runAsUser: 82
-          volumeMounts:
-            - name: nginx-config
-              mountPath: /target-nginx
-            - name: autoconfig
-              mountPath: /target-autoconfig
-        - name: prepare-config
-          image: jeboehm/mailserver-web:latest
-          imagePullPolicy: IfNotPresent
-          command:
-            - /usr/local/bin/init.sh
-          envFrom:
-            - configMapRef:
-                name: config-service-map
-            - configMapRef:
-                name: config-env
-            - secretRef:
-                name: secret-config-env
-          resources:
-            requests:
-              cpu: 50m
-              memory: 64Mi
-          securityContext:
-            allowPrivilegeEscalation: false
-            readOnlyRootFilesystem: true
-            capabilities:
-              drop:
-                - ALL
-            runAsGroup: 82
-            runAsUser: 82
-          volumeMounts:
-            - name: nginx-config
-              mountPath: /etc/nginx
-            - name: autoconfig
-              mountPath: /var/www/html/autoconfig
-        - name: init-database
-          image: jeboehm/mailserver-web:latest
-          imagePullPolicy: IfNotPresent
-          command:
-            - /usr/local/bin/init_database.sh
-          envFrom:
-            - configMapRef:
-                name: config-service-map
-            - configMapRef:
-                name: config-env
-            - secretRef:
-                name: secret-config-env
-          resources:
-            requests:
-              cpu: 50m
-              memory: 64Mi
-          securityContext:
-            allowPrivilegeEscalation: false
-            readOnlyRootFilesystem: true
-            capabilities:
-              drop:
-                - ALL
-            runAsGroup: 82
-            runAsUser: 82
+            runAsGroup: 1000
+            runAsUser: 1000
           volumeMounts:
             - name: tmp
               mountPath: /tmp
               subPath: tmp
             - name: tmp
-              mountPath: /opt/manager/var/cache/prod
+              mountPath: /opt/admin/var/cache/prod
               subPath: cache
             - name: tmp
-              mountPath: /opt/manager/var/log
+              mountPath: /opt/admin/var/log
               subPath: log
             - name: tmp
-              mountPath: /var/www/html/webmail/temp
+              mountPath: /opt/roundcube/temp
               subPath: rc-temp
             - name: tmp
-              mountPath: /var/www/html/webmail/logs
+              mountPath: /opt/roundcube/logs
               subPath: rc-logs
+            - name: tmp
+              mountPath: /var/www/html/autoconfig
+              subPath: autoconfig
       securityContext:
-        fsGroup: 82
+        fsGroup: 1000
         fsGroupChangePolicy: OnRootMismatch
         runAsNonRoot: true
         seccompProfile:
           type: RuntimeDefault
       volumes:
-        - name: autoconfig
-          emptyDir: {}
-        - name: nginx-config
-          emptyDir: {}
         - name: tmp
           emptyDir: {}

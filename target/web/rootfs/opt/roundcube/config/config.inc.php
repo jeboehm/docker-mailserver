@@ -1,9 +1,9 @@
 <?php
 $config = [];
 $config['smtp_log'] = false;
-$config['log_dir'] = '/var/www/html/webmail/logs';
-$config['temp_dir'] = '/var/www/html/webmail/temp';
-$config['imap_cache'] = 'apc';
+$config['log_dir'] = '/opt/roundcube/logs';
+$config['temp_dir'] = '/opt/roundcube/temp';
+$config['imap_cache'] = 'apcu';
 $config['db_dsnw'] = sprintf(
     'mysql://%s:%s@%s:%s/%s',
     getenv('MYSQL_USER'),

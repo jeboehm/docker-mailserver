@@ -4,6 +4,14 @@ Upgrade guide for docker-mailserver.
 
 Before upgrading, ensure you have updated `docker-compose.yml` and `docker-compose.production.yml` files.
 
+## v6.x to v7.x
+
+The web image is now based on Alpine Linux and uses FrankenPHP instead of PHP-FPM.
+The installation path for Roundcube has changed from `/var/www/html/webmail` to `/opt/roundcube`.
+A symbolic link is retained at `/var/www/html/webmail`, pointing to the `public_html` directory of Roundcube.
+The admin interface is now installed in `/opt/admin` to have a more appropriate naming.
+The container now supports read-only operation. Ensure that tmpfs mounts are configured as specified in [compose/web.yaml](../deploy/compose/web.yaml).
+
 ## v5.x to v6.0
 
 Deployment on Kubernetes is now a first class citizen. You can use the `kustomization.yaml` file to deploy the mailserver to your Kubernetes cluster.
