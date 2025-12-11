@@ -205,13 +205,14 @@ jobs:
             FILENAME=$(echo "$IMAGE" | tr '/:' '-').tar
             CACHE_PATH="/tmp/docker-images/$FILENAME"
             if [ -f "$CACHE_PATH" ]; then
-              echo "Loading $IMAGE from cache"
+              echo "::group::Loading $IMAGE from cache"
               docker load --input "$CACHE_PATH"
+              echo "::endgroup::"
             else
-              echo "Pulling $IMAGE from registry"
+              echo "::group::Pulling $IMAGE from registry"
               docker pull "$IMAGE"
-              echo "Saving $IMAGE for caching"
               docker save "$IMAGE" -o "$CACHE_PATH"
+              echo "::endgroup::"
             fi
           done
       - name: Prepare environment
@@ -239,7 +240,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       CLUSTER_NAME: kind
-      POPEYE_VERSION: v0.22.1
+      POPEYE_VERSION: v0.22.1 # renovate: depName=derailed/popeye
     strategy:
       matrix:
         TEST_CASE:
@@ -254,7 +255,7 @@ jobs:
           cluster_name: ${{ env.CLUSTER_NAME }}
       - name: Install Popeye
         run: |
-          curl -LO https://github.com/derailed/popeye/releases/download/${{ env.POPEYE_VERSION }}/popeye_linux_amd64.deb
+          curl -sfOL https://github.com/derailed/popeye/releases/download/${{ env.POPEYE_VERSION }}/popeye_linux_amd64.deb
           sudo dpkg -i popeye_linux_amd64.deb
       - name: Use kubectl context
         run: |
@@ -274,8 +275,9 @@ jobs:
             FILENAME=$(echo "$IMAGE" | tr '/:' '-').tar
             CACHE_PATH="/tmp/docker-images/$FILENAME"
             if [ -f "$CACHE_PATH" ]; then
-              echo "Loading $IMAGE from cache into kind cluster"
+              echo "::group::Loading $IMAGE from cache into kind cluster"
               kind load image-archive "$CACHE_PATH"
+              echo "::endgroup::"
             fi
           done
       - name: Download docker image artifacts
@@ -287,7 +289,9 @@ jobs:
       - name: Load downloaded docker images
         run: |
           for image in $(ls images/); do
+            echo "::group::Loading $IMAGE from downloaded artifacts into kind cluster"
             kind load image-archive images/${image}
+            echo "::endgroup::"
           done
       - name: Prepare environment
         run: |
