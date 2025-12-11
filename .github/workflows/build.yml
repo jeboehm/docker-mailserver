@@ -8,6 +8,7 @@ on:
   pull_request:
     paths:
       - ".env.dist"
+      - ".github/**"
       - "bin/**"
       - "deploy/**"
       - "docker-compose*.yml"
@@ -141,6 +142,32 @@ jobs:
           name: docker-image-${{ matrix.image }}
           path: ${{ runner.temp }}/${{ matrix.image }}.tar
           retention-days: 1
+  test_container_image_efficiency:
+    needs: build
+    if: ${{ github.event_name == 'pull_request' }}
+    runs-on: ubuntu-latest
+    env:
+      CI: "true"
+      DIVE_VERSION: 0.13.1 # renovate: depName=wagoodman/dive
+    steps:
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
+      - name: Download Docker image artifacts
+        uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6
+        with:
+          path: images
+          pattern: docker-image-*
+          merge-multiple: true
+      - name: Install Dive
+        run: |
+          curl -sfOL "https://github.com/wagoodman/dive/releases/download/v${DIVE_VERSION}/dive_${DIVE_VERSION}_linux_amd64.deb"
+          sudo dpkg -i ./dive_${DIVE_VERSION}_linux_amd64.deb
+      - name: Check container image efficiency
+        run: |
+          for image in $(ls images/); do
+            echo "::group::Checking image ${image}"
+            dive --ci-config .github/linters/.dive-ci.yml docker-archive://images/${image}
+            echo "::endgroup::"
+          done
   test_docker_matrix:
     needs: build
     if: ${{ github.event_name == 'pull_request' }}
