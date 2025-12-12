@@ -2,3 +2,5 @@
 docker-compose.override.yml
 /config/
 node_modules/
+site/
+.mypy_cache

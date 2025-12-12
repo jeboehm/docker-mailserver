@@ -1,0 +1,38 @@
+site_name: docker-mailserver
+site_description: A Dockerized mail server with a web interface for managing your email infrastructure.
+site_url: https://jeboehm.github.io/docker-mailserver/
+repo_name: jeboehm/docker-mailserver
+repo_url: https://github.com/jeboehm/docker-mailserver
+remote_branch: gh-pages
+theme: readthedocs
+markdown_extensions:
+  - codehilite
+  - admonition
+exclude_docs: |
+  example-configs/**
+  requirements.txt
+
+nav:
+  - Welcome: README.md
+  - Quick Start:
+      - INSTALLATION.md
+      - UPGRADE.md
+  - Configuration:
+      - DKIM_SIGNING.md
+      - ENVIRONMENT_VARIABLES.md
+      - EXTERNAL_MYSQL.md
+      - RELAYHOST.md
+      - LOCAL_ADDRESS_EXTENSION.md
+      - PHP_SESSIONS.md
+      - REVERSE_PROXY.md
+      - ROUNDCUBE.md
+      - TLS.md
+  - Recipes:
+      - Docker:
+          - Traefik Reverse Proxy: https://github.com/jeboehm/docker-mailserver/tree/main/docs/example-configs/compose/traefik-reverse-proxy
+      - Kubernetes:
+          - External Database and HTTPS Ingress: https://github.com/jeboehm/docker-mailserver/tree/main/docs/example-configs/kustomize/external-db-and-https-ingress
+  - Development:
+      - ARCHITECTURE.md
+      - DEVELOPMENT.md
+  - Issues: https://github.com/jeboehm/docker-mailserver/issues
