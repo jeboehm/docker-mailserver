@@ -65,6 +65,9 @@ RUN apk --no-cache add \
     postconf smtpd_error_sleep_time=10s && \
     postconf smtpd_soft_error_limit=3 && \
     postconf smtpd_hard_error_limit=5 && \
+    postconf postscreen_dnsbl_sites='bl.spamcop.net*2' && \
+    postconf postscreen_dnsbl_threshold=2 && \
+    postconf postscreen_dnsbl_action=enforce && \
     newaliases
 COPY --from=dockerize /bin/dockerize /usr/local/bin/dockerize
 COPY rootfs/ /

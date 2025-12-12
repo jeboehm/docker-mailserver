@@ -20,6 +20,6 @@ spec:
         - podSelector: {}
       ports:
         - protocol: UDP
-          port: 5353 # DNS
+          port: 53 # DNS
         - protocol: TCP
-          port: 5353 # DNS TCP
+          port: 53 # DNS TCP
