@@ -1,6 +1,7 @@
 #!/bin/sh
+set -e
 
-/usr/local/bin/init.sh
+/usr/local/lib/init.sh
 
 exec dockerize \
 	-wait "tcp://${MYSQL_HOST}:${MYSQL_PORT}" \
