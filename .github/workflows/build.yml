@@ -197,7 +197,10 @@ jobs:
         id: docker-images-cache
         with:
           path: /tmp/docker-images
-          key: docker-images-additional
+          key: ${{ runner.os }}-images-additional-${{ github.ref }}-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-images-additional-${{ github.ref }}-
+            ${{ runner.os }}-images-additional-
       - name: Load or pull Docker images
         run: |
           mkdir -p /tmp/docker-images
