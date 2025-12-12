@@ -13,7 +13,7 @@ if [ -n "${MDA_UPSTREAM_PROXY}" ]; then
 	fi
 fi
 
-dockerize \
+exec dockerize \
 	-wait "tcp://${MYSQL_HOST}:${MYSQL_PORT}" \
 	-wait "file:///etc/dovecot/tls/tls.crt" \
 	-wait "file:///etc/dovecot/tls/tls.key" \
