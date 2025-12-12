@@ -4,3 +4,4 @@ docker-compose.override.yml
 node_modules/
 site/
 .mypy_cache
+**/rootfs/.banner.sh

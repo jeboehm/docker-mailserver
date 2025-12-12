@@ -56,10 +56,11 @@ RUN apk --no-cache add \
 RUN apk add --no-cache --repository http://dl-cdn.alpinelinux.org/alpine/edge/testing/ swaks=20240103.0-r0
 
 COPY --from=dockerize /bin/dockerize /usr/local/bin/dockerize
-COPY _helpers/ /usr/local/bin/
+COPY _helpers/dockerlogs.sh /usr/local/bin/dockerlogs.sh
+COPY _helpers/entrypoint.sh /entrypoint.sh
 
 WORKDIR /app/tests
 COPY integration/ /app/tests/
 
-ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+ENTRYPOINT ["/entrypoint.sh"]
 CMD ["bats", "."]

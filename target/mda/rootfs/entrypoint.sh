@@ -13,9 +13,19 @@ if [ -n "${MDA_UPSTREAM_PROXY}" ]; then
 	fi
 fi
 
+[ "$#" -gt 0 ] && exec "$@"
+
+if [ -r /.banner.sh ]; then
+	/.banner.sh
+fi
+
+if ! [ -r /etc/dovecot/tls/tls.crt ] || ! [ -r /etc/dovecot/tls/tls.key ]; then
+	echo "Error: TLS certificate or key not found"
+	echo "Please mount the certificate and key files to /etc/dovecot/tls/tls.crt and /etc/dovecot/tls/tls.key"
+	exit 1
+fi
+
 exec dockerize \
 	-wait "tcp://${MYSQL_HOST}:${MYSQL_PORT}" \
-	-wait "file:///etc/dovecot/tls/tls.crt" \
-	-wait "file:///etc/dovecot/tls/tls.key" \
 	-timeout "${WAITSTART_TIMEOUT}" \
 	/dovecot/sbin/dovecot -F

@@ -10,7 +10,6 @@ ENV MAILNAME=mail.example.com \
     MYSQL_HOST=db \
     MYSQL_PORT=3306 \
     MYSQL_USER=root \
-    MYSQL_PASSWORD= \
     MYSQL_DATABASE=mailserver \
     MDA_LMTP_ADDRESS=mda:2003 \
     MDA_AUTH_ADDRESS=mda:2004 \
@@ -18,8 +17,6 @@ ENV MAILNAME=mail.example.com \
     FILTER_MIME=false \
     RELAYHOST=false \
     RELAY_PASSWD_FILE=false \
-    SSL_CERT=/etc/postfix/tls/tls.crt \
-    SSL_KEY=/etc/postfix/tls/tls.key \
     WAITSTART_TIMEOUT=1m \
     RECIPIENT_DELIMITER=-
 
@@ -40,8 +37,8 @@ RUN apk --no-cache add \
     postconf smtp_tls_security_level=may && \
     postconf smtpd_tls_security_level=may && \
     postconf smtpd_tls_auth_only=yes && \
-    postconf smtpd_tls_cert_file="${SSL_CERT}" && \
-    postconf smtpd_tls_key_file="${SSL_KEY}" && \
+    postconf smtpd_tls_cert_file="/etc/postfix/tls/tls.crt" && \
+    postconf smtpd_tls_key_file="/etc/postfix/tls/tls.key" && \
     postconf smtpd_discard_ehlo_keywords="silent-discard, dsn" && \
     postconf smtpd_sasl_path="inet:${MDA_AUTH_ADDRESS}" && \
     postconf smtpd_sasl_type=dovecot && \
@@ -73,4 +70,5 @@ EXPOSE 25 587
 VOLUME ["/var/spool/postfix"]
 
 HEALTHCHECK CMD /usr/local/bin/healthcheck.sh
-CMD ["/usr/local/bin/entrypoint.sh"]
+ENTRYPOINT ["/entrypoint.sh"]
+CMD []

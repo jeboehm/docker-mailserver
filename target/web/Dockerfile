@@ -111,5 +111,5 @@ USER ${USER}
 HEALTHCHECK CMD /usr/local/bin/healthcheck.sh
 EXPOSE 8080
 
-ENTRYPOINT []
-CMD ["/usr/local/bin/entrypoint.sh"]
+ENTRYPOINT ["/entrypoint.sh"]
+CMD []
