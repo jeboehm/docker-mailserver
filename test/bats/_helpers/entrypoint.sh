@@ -1,6 +1,6 @@
 #!/bin/sh
 
-dockerize \
+exec dockerize \
 	-wait "tcp://${MYSQL_HOST}:${MYSQL_PORT}" \
 	-wait "tcp://${FILTER_WEB_ADDRESS}" \
 	-wait "tcp://${MDA_IMAP_ADDRESS}" \
