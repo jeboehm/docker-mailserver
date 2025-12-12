@@ -14,11 +14,9 @@ USER vmail
 ENV MYSQL_HOST=db \
     MYSQL_PORT=3306 \
     MYSQL_USER=root \
-    MYSQL_PASSWORD= \
     MYSQL_DATABASE=mailserver \
     FILTER_WEB_ADDRESS=filter:11334 \
     MTA_SMTP_ADDRESS=mta:25 \
-    CONTROLLER_PASSWORD= \
     RECIPIENT_DELIMITER=- \
     MAILNAME=mail.example.com \
     MDA_UPSTREAM_PROXY=no \
@@ -41,4 +39,5 @@ WORKDIR /
 
 HEALTHCHECK CMD /usr/local/bin/healthcheck.sh
 
-CMD ["/usr/local/bin/entrypoint.sh"]
+ENTRYPOINT ["/entrypoint.sh"]
+CMD []
