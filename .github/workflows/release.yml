@@ -36,8 +36,15 @@ jobs:
         run: |
           python3 .github/bin/update_image_tags.py "${{ steps.changelog.outputs.tag }}" --verbose
           echo "${{ steps.changelog.outputs.tag }}" > VERSION
-          tar --exclude='.github' --exclude='.cursor' --exclude='.git' --exclude='renovate.json' \
-            -czvf /tmp/release-${{ steps.changelog.outputs.tag }}.tar.gz .
+          tar \
+            --exclude='.github' \
+            --exclude='.cursor' \
+            --exclude='.git' \
+            --exclude='.gitignore' \
+            --exclude='.mkdocs.yaml' \
+            --exclude='docs/requirements.txt' \
+            --exclude='renovate.json' \
+            -czf /tmp/release-${{ steps.changelog.outputs.tag }}.tar.gz .
       - name: Create GitHub Release
         uses: ncipollo/release-action@b7eabc95ff50cbeeedec83973935c8f306dfcd0b # v1
         if: ${{ steps.changelog.outputs.skipped == 'false' }}

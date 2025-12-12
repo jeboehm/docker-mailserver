@@ -122,3 +122,11 @@ kind-load: build
 popeye-score:
 	popeye
 	.github/bin/popeye_score.sh
+
+.PHONY: docs-build
+docs-build:
+	mkdocs build --strict -f .mkdocs.yaml
+
+.PHONY: docs-serve
+docs-serve:
+	mkdocs serve --strict -f .mkdocs.yaml

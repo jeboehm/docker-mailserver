@@ -8,7 +8,7 @@ on:
   pull_request:
     paths:
       - ".env.dist"
-      - ".github/**"
+      - ".github/workflows/build.yml"
       - "bin/**"
       - "deploy/**"
       - "docker-compose*.yml"
