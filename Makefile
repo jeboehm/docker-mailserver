@@ -42,20 +42,20 @@ up: .env
 .PHONY: fixtures
 fixtures:
 	$(COMPOSE_PRODUCTION) run --rm web /opt/admin/bin/console system:check --wait
-	$(COMPOSE_PRODUCTION) run --rm web /opt/admin/bin/console domain:add example.com
-	$(COMPOSE_PRODUCTION) run --rm web /opt/admin/bin/console domain:add example.org
-	$(COMPOSE_PRODUCTION) run --rm web /opt/admin/bin/console user:add --admin --password=changeme --enable admin example.com
-	$(COMPOSE_PRODUCTION) run --rm web /opt/admin/bin/console user:add --password=test1234 --enable --sendonly sendonly example.com
-	$(COMPOSE_PRODUCTION) run --rm web /opt/admin/bin/console user:add --password=test1234 --enable --quota=1 quota example.com
-	$(COMPOSE_PRODUCTION) run --rm web /opt/admin/bin/console user:add --password=test1234 disabled example.com
-	$(COMPOSE_PRODUCTION) run --rm web /opt/admin/bin/console user:add --password=test1234 --sendonly disabledsendonly example.com
-	$(COMPOSE_PRODUCTION) run --rm web /opt/admin/bin/console user:add --password=test1234 --enable fetchmailsource example.org
-	$(COMPOSE_PRODUCTION) run --rm web /opt/admin/bin/console user:add --password=test1234 --enable fetchmailreceiver example.org
-	$(COMPOSE_PRODUCTION) run --rm web /opt/admin/bin/console alias:add foo@example.com admin@example.com
-	$(COMPOSE_PRODUCTION) run --rm web /opt/admin/bin/console alias:add foo@example.org admin@example.com
-	$(COMPOSE_PRODUCTION) run --rm web /opt/admin/bin/console alias:add --catchall @example.com admin@example.com
-	$(COMPOSE_PRODUCTION) run --rm web /opt/admin/bin/console dkim:setup example.com --enable --selector dkim
-	$(COMPOSE_PRODUCTION) run --rm web /opt/admin/bin/console fetchmail:account:add --force fetchmailreceiver@example.org mda.local imap 31143 fetchmailsource@example.org test1234
+	$(COMPOSE_PRODUCTION) exec web /opt/admin/bin/console domain:add example.com
+	$(COMPOSE_PRODUCTION) exec web /opt/admin/bin/console domain:add example.org
+	$(COMPOSE_PRODUCTION) exec web /opt/admin/bin/console user:add --admin --password=changeme --enable admin example.com
+	$(COMPOSE_PRODUCTION) exec web /opt/admin/bin/console user:add --password=test1234 --enable --sendonly sendonly example.com
+	$(COMPOSE_PRODUCTION) exec web /opt/admin/bin/console user:add --password=test1234 --enable --quota=1 quota example.com
+	$(COMPOSE_PRODUCTION) exec web /opt/admin/bin/console user:add --password=test1234 disabled example.com
+	$(COMPOSE_PRODUCTION) exec web /opt/admin/bin/console user:add --password=test1234 --sendonly disabledsendonly example.com
+	$(COMPOSE_PRODUCTION) exec web /opt/admin/bin/console user:add --password=test1234 --enable fetchmailsource example.org
+	$(COMPOSE_PRODUCTION) exec web /opt/admin/bin/console user:add --password=test1234 --enable fetchmailreceiver example.org
+	$(COMPOSE_PRODUCTION) exec web /opt/admin/bin/console alias:add foo@example.com admin@example.com
+	$(COMPOSE_PRODUCTION) exec web /opt/admin/bin/console alias:add foo@example.org admin@example.com
+	$(COMPOSE_PRODUCTION) exec web /opt/admin/bin/console alias:add --catchall @example.com admin@example.com
+	$(COMPOSE_PRODUCTION) exec web /opt/admin/bin/console dkim:setup example.com --enable --selector dkim
+	$(COMPOSE_PRODUCTION) exec web /opt/admin/bin/console fetchmail:account:add --force fetchmailreceiver@example.org mda.local imap 31143 fetchmailsource@example.org test1234
 
 .PHONY: setup
 setup:
