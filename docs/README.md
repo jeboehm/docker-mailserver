@@ -67,3 +67,7 @@ Container images are available at:
 - [Roundcube Documentation](https://docs.roundcube.net/doc/help/1.1/en_US/)
 - [Redis Documentation](https://redis.io/docs/latest/)
 - [Unbound Documentation](https://unbound.docs.nlnetlabs.nl/en/latest/)
+
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=jeboehm/docker-mailserver&type=date&legend=top-left)](https://www.star-history.com/#jeboehm/docker-mailserver&type=date&legend=top-left)
