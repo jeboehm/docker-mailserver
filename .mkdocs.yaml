@@ -3,11 +3,12 @@ site_description: A Dockerized mail server with a web interface for managing you
 site_url: https://jeboehm.github.io/docker-mailserver/
 repo_name: jeboehm/docker-mailserver
 repo_url: https://github.com/jeboehm/docker-mailserver
+edit_uri: blob/main/docs/
 remote_branch: gh-pages
 theme: readthedocs
 markdown_extensions:
-  - codehilite
   - admonition
+  - pymdownx.superfences
 exclude_docs: |
   example-configs/**
   requirements.txt

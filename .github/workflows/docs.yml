@@ -3,6 +3,10 @@ on:
   push:
     branches:
       - main
+    paths:
+      - "docs/**"
+      - ".github/workflows/docs.yml"
+      - ".mkdocs.yaml"
   pull_request:
     paths:
       - "docs/**"

@@ -68,7 +68,7 @@ services:
 ## PHP Configuration
 
 The session configuration is applied through the PHP configuration file at:
-`target/web/rootfs/usr/local/etc/php/conf.d/zzz_app.ini`
+`target/web/rootfs/etc/frankenphp/php.ini`
 
 ```ini
 session.save_handler = ${PHP_SESSION_SAVE_HANDLER}

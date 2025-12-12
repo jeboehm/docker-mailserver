@@ -35,15 +35,9 @@ The documentation includes:
 
 See the [documentation](https://jeboehm.github.io/docker-mailserver/) for a complete feature list.
 
-## Quick Start
+## Setup
 
-Download the latest release from the [Releases](https://github.com/jeboehm/docker-mailserver/releases) page, or clone the repository:
-
-```bash
-git clone https://github.com/jeboehm/docker-mailserver.git
-```
-
-**Important:** Do not use the `latest` container image tag for production deployments. Use a specific version instead (e.g., `jeboehm/mailserver-mta:6.3`).
+`docker-mailserver` can be set up using Docker or Kubernetes.
 
 For detailed installation instructions, see the [Installation Guide](https://jeboehm.github.io/docker-mailserver/INSTALLATION/) in the documentation.
 
