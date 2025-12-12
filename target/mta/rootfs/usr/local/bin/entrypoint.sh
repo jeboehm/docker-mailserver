@@ -2,7 +2,7 @@
 
 /usr/local/bin/init.sh
 
-dockerize \
+exec dockerize \
 	-wait "tcp://${MYSQL_HOST}:${MYSQL_PORT}" \
 	-wait "tcp://${MDA_LMTP_ADDRESS}" \
 	-wait "tcp://${FILTER_MILTER_ADDRESS}" \

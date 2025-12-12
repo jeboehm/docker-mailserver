@@ -13,4 +13,4 @@ export RSPAMD_REDIS_PASSWORD="${REDIS_PASSWORD}"
 export RSPAMD_REDIS_HOST="${REDIS_HOST}"
 export RSPAMD_REDIS_PORT="${REDIS_PORT}"
 
-/usr/bin/rspamd -f
+exec /usr/bin/rspamd -f
