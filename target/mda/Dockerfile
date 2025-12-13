@@ -1,5 +1,5 @@
 FROM ghcr.io/jeboehm/dockerize:0.9.3@sha256:d4e824aa120670658d7012421d2fdf1b2437be34a6acbb7a4ad92ed52edec8eb AS dockerize
-FROM dovecot/dovecot:2.4.2-dev@sha256:e6cce878d61159c35e9aa9cf4689b3e3924b6ca6a44b6272c11fb4c2df4fd537
+FROM dovecot/dovecot:2.4.2-dev@sha256:647e6934e4981558a603ab32bc1657cb519d3ae24ae1dd7db8ee2782f98de959
 
 LABEL maintainer="https://github.com/jeboehm/docker-mailserver"
 LABEL vendor="https://github.com/jeboehm/docker-mailserver"
