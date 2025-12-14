@@ -11,6 +11,10 @@ REVISION="$1"
 VERSION="$2"
 TARGETS="filter mda mta unbound web"
 
+echo "Creating version hint for mailserver-admin.."
+mkdir -p target/web/rootfs/opt/admin/
+echo "${VERSION}" >target/web/rootfs/opt/admin/DMS-VERSION
+
 for TARGET in $TARGETS; do
 	echo "Creating banner for $TARGET container.."
 

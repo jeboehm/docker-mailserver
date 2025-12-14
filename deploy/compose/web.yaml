@@ -19,7 +19,6 @@ services:
       - redis
     read_only: true
     tmpfs:
-      - /var/www/html/autoconfig:mode=0777
       - /opt/admin/var/cache/prod:mode=0777
       - /opt/admin/var/log:mode=0777
       - /opt/roundcube/temp:mode=0777
