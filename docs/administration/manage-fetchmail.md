@@ -35,7 +35,7 @@ Fetchmail enables the mailserver to retrieve emails from external email provider
    - **SSL Verify**: Verify the external mail server's certificate
 5. Save the fetchmail account
 
-![Fetchmail Create](images/admin/fetchmail_create.png)
+![Fetchmail Create](../images/admin/fetchmail_create.png)
 
 ### Editing a Fetchmail Account
 

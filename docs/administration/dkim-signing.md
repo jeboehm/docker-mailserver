@@ -20,7 +20,7 @@ Configure DKIM through the management interface:
 6. Verify the DNS record through the management interface
 7. Enable DKIM signing for the domain
 
-![DKIM Edit](images/admin/dkim_edit.png)
+![DKIM Edit](../images/admin/dkim_edit.png)
 
 ## DNS Record
 

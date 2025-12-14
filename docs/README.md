@@ -45,7 +45,7 @@ The mailserver consists of multiple microservices:
 - **Unbound** - DNS resolver for the filter service
 - **Fetchmail** - External mail retrieval (optional)
 
-See [Architecture Documentation](architecture.md) for detailed information.
+See [Architecture Documentation](development/architecture.md) for detailed information.
 
 ## Getting Help
 

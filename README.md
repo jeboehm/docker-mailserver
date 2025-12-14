@@ -43,17 +43,18 @@ For detailed installation instructions, see the [Installation Guide](https://jeb
 
 ## Screenshots
 
-### Manage users
+### Dashboard
 
-![User overview](https://raw.githubusercontent.com/jeboehm/mailserver-admin/master/.github/screenshots/user.png)
+![Dashboard](docs/images/admin/dashboard.png)
 
-### Manage aliases
+### User management
 
-![Alias overview](https://raw.githubusercontent.com/jeboehm/mailserver-admin/master/.github/screenshots/alias.png)
+![User List](docs/images/admin/user_list.png)
+![User Edit](docs/images/admin/user_edit.png)
 
 ### DKIM setup
 
-![DKIM setup](https://raw.githubusercontent.com/jeboehm/mailserver-admin/master/.github/screenshots/dkim_edit.png)
+![DKIM setup](docs/images/admin/dkim_edit.png)
 
 ## Links
 

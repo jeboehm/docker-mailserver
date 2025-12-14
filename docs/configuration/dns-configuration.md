@@ -175,7 +175,7 @@ After publishing the DKIM record, verify it through the management interface. Th
 dig TXT default._domainkey.example.com
 ```
 
-See [DKIM Signing](dkim-signing.md) for detailed DKIM configuration instructions.
+See [DKIM Signing](../administration/dkim-signing.md) for detailed DKIM configuration instructions.
 
 ## DMARC Record
 
