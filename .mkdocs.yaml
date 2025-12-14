@@ -19,8 +19,8 @@ nav:
       - INSTALLATION.md
       - UPGRADE.md
   - Configuration:
-      - DKIM_SIGNING.md
       - ENVIRONMENT_VARIABLES.md
+      - DNS_CONFIGURATION.md
       - EXTERNAL_MYSQL.md
       - RELAYHOST.md
       - LOCAL_ADDRESS_EXTENSION.md
@@ -28,6 +28,12 @@ nav:
       - REVERSE_PROXY.md
       - ROUNDCUBE.md
       - TLS.md
+  - Administration:
+      - manage-domains.md
+      - manage-users.md
+      - manage-aliases.md
+      - manage-fetchmail.md
+      - DKIM_SIGNING.md
   - Recipes:
       - Docker:
           - Traefik Reverse Proxy: https://github.com/jeboehm/docker-mailserver/tree/main/docs/example-configs/compose/traefik-reverse-proxy
