@@ -16,30 +16,30 @@ exclude_docs: |
 nav:
   - Welcome: README.md
   - Quick Start:
-      - INSTALLATION.md
-      - UPGRADE.md
+      - installation.md
+      - upgrade.md
   - Configuration:
-      - ENVIRONMENT_VARIABLES.md
-      - DNS_CONFIGURATION.md
-      - EXTERNAL_MYSQL.md
-      - RELAYHOST.md
-      - LOCAL_ADDRESS_EXTENSION.md
-      - PHP_SESSIONS.md
-      - REVERSE_PROXY.md
-      - ROUNDCUBE.md
-      - TLS.md
+      - environment-variables.md
+      - dns-configuration.md
+      - external-mysql.md
+      - relayhost.md
+      - local-address-extension.md
+      - php-sessions.md
+      - reverse-proxy.md
+      - roundcube.md
+      - tls.md
   - Administration:
       - manage-domains.md
       - manage-users.md
       - manage-aliases.md
       - manage-fetchmail.md
-      - DKIM_SIGNING.md
+      - dkim-signing.md
   - Recipes:
       - Docker:
           - Traefik Reverse Proxy: https://github.com/jeboehm/docker-mailserver/tree/main/docs/example-configs/compose/traefik-reverse-proxy
       - Kubernetes:
           - External Database and HTTPS Ingress: https://github.com/jeboehm/docker-mailserver/tree/main/docs/example-configs/kustomize/external-db-and-https-ingress
   - Development:
-      - ARCHITECTURE.md
-      - DEVELOPMENT.md
+      - architecture.md
+      - development.md
   - Issues: https://github.com/jeboehm/docker-mailserver/issues

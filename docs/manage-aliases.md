@@ -26,13 +26,14 @@ Email aliases provide flexible email routing without requiring separate user acc
 3. Click **Add Alias**
 4. Enter the following information:
    - **Source Address**: The email address that will receive incoming emails and forward them to the configured destinations, formatted as a combination of local **name** part and **domain** part (e.g., `info@example.com`).
-   You can leave the **name** part empty to create a catch-all alias address.
+     You can leave the **name** part empty to create a catch-all alias address.
    - **Destination Address(es)**: An email address to forward emails to
 5. Save the alias
 
 ![Alias Create](images/admin/alias_create.png)
 
 The source address must belong to a domain that exists in the system. Destination addresses can be:
+
 - Local users within the same domain
 - Local users in other domains
 - External email addresses
@@ -76,6 +77,7 @@ When multiple destination addresses are configured, the email is forwarded to al
 ### Generic Addresses
 
 Create aliases for common business functions:
+
 - `info@example.com` → `team@example.com`
 - `support@example.com` → `support1@example.com, support2@example.com`
 - `sales@example.com` → `sales-team@example.com`
@@ -83,9 +85,11 @@ Create aliases for common business functions:
 ### Personal Aliases
 
 Forward emails to personal accounts:
+
 - `john.doe@example.com` → `john.doe@gmail.com`
 
 ### Distribution Lists
 
 Forward to multiple recipients:
+
 - `announcements@example.com` → `user1@example.com, user2@example.com, user3@example.com`
