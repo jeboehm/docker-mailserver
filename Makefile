@@ -42,7 +42,6 @@ up: .env
 .PHONY: fixtures
 fixtures:
 	$(COMPOSE_PRODUCTION) exec web /opt/admin/bin/console system:check --wait
-	sleep 5 # TODO: remove when admin implemented better checks
 	$(COMPOSE_PRODUCTION) exec web /opt/admin/bin/console domain:add example.com
 	$(COMPOSE_PRODUCTION) exec web /opt/admin/bin/console domain:add example.org
 	$(COMPOSE_PRODUCTION) exec web /opt/admin/bin/console user:add --admin --password=changeme --enable admin example.com
