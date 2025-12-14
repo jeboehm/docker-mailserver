@@ -41,7 +41,8 @@ up: .env
 
 .PHONY: fixtures
 fixtures:
-	$(COMPOSE_PRODUCTION) run --rm web /opt/admin/bin/console system:check --wait
+	$(COMPOSE_PRODUCTION) exec web /opt/admin/bin/console system:check --wait
+	sleep 5 # TODO: remove when admin implemented better checks
 	$(COMPOSE_PRODUCTION) exec web /opt/admin/bin/console domain:add example.com
 	$(COMPOSE_PRODUCTION) exec web /opt/admin/bin/console domain:add example.org
 	$(COMPOSE_PRODUCTION) exec web /opt/admin/bin/console user:add --admin --password=changeme --enable admin example.com
@@ -101,7 +102,7 @@ kubernetes-logs:
 kubernetes-test:
 	kubectl delete -f test/k8s/test-job.yaml --ignore-not-found
 	kubectl apply -f test/k8s/test-job.yaml
-	kubectl wait --timeout=10m --for=condition=complete job -l app.kubernetes.io/name=test-runner-job
+	kubectl wait --timeout=5m --for=condition=complete job -l app.kubernetes.io/name=test-runner-job
 	kubectl logs --ignore-errors -l app.kubernetes.io/name=test-runner-job
 
 .PHONY: kubernetes-up
