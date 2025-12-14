@@ -8,7 +8,11 @@ LABEL de.ressourcenkonflikt.docker-mailserver.autoheal="true"
 USER root
 RUN apt-get update && \
     apt-get install --no-install-recommends -y curl && \
-    rm -rf /var/lib/apt/lists/*
+    rm -r \
+        /etc/dovecot/conf.d/mail.conf \
+        /etc/dovecot/conf.d/ssl.conf \
+        /etc/dovecot/ssl \
+        /var/lib/apt/lists/*
 USER vmail
 
 ENV MYSQL_HOST=db \
