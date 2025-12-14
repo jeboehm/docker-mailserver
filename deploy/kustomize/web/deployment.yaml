@@ -97,10 +97,6 @@ spec:
             - name: tmp
               mountPath: /opt/roundcube/logs
               subPath: rc-logs
-            - name: tmp
-              mountPath: /var/www/html/autoconfig
-              subPath: autoconfig
-              readOnly: true
       initContainers:
         - name: prepare-service
           image: jeboehm/mailserver-web:latest
@@ -142,9 +138,6 @@ spec:
             - name: tmp
               mountPath: /opt/roundcube/logs
               subPath: rc-logs
-            - name: tmp
-              mountPath: /var/www/html/autoconfig
-              subPath: autoconfig
       securityContext:
         fsGroup: 1000
         fsGroupChangePolicy: OnRootMismatch

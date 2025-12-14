@@ -12,11 +12,6 @@ http://:8080 {
 	root {$SERVER_ROOT}
 	encode zstd br gzip
 
-	handle_path /.well-known/autoconfig/mail/* {
-		root {$SERVER_ROOT}/autoconfig
-		file_server
-	}
-
 	handle_path /webmail* {
 		root {$SERVER_ROOT}/webmail
 		php_server {

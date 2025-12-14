@@ -18,8 +18,6 @@ ENV MYSQL_HOST=db \
     WEB_PHP_ADDRESS=127.0.0.1:9000 \
     SUPPORT_URL=https://github.com/jeboehm/docker-mailserver \
     MAILNAME=mail.example.com \
-    LABEL=docker-mailserver \
-    LABEL_SHORT=docker-mailserver \
     WAITSTART_TIMEOUT=1m \
     DATABASE_URL="mysql://%env(MYSQL_USER)%:%env(MYSQL_PASSWORD)%@%env(MYSQL_HOST)%:%env(MYSQL_PORT)%/%env(MYSQL_DATABASE)%?serverVersion=8.4" \
     SERVER_ROOT=/var/www/html
@@ -76,7 +74,7 @@ RUN --mount=type=cache,target=/root/.composer \
 
 FROM composer AS admin-builder
 
-ARG ADMIN_VER=5.8.0 # renovate: depName=jeboehm/mailserver-admin
+ARG ADMIN_VER=5.9.0 # renovate: depName=jeboehm/mailserver-admin
 WORKDIR /opt/admin
 RUN curl -sSLf \
         -o /tmp/admin.tar.gz \
@@ -90,22 +88,18 @@ FROM base AS prod
 WORKDIR /
 COPY --chown=root:root --from=roundcube-builder /opt/roundcube/ /opt/roundcube/
 COPY --chown=root:root --from=admin-builder /opt/admin/ /opt/admin/
-# TODO: Remove when autoconfig is served by admin.
-COPY --chown=root:root --from=ghcr.io/jeboehm/dockerize:0.9.3@sha256:d4e824aa120670658d7012421d2fdf1b2437be34a6acbb7a4ad92ed52edec8eb /bin/dockerize /usr/local/bin/dockerize
 COPY --chown=root:root rootfs/ /
 
 RUN ln -s /opt/roundcube/public_html ${SERVER_ROOT}/webmail && \
     ln -s /opt/admin/public ${SERVER_ROOT}/manager
 
 ARG USER=app
-RUN mkdir ${SERVER_ROOT}/autoconfig && \
-    adduser -DH ${USER} && \
+RUN adduser -DH ${USER} && \
 	chown -R ${USER}:${USER} \
         /opt/admin/var/cache/prod \
         /opt/admin/var/log \
         /opt/roundcube/logs \
-        /opt/roundcube/temp \
-        ${SERVER_ROOT}/autoconfig
+        /opt/roundcube/temp
 USER ${USER}
 
 HEALTHCHECK CMD /usr/local/bin/healthcheck.sh
