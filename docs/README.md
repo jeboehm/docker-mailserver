@@ -28,8 +28,8 @@ This project enables you to operate your own email services, providing independe
 
 ## Quick Start
 
-1. **[Installation Guide](INSTALLATION.md)** - Get started with Docker or Kubernetes deployment
-2. **[Upgrade Guide](UPGRADE.md)** - Upgrade procedures and version migration notes
+1. **[Installation Guide](installation.md)** - Get started with Docker or Kubernetes deployment
+2. **[Upgrade Guide](upgrade.md)** - Upgrade procedures and version migration notes
 
 ## Service Architecture
 
@@ -45,7 +45,7 @@ The mailserver consists of multiple microservices:
 - **Unbound** - DNS resolver for the filter service
 - **Fetchmail** - External mail retrieval (optional)
 
-See [Architecture Documentation](ARCHITECTURE.md) for detailed information.
+See [Architecture Documentation](architecture.md) for detailed information.
 
 ## Getting Help
 

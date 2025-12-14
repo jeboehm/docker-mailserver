@@ -20,6 +20,8 @@ Configure DKIM through the management interface:
 6. Verify the DNS record through the management interface
 7. Enable DKIM signing for the domain
 
+![DKIM Edit](images/admin/dkim_edit.png)
+
 ## DNS Record
 
 The management interface provides a DNS TXT record that must be added to your domain's DNS configuration. The record contains the public key used for DKIM verification by receiving mail servers.

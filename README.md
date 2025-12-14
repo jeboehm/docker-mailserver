@@ -39,7 +39,7 @@ See the [documentation](https://jeboehm.github.io/docker-mailserver/) for a comp
 
 `docker-mailserver` can be set up using Docker or Kubernetes.
 
-For detailed installation instructions, see the [Installation Guide](https://jeboehm.github.io/docker-mailserver/INSTALLATION/) in the documentation.
+For detailed installation instructions, see the [Installation Guide](https://jeboehm.github.io/docker-mailserver/installation/) in the documentation.
 
 ## Screenshots
 

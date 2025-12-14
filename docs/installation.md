@@ -41,7 +41,7 @@ cd docker-mailserver
 cp .env.dist .env
 ```
 
-2. Open `.env` in a text editor and configure the variables according to your needs. See [Environment Variables](ENVIRONMENT_VARIABLES.md) for detailed descriptions of all available options.
+2. Open `.env` in a text editor and configure the variables according to your needs. See [Environment Variables](environment-variables.md) for detailed descriptions of all available options.
 
 ### Step 2: Download Container Images
 
@@ -104,7 +104,7 @@ You can find a complete example configuration for Kubernetes in the [example-con
 cp .env.dist .env
 ```
 
-2. Edit `.env` and configure variables as described in [Environment Variables](ENVIRONMENT_VARIABLES.md).
+2. Edit `.env` and configure variables as described in [Environment Variables](environment-variables.md).
 
 3. Create Kubernetes secrets for database credentials and other sensitive values before applying manifests.
 
@@ -194,7 +194,7 @@ After installation, consider:
 4. **Backup Strategy**: Set up regular backups of persistent volumes
 5. **Monitoring**: Configure monitoring and alerting for service health
 
-See the [Configuration](ENVIRONMENT_VARIABLES.md) section for advanced configuration options.
+See the [Configuration](environment-variables.md) section for advanced configuration options.
 
 ## Troubleshooting
 
@@ -207,6 +207,6 @@ Common issues and solutions:
 
 For additional help, see:
 
-- [Architecture Documentation](ARCHITECTURE.md)
-- [Development Guide](DEVELOPMENT.md)
+- [Architecture Documentation](architecture.md)
+- [Development Guide](development.md)
 - [GitHub Issues](https://github.com/jeboehm/docker-mailserver/issues)
