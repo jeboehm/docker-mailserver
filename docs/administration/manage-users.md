@@ -18,7 +18,7 @@ Users are email accounts associated with a specific domain. Each user has a uniq
 
 The user list shows all configured users in the system:
 
-![User List](images/admin/user_list.png)
+![User List](../images/admin/user_list.png)
 
 ### Adding a User
 
@@ -50,7 +50,7 @@ The email address must belong to a domain that exists in the system. The passwor
    - **Send Only**: Whether the user can only send emails
 4. Save changes
 
-![User Edit](images/admin/user_edit.png)
+![User Edit](../images/admin/user_edit.png)
 
 **Note**: Changing the email address is typically not supported. To change an email address, create a new user and migrate data if needed.
 

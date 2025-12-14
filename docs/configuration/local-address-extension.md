@@ -26,9 +26,8 @@ user1-temp@example.com
 
 Configure the delimiter using the `RECIPIENT_DELIMITER` environment variable:
 
-```yaml
-environment:
-  - RECIPIENT_DELIMITER=+
+```bash
+RECIPIENT_DELIMITER=+
 ```
 
 This changes the delimiter from `-` to `+`, allowing addresses like `user1+friends@example.com`.

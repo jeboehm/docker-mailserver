@@ -30,7 +30,7 @@ Email aliases provide flexible email routing without requiring separate user acc
    - **Destination Address(es)**: An email address to forward emails to
 5. Save the alias
 
-![Alias Create](images/admin/alias_create.png)
+![Alias Create](../images/admin/alias_create.png)
 
 The source address must belong to a domain that exists in the system. Destination addresses can be:
 

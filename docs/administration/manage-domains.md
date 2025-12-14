@@ -16,7 +16,7 @@ Domain management is restricted to users with **Admin** role. Domain administrat
 
 The domain list shows all configured domains in the system:
 
-![Domain List](images/admin/domain_list.png)
+![Domain List](../images/admin/domain_list.png)
 
 ### Adding a Domain
 
