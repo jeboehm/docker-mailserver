@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "8e935495387129ec80b0635a0739eba587daf508c9adddc615b3c5915e9e0391"
+            "sha256": "ffda47332a8a2c14b2a0904c4ab588a5b7e4e0c192d9ce7271d227fe253b3ff0"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -202,12 +202,12 @@
         },
         "pymdown-extensions": {
             "hashes": [
-                "sha256:01bb917ea231f9ce14456fa9092cdb95ac3e5bd32202a3ee61dbd5ad2dd9ef9b",
-                "sha256:dc5f249fc3a1b6d8a6de4634ba8336b88d0942cee75e92b18ac79eaf3503bf7c"
+                "sha256:4969c691009a389fb1f9712dd8e7bd70dcc418d15a0faf70acb5117d022f7de8",
+                "sha256:e8698a66055b1dc0dca2a7f2c9d0ea6f5faa7834a9c432e3535ab96c0c4e509b"
             ],
             "index": "pypi",
             "markers": "python_version >= '3.9'",
-            "version": "==10.19"
+            "version": "==10.19.1"
         },
         "python-dateutil": {
             "hashes": [
