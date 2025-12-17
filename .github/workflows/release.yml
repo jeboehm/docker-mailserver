@@ -44,6 +44,8 @@ jobs:
             --exclude='.mkdocs.yaml' \
             --exclude='docs/requirements.txt' \
             --exclude='docs/images/**' \
+            --exclude='docs/logo/**' \
+            --exclude='Makefile' \
             --exclude='renovate.json' \
             -czf /tmp/release-${{ steps.changelog.outputs.tag }}.tar.gz .
       - name: Create GitHub Release
