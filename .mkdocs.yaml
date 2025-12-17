@@ -35,6 +35,7 @@ nav:
       - administration/manage-aliases.md
       - administration/manage-fetchmail.md
       - administration/dkim-signing.md
+      - administration/dns-validation-wizard.md
   - Recipes:
       - Docker:
           - Traefik Reverse Proxy: https://github.com/jeboehm/docker-mailserver/tree/main/docs/example-configs/compose/traefik-reverse-proxy

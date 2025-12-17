@@ -5,3 +5,4 @@ node_modules/
 site/
 .mypy_cache
 **/rootfs/.banner.sh
+/Pipfile*

@@ -31,6 +31,7 @@ The documentation includes:
 - Quota management, catch-all addresses, and send-only accounts
 - Restriction of sender addresses for enhanced security
 - Full-text search and enforced TLS
+- DNS Validation Wizard for all mail related DNS records
 - Continuous health monitoring
 
 See the [documentation](https://jeboehm.github.io/docker-mailserver/) for a complete feature list.
