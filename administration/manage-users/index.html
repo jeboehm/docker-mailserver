@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><link rel="canonical" href="https://jeboehm.github.io/docker-mailserver/administration/manage-users/" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>Manage Users - docker-mailserver</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Manage Users";
+        var mkdocs_page_input_path = "administration/manage-users.md";
+        var mkdocs_page_url = "/docker-mailserver/administration/manage-users/";
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../.." class="icon icon-home"> docker-mailserver
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../..">Welcome</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Quick Start</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../installation/">Installation Guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../upgrade/">Upgrade Guide</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Configuration</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../configuration/environment-variables/">Environment Variables Configuration</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../configuration/mailserver-admin/">mailserver-admin</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../configuration/dns-configuration/">DNS Configuration</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../configuration/external-mysql/">External MySQL Configuration</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../configuration/relayhost/">Relayhost Configuration</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../configuration/local-address-extension/">Local Address Extension</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../configuration/php-sessions/">PHP Session Configuration</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../configuration/reverse-proxy/">Reverse Proxy Configuration</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../configuration/roundcube/">Roundcube Configuration</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../configuration/tls/">TLS Certificate Configuration</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Administration</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../login/">Login</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../dashboard/">Dashboard</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../manage-domains/">Manage Domains</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Manage Users</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#overview">Overview</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#access-control">Access Control</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#user-operations">User Operations</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#user-list">User List</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#adding-a-user">Adding a User</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#editing-a-user">Editing a User</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#deleting-a-user">Deleting a User</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#user-properties">User Properties</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#email-address">Email Address</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#password">Password</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#quota">Quota</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#send-only">Send Only</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#admin">Admin</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#domain-admin">Domain Admin</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#user-access">User Access</a>
+    </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../manage-aliases/">Manage Aliases</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../manage-fetchmail/">Manage Fetchmail</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../dkim-signing/">DKIM Signing</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../dns-validation-wizard/">DNS Validation Wizard</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../user-roles/">User Roles</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Recipes</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Docker</a>
+    <ul>
+                <li class="toctree-l2"><a class="" href="https://github.com/jeboehm/docker-mailserver/tree/main/docs/example-configs/compose/traefik-reverse-proxy">Traefik Reverse Proxy</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Kubernetes</a>
+    <ul>
+                <li class="toctree-l2"><a class="" href="https://github.com/jeboehm/docker-mailserver/tree/main/docs/example-configs/kustomize/external-db-and-https-ingress">External Database and HTTPS Ingress</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Development</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../development/architecture/">Service Architecture</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../development/development/">Developer Guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../development/mailserver-admin/">mailserver-admin</a>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="" href="https://github.com/jeboehm/docker-mailserver/issues">Issues</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">docker-mailserver</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Administration</li>
+      <li class="breadcrumb-item active">Manage Users</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/jeboehm/docker-mailserver/blob/main/docs/administration/manage-users.md">Edit on jeboehm/docker-mailserver</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="manage-users">Manage Users</h1>
+<p>User management allows administrators to create and configure email accounts. Each user account represents an email address that can send and receive emails through the mailserver.</p>
+<h2 id="overview">Overview</h2>
+<p>Users are email accounts associated with a specific domain. Each user has a unique email address, password, and optional quota limits. Users can access their email through IMAP, POP3, or the webmail interface.</p>
+<h2 id="access-control">Access Control</h2>
+<ul>
+<li><strong>Admin</strong>: Can manage users across all domains</li>
+<li><strong>Domain Admin</strong>: Can manage users within their assigned domain only</li>
+<li><strong>User</strong>: Cannot manage other users, only their own account settings</li>
+</ul>
+<p>See <a href="../user-roles/">User Roles</a> for more information.</p>
+<h2 id="user-operations">User Operations</h2>
+<h3 id="user-list">User List</h3>
+<p>The user list shows all configured users in the system:</p>
+<p><img alt="User List" src="../../images/admin/user_list.png" /></p>
+<h3 id="adding-a-user">Adding a User</h3>
+<ol>
+<li>Access the management interface</li>
+<li>Navigate to <strong>User</strong> in the menu bar</li>
+<li>Click <strong>Add User</strong></li>
+<li>Enter the following information:</li>
+<li><strong>Email Address</strong>: The full email address (e.g., <code>user@example.com</code>)</li>
+<li><strong>Password</strong>: Set an initial password for the account</li>
+<li><strong>Quota</strong> (optional): Storage limit in megabytes</li>
+<li><strong>Admin</strong>: Whether the user is an administrator</li>
+<li><strong>Domain Admin</strong>: Whether the user is a domain administrator</li>
+<li><strong>Enabled</strong>: Whether the user is enabled</li>
+<li><strong>Send Only</strong>: Whether the user can only send emails</li>
+<li>Save the user</li>
+</ol>
+<p>The email address must belong to a domain that exists in the system. The password should meet security requirements (complexity, length) as configured in the mailserver.</p>
+<h3 id="editing-a-user">Editing a User</h3>
+<ol>
+<li>Navigate to <strong>User</strong> in the menu bar</li>
+<li>Select the user to edit</li>
+<li>Modify user details:</li>
+<li><strong>Password</strong>: Update the account password</li>
+<li><strong>Quota</strong>: Adjust storage limits</li>
+<li><strong>Admin</strong>: Whether the user is an administrator</li>
+<li><strong>Domain Admin</strong>: Whether the user is a domain administrator</li>
+<li><strong>Enabled</strong>: Whether the user is enabled</li>
+<li><strong>Send Only</strong>: Whether the user can only send emails</li>
+<li>Save changes</li>
+</ol>
+<p><img alt="User Edit" src="../../images/admin/user_edit.png" /></p>
+<p><strong>Note</strong>: Changing the email address is typically not supported. To change an email address, create a new user and migrate data if needed.</p>
+<h3 id="deleting-a-user">Deleting a User</h3>
+<ol>
+<li>Navigate to <strong>User</strong> in the menu bar</li>
+<li>Select the user to delete</li>
+<li>Confirm the deletion</li>
+</ol>
+<p><strong>Warning</strong>: Deleting a user permanently removes the email account and all associated email data. This action cannot be undone. Ensure important emails are backed up before deletion.</p>
+<h2 id="user-properties">User Properties</h2>
+<h3 id="email-address">Email Address</h3>
+<p>The email address uniquely identifies the user account. It consists of a local part (before the @) and a domain part (after the @). The email address format must be valid according to RFC 5322.</p>
+<h3 id="password">Password</h3>
+<p>User passwords are stored securely using hashing algorithms. Passwords can be set during user creation or updated later through the user management interface. Password policies are enforced by the mailserver configuration.</p>
+<h3 id="quota">Quota</h3>
+<p>Email storage quotas limit the amount of disk space a user's mailbox can consume. Quotas are specified in megabytes. When a user reaches their quota limit:</p>
+<ul>
+<li>Incoming emails may be rejected</li>
+<li>The user cannot send new emails until space is freed</li>
+<li>Quota warnings are sent to the user</li>
+</ul>
+<h3 id="send-only">Send Only</h3>
+<p>When a user is set to send only, they can only send emails. They cannot receive emails via IMAP, POP3 or the webmail interface.</p>
+<h3 id="admin">Admin</h3>
+<p>When a user is set to admin, they can manage other users and domains.</p>
+<p>See <a href="../user-roles/">User Roles</a> for more information.</p>
+<h3 id="domain-admin">Domain Admin</h3>
+<p>When a user is set to domain admin, they can manage users and aliases within their assigned domain.</p>
+<p>See <a href="../user-roles/">User Roles</a> for more information.</p>
+<h2 id="user-access">User Access</h2>
+<p>Once created, users can access their email accounts through:</p>
+<ul>
+<li><strong>IMAP</strong>: For email client access (port 143 with TLS)</li>
+<li><strong>POP3</strong>: For email client access (port 110 with TLS)</li>
+<li><strong>SMTP</strong>: For email sending (port 587 with TLS)</li>
+<li><strong>Webmail</strong>: Roundcube web interface accessible through the web service</li>
+</ul>
+<p>Users authenticate using their full email address and password.</p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../manage-domains/" class="btn btn-neutral float-left" title="Manage Domains"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../manage-aliases/" class="btn btn-neutral float-right" title="Manage Aliases">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/jeboehm/docker-mailserver" class="fa fa-code-fork" style="color: #fcfcfc"> jeboehm/docker-mailserver</a>
+        </span>
+    
+    
+      <span><a href="../manage-domains/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../manage-aliases/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../..";</script>
+    <script src="../../js/theme_extra.js"></script>
+    <script src="../../js/theme.js"></script>
+      <script src="../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

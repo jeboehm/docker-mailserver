@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><link rel="canonical" href="https://jeboehm.github.io/docker-mailserver/configuration/relayhost/" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>Relayhost Configuration - docker-mailserver</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Relayhost Configuration";
+        var mkdocs_page_input_path = "configuration/relayhost.md";
+        var mkdocs_page_url = "/docker-mailserver/configuration/relayhost/";
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../.." class="icon icon-home"> docker-mailserver
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../..">Welcome</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Quick Start</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../installation/">Installation Guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../upgrade/">Upgrade Guide</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Configuration</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../environment-variables/">Environment Variables Configuration</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../mailserver-admin/">mailserver-admin</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../dns-configuration/">DNS Configuration</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../external-mysql/">External MySQL Configuration</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Relayhost Configuration</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#overview">Overview</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#configuration">Configuration</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#environment-variables">Environment Variables</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#variable-descriptions">Variable Descriptions</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#credentials-file">Credentials File</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#file-format">File Format</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#example-credentials-file">Example Credentials File</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#file-location">File Location</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#docker-compose-configuration">Docker Compose Configuration</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#step-1-create-credentials-file">Step 1: Create Credentials File</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#step-2-mount-credentials-file">Step 2: Mount Credentials File</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#step-3-update-environment-variables">Step 3: Update Environment Variables</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#step-4-restart-mta-service">Step 4: Restart MTA Service</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#common-relayhost-examples">Common Relayhost Examples</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#gmail-smtp">Gmail SMTP</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#office-365">Office 365</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#verification">Verification</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#test-email-sending">Test Email Sending</a>
+    </li>
+        </ul>
+    </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../local-address-extension/">Local Address Extension</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../php-sessions/">PHP Session Configuration</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../reverse-proxy/">Reverse Proxy Configuration</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../roundcube/">Roundcube Configuration</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tls/">TLS Certificate Configuration</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Administration</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../administration/login/">Login</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../administration/dashboard/">Dashboard</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../administration/manage-domains/">Manage Domains</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../administration/manage-users/">Manage Users</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../administration/manage-aliases/">Manage Aliases</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../administration/manage-fetchmail/">Manage Fetchmail</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../administration/dkim-signing/">DKIM Signing</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../administration/dns-validation-wizard/">DNS Validation Wizard</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../administration/user-roles/">User Roles</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Recipes</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Docker</a>
+    <ul>
+                <li class="toctree-l2"><a class="" href="https://github.com/jeboehm/docker-mailserver/tree/main/docs/example-configs/compose/traefik-reverse-proxy">Traefik Reverse Proxy</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Kubernetes</a>
+    <ul>
+                <li class="toctree-l2"><a class="" href="https://github.com/jeboehm/docker-mailserver/tree/main/docs/example-configs/kustomize/external-db-and-https-ingress">External Database and HTTPS Ingress</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Development</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../development/architecture/">Service Architecture</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../development/development/">Developer Guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../development/mailserver-admin/">mailserver-admin</a>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="" href="https://github.com/jeboehm/docker-mailserver/issues">Issues</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">docker-mailserver</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Configuration</li>
+      <li class="breadcrumb-item active">Relayhost Configuration</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/jeboehm/docker-mailserver/blob/main/docs/configuration/relayhost.md">Edit on jeboehm/docker-mailserver</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="relayhost-configuration">Relayhost Configuration</h1>
+<h2 id="overview">Overview</h2>
+<p>The <code>docker-mailserver</code> MTA service can be configured to relay outgoing emails through another SMTP server. This is useful when you need to send emails through a third-party SMTP provider, corporate mail server, or when your hosting provider blocks direct SMTP connections.</p>
+<h2 id="configuration">Configuration</h2>
+<h3 id="environment-variables">Environment Variables</h3>
+<p>Configure the following environment variables in your <code>.env</code> file:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Relayhost Configuration</span>
+<span class="nv">RELAYHOST</span><span class="o">=[</span>mailpit<span class="o">]</span>:1025
+<span class="nv">RELAY_PASSWD_FILE</span><span class="o">=</span>/etc/postfix/sasl_passwd_ext
+</code></pre></div>
+<h3 id="variable-descriptions">Variable Descriptions</h3>
+<ul>
+<li><strong>RELAYHOST</strong>: The SMTP server to relay emails through, in the format <code>[hostname]:port</code></li>
+<li><strong>RELAY_PASSWD_FILE</strong>: Path to the credentials file containing authentication details</li>
+</ul>
+<h2 id="credentials-file">Credentials File</h2>
+<h3 id="file-format">File Format</h3>
+<p>Create a credentials file with the following format:</p>
+<div class="highlight"><pre><span></span><code>hostname username:password
+</code></pre></div>
+<h3 id="example-credentials-file">Example Credentials File</h3>
+<p>For a relayhost at <code>mailpit</code> on port <code>1025</code> with user <code>user1</code> and password <code>password1</code>:</p>
+<div class="highlight"><pre><span></span><code>mailpit user1:password1
+</code></pre></div>
+<h3 id="file-location">File Location</h3>
+<p>The credentials file must be mounted to <code>/etc/postfix/sasl_passwd_ext</code> in the MTA container.</p>
+<h2 id="docker-compose-configuration">Docker Compose Configuration</h2>
+<h3 id="step-1-create-credentials-file">Step 1: Create Credentials File</h3>
+<p>Create your credentials file locally (e.g., <code>sasl_passwd</code>):</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Create credentials file</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;mailpit user1:password1&quot;</span><span class="w"> </span>&gt;<span class="w"> </span>sasl_passwd
+
+<span class="c1"># Set secure permissions</span>
+chmod<span class="w"> </span><span class="m">600</span><span class="w"> </span>sasl_passwd
+</code></pre></div>
+<h3 id="step-2-mount-credentials-file">Step 2: Mount Credentials File</h3>
+<p>Edit <code>deploy/compose/mta.yaml</code> to mount the credentials file:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">services</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">mta</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">jeboehm/mailserver-mta:latest</span>
+<span class="w">    </span><span class="nt">build</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">context</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">../../target/mta</span>
+<span class="w">      </span><span class="nt">cache_from</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">type=registry,ref=ghcr.io/jeboehm/mailserver-mta:buildcache</span>
+<span class="w">    </span><span class="nt">restart</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">on-failure:5</span>
+<span class="w">    </span><span class="nt">env_file</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">../../.env</span>
+<span class="w">    </span><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">data-tls:/etc/postfix/tls:ro</span>
+<span class="w">      </span><span class="c1"># Mount your credentials file</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./sasl_passwd:/etc/postfix/sasl_passwd_ext:ro</span>
+<span class="w">      </span><span class="c1"># For using external certificates uncomment the following lines</span>
+<span class="w">      </span><span class="c1"># and change the path on the left side of the colon.</span>
+<span class="w">      </span><span class="c1"># - /home/user/certs/mail.example.com.crt:/etc/postfix/tls.crt:ro</span>
+<span class="w">      </span><span class="c1"># - /home/user/certs/mail.example.com.key:/etc/postfix/tls.key:ro</span>
+</code></pre></div>
+<h3 id="step-3-update-environment-variables">Step 3: Update Environment Variables</h3>
+<p>Ensure your <code>.env</code> file contains:</p>
+<div class="highlight"><pre><span></span><code><span class="nv">RELAYHOST</span><span class="o">=[</span>mailpit<span class="o">]</span>:1025
+<span class="nv">RELAY_PASSWD_FILE</span><span class="o">=</span>/etc/postfix/sasl_passwd_ext
+</code></pre></div>
+<h3 id="step-4-restart-mta-service">Step 4: Restart MTA Service</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Restart the MTA service to apply changes</span>
+docker-compose<span class="w"> </span>up<span class="w"> </span>-d<span class="w"> </span>mta
+
+<span class="c1"># Or using the production script</span>
+bin/production.sh<span class="w"> </span>up<span class="w"> </span>-d<span class="w"> </span>mta
+</code></pre></div>
+<h2 id="common-relayhost-examples">Common Relayhost Examples</h2>
+<h3 id="gmail-smtp">Gmail SMTP</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Environment variables</span>
+<span class="nv">RELAYHOST</span><span class="o">=[</span>smtp.gmail.com<span class="o">]</span>:587
+<span class="nv">RELAY_PASSWD_FILE</span><span class="o">=</span>/etc/postfix/sasl_passwd_ext
+
+<span class="c1"># Credentials file content</span>
+smtp.gmail.com<span class="w"> </span>your-email@gmail.com:your-app-password
+</code></pre></div>
+<h3 id="office-365">Office 365</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Environment variables</span>
+<span class="nv">RELAYHOST</span><span class="o">=[</span>smtp.office365.com<span class="o">]</span>:587
+<span class="nv">RELAY_PASSWD_FILE</span><span class="o">=</span>/etc/postfix/sasl_passwd_ext
+
+<span class="c1"># Credentials file content</span>
+smtp.office365.com<span class="w"> </span>your-email@yourdomain.com:your-password
+</code></pre></div>
+<h2 id="verification">Verification</h2>
+<h3 id="test-email-sending">Test Email Sending</h3>
+<ol>
+<li><strong>Send a test email</strong> through the webmail interface</li>
+<li><strong>Check MTA logs</strong> for successful relay:</li>
+</ol>
+<div class="highlight"><pre><span></span><code><span class="c1"># Docker Compose</span>
+bin/production.sh<span class="w"> </span>logs<span class="w"> </span>mta
+
+<span class="c1"># Kubernetes</span>
+kubectl<span class="w"> </span>logs<span class="w"> </span>statefulset/mta<span class="w"> </span>-n<span class="w"> </span>mail
+</code></pre></div>
+<ol>
+<li><strong>Look for successful relay messages</strong> in the logs:
+   <div class="highlight"><pre><span></span><code>postfix/smtp[1234]: 1A2B3C4D5E: to=&lt;recipient@example.com&gt;, relay=mailpit[127.0.0.1]:1025, delay=0.1, delays=0.05/0.01/0.01/0.03, dsn=2.0.0, status=sent (250 2.0.0 Ok: queued as 1A2B3C4D5E)
+</code></pre></div></li>
+</ol>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../external-mysql/" class="btn btn-neutral float-left" title="External MySQL Configuration"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../local-address-extension/" class="btn btn-neutral float-right" title="Local Address Extension">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/jeboehm/docker-mailserver" class="fa fa-code-fork" style="color: #fcfcfc"> jeboehm/docker-mailserver</a>
+        </span>
+    
+    
+      <span><a href="../external-mysql/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../local-address-extension/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../..";</script>
+    <script src="../../js/theme_extra.js"></script>
+    <script src="../../js/theme.js"></script>
+      <script src="../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

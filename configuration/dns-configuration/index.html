@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><link rel="canonical" href="https://jeboehm.github.io/docker-mailserver/configuration/dns-configuration/" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>DNS Configuration - docker-mailserver</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "DNS Configuration";
+        var mkdocs_page_input_path = "configuration/dns-configuration.md";
+        var mkdocs_page_url = "/docker-mailserver/configuration/dns-configuration/";
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../.." class="icon icon-home"> docker-mailserver
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../..">Welcome</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Quick Start</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../installation/">Installation Guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../upgrade/">Upgrade Guide</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Configuration</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../environment-variables/">Environment Variables Configuration</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../mailserver-admin/">mailserver-admin</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">DNS Configuration</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#overview">Overview</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#mx-record">MX Record</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#mx-record-configuration">MX Record Configuration</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#mx-record-example">MX Record Example</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#mx-record-verification">MX Record Verification</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#a-and-aaaa-records">A and AAAA Records</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#aaaaa-record-configuration">A/AAAA Record Configuration</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#aaaaa-record-example">A/AAAA Record Example</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#aaaaa-record-verification">A/AAAA Record Verification</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#spf-record">SPF Record</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#spf-record-configuration">SPF Record Configuration</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#spf-mechanisms">SPF Mechanisms</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#spf-record-example">SPF Record Example</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#spf-record-verification">SPF Record Verification</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#dkim-record">DKIM Record</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#dkim-record-configuration">DKIM Record Configuration</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#record-format">Record Format</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#dkim-record-example">DKIM Record Example</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#dkim-record-verification">DKIM Record Verification</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#dmarc-record">DMARC Record</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#dmarc-record-configuration">DMARC Record Configuration</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#dmarc-policy-options">DMARC Policy Options</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#dmarc-tags">DMARC Tags</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#example-policies">Example Policies</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#dmarc-record-verification">DMARC Record Verification</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#dns-record-summary">DNS Record Summary</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#troubleshooting">Troubleshooting</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#common-issues">Common Issues</a>
+    </li>
+        </ul>
+    </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../external-mysql/">External MySQL Configuration</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../relayhost/">Relayhost Configuration</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../local-address-extension/">Local Address Extension</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../php-sessions/">PHP Session Configuration</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../reverse-proxy/">Reverse Proxy Configuration</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../roundcube/">Roundcube Configuration</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tls/">TLS Certificate Configuration</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Administration</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../administration/login/">Login</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../administration/dashboard/">Dashboard</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../administration/manage-domains/">Manage Domains</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../administration/manage-users/">Manage Users</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../administration/manage-aliases/">Manage Aliases</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../administration/manage-fetchmail/">Manage Fetchmail</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../administration/dkim-signing/">DKIM Signing</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../administration/dns-validation-wizard/">DNS Validation Wizard</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../administration/user-roles/">User Roles</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Recipes</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Docker</a>
+    <ul>
+                <li class="toctree-l2"><a class="" href="https://github.com/jeboehm/docker-mailserver/tree/main/docs/example-configs/compose/traefik-reverse-proxy">Traefik Reverse Proxy</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Kubernetes</a>
+    <ul>
+                <li class="toctree-l2"><a class="" href="https://github.com/jeboehm/docker-mailserver/tree/main/docs/example-configs/kustomize/external-db-and-https-ingress">External Database and HTTPS Ingress</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Development</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../development/architecture/">Service Architecture</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../development/development/">Developer Guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../development/mailserver-admin/">mailserver-admin</a>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="" href="https://github.com/jeboehm/docker-mailserver/issues">Issues</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">docker-mailserver</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Configuration</li>
+      <li class="breadcrumb-item active">DNS Configuration</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/jeboehm/docker-mailserver/blob/main/docs/configuration/dns-configuration.md">Edit on jeboehm/docker-mailserver</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="dns-configuration">DNS Configuration</h1>
+<p>This document describes the DNS records required for the mailserver to function properly. All DNS records must be configured in your domain's DNS zone to enable email delivery, authentication, and reputation management.</p>
+<h2 id="overview">Overview</h2>
+<p>The mailserver requires several DNS record types to operate correctly:</p>
+<ul>
+<li><strong>MX Record</strong>: Directs incoming emails to your mailserver</li>
+<li><strong>A/AAAA Records</strong>: Resolve the mailserver hostname to IP addresses</li>
+<li><strong>SPF Record</strong>: Authorizes your mailserver to send emails for your domain</li>
+<li><strong>DKIM Record</strong>: Provides public key for email signature verification</li>
+<li><strong>DMARC Record</strong>: Defines email authentication policy and reporting</li>
+</ul>
+<h2 id="mx-record">MX Record</h2>
+<p>The Mail Exchange (MX) record directs incoming emails to your mailserver. This is the primary DNS record that tells other mail servers where to deliver emails for your domain.</p>
+<h3 id="mx-record-configuration">MX Record Configuration</h3>
+<p>Create an MX record in your domain's DNS zone:</p>
+<div class="highlight"><pre><span></span><code>Type: MX
+Name: @ (or your domain name)
+Priority: 10
+Value: mail.example.com
+</code></pre></div>
+<p>Replace <code>mail.example.com</code> with the value configured in the <code>MAILNAME</code> environment variable. The priority value (10 in this example) determines the order when multiple MX records exist. Lower numbers have higher priority.</p>
+<h3 id="mx-record-example">MX Record Example</h3>
+<p>For domain <code>example.com</code> with mailserver hostname <code>mail.example.com</code>:</p>
+<div class="highlight"><pre><span></span><code>example.com.    IN    MX    10    mail.example.com.
+</code></pre></div>
+<h3 id="mx-record-verification">MX Record Verification</h3>
+<p>Verify the MX record using DNS lookup tools:</p>
+<div class="highlight"><pre><span></span><code>dig<span class="w"> </span>MX<span class="w"> </span>example.com
+<span class="c1"># or</span>
+nslookup<span class="w"> </span>-type<span class="o">=</span>MX<span class="w"> </span>example.com
+</code></pre></div>
+<h2 id="a-and-aaaa-records">A and AAAA Records</h2>
+<p>A and AAAA records resolve the mailserver hostname to IPv4 and IPv6 addresses respectively. These records are required for the MX record to function, as the MX record points to a hostname that must resolve to an IP address.</p>
+<h3 id="aaaaa-record-configuration">A/AAAA Record Configuration</h3>
+<p>Create A and AAAA records for your mailserver hostname:</p>
+<div class="highlight"><pre><span></span><code>Type: A
+Name: mail (or your mailserver hostname without domain)
+Value: 192.0.2.1
+
+Type: AAAA
+Name: mail (or your mailserver hostname without domain)
+Value: 2001:db8::1
+</code></pre></div>
+<p>Replace the IP addresses with your mailserver's actual IPv4 and IPv6 addresses. If your mailserver only has IPv4, you can omit the AAAA record, though IPv6 is recommended for modern email infrastructure.</p>
+<h3 id="aaaaa-record-example">A/AAAA Record Example</h3>
+<p>For mailserver hostname <code>mail.example.com</code>:</p>
+<div class="highlight"><pre><span></span><code>mail.example.com.    IN    A        192.0.2.1
+mail.example.com.    IN    AAAA    2001:db8::1
+</code></pre></div>
+<h3 id="aaaaa-record-verification">A/AAAA Record Verification</h3>
+<p>Verify the A and AAAA records:</p>
+<div class="highlight"><pre><span></span><code>dig<span class="w"> </span>A<span class="w"> </span>mail.example.com
+dig<span class="w"> </span>AAAA<span class="w"> </span>mail.example.com
+<span class="c1"># or</span>
+nslookup<span class="w"> </span>mail.example.com
+</code></pre></div>
+<h2 id="spf-record">SPF Record</h2>
+<p>The Sender Policy Framework (SPF) record authorizes your mailserver to send emails on behalf of your domain. SPF helps prevent email spoofing by specifying which mail servers are allowed to send emails for your domain.</p>
+<h3 id="spf-record-configuration">SPF Record Configuration</h3>
+<p>Create a TXT record with SPF policy:</p>
+<div class="highlight"><pre><span></span><code>Type: TXT
+Name: @ (or your domain name)
+Value: v=spf1 mx a ip4:192.0.2.1 ip6:2001:db8::1 ~all
+</code></pre></div>
+<h3 id="spf-mechanisms">SPF Mechanisms</h3>
+<p>Common SPF mechanisms used in mailserver configurations:</p>
+<ul>
+<li><code>mx</code>: Authorizes the mail servers listed in MX records</li>
+<li><code>a</code>: Authorizes the IP addresses of A records for the domain</li>
+<li><code>ip4:192.0.2.1</code>: Explicitly authorizes a specific IPv4 address</li>
+<li><code>ip6:2001:db8::1</code>: Explicitly authorizes a specific IPv6 address</li>
+<li><code>include:example.com</code>: Includes SPF policy from another domain</li>
+<li><code>~all</code>: Soft fail for all other sources (recommended during testing)</li>
+<li><code>-all</code>: Hard fail for all other sources (recommended for production)</li>
+</ul>
+<h3 id="spf-record-example">SPF Record Example</h3>
+<p>For domain <code>example.com</code> with mailserver at <code>mail.example.com</code>:</p>
+<div class="highlight"><pre><span></span><code>example.com.    IN    TXT    &quot;v=spf1 mx a ip4:192.0.2.1 ~all&quot;
+</code></pre></div>
+<h3 id="spf-record-verification">SPF Record Verification</h3>
+<p>Verify the SPF record:</p>
+<div class="highlight"><pre><span></span><code>dig<span class="w"> </span>TXT<span class="w"> </span>example.com
+<span class="c1"># or use SPF validation tools</span>
+</code></pre></div>
+<p>SPF records must be published as TXT records. Some DNS providers may also support the deprecated SPF record type, but TXT is the standard.</p>
+<h2 id="dkim-record">DKIM Record</h2>
+<p>DomainKeys Identified Mail (DKIM) records publish the public key used to verify email signatures. DKIM signing is configured through the management interface, which generates the DNS TXT record that must be published.</p>
+<h3 id="dkim-record-configuration">DKIM Record Configuration</h3>
+<p>DKIM records are generated through the management interface:</p>
+<ol>
+<li>Access the management interface</li>
+<li>Navigate to <strong>DKIM</strong> in the menu bar</li>
+<li>Select the domain for DKIM configuration</li>
+<li>Generate the DKIM key pair</li>
+<li>Copy the provided DNS TXT record</li>
+<li>Add the record to your domain's DNS</li>
+</ol>
+<h3 id="record-format">Record Format</h3>
+<p>DKIM records use a specific subdomain format:</p>
+<div class="highlight"><pre><span></span><code>Type: TXT
+Name: default._domainkey (or selector._domainkey)
+Value: v=DKIM1; k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC...
+</code></pre></div>
+<p>The record name includes a selector (typically <code>default</code>) and the <code>_domainkey</code> subdomain. The value contains the DKIM version, key type, and public key.</p>
+<h3 id="dkim-record-example">DKIM Record Example</h3>
+<p>For domain <code>example.com</code> with selector <code>default</code>:</p>
+<div class="highlight"><pre><span></span><code>default._domainkey.example.com.    IN    TXT    &quot;v=DKIM1; k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC...&quot;
+</code></pre></div>
+<h3 id="dkim-record-verification">DKIM Record Verification</h3>
+<p>After publishing the DKIM record, verify it through the management interface. The interface checks DNS propagation and validates the record format. You can also verify manually:</p>
+<div class="highlight"><pre><span></span><code>dig<span class="w"> </span>TXT<span class="w"> </span>default._domainkey.example.com
+</code></pre></div>
+<p>See <a href="../../administration/dkim-signing/">DKIM Signing</a> for detailed DKIM configuration instructions.</p>
+<h2 id="dmarc-record">DMARC Record</h2>
+<p>Domain-based Message Authentication, Reporting &amp; Conformance (DMARC) records define email authentication policy and enable reporting. DMARC works in conjunction with SPF and DKIM to provide comprehensive email authentication.</p>
+<h3 id="dmarc-record-configuration">DMARC Record Configuration</h3>
+<p>Create a TXT record with DMARC policy:</p>
+<div class="highlight"><pre><span></span><code>Type: TXT
+Name: _dmarc
+Value: v=DMARC1; p=none; rua=mailto:dmarc@example.com
+</code></pre></div>
+<h3 id="dmarc-policy-options">DMARC Policy Options</h3>
+<p>Common DMARC policy settings:</p>
+<ul>
+<li><code>p=none</code>: Monitor mode - no action taken, useful for initial deployment</li>
+<li><code>p=quarantine</code>: Quarantine emails that fail authentication</li>
+<li><code>p=reject</code>: Reject emails that fail authentication (recommended for production)</li>
+</ul>
+<h3 id="dmarc-tags">DMARC Tags</h3>
+<ul>
+<li><code>v=DMARC1</code>: DMARC version (required)</li>
+<li><code>p=</code>: Policy for emails that fail authentication (none, quarantine, reject)</li>
+<li><code>rua=mailto:dmarc@example.com</code>: Email address for aggregate reports</li>
+<li><code>ruf=mailto:dmarc@example.com</code>: Email address for forensic reports</li>
+<li><code>pct=100</code>: Percentage of emails to apply policy to (default: 100)</li>
+<li><code>aspf=r</code>: SPF alignment mode (relaxed or strict)</li>
+<li><code>adkim=r</code>: DKIM alignment mode (relaxed or strict)</li>
+<li><code>fo=0</code>: Failure reporting options</li>
+</ul>
+<h3 id="example-policies">Example Policies</h3>
+<p><strong>Monitoring mode</strong> (recommended for initial deployment):</p>
+<div class="highlight"><pre><span></span><code>_dmarc.example.com.    IN    TXT    &quot;v=DMARC1; p=none; rua=mailto:dmarc@example.com&quot;
+</code></pre></div>
+<p><strong>Quarantine mode</strong> (after monitoring period):</p>
+<div class="highlight"><pre><span></span><code>_dmarc.example.com.    IN    TXT    &quot;v=DMARC1; p=quarantine; rua=mailto:dmarc@example.com; pct=100&quot;
+</code></pre></div>
+<p><strong>Reject mode</strong> (production, after validation):</p>
+<div class="highlight"><pre><span></span><code>_dmarc.example.com.    IN    TXT    &quot;v=DMARC1; p=reject; rua=mailto:dmarc@example.com; aspf=r; adkim=r&quot;
+</code></pre></div>
+<h3 id="dmarc-record-verification">DMARC Record Verification</h3>
+<p>Verify the DMARC record:</p>
+<div class="highlight"><pre><span></span><code>dig<span class="w"> </span>TXT<span class="w"> </span>_dmarc.example.com
+</code></pre></div>
+<h2 id="dns-record-summary">DNS Record Summary</h2>
+<p>For a complete mailserver setup, configure the following DNS records:</p>
+<table>
+<thead>
+<tr>
+<th>Record Type</th>
+<th>Name</th>
+<th>Value</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>MX</td>
+<td><code>@</code></td>
+<td><code>10 mail.example.com</code></td>
+<td>Direct incoming emails</td>
+</tr>
+<tr>
+<td>A</td>
+<td><code>mail</code></td>
+<td><code>192.0.2.1</code></td>
+<td>Resolve mailserver hostname (IPv4)</td>
+</tr>
+<tr>
+<td>AAAA</td>
+<td><code>mail</code></td>
+<td><code>2001:db8::1</code></td>
+<td>Resolve mailserver hostname (IPv6)</td>
+</tr>
+<tr>
+<td>TXT (SPF)</td>
+<td><code>@</code></td>
+<td><code>v=spf1 mx a ~all</code></td>
+<td>Authorize sending servers</td>
+</tr>
+<tr>
+<td>TXT (DKIM)</td>
+<td><code>default._domainkey</code></td>
+<td><code>v=DKIM1; k=rsa; p=...</code></td>
+<td>Email signature verification</td>
+</tr>
+<tr>
+<td>TXT (DMARC)</td>
+<td><code>_dmarc</code></td>
+<td><code>v=DMARC1; p=none; rua=...</code></td>
+<td>Authentication policy</td>
+</tr>
+</tbody>
+</table>
+<h2 id="troubleshooting">Troubleshooting</h2>
+<h3 id="common-issues">Common Issues</h3>
+<p><strong>Emails not being received:</strong></p>
+<ul>
+<li>Verify MX record points to correct hostname</li>
+<li>Ensure A/AAAA records resolve the mailserver hostname</li>
+<li>Check firewall rules allow connections on port 25</li>
+</ul>
+<p><strong>Emails marked as spam:</strong></p>
+<ul>
+<li>Verify SPF record is correctly configured</li>
+<li>Ensure DKIM record is published and verified</li>
+<li>Check DMARC policy is not too restrictive during initial setup</li>
+<li>Review DMARC reports for authentication failures</li>
+</ul>
+<p><strong>DKIM verification failures:</strong></p>
+<ul>
+<li>Verify DKIM DNS record is published correctly</li>
+<li>Check DNS propagation is complete</li>
+<li>Ensure the selector matches between DNS and mailserver configuration</li>
+<li>Verify the public key in DNS matches the private key in mailserver</li>
+</ul>
+<p><strong>SPF failures:</strong></p>
+<ul>
+<li>Verify all sending IP addresses are included in SPF record</li>
+<li>Check for syntax errors in SPF record</li>
+<li>Ensure SPF record is published as TXT record type</li>
+<li>Review SPF mechanisms (mx, a, ip4, ip6) are appropriate for your setup</li>
+</ul>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../mailserver-admin/" class="btn btn-neutral float-left" title="mailserver-admin"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../external-mysql/" class="btn btn-neutral float-right" title="External MySQL Configuration">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/jeboehm/docker-mailserver" class="fa fa-code-fork" style="color: #fcfcfc"> jeboehm/docker-mailserver</a>
+        </span>
+    
+    
+      <span><a href="../mailserver-admin/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../external-mysql/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../..";</script>
+    <script src="../../js/theme_extra.js"></script>
+    <script src="../../js/theme.js"></script>
+      <script src="../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

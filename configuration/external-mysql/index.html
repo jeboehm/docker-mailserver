@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><link rel="canonical" href="https://jeboehm.github.io/docker-mailserver/configuration/external-mysql/" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>External MySQL Configuration - docker-mailserver</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "External MySQL Configuration";
+        var mkdocs_page_input_path = "configuration/external-mysql.md";
+        var mkdocs_page_url = "/docker-mailserver/configuration/external-mysql/";
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../.." class="icon icon-home"> docker-mailserver
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../..">Welcome</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Quick Start</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../installation/">Installation Guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../upgrade/">Upgrade Guide</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Configuration</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../environment-variables/">Environment Variables Configuration</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../mailserver-admin/">mailserver-admin</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../dns-configuration/">DNS Configuration</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">External MySQL Configuration</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#overview">Overview</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#environment-variables">Environment Variables</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#variable-descriptions">Variable Descriptions</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#database-initialization">Database Initialization</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#required-sql-files">Required SQL Files</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#import-process">Import Process</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#option-1-manual-import">Option 1: Manual Import</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#option-2-using-docker">Option 2: Using Docker</a>
+    </li>
+        </ul>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#docker-compose-configuration">Docker Compose Configuration</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#removing-the-built-in-database">Removing the Built-in Database</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#example-configuration">Example Configuration</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#kubernetes-configuration">Kubernetes Configuration</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#prerequisites">Prerequisites</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#database-migrations">Database Migrations</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#docker-compose">Docker Compose</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#kubernetes">Kubernetes</a>
+    </li>
+        </ul>
+    </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../relayhost/">Relayhost Configuration</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../local-address-extension/">Local Address Extension</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../php-sessions/">PHP Session Configuration</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../reverse-proxy/">Reverse Proxy Configuration</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../roundcube/">Roundcube Configuration</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tls/">TLS Certificate Configuration</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Administration</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../administration/login/">Login</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../administration/dashboard/">Dashboard</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../administration/manage-domains/">Manage Domains</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../administration/manage-users/">Manage Users</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../administration/manage-aliases/">Manage Aliases</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../administration/manage-fetchmail/">Manage Fetchmail</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../administration/dkim-signing/">DKIM Signing</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../administration/dns-validation-wizard/">DNS Validation Wizard</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../administration/user-roles/">User Roles</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Recipes</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Docker</a>
+    <ul>
+                <li class="toctree-l2"><a class="" href="https://github.com/jeboehm/docker-mailserver/tree/main/docs/example-configs/compose/traefik-reverse-proxy">Traefik Reverse Proxy</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Kubernetes</a>
+    <ul>
+                <li class="toctree-l2"><a class="" href="https://github.com/jeboehm/docker-mailserver/tree/main/docs/example-configs/kustomize/external-db-and-https-ingress">External Database and HTTPS Ingress</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Development</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../development/architecture/">Service Architecture</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../development/development/">Developer Guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../development/mailserver-admin/">mailserver-admin</a>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="" href="https://github.com/jeboehm/docker-mailserver/issues">Issues</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">docker-mailserver</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Configuration</li>
+      <li class="breadcrumb-item active">External MySQL Configuration</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/jeboehm/docker-mailserver/blob/main/docs/configuration/external-mysql.md">Edit on jeboehm/docker-mailserver</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="external-mysql-configuration">External MySQL Configuration</h1>
+<h2 id="overview">Overview</h2>
+<p>The <code>docker-mailserver</code> can be configured to use an external MySQL database instead of the built-in database service. This is particularly useful for production deployments, Kubernetes environments, or when you want to use an existing MySQL infrastructure.</p>
+<h2 id="environment-variables">Environment Variables</h2>
+<p>To use an external MySQL database, configure the following environment variables in your <code>.env</code> file:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># External MySQL Configuration</span>
+<span class="nv">MYSQL_HOST</span><span class="o">=</span>your-mysql-host.example.com
+<span class="nv">MYSQL_DATABASE</span><span class="o">=</span>mailserver
+<span class="nv">MYSQL_USER</span><span class="o">=</span>mailserver_user
+<span class="nv">MYSQL_PASSWORD</span><span class="o">=</span>your_secure_password
+</code></pre></div>
+<h3 id="variable-descriptions">Variable Descriptions</h3>
+<ul>
+<li><strong>MYSQL_HOST</strong>: The hostname or IP address of your MySQL server</li>
+<li><strong>MYSQL_DATABASE</strong>: The database name to use (will be created if it doesn't exist)</li>
+<li><strong>MYSQL_USER</strong>: The MySQL username for database access</li>
+<li><strong>MYSQL_PASSWORD</strong>: The password for the MySQL user</li>
+</ul>
+<h2 id="database-initialization">Database Initialization</h2>
+<h3 id="required-sql-files">Required SQL Files</h3>
+<p>The mailserver requires two SQL initialization files to be imported into your external MySQL database:</p>
+<ol>
+<li><strong><code>target/db/rootfs/docker-entrypoint-initdb.d/001_mailserver.sql</code></strong> - Core mailserver schema</li>
+<li><strong><code>target/db/rootfs/docker-entrypoint-initdb.d/002_webmail.sql</code></strong> - Webmail-specific schema</li>
+</ol>
+<h3 id="import-process">Import Process</h3>
+<h4 id="option-1-manual-import">Option 1: Manual Import</h4>
+<ol>
+<li><strong>Connect to your MySQL server</strong>:</li>
+</ol>
+<div class="highlight"><pre><span></span><code>mysql<span class="w"> </span>-h<span class="w"> </span>your-mysql-host.example.com<span class="w"> </span>-u<span class="w"> </span>root<span class="w"> </span>-p
+</code></pre></div>
+<ol>
+<li><strong>Create the database</strong> (if it doesn't exist):</li>
+</ol>
+<div class="highlight"><pre><span></span><code><span class="k">CREATE</span><span class="w"> </span><span class="k">DATABASE</span><span class="w"> </span><span class="n">mailserver</span><span class="w"> </span><span class="nb">CHARACTER</span><span class="w"> </span><span class="k">SET</span><span class="w"> </span><span class="n">utf8mb4</span><span class="w"> </span><span class="k">COLLATE</span><span class="w"> </span><span class="n">utf8mb4_unicode_ci</span><span class="p">;</span>
+</code></pre></div>
+<ol>
+<li><strong>Import the SQL files</strong>:
+   <div class="highlight"><pre><span></span><code>mysql<span class="w"> </span>-h<span class="w"> </span>your-mysql-host.example.com<span class="w"> </span>-u<span class="w"> </span>root<span class="w"> </span>-p<span class="w"> </span>mailserver<span class="w"> </span>&lt;<span class="w"> </span>target/db/rootfs/docker-entrypoint-initdb.d/001_mailserver.sql
+mysql<span class="w"> </span>-h<span class="w"> </span>your-mysql-host.example.com<span class="w"> </span>-u<span class="w"> </span>root<span class="w"> </span>-p<span class="w"> </span>mailserver<span class="w"> </span>&lt;<span class="w"> </span>target/db/rootfs/docker-entrypoint-initdb.d/002_webmail.sql
+</code></pre></div></li>
+</ol>
+<h4 id="option-2-using-docker">Option 2: Using Docker</h4>
+<p>If you have the SQL files locally, you can use Docker to import them:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Import mailserver schema</span>
+docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span>-v<span class="w"> </span><span class="k">$(</span><span class="nb">pwd</span><span class="k">)</span>/target/db/rootfs/docker-entrypoint-initdb.d:/sql<span class="w"> </span>mysql:lts<span class="w"> </span>mysql<span class="w"> </span>-h<span class="w"> </span>your-mysql-host.example.com<span class="w"> </span>-u<span class="w"> </span>root<span class="w"> </span>-p<span class="w"> </span>mailserver<span class="w"> </span>&lt;<span class="w"> </span>/sql/001_mailserver.sql
+
+<span class="c1"># Import webmail schema</span>
+docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span>-v<span class="w"> </span><span class="k">$(</span><span class="nb">pwd</span><span class="k">)</span>/target/db/rootfs/docker-entrypoint-initdb.d:/sql<span class="w"> </span>mysql:lts<span class="w"> </span>mysql<span class="w"> </span>-h<span class="w"> </span>your-mysql-host.example.com<span class="w"> </span>-u<span class="w"> </span>root<span class="w"> </span>-p<span class="w"> </span>mailserver<span class="w"> </span>&lt;<span class="w"> </span>/sql/002_webmail.sql
+</code></pre></div>
+<h2 id="docker-compose-configuration">Docker Compose Configuration</h2>
+<h3 id="removing-the-built-in-database">Removing the Built-in Database</h3>
+<p>To use an external MySQL database with Docker Compose, remove the database service:</p>
+<ol>
+<li><strong>Edit <code>deploy/compose/db.yaml</code></strong>:</li>
+</ol>
+<div class="highlight"><pre><span></span><code><span class="c1"># Comment out or remove the entire db service</span>
+<span class="c1"># services:</span>
+<span class="c1">#   db:</span>
+<span class="c1">#     image: mysql:lts</span>
+<span class="c1">#     restart: on-failure:5</span>
+<span class="c1">#     env_file: ../../.env</span>
+<span class="c1">#     volumes:</span>
+<span class="c1">#       - ../../target/db/rootfs/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d:ro</span>
+<span class="c1">#       - data-db:/var/lib/mysql</span>
+</code></pre></div>
+<ol>
+<li><strong>Update service dependencies</strong>:</li>
+<li>Remove <code>depends_on: - db</code> from services that depend on the database</li>
+<li>The services will connect to the external MySQL host instead</li>
+</ol>
+<h3 id="example-configuration">Example Configuration</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># In your docker-compose.yml or compose override</span>
+<span class="nt">services</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">web</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">environment</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MYSQL_HOST=your-mysql-host.example.com</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MYSQL_DATABASE=mailserver</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MYSQL_USER=mailserver_user</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MYSQL_PASSWORD=your_secure_password</span>
+<span class="w">    </span><span class="c1"># Remove depends_on: db if present</span>
+</code></pre></div>
+<h2 id="kubernetes-configuration">Kubernetes Configuration</h2>
+<p>External MySQL is <strong>required</strong> for Kubernetes deployments, as the provided kustomization does not include a database service.</p>
+<h3 id="prerequisites">Prerequisites</h3>
+<ol>
+<li><strong>Existing MySQL Server</strong>: Ensure you have a MySQL-compatible database (MySQL, Percona XtraDB, MariaDB)</li>
+<li><strong>Database Access</strong>: Verify network connectivity from your Kubernetes cluster to the MySQL server</li>
+<li><strong>Credentials</strong>: Create a MySQL user with appropriate permissions</li>
+</ol>
+<h2 id="database-migrations">Database Migrations</h2>
+<p>After importing the initial SQL files, you need to restart the web service to apply any database migrations:</p>
+<h3 id="docker-compose">Docker Compose</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Restart the web service to apply migrations</span>
+docker-compose<span class="w"> </span>restart<span class="w"> </span>web
+
+<span class="c1"># Or if using the production script</span>
+bin/production.sh<span class="w"> </span>restart<span class="w"> </span>web
+</code></pre></div>
+<h3 id="kubernetes">Kubernetes</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Restart the web deployment</span>
+kubectl<span class="w"> </span>rollout<span class="w"> </span>restart<span class="w"> </span>deployment/web<span class="w"> </span>-n<span class="w"> </span>mail
+</code></pre></div>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../dns-configuration/" class="btn btn-neutral float-left" title="DNS Configuration"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../relayhost/" class="btn btn-neutral float-right" title="Relayhost Configuration">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/jeboehm/docker-mailserver" class="fa fa-code-fork" style="color: #fcfcfc"> jeboehm/docker-mailserver</a>
+        </span>
+    
+    
+      <span><a href="../dns-configuration/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../relayhost/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../..";</script>
+    <script src="../../js/theme_extra.js"></script>
+    <script src="../../js/theme.js"></script>
+      <script src="../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>
