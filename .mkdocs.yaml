@@ -20,7 +20,7 @@ nav:
       - upgrade.md
   - Configuration:
       - configuration/environment-variables.md
-      - configuration/mailserver-admin.md
+      - "mailserver-admin": configuration/mailserver-admin.md
       - configuration/dns-configuration.md
       - configuration/external-mysql.md
       - configuration/relayhost.md
@@ -47,5 +47,5 @@ nav:
   - Development:
       - development/architecture.md
       - development/development.md
-      - development/mailserver-admin.md
+      - "mailserver-admin": development/mailserver-admin.md
   - Issues: https://github.com/jeboehm/docker-mailserver/issues

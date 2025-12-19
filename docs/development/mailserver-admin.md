@@ -1,6 +1,6 @@
 # Development Guide for mailserver-admin
 
-This document describes the development setup and workflow for the ```mailserver-admin``` project.
+This document describes the development setup and workflow for the `mailserver-admin` project.
 The project is located in a separate repository: https://github.com/jeboehm/mailserver-admin/
 
 ## Technical Stack
@@ -24,12 +24,14 @@ The project uses [devenv](https://devenv.sh/) to provide a reproducible developm
 ### Initial Setup
 
 1. Clone the repository:
+
    ```bash
    git clone <repository-url>
    cd mailserver-admin
    ```
 
 2. Start the development environment:
+
    ```bash
    devenv up
    ```
@@ -57,38 +59,6 @@ The project uses [devenv](https://devenv.sh/) to provide a reproducible developm
 
 The web server is configured to serve files from the `public/` directory and uses PHP-FPM for PHP execution.
 
-### Development Services
-
-The devenv configuration provides:
-
-- **PHP 8.4** with extensions:
-  - Redis
-  - PDO MySQL
-  - Xdebug (configured for debugging on port 9003)
-
-- **MySQL** database:
-  - Database name: `app`
-  - User: `root`
-  - Connection string: `mysql://root@127.0.0.1/app?version=mariadb-10.11.5`
-
-- **Redis** server:
-  - Host: `localhost`
-  - Port: `6379`
-  - Connection string: `redis://localhost:6379/0`
-
-- **Caddy** web server:
-  - Port: `8000`
-  - Document root: `public/`
-  - PHP-FPM integration enabled
-
-### Environment Variables
-
-The following environment variables are automatically set by devenv:
-
-- `DATABASE_URL`: MySQL connection string
-- `REDIS_DSN`: Redis connection string
-- `CORS_ALLOW_ORIGIN`: CORS configuration for localhost
-
 ## Development Commands
 
 The project includes several composer scripts for development tasks:
@@ -102,6 +72,7 @@ composer run csfix
 ```
 
 This command runs PHP CS Fixer with the configuration defined in `.php-cs-fixer.dist.php`. It applies PSR-2, Symfony, and PHP 8.0 migration rules to files in:
+
 - `bin/`
 - `public/`
 - `tests/`
@@ -117,6 +88,7 @@ composer run phpstan
 ```
 
 PHPStan is configured to analyze code at level 6 (as defined in `phpstan.dist.neon`) and checks:
+
 - `bin/`
 - `config/`
 - `public/`
@@ -132,6 +104,7 @@ composer run test
 ```
 
 This runs PHPUnit with the configuration from `phpunit.dist.xml`. The test suite includes:
+
 - Unit tests in `tests/Unit/`
 - Integration tests in `tests/Integration/`
 
@@ -179,6 +152,7 @@ Rector uses the configuration from `rector.php` to apply automated code improvem
 ## Debugging
 
 Xdebug is configured in the devenv setup with:
+
 - Mode: `debug`
 - Client port: `9003`
 - Start with request: enabled
@@ -190,6 +164,7 @@ Configure your IDE to connect to Xdebug on port 9003 for debugging.
 When making database schema changes:
 
 1. Create a migration:
+
    ```bash
    php bin/console doctrine:migrations:generate
    ```

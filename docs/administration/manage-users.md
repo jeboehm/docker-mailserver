@@ -11,7 +11,8 @@ Users are email accounts associated with a specific domain. Each user has a uniq
 - **Admin**: Can manage users across all domains
 - **Domain Admin**: Can manage users within their assigned domain only
 - **User**: Cannot manage other users, only their own account settings
-  See [User Roles](user-roles.md) for more information.
+
+See [User Roles](user-roles.md) for more information.
 
 ## User Operations
 
@@ -88,11 +89,13 @@ When a user is set to send only, they can only send emails. They cannot receive 
 ### Admin
 
 When a user is set to admin, they can manage other users and domains.
+
 See [User Roles](user-roles.md) for more information.
 
 ### Domain Admin
 
 When a user is set to domain admin, they can manage users and aliases within their assigned domain.
+
 See [User Roles](user-roles.md) for more information.
 
 ## User Access
