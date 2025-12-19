@@ -29,14 +29,14 @@ OAUTH_PATHS_IDENTIFIER=sub
 
 The following environment variables can be set in the `.env` file or in the environment:
 
-### General
+### General Configuration
 
 - `APP_ENV`: The environment the application is running in. Default: `prod`
 - `APP_SECRET`: A secret key used by Symfony for various purposes (e.g., CSRF tokens). Default: `randomly generated`.
 - `CSRF_ENABLED`: Whether CSRF protection is enabled. Default: `true`.
 - `TRUSTED_PROXIES`: A list of trusted proxy IP addresses.
 
-### Database
+### Database Configuration
 
 - `MYSQL_USER`: The MySQL database user.
 - `MYSQL_PASSWORD`: The MySQL database password.
@@ -46,7 +46,7 @@ The following environment variables can be set in the `.env` file or in the envi
 - `REDIS_PORT`: The Redis server port.
 - `REDIS_PASSWORD`: The Redis server password.
 
-### OAuth2
+### OAuth2 Configuration
 
 - `OAUTH_ENABLED`: Whether OAuth2 is enabled. Default: `false`.
 - `OAUTH_CLIENT_ID`: The client ID for the OAuth2 provider.
