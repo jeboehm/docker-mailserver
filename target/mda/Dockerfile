@@ -1,5 +1,5 @@
 FROM ghcr.io/jeboehm/dockerize:0.9.3@sha256:d4e824aa120670658d7012421d2fdf1b2437be34a6acbb7a4ad92ed52edec8eb AS dockerize
-FROM dovecot/dovecot:2.4.2-dev@sha256:647e6934e4981558a603ab32bc1657cb519d3ae24ae1dd7db8ee2782f98de959
+FROM dovecot/dovecot:2.4.1-dev@sha256:99f45812578122e62663503f55bd32919e96c7b048349539a8511c3e71c00e3e
 
 LABEL maintainer="https://github.com/jeboehm/docker-mailserver"
 LABEL vendor="https://github.com/jeboehm/docker-mailserver"
@@ -8,10 +8,9 @@ LABEL de.ressourcenkonflikt.docker-mailserver.autoheal="true"
 USER root
 RUN apt-get update && \
     apt-get install --no-install-recommends -y curl && \
-    rm -r \
+    rm -rf \
         /etc/dovecot/conf.d/mail.conf \
         /etc/dovecot/conf.d/ssl.conf \
-        /etc/dovecot/ssl \
         /var/lib/apt/lists/*
 USER vmail
 

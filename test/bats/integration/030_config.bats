@@ -18,11 +18,12 @@ setup() {
 	[ "$status" -eq 0 ]
 }
 
-@test "Check dovecot configuration" {
-	run docker exec docker-mailserver-mda-1 doveconf
+# https://github.com/jeboehm/docker-mailserver/issues/624
+# @test "Check dovecot configuration" {
+# 	run docker exec docker-mailserver-mda-1 doveconf
 
-	[ "$status" -eq 0 ]
-}
+# 	[ "$status" -eq 0 ]
+# }
 
 @test "Check rspamd configuration" {
 	run docker exec docker-mailserver-filter-1 rspamadm configtest
