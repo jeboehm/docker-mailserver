@@ -85,7 +85,7 @@ when you use Kubernetes or decide to rename services somehow.
 
 ### mailserver-admin Configuration
 
-See [mailserver-admin](https://github.com/jeboehm/mailserver-admin?tab=readme-ov-file#environment-variables) for more information.
+See [mailserver-admin](mailserver-admin.md) for more information.
 
 ### PHP Configuration
 

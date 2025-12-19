@@ -1,13 +1,16 @@
 # docker-mailserver
 
-![Logo](/docs/logo/logo.png?raw=true)
+![Logo](/docs/logo/logo.png)
 
-`docker-mailserver` is inspired by the renowned [ISPMail guide](https://workaround.org/ispmail/).
+`docker-mailserver` is inspired by the renowned [ISPMail guide](https://workaround.org/).
 This project lets you run your own email services, giving you independence from large providers. It is a secure, customizable, and feature-rich solution for managing your email infrastructure.
 
 Container images are built on [Alpine Linux](https://alpinelinux.org) or vendor base images and are kept lightweight.
 
-[![Build & Tests](https://github.com/jeboehm/docker-mailserver/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/jeboehm/docker-mailserver/actions/workflows/build.yml)
+[![Build & Tests](https://github.com/jeboehm/docker-mailserver/actions/workflows/build.yml/badge.svg)](https://github.com/jeboehm/docker-mailserver/actions/workflows/build.yml)
+[![Validate Manifests](https://github.com/jeboehm/docker-mailserver/actions/workflows/test-yaml-schema.yml/badge.svg)](https://github.com/jeboehm/docker-mailserver/actions/workflows/test-yaml-schema.yml)
+[![Release](https://github.com/jeboehm/docker-mailserver/actions/workflows/release.yml/badge.svg)](https://github.com/jeboehm/docker-mailserver/actions/workflows/release.yml)
+[![Documentation](https://github.com/jeboehm/docker-mailserver/actions/workflows/docs.yml/badge.svg)](https://github.com/jeboehm/docker-mailserver/actions/workflows/docs.yml)
 
 ## 📚 Documentation
 
@@ -56,6 +59,10 @@ For detailed installation instructions, see the [Installation Guide](https://jeb
 ### DKIM setup
 
 ![DKIM setup](docs/images/admin/dkim_edit.png)
+
+### DNS Validation Wizard
+
+![DNS Validation Wizard](docs/images/admin/dns_validation_wizard.png)
 
 ## Links
 

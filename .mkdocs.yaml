@@ -20,6 +20,7 @@ nav:
       - upgrade.md
   - Configuration:
       - configuration/environment-variables.md
+      - configuration/mailserver-admin.md
       - configuration/dns-configuration.md
       - configuration/external-mysql.md
       - configuration/relayhost.md
@@ -29,6 +30,7 @@ nav:
       - configuration/roundcube.md
       - configuration/tls.md
   - Administration:
+      - administration/login.md
       - administration/dashboard.md
       - administration/manage-domains.md
       - administration/manage-users.md
@@ -36,6 +38,7 @@ nav:
       - administration/manage-fetchmail.md
       - administration/dkim-signing.md
       - administration/dns-validation-wizard.md
+      - administration/user-roles.md
   - Recipes:
       - Docker:
           - Traefik Reverse Proxy: https://github.com/jeboehm/docker-mailserver/tree/main/docs/example-configs/compose/traefik-reverse-proxy
@@ -44,4 +47,5 @@ nav:
   - Development:
       - development/architecture.md
       - development/development.md
+      - development/mailserver-admin.md
   - Issues: https://github.com/jeboehm/docker-mailserver/issues
