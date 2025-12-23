@@ -25,7 +25,4 @@ if ! [ -r /etc/dovecot/tls/tls.crt ] || ! [ -r /etc/dovecot/tls/tls.key ]; then
 	exit 1
 fi
 
-exec dockerize \
-	-wait "tcp://${MYSQL_HOST}:${MYSQL_PORT}" \
-	-timeout "${WAITSTART_TIMEOUT}" \
-	/dovecot/sbin/dovecot -F
+exec /usr/bin/tini -- /dovecot/sbin/dovecot -F
