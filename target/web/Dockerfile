@@ -22,7 +22,7 @@ ENV MYSQL_HOST=db \
     DATABASE_URL="mysql://%env(MYSQL_USER)%:%env(MYSQL_PASSWORD)%@%env(MYSQL_HOST)%:%env(MYSQL_PORT)%/%env(MYSQL_DATABASE)%?serverVersion=8.4" \
     SERVER_ROOT=/var/www/html
 
-ARG FRANKENPHP_VER=v1.11.0 # renovate: depName=php/frankenphp
+ARG FRANKENPHP_VER=v1.11.1 # renovate: depName=php/frankenphp
 RUN apk add --no-cache \
         curl && \
     curl -sfOL https://github.com/php/frankenphp/releases/download/${FRANKENPHP_VER}/frankenphp-linux-x86_64 && \
