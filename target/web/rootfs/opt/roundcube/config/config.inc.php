@@ -21,7 +21,6 @@ $config['plugins'] = [
     'archive',
     'zipdownload',
     'managesieve',
-    'password',
 ];
 $config['imap_conn_options'] = [
     'ssl' => [
