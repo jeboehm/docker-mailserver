@@ -15,7 +15,6 @@ ENV MYSQL_HOST=db \
     MDA_MANAGESIEVE_ADDRESS=mda:4190 \
     MTA_SMTP_SUBMISSION_ADDRESS=mta:587 \
     WEB_HTTP_ADDRESS=web:8080 \
-    WEB_PHP_ADDRESS=127.0.0.1:9000 \
     SUPPORT_URL=https://github.com/jeboehm/docker-mailserver \
     MAILNAME=mail.example.com \
     WAITSTART_TIMEOUT=1m \

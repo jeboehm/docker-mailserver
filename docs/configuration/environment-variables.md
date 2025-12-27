@@ -80,7 +80,6 @@ when you use Kubernetes or decide to rename services somehow.
 | `MTA_SMTP_ADDRESS`            | `mta:25`                 | Postfix SMTP service address            |
 | `MTA_SMTP_SUBMISSION_ADDRESS` | `mta:587`                | Postfix SMTP submission service address |
 | `WEB_HTTP_ADDRESS`            | `web:80`                 | Web interface HTTP address              |
-| `WEB_PHP_ADDRESS`             | `127.0.0.1:9000`         | PHP-FPM service address                 |
 | `RSPAMD_DNS_SERVERS`          | `round-robin:unbound:53` | DNS servers for RSpamd (Kubernetes)     |
 
 ### mailserver-admin Configuration
