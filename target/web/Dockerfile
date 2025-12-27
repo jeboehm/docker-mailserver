@@ -25,12 +25,11 @@ ENV MYSQL_HOST=db \
 ARG FRANKENPHP_VER=v1.11.1 # renovate: depName=php/frankenphp
 RUN apk add --no-cache \
         curl && \
-    curl -sfOL https://github.com/php/frankenphp/releases/download/${FRANKENPHP_VER}/frankenphp-linux-x86_64 && \
-    chmod +x frankenphp-linux-x86_64 && \
-    mv frankenphp-linux-x86_64 /usr/bin/frankenphp && \
-    mkdir -p ${SERVER_ROOT} && \
     ln -sf /tmp /home/app && \
-    apk del --no-cache apk-tools
+    ARCH=$(uname -m) && \
+    curl -sfOL https://github.com/php/frankenphp/releases/download/${FRANKENPHP_VER}/frankenphp-linux-${ARCH} && \
+    chmod +x frankenphp-linux-${ARCH} && \
+    mv frankenphp-linux-${ARCH} /usr/bin/frankenphp
 
 RUN printf '#!/bin/sh\nexec frankenphp php-cli "$@"\n' > /usr/bin/php && \
     chmod +x /usr/bin/php
@@ -38,7 +37,7 @@ RUN printf '#!/bin/sh\nexec frankenphp php-cli "$@"\n' > /usr/bin/php && \
 FROM base AS composer
 
 ENV COMPOSER_ALLOW_SUPERUSER=1
-COPY --from=composer/composer:2.9.2@sha256:969fb900253c0e71645cf74257d6c9206304573e8b246d1bc57f8ac1d64e12f4 /usr/bin/composer /usr/local/bin/composer
+COPY --from=composer/composer:2.9.2@sha256:969fb900253c0e71645cf74257d6c9206304573e8b246d1bc57f8ac1d64e12f4 /usr/bin/composer /usr/bin/composer
 
 FROM composer AS roundcube-builder
 
@@ -55,6 +54,9 @@ RUN --mount=type=cache,target=/root/.composer \
         temp/ \
         logs/ && \
     mkdir -p \
+        temp/ \
+        logs/ && \
+    chmod 777 \
         temp/ \
         logs/ && \
     if [ "${RC_PLUGINS}" != "" ]; then \
@@ -81,7 +83,11 @@ RUN curl -sSLf \
         https://github.com/jeboehm/mailserver-admin/releases/download/${ADMIN_VER}/release-${ADMIN_VER}.tar.gz && \
     tar -oxf /tmp/admin.tar.gz --strip=1 && \
     rm /tmp/admin.tar.gz && \
-    composer symfony:dump-env prod
+    composer symfony:dump-env prod && \
+    chmod 777 \
+        /opt/admin/var/cache \
+        /opt/admin/var/cache/prod \
+        /opt/admin/var/log
 
 FROM base AS prod
 
@@ -90,16 +96,12 @@ COPY --chown=root:root --from=roundcube-builder /opt/roundcube/ /opt/roundcube/
 COPY --chown=root:root --from=admin-builder /opt/admin/ /opt/admin/
 COPY --chown=root:root rootfs/ /
 
-RUN ln -s /opt/roundcube/public_html ${SERVER_ROOT}/webmail && \
+RUN mkdir -p ${SERVER_ROOT} && \
+    ln -s /opt/roundcube/public_html ${SERVER_ROOT}/webmail && \
     ln -s /opt/admin/public ${SERVER_ROOT}/manager
 
 ARG USER=app
-RUN adduser -DH ${USER} && \
-	chown -R ${USER}:${USER} \
-        /opt/admin/var/cache/prod \
-        /opt/admin/var/log \
-        /opt/roundcube/logs \
-        /opt/roundcube/temp
+RUN adduser -DH ${USER}
 USER ${USER}
 
 HEALTHCHECK CMD /usr/local/bin/healthcheck.sh
