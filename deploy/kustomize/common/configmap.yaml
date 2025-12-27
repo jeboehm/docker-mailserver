@@ -20,4 +20,3 @@ data:
   RSPAMD_DNS_SERVERS: round-robin:unbound:53
   UNBOUND_DNS_ADDRESS: unbound:53
   WEB_HTTP_ADDRESS: web:80
-  WEB_PHP_ADDRESS: 127.0.0.1:9000
