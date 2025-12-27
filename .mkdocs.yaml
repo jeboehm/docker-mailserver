@@ -8,11 +8,11 @@ remote_branch: gh-pages
 theme: readthedocs
 markdown_extensions:
   - admonition
+  - pymdownx.fancylists
   - pymdownx.superfences
 exclude_docs: |
   example-configs/**
   requirements.txt
-
 nav:
   - Welcome: README.md
   - Quick Start:
