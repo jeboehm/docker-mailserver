@@ -133,4 +133,4 @@ docs-build:
 
 .PHONY: docs-serve
 docs-serve:
-	mkdocs serve --strict -f .mkdocs.yaml
+	mkdocs serve --watch docs/ --strict -f .mkdocs.yaml

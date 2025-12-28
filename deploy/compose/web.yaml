@@ -7,7 +7,7 @@ services:
       context: ../../target/web
       args:
         # Roundcube plugins can be added here.
-        # See https://packagist.org/?type=roundcube-plugin
+        # Documentation available at docs/configuration/roundcube.md
         RC_PLUGINS: "johndoh/contextmenu jfcherng-roundcube/show-folder-size"
       cache_from:
         - type=registry,ref=ghcr.io/jeboehm/mailserver-web:buildcache

@@ -1,7 +1,7 @@
 # Development Guide for mailserver-admin
 
 This document describes the development setup and workflow for the `mailserver-admin` project.
-The project is located in a separate repository: https://github.com/jeboehm/mailserver-admin/
+The project is located in a separate repository: [mailserver-admin](https://github.com/jeboehm/mailserver-admin).
 
 ## Technical Stack
 
@@ -32,26 +32,28 @@ The project uses [devenv](https://devenv.sh/) to provide a reproducible developm
 
 2. Start the development environment:
 
-   ```bash
-   devenv up
-   ```
+```bash
+devenv up
+```
 
-   This command will:
-   - Set up PHP 8.4 with required extensions (Redis, PDO MySQL, Xdebug)
-   - Start MySQL database server
-   - Start Redis server
-   - Start Caddy web server on port 8000
-   - Configure PHP-FPM pool for the web server
-   - Set up environment variables for database and Redis connections
+This command will:
+
+- Set up PHP 8.4 with required extensions (Redis, PDO MySQL, Xdebug)
+- Start MySQL database server
+- Start Redis server
+- Start Caddy web server on port 8000
+- Configure PHP-FPM pool for the web server
+- Set up environment variables for database and Redis connections
 
 3. Install dependencies:
-   ```bash
-   composer install
-   ```
+
+```bash
+composer install
+```
 
 ### Starting the Web Server
 
-**Important**: You must run `devenv up` to start the web server. This command starts all required services including:
+**Important**: You must run `devenv up` to start the web server. This command starts all required services:
 
 - **Caddy web server** on `http://localhost:8000`
 - **MySQL database** (accessible at `127.0.0.1`)
@@ -71,7 +73,7 @@ Fix code style issues using PHP CS Fixer:
 composer run csfix
 ```
 
-This command runs PHP CS Fixer with the configuration defined in `.php-cs-fixer.dist.php`. It applies PSR-2, Symfony, and PHP 8.0 migration rules to files in:
+This command runs PHP CS Fixer with the configuration defined in `.php-cs-fixer.dist.php`. It applies PSR-2, Symfony, and PHP 8.0 migration rules to the following directories:
 
 - `bin/`
 - `public/`
@@ -87,7 +89,7 @@ Run PHPStan to perform static analysis:
 composer run phpstan
 ```
 
-PHPStan is configured to analyze code at level 6 (as defined in `phpstan.dist.neon`) and checks:
+PHPStan is configured to analyze code at level 6 (as defined in `phpstan.dist.neon`) and checks the following directories:
 
 - `bin/`
 - `config/`
@@ -103,22 +105,12 @@ Execute the test suite:
 composer run test
 ```
 
-This runs PHPUnit with the configuration from `phpunit.dist.xml`. The test suite includes:
+This runs PHPUnit with the configuration from `phpunit.dist.xml`. The test suite includes the following:
 
 - Unit tests in `tests/Unit/`
 - Integration tests in `tests/Integration/`
 
 Tests run in the `test` environment and use the database configured in `.env.test`.
-
-### Test Coverage
-
-Generate test coverage report:
-
-```bash
-composer run coverage
-```
-
-This runs PHPUnit with Xdebug coverage enabled and outputs a text-based coverage report.
 
 ### Code Refactoring
 
@@ -151,7 +143,7 @@ Rector uses the configuration from `rector.php` to apply automated code improvem
 
 ## Debugging
 
-Xdebug is configured in the devenv setup with:
+Xdebug is configured in the devenv setup with the following settings:
 
 - Mode: `debug`
 - Client port: `9003`
@@ -165,16 +157,17 @@ When making database schema changes:
 
 1. Create a migration:
 
-   ```bash
-   php bin/console doctrine:migrations:generate
-   ```
+```bash
+php bin/console doctrine:migrations:generate
+```
 
 2. Edit the generated migration file in `migrations/`
 
 3. Run migrations:
-   ```bash
-   php bin/console doctrine:migrations:migrate
-   ```
+
+```bash
+php bin/console doctrine:migrations:migrate
+```
 
 ## Additional Resources
 
