@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><link rel="canonical" href="https://jeboehm.github.io/docker-mailserver/configuration/local-address-extension/" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>Local Address Extension - docker-mailserver</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Local Address Extension";
+        var mkdocs_page_input_path = "configuration/local-address-extension.md";
+        var mkdocs_page_url = "/docker-mailserver/configuration/local-address-extension/";
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../.." class="icon icon-home"> docker-mailserver
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../..">Welcome</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Quick Start</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../installation/">Installation Guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../upgrade/">Upgrade Guide</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Configuration</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../environment-variables/">Environment Variables Configuration</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../mailserver-admin/">mailserver-admin</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../dns-configuration/">DNS Configuration</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../external-mysql/">External MySQL Configuration</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../relayhost/">Relayhost Configuration</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Local Address Extension</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#implementation">Implementation</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#examples">Examples</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#configuration">Configuration</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#sieve-integration">Sieve Integration</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#use-cases">Use Cases</a>
+    </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../php-sessions/">PHP Session Configuration</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../reverse-proxy/">Reverse Proxy Configuration</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../roundcube/">Roundcube Configuration</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tls/">TLS Certificate Configuration</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Administration</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../administration/login/">Login</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../administration/dashboard/">Dashboard</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../administration/manage-domains/">Manage Domains</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../administration/manage-users/">Manage Users</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../administration/manage-aliases/">Manage Aliases</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../administration/manage-fetchmail/">Manage Fetchmail</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../administration/dkim-signing/">DKIM Signing</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../administration/dns-validation-wizard/">DNS Validation Wizard</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../administration/user-roles/">User Roles</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Recipes</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Docker</a>
+    <ul>
+                <li class="toctree-l2"><a class="" href="https://github.com/jeboehm/docker-mailserver/tree/main/docs/example-configs/compose/traefik-reverse-proxy">Traefik Reverse Proxy</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Kubernetes</a>
+    <ul>
+                <li class="toctree-l2"><a class="" href="https://github.com/jeboehm/docker-mailserver/tree/main/docs/example-configs/kustomize/external-db-and-https-ingress">External Database and HTTPS Ingress</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Development</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../development/architecture/">Service Architecture</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../development/development/">Developer Guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../development/mailserver-admin/">mailserver-admin</a>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="" href="https://github.com/jeboehm/docker-mailserver/issues">Issues</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">docker-mailserver</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Configuration</li>
+      <li class="breadcrumb-item active">Local Address Extension</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/jeboehm/docker-mailserver/blob/main/docs/configuration/local-address-extension.md">Edit on jeboehm/docker-mailserver</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="local-address-extension">Local Address Extension</h1>
+<p>Local address extension allows multiple unique email addresses to be delivered to a single mailbox without additional configuration. This feature implements RFC 5233 subaddressing and is commonly known as plus-addressing.</p>
+<h2 id="implementation">Implementation</h2>
+<p>The feature appends a configurable delimiter followed by any string to the base email address. All emails sent to extended addresses are delivered to the original mailbox. The default delimiter is <code>-</code> (dash).</p>
+<p>Alternative names for this feature:</p>
+<ul>
+<li>Plus-addressing (traditional <code>+</code> delimiter)</li>
+<li>Subaddressing (RFC 5233 standard)</li>
+<li>Address tagging</li>
+</ul>
+<h2 id="examples">Examples</h2>
+<div class="highlight"><pre><span></span><code>user1-friends@example.com
+user1-1382@example.com
+user1-newsletter@example.com
+user1-shopping@example.com
+user1-temp@example.com
+</code></pre></div>
+<h2 id="configuration">Configuration</h2>
+<p>Configure the delimiter using the <code>RECIPIENT_DELIMITER</code> environment variable:</p>
+<div class="highlight"><pre><span></span><code><span class="nv">RECIPIENT_DELIMITER</span><span class="o">=</span>+
+</code></pre></div>
+<p>This changes the delimiter from <code>-</code> to <code>+</code>, allowing addresses like <code>user1+friends@example.com</code>.</p>
+<h2 id="sieve-integration">Sieve Integration</h2>
+<p>Extended addresses can be used in Sieve filtering rules for automated email processing. Sieve rules can sort emails into folders, apply actions, or forward based on the extension used.</p>
+<p>Example Sieve rule for <code>user1-newsletter@example.com</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="nb">if</span> <span class="nb">address</span> <span class="nt">:matches</span> <span class="nt">:localpart</span> <span class="s">&quot;to&quot;</span> <span class="s">&quot;user1-newsletter*&quot;</span> <span class="p">{</span>
+    <span class="nb">fileinto</span> <span class="s">&quot;Newsletters&quot;</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+<h2 id="use-cases">Use Cases</h2>
+<ul>
+<li>Email categorisation by source or purpose</li>
+<li>Service-specific addresses without multiple mailboxes</li>
+<li>Spam source identification</li>
+<li>Temporary address generation</li>
+<li>Email routing and filtering</li>
+</ul>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../relayhost/" class="btn btn-neutral float-left" title="Relayhost Configuration"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../php-sessions/" class="btn btn-neutral float-right" title="PHP Session Configuration">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/jeboehm/docker-mailserver" class="fa fa-code-fork" style="color: #fcfcfc"> jeboehm/docker-mailserver</a>
+        </span>
+    
+    
+      <span><a href="../relayhost/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../php-sessions/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../..";</script>
+    <script src="../../js/theme_extra.js"></script>
+    <script src="../../js/theme.js"></script>
+      <script src="../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>
