@@ -6,7 +6,7 @@ setup() {
 }
 
 @test "http connection to manager web interface" {
-	run curl -L "http://${WEB_HTTP_ADDRESS}/manager/"
+	run curl -L "http://${WEB_HTTP_ADDRESS}/"
 	assert_output --partial "Email address"
 }
 
@@ -21,6 +21,11 @@ setup() {
 }
 
 @test "http connection to autoconfigure file" {
-	run curl "http://${WEB_HTTP_ADDRESS}/.well-known/autoconfig/mail/config-v1.1.xml"
+	run curl "http://${WEB_HTTP_ADDRESS}/mail/config-v1.1.xml"
 	assert_output --partial "clientConfig"
+}
+
+@test "http connection to autodiscover file" {
+	run curl "http://${WEB_HTTP_ADDRESS}/autodiscover/autodiscover.xml"
+	assert_output --partial "DomainRequired"
 }

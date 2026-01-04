@@ -34,6 +34,7 @@ In `mailserver-admin`, there are three distinct user roles, each with different 
 
 - Login to the application
 - Configure and manage their personal fetchmail accounts
+- Change their own password with strict password policy
 
 **Restrictions**:
 

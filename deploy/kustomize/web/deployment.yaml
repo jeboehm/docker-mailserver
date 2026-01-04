@@ -97,6 +97,8 @@ spec:
             - name: tmp
               mountPath: /opt/roundcube/logs
               subPath: rc-logs
+            - name: tls-certs
+              mountPath: /opt/admin/tls
       initContainers:
         - name: prepare-service
           image: jeboehm/mailserver-web:latest
@@ -145,5 +147,13 @@ spec:
         seccompProfile:
           type: RuntimeDefault
       volumes:
+        - name: tls-certs
+          secret:
+            items:
+              - key: tls.crt
+                path: tls.crt
+              - key: tls.key
+                path: tls.key
+            secretName: tls-certs
         - name: tmp
           emptyDir: {}

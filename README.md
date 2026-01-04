@@ -35,6 +35,8 @@ The documentation includes:
 - Restriction of sender addresses for enhanced security
 - Full-text search and enforced TLS
 - DNS Validation Wizard for all mail related DNS records
+- Generates configuration profiles for iOS and macOS devices
+- Supports assisted client configuration in Outlook and Thunderbird
 - Continuous health monitoring
 
 See the [documentation](https://jeboehm.github.io/docker-mailserver/) for a complete feature list.
@@ -62,7 +64,7 @@ For detailed installation instructions, see the [Installation Guide](https://jeb
 
 ### DNS Validation Wizard
 
-![DNS Validation Wizard](docs/images/admin/dns_validation_wizard.png)
+![DNS Validation Wizard](docs/images/admin/dns_wizard.png)
 
 ## Links
 
