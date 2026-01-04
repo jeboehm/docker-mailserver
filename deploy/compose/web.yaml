@@ -24,6 +24,9 @@ services:
       - /opt/roundcube/temp:mode=0777
       - /opt/roundcube/logs:mode=0777
       - /tmp:mode=0777
-    # For use with jwilder/nginx-proxy.
-    # environment:
-    #   - VIRTUAL_HOST=mail.example.com
+    volumes:
+      - data-tls:/opt/admin/tls:ro
+      # For using external certificates uncomment the following lines
+      # and change the path on the left side of the colon.
+      # - /home/user/certs/mail.example.com.crt:/opt/admin/tls/tls.crt:ro
+      # - /home/user/certs/mail.example.com.key:/opt/admin/tls/tls.key:ro
