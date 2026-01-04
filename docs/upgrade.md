@@ -4,6 +4,10 @@ Upgrade guide for docker-mailserver.
 
 When upgrading, ensure that container configuration files are updated to match the requirements of the new version. Review the manifests in `deploy/compose` and `deploy/kustomize` for any changes to persistent volumes or configuration, and update them as necessary. If new environment variables have been introduced, update the `.env` file accordingly.
 
+## v7.1
+
+- **web**: mailserver-admin now includes a feature to generate mobileconfig files for iOS and macOS. These files are signed with the same TLS certificate that the mailserver displays to connecting clients. To generate these files, it’s necessary to mount the certificate to the web container.
+
 ## v6.x to v7.x
 
 The web image is now based on Alpine Linux and uses FrankenPHP instead of PHP-FPM.

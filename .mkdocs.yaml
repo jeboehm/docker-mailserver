@@ -39,6 +39,7 @@ nav:
       - administration/dkim-signing.md
       - administration/dns-validation-wizard.md
       - administration/user-roles.md
+      - administration/ios-macos-profile.md
   - Recipes:
       - Docker:
           - Traefik Reverse Proxy: https://github.com/jeboehm/docker-mailserver/tree/main/docs/example-configs/compose/traefik-reverse-proxy
