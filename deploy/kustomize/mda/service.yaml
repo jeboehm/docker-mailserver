@@ -37,6 +37,10 @@ spec:
       port: 4190
       protocol: TCP
       targetPort: managesieve
+    - name: doveadm
+      port: 8080
+      protocol: TCP
+      targetPort: doveadm
   selector:
     app.kubernetes.io/name: mda
     app.kubernetes.io/component: mail

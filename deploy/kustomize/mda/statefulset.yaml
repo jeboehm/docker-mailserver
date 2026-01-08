@@ -66,6 +66,9 @@ spec:
             - name: managesieve
               containerPort: 4190
               protocol: TCP
+            - name: doveadm
+              containerPort: 8080
+              protocol: TCP
           livenessProbe:
             exec:
               command:

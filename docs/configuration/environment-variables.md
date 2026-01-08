@@ -40,11 +40,10 @@ It is required to **always set** `REDIS_PASSWORD`.
 
 ### Authentication
 
-This is the password for the RSpamd controller access. It is required to **always set** `CONTROLLER_PASSWORD`.
-
 | Variable              | Default      | Description                           |
 | --------------------- | ------------ | ------------------------------------- |
 | `CONTROLLER_PASSWORD` | _(required)_ | Password for RSpamd controller access |
+| `DOVEADM_API_KEY`     | _(required)_ | Password for Dovecot API access       |
 
 ### Relay Configuration
 

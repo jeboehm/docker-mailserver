@@ -4,6 +4,16 @@ Upgrade guide for docker-mailserver.
 
 When upgrading, ensure that container configuration files are updated to match the requirements of the new version. Review the manifests in `deploy/compose` and `deploy/kustomize` for any changes to persistent volumes or configuration, and update them as necessary. If new environment variables have been introduced, update the `.env` file accordingly.
 
+## v7.3
+
+`mailserver-admin` now provides observability features for the mailserver. To make sure the service to service communication works, the
+following environment variables have been added:
+
+- `MDA_DOVEADM_ADDRESS`: The address of the MDA service for Dovecot API access. (default: `mda:8080`)
+- `DOVEADM_API_KEY`: The API key for Dovecot API access.
+
+Please make sure to change at least `DOVEADM_API_KEY`.
+
 ## v7.1
 
 - **web**: mailserver-admin now includes a feature to generate mobileconfig files for iOS and macOS. These files are signed with the same TLS certificate that the mailserver displays to connecting clients. To generate these files, it’s necessary to mount the certificate to the web container.
