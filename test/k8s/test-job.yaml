@@ -16,7 +16,8 @@ spec:
         app.kubernetes.io/component: test
         app.kubernetes.io/part-of: docker-mailserver
     spec:
-      automountServiceAccountToken: false
+      automountServiceAccountToken: true
+      serviceAccountName: test-runner-sa
       restartPolicy: Never
       initContainers:
         - name: load-fixtures
@@ -28,7 +29,7 @@ spec:
           args:
             - |
               /opt/admin/bin/console system:check --wait
-              /opt/admin/bin/console domain:add example.com
+              /opt/admin/bin/console domain:add example.com || exit 0
               /opt/admin/bin/console domain:add example.org
               /opt/admin/bin/console user:add --admin --password=changeme --enable admin example.com
               /opt/admin/bin/console user:add --password=test1234 --enable --sendonly sendonly example.com
@@ -109,3 +110,29 @@ spec:
         - name: vmail
           persistentVolumeClaim:
             claimName: mda-data-mda-0
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: test-runner-sa
+  labels:
+    app.kubernetes.io/name: test-runner-sa
+    app.kubernetes.io/component: test
+    app.kubernetes.io/part-of: docker-mailserver
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: test-runner-cluster-admin
+  labels:
+    app.kubernetes.io/name: test-runner-cluster-admin
+    app.kubernetes.io/component: test
+    app.kubernetes.io/part-of: docker-mailserver
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-admin
+subjects:
+  - kind: ServiceAccount
+    name: test-runner-sa
+    namespace: default

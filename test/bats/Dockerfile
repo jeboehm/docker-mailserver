@@ -10,6 +10,7 @@ ENV MYSQL_HOST=db \
     MYSQL_DATABASE=mailserver \
     FILTER_WEB_ADDRESS=filter:11334 \
     IS_KUBERNETES=0 \
+    KUBECTL_CONFIG=/tmp/kubeconfig \
     MDA_POP3_ADDRESS=mda:31110 \
     MDA_IMAP_ADDRESS=mda:31143 \
     MDA_POP3S_ADDRESS=mda:31995 \
@@ -56,8 +57,7 @@ RUN apk --no-cache add \
 RUN apk add --no-cache --repository http://dl-cdn.alpinelinux.org/alpine/edge/testing/ swaks=20240103.0-r0
 
 COPY --from=dockerize /bin/dockerize /usr/local/bin/dockerize
-COPY _helpers/dockerlogs.sh /usr/local/bin/dockerlogs.sh
-COPY _helpers/entrypoint.sh /entrypoint.sh
+COPY rootfs/ /
 
 WORKDIR /app/tests
 COPY integration/ /app/tests/
