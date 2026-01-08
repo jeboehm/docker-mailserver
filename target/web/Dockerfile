@@ -10,15 +10,20 @@ ENV MYSQL_HOST=db \
     MYSQL_USER=mailserver \
     REDIS_HOST=redis \
     REDIS_PORT=6379 \
+    APP_SHARE_DIR="var/cache" \
+    DATABASE_URL="mysql://%env(MYSQL_USER)%:%env(MYSQL_PASSWORD)%@%env(MYSQL_HOST)%:%env(MYSQL_PORT)%/%env(MYSQL_DATABASE)%?serverVersion=8.4" \
+    DOVEADM_HTTP_URL="https://%env(MDA_DOVEADM_ADDRESS)%" \
     FILTER_WEB_ADDRESS=filter:11334 \
+    MAILNAME=mail.example.com \
+    MDA_DOVEADM_ADDRESS=mda:8080 \
     MDA_IMAP_ADDRESS=mda:31143 \
     MDA_MANAGESIEVE_ADDRESS=mda:4190 \
     MTA_SMTP_SUBMISSION_ADDRESS=mta:587 \
+    RSPAMD_CONTROLLER_URL="http://%env(FILTER_WEB_ADDRESS)%" \
+    RSPAMD_PASSWORD="%env(CONTROLLER_PASSWORD)%" \
+    SERVER_ROOT=/var/www/html \
     SUPPORT_URL=https://github.com/jeboehm/docker-mailserver \
-    MAILNAME=mail.example.com \
-    WAITSTART_TIMEOUT=1m \
-    DATABASE_URL="mysql://%env(MYSQL_USER)%:%env(MYSQL_PASSWORD)%@%env(MYSQL_HOST)%:%env(MYSQL_PORT)%/%env(MYSQL_DATABASE)%?serverVersion=8.4" \
-    SERVER_ROOT=/var/www/html
+    WAITSTART_TIMEOUT=1m
 
 ARG FRANKENPHP_VER=v1.11.1 # renovate: depName=php/frankenphp
 RUN apk add --no-cache \
@@ -74,17 +79,15 @@ RUN --mount=type=cache,target=/root/.composer \
 
 FROM composer AS admin-builder
 
-ARG ADMIN_VER=5.13.4 # renovate: depName=jeboehm/mailserver-admin
+ARG ADMIN_VER=5.14.1 # renovate: depName=jeboehm/mailserver-admin
 WORKDIR /opt/admin
 RUN curl -sSLf \
         -o /tmp/admin.tar.gz \
         https://github.com/jeboehm/mailserver-admin/releases/download/${ADMIN_VER}/release-${ADMIN_VER}.tar.gz && \
-    tar -oxf /tmp/admin.tar.gz --strip=1 && \
+    tar -oxf /tmp/admin.tar.gz && \
     rm /tmp/admin.tar.gz && \
-    composer symfony:dump-env prod && \
     chmod 777 \
         /opt/admin/var/cache \
-        /opt/admin/var/cache/prod \
         /opt/admin/var/log
 
 FROM base AS prod
