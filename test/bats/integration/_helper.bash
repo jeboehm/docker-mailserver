@@ -6,6 +6,12 @@ skip_in_kubernetes() {
 	fi
 }
 
+skip_in_non_kubernetes() {
+	if [ "${IS_KUBERNETES}" -ne "1" ]; then
+		skip "Skipping test in non-Kubernetes"
+	fi
+}
+
 # Split a string by colon (:) character and return both parts
 # Usage: split_by_colon "hostname:8080"
 # Returns: Two lines - first part on line 1, second part on line 2

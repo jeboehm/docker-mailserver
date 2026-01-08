@@ -1,5 +1,9 @@
 #!/bin/sh
 
+if [ "${IS_KUBERNETES}" -eq "1" ]; then
+	/usr/local/bin/kubectl.sh
+fi
+
 exec dockerize \
 	-wait "tcp://${MYSQL_HOST}:${MYSQL_PORT}" \
 	-wait "tcp://${FILTER_WEB_ADDRESS}" \
