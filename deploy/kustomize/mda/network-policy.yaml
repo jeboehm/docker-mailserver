@@ -33,6 +33,8 @@ spec:
           port: 2004 # Auth
         - protocol: TCP
           port: 4190 # ManageSieve
+        - protocol: TCP
+          port: 8080 # Doveadm
     # Allow external access (from internet)
     - from:
         - ipBlock:

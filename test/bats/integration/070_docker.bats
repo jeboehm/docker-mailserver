@@ -16,3 +16,9 @@ setup() {
 
 	[ "$status" -eq 0 ]
 }
+
+@test "system:check command succeeds" {
+	run docker exec docker-mailserver-web-1 /opt/admin/bin/console system:check --all
+
+	[ "$status" -eq 0 ]
+}
