@@ -63,6 +63,8 @@ RUN apk --no-cache add \
     postconf smtpd_error_sleep_time=10s && \
     postconf smtpd_soft_error_limit=3 && \
     postconf smtpd_hard_error_limit=5 && \
+    postconf local_recipient_maps = && \
+    postconf local_transport = "error:local mail delivery is disabled" && \
     newaliases
 COPY --from=dockerize /bin/dockerize /usr/local/bin/dockerize
 COPY rootfs/ /
