@@ -44,7 +44,6 @@ if [ "${MTA_UPSTREAM_PROXY}" = "true" ]; then
 	echo "Enabling upstream proxy protocol"
 	postconf smtpd_upstream_proxy_protocol=haproxy
 	postconf postscreen_upstream_proxy_protocol=haproxy
-	postconf submission_upstream_proxy_protocol=haproxy
 fi
 
 envsubst </etc/postfix/mysql-email2email.cf.templ >/etc/postfix/mysql-email2email.cf
