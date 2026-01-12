@@ -1,5 +1,5 @@
 FROM ghcr.io/jeboehm/dockerize:0.9.3@sha256:d4e824aa120670658d7012421d2fdf1b2437be34a6acbb7a4ad92ed52edec8eb AS dockerize
-FROM alpine:3.22@sha256:4b7ce07002c69e8f3d704a9c5d6fd3053be500b7f1c69fc0d80990c2ad8dd412
+FROM alpine:3.23@sha256:865b95f46d98cf867a156fe4a135ad3fe50d2056aa3f25ed31662dff6da4eb62
 
 LABEL maintainer="https://github.com/jeboehm/docker-mailserver"
 LABEL vendor="https://github.com/jeboehm/docker-mailserver"
@@ -11,6 +11,7 @@ ENV MAILNAME=mail.example.com \
     MYSQL_PORT=3306 \
     MYSQL_USER=root \
     MYSQL_DATABASE=mailserver \
+    MYSQL_TLS_VERIFY_CERT=no \
     MDA_LMTP_ADDRESS=mda:2003 \
     MDA_AUTH_ADDRESS=mda:2004 \
     FILTER_MILTER_ADDRESS=filter:11332 \
