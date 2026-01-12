@@ -11,13 +11,14 @@ These are the core environment variables that need to be configured in your `.en
 When you use the MySQL service provided by docker-mailserver compose, you don't need to configure this.
 It is required to **always set** `MYSQL_PASSWORD`.
 
-| Variable         | Default                              | Description             |
-| ---------------- | ------------------------------------ | ----------------------- |
-| `MYSQL_HOST`     | `db`                                 | MySQL database hostname |
-| `MYSQL_PORT`     | `3306`                               | MySQL database port     |
-| `MYSQL_DATABASE` | `mailserver`                         | MySQL database name     |
-| `MYSQL_USER`     | `root` (MTA/MDA), `mailserver` (Web) | MySQL database username |
-| `MYSQL_PASSWORD` | _(empty)_                            | MySQL database password |
+| Variable                | Default                              | Description                        |
+| ----------------------- | ------------------------------------ | ---------------------------------- |
+| `MYSQL_HOST`            | `db`                                 | MySQL database hostname            |
+| `MYSQL_PORT`            | `3306`                               | MySQL database port                |
+| `MYSQL_DATABASE`        | `mailserver`                         | MySQL database name                |
+| `MYSQL_USER`            | `root` (MTA/MDA), `mailserver` (Web) | MySQL database username            |
+| `MYSQL_PASSWORD`        | _(empty)_                            | MySQL database password            |
+| `MYSQL_TLS_VERIFY_CERT` | `no`                                 | MySQL TLS certificate verification |
 
 ### Mail Server Identity
 
