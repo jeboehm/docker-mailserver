@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><link rel="canonical" href="https://jeboehm.github.io/docker-mailserver/administration/dkim-signing/" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>DKIM Signing - docker-mailserver</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "DKIM Signing";
+        var mkdocs_page_input_path = "administration/dkim-signing.md";
+        var mkdocs_page_url = "/docker-mailserver/administration/dkim-signing/";
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../.." class="icon icon-home"> docker-mailserver
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../..">Welcome</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Quick Start</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../installation/">Installation Guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../upgrade/">Upgrade Guide</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Configuration</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../configuration/environment-variables/">Environment Variables Configuration</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../configuration/mailserver-admin/">mailserver-admin</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../configuration/dns-configuration/">DNS Configuration</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../configuration/external-mysql/">External MySQL Configuration</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../configuration/relayhost/">Relayhost Configuration</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../configuration/local-address-extension/">Local Address Extension</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../configuration/php-sessions/">PHP Session Configuration</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../configuration/reverse-proxy/">Reverse Proxy Configuration</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../configuration/roundcube/">Roundcube Configuration</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../configuration/tls/">TLS Certificate Configuration</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Administration</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../login/">Login</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../dashboard/">Dashboard</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../manage-domains/">Manage Domains</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../manage-users/">Manage Users</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../manage-aliases/">Manage Aliases</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../manage-fetchmail/">Manage Fetchmail</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">DKIM Signing</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#implementation-details">Implementation details</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#configuration-steps">Configuration steps</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#dns-record">DNS Record</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#operation">Operation</a>
+    </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../dns-validation-wizard/">DNS Validation Wizard</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../user-roles/">User Roles</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ios-macos-profile/">iOS / macOS Profile</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Observability</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../observability/intro/">Observability</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Recipes</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Docker</a>
+    <ul>
+                <li class="toctree-l2"><a class="" href="https://github.com/jeboehm/docker-mailserver/tree/main/docs/example-configs/compose/traefik-reverse-proxy">Traefik Reverse Proxy</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Kubernetes</a>
+    <ul>
+                <li class="toctree-l2"><a class="" href="https://github.com/jeboehm/docker-mailserver/tree/main/docs/example-configs/kustomize/external-db-and-https-ingress">External Database and HTTPS Ingress</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Development</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../development/architecture/">Service Architecture</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../development/development/">Developer Guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../development/mailserver-admin/">mailserver-admin</a>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="" href="https://github.com/jeboehm/docker-mailserver/issues">Issues</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">docker-mailserver</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Administration</li>
+      <li class="breadcrumb-item active">DKIM Signing</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/jeboehm/docker-mailserver/blob/main/docs/administration/dkim-signing.md">Edit on jeboehm/docker-mailserver</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="dkim-signing">DKIM Signing</h1>
+<p>DKIM (DomainKeys Identified Mail) signing provides cryptographic authentication for outgoing emails. This feature signs all outgoing emails from configured domains with a private key, allowing recipients to verify email authenticity through DNS records.</p>
+<h2 id="implementation-details">Implementation details</h2>
+<p>DKIM signing is implemented using the Rspamd DKIM module. Each domain requires a separate DKIM key pair consisting of a private key (stored in docker-mailserver) and a public key (published in DNS).</p>
+<p>Rspamd verifies the DNS record for each domain before signing outgoing messages. This ensures that only domains with valid DKIM DNS records will have their emails signed, preventing false signatures.</p>
+<h2 id="configuration-steps">Configuration steps</h2>
+<p>Configure DKIM through the management interface:</p>
+<ol type="1">
+<li>Access the management interface</li>
+<li>Navigate to DKIM in the menu bar</li>
+<li>Select the domain for DKIM configuration</li>
+<li>Generate the private key</li>
+<li>Add the provided DNS TXT record to your domain's DNS</li>
+<li>Verify the DNS record through the management interface</li>
+<li>Enable DKIM signing for the domain</li>
+</ol>
+<p><img alt="DKIM Edit" src="../../images/admin/dkim_edit.png" /></p>
+<h2 id="dns-record">DNS Record</h2>
+<p>The management interface provides a DNS TXT record that must be added to your domain's DNS configuration. The record contains the public key used for DKIM verification by receiving mail servers.</p>
+<h2 id="operation">Operation</h2>
+<p>Once enabled, all outgoing emails from the configured domain are automatically signed with the DKIM private key. Receiving mail servers can verify the signature using the public key published in DNS, confirming the email's authenticity and integrity.</p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../manage-fetchmail/" class="btn btn-neutral float-left" title="Manage Fetchmail"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../dns-validation-wizard/" class="btn btn-neutral float-right" title="DNS Validation Wizard">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/jeboehm/docker-mailserver" class="fa fa-code-fork" style="color: #fcfcfc"> jeboehm/docker-mailserver</a>
+        </span>
+    
+    
+      <span><a href="../manage-fetchmail/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../dns-validation-wizard/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../..";</script>
+    <script src="../../js/theme_extra.js"></script>
+    <script src="../../js/theme.js"></script>
+      <script src="../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

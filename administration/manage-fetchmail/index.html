@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><link rel="canonical" href="https://jeboehm.github.io/docker-mailserver/administration/manage-fetchmail/" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>Manage Fetchmail - docker-mailserver</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Manage Fetchmail";
+        var mkdocs_page_input_path = "administration/manage-fetchmail.md";
+        var mkdocs_page_url = "/docker-mailserver/administration/manage-fetchmail/";
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../.." class="icon icon-home"> docker-mailserver
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../..">Welcome</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Quick Start</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../installation/">Installation Guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../upgrade/">Upgrade Guide</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Configuration</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../configuration/environment-variables/">Environment Variables Configuration</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../configuration/mailserver-admin/">mailserver-admin</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../configuration/dns-configuration/">DNS Configuration</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../configuration/external-mysql/">External MySQL Configuration</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../configuration/relayhost/">Relayhost Configuration</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../configuration/local-address-extension/">Local Address Extension</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../configuration/php-sessions/">PHP Session Configuration</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../configuration/reverse-proxy/">Reverse Proxy Configuration</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../configuration/roundcube/">Roundcube Configuration</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../configuration/tls/">TLS Certificate Configuration</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Administration</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../login/">Login</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../dashboard/">Dashboard</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../manage-domains/">Manage Domains</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../manage-users/">Manage Users</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../manage-aliases/">Manage Aliases</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Manage Fetchmail</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#overview">Overview</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#access-control">Access Control</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#fetchmail-operations">Fetchmail Operations</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#adding-a-fetchmail-account">Adding a Fetchmail Account</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#editing-a-fetchmail-account">Editing a Fetchmail Account</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#deleting-a-fetchmail-account">Deleting a Fetchmail Account</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#retrieval-schedule">Retrieval Schedule</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#security-considerations">Security Considerations</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#authentication-credentials">Authentication Credentials</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#network-security">Network Security</a>
+    </li>
+        </ul>
+    </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../dkim-signing/">DKIM Signing</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../dns-validation-wizard/">DNS Validation Wizard</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../user-roles/">User Roles</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ios-macos-profile/">iOS / macOS Profile</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Observability</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../observability/intro/">Observability</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Recipes</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Docker</a>
+    <ul>
+                <li class="toctree-l2"><a class="" href="https://github.com/jeboehm/docker-mailserver/tree/main/docs/example-configs/compose/traefik-reverse-proxy">Traefik Reverse Proxy</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Kubernetes</a>
+    <ul>
+                <li class="toctree-l2"><a class="" href="https://github.com/jeboehm/docker-mailserver/tree/main/docs/example-configs/kustomize/external-db-and-https-ingress">External Database and HTTPS Ingress</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Development</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../development/architecture/">Service Architecture</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../development/development/">Developer Guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../development/mailserver-admin/">mailserver-admin</a>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="" href="https://github.com/jeboehm/docker-mailserver/issues">Issues</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">docker-mailserver</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Administration</li>
+      <li class="breadcrumb-item active">Manage Fetchmail</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/jeboehm/docker-mailserver/blob/main/docs/administration/manage-fetchmail.md">Edit on jeboehm/docker-mailserver</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="manage-fetchmail">Manage Fetchmail</h1>
+<p>Fetchmail management allows users and administrators to configure external email retrieval. Fetchmail connects to external mail servers (POP3 or IMAP) and retrieves emails, delivering them to local mailboxes on the mailserver.</p>
+<h2 id="overview">Overview</h2>
+<p>Fetchmail enables the mailserver to retrieve emails from external email providers and deliver them to local user accounts. This is useful for:</p>
+<ul>
+<li>Migrating emails from external providers</li>
+<li>Consolidating multiple email accounts into a single mailbox</li>
+<li>Retrieving emails from providers that don't support forwarding</li>
+<li>Maintaining access to emails from legacy email systems</li>
+</ul>
+<h2 id="access-control">Access Control</h2>
+<ul>
+<li><strong>Admin</strong>: Can manage fetchmail accounts for all users</li>
+<li><strong>Domain Admin</strong>: Can manage fetchmail accounts for users within their assigned domain</li>
+<li><strong>User</strong>: Can manage their own fetchmail accounts only</li>
+</ul>
+<h2 id="fetchmail-operations">Fetchmail Operations</h2>
+<h3 id="adding-a-fetchmail-account">Adding a Fetchmail Account</h3>
+<ol type="1">
+<li>Access the management interface</li>
+<li>Navigate to <strong>Fetchmail</strong> in the menu bar</li>
+<li>Click <strong>Add Fetchmail Account</strong></li>
+<li>Enter the following information:</li>
+</ol>
+<ul>
+<li><strong>User</strong>: Select the local user account that will receive the retrieved emails</li>
+<li><strong>Server</strong>: Hostname or IP address of the external mail server</li>
+<li><strong>Port</strong>: Port number for the mail server (typically 110 for POP3, 143 for IMAP, 995 for POP3S, 993 for IMAPS)</li>
+<li><strong>Protocol</strong>: Select POP3 or IMAP</li>
+<li><strong>Username</strong>: Username for authenticating with the external mail server</li>
+<li><strong>Password</strong>: Password for authenticating with the external mail server</li>
+<li><strong>SSL</strong>: Enable secure connection (recommended)</li>
+<li><strong>SSL Verify</strong>: Verify the external mail server's certificate</li>
+</ul>
+<ol start="5" type="1">
+<li>Save the fetchmail account</li>
+</ol>
+<p><img alt="Fetchmail Create" src="../../images/admin/fetchmail_create.png" /></p>
+<h3 id="editing-a-fetchmail-account">Editing a Fetchmail Account</h3>
+<ol type="1">
+<li>Navigate to <strong>Fetchmail</strong> in the menu bar</li>
+<li>Select the fetchmail account to edit</li>
+<li>Modify configuration:</li>
+</ol>
+<ul>
+<li><strong>Server</strong>: Update mail server address</li>
+<li><strong>Port</strong>: Change port number</li>
+<li><strong>Protocol</strong>: Switch between POP3 and IMAP</li>
+<li><strong>Username/Password</strong>: Update authentication credentials</li>
+<li><strong>SSL</strong>: Enable or disable secure connection</li>
+<li><strong>SSL Verify</strong>: Verify the external mail server's certificate</li>
+</ul>
+<ol start="4" type="1">
+<li>Save changes</li>
+</ol>
+<p>You can see the last transaction log with the external mail server in the field "Last run log".
+This helps to troubleshoot issues with the fetchmail account.</p>
+<h3 id="deleting-a-fetchmail-account">Deleting a Fetchmail Account</h3>
+<ol type="1">
+<li>Navigate to <strong>Fetchmail</strong> in the menu bar</li>
+<li>Select the fetchmail account to delete</li>
+<li>Confirm the deletion</li>
+</ol>
+<p><strong>Note</strong>: Deleting a fetchmail account stops email retrieval but does not affect emails already delivered to the local mailbox.</p>
+<h2 id="retrieval-schedule">Retrieval Schedule</h2>
+<p>Fetchmail runs periodically to check for new emails on external servers. The retrieval interval is configured at the mailserver level and applies to all fetchmail accounts.</p>
+<h2 id="security-considerations">Security Considerations</h2>
+<h3 id="authentication-credentials">Authentication Credentials</h3>
+<p>Fetchmail stores authentication credentials securely. However, consider the following:</p>
+<ul>
+<li>Use strong, unique passwords for external mail server accounts</li>
+<li>Enable SSL to encrypt credential transmission</li>
+<li>Regularly review and update fetchmail account credentials</li>
+<li>Disable unused fetchmail accounts</li>
+</ul>
+<h3 id="network-security">Network Security</h3>
+<p>Ensure the mailserver can reach external mail servers:</p>
+<ul>
+<li>Configure firewall rules to allow outbound connections to external mail servers</li>
+<li>Verify DNS resolution for external mail server hostnames</li>
+<li>Test connectivity before configuring fetchmail accounts</li>
+</ul>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../manage-aliases/" class="btn btn-neutral float-left" title="Manage Aliases"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../dkim-signing/" class="btn btn-neutral float-right" title="DKIM Signing">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/jeboehm/docker-mailserver" class="fa fa-code-fork" style="color: #fcfcfc"> jeboehm/docker-mailserver</a>
+        </span>
+    
+    
+      <span><a href="../manage-aliases/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../dkim-signing/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../..";</script>
+    <script src="../../js/theme_extra.js"></script>
+    <script src="../../js/theme.js"></script>
+      <script src="../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>
