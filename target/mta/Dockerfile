@@ -11,6 +11,7 @@ ENV MAILNAME=mail.example.com \
     MYSQL_PORT=3306 \
     MYSQL_USER=root \
     MYSQL_DATABASE=mailserver \
+    MYSQL_TLS_VERIFY_CERT=no \
     MDA_LMTP_ADDRESS=mda:2003 \
     MDA_AUTH_ADDRESS=mda:2004 \
     FILTER_MILTER_ADDRESS=filter:11332 \
