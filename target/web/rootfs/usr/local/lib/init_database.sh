@@ -10,7 +10,7 @@ roundcube_init() {
 	rm -f /opt/roundcube/logs/errors.log
 }
 
-/opt/admin/bin/console system:check --wait
+/opt/admin/bin/console system:check --wait --allow-empty-database
 roundcube_init
 
 /opt/admin/bin/console doctrine:migrations:migrate -n
