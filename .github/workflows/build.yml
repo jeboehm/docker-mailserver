@@ -323,21 +323,45 @@ jobs:
           make kubernetes-logs
           kubectl get pods -o wide
   test_trivy_vulnerabilities:
+    if: ${{ github.event_name == 'pull_request' }}
+    needs: build
     runs-on: ubuntu-latest
     permissions:
       contents: read
       security-events: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - context: target/mda
+            image: mailserver-mda
+          - context: target/mta
+            image: mailserver-mta
+          - context: target/filter
+            image: mailserver-filter
+          - context: target/web
+            image: mailserver-web
+          - context: target/ssl
+            image: mailserver-ssl
+          - context: target/unbound
+            image: mailserver-unbound
     steps:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
-      - name: Run Trivy vulnerability scanner in repo mode
+      - name: Download Docker image artifacts
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7
+        with:
+          path: images
+          pattern: docker-image-${{ matrix.image }}
+          merge-multiple: true
+      - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@0.33.1
         with:
-          scan-type: 'fs'
-          ignore-unfixed: true
-          format: 'sarif'
-          output: 'trivy-results.sarif'
-          severity: 'CRITICAL'
+          input: "images/${{ matrix.image }}.tar"
+          format: "sarif"
+          output: "trivy-results.sarif"
       - name: Upload Trivy scan results to GitHub Security tab
+        if: always()
         uses: github/codeql-action/upload-sarif@v4
         with:
-          sarif_file: 'trivy-results.sarif'
+          sarif_file: "trivy-results.sarif"
+          category: "${{ matrix.image }}"
