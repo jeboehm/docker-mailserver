@@ -326,7 +326,7 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     permissions:
-      contents: write
+      contents: read
       security-events: write
     strategy:
       fail-fast: false
@@ -355,8 +355,6 @@ jobs:
           format: "sarif"
           output: "trivy-results.sarif"
           severity: "CRITICAL,HIGH"
-          scanners: "vuln,secret,misconfig,license"
-          github-pat: "${{ secrets.GITHUB_TOKEN }}"
       - name: Log in to Container Registry (ghcr.io)
         if: ${{ github.event_name != 'pull_request' }}
         uses: docker/login-action@5e57cd118135c172c3672efd75eb46360885c0ef # v3
@@ -372,8 +370,6 @@ jobs:
           format: "sarif"
           output: "trivy-results.sarif"
           severity: "CRITICAL,HIGH"
-          scanners: "vuln,secret,misconfig,license"
-          github-pat: "${{ secrets.GITHUB_TOKEN }}"
       - name: Upload Trivy scan results to GitHub Security tab
         if: always()
         uses: github/codeql-action/upload-sarif@v4
