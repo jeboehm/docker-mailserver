@@ -357,8 +357,10 @@ jobs:
         uses: aquasecurity/trivy-action@0.33.1
         with:
           input: "images/${{ matrix.image }}.tar"
-          format: "sarif"
+          format: "template"
+          template: "@/contrib/sarif.tpl"
           output: "trivy-results.sarif"
+          severity: "CRITICAL,HIGH"
       - name: Upload Trivy scan results to GitHub Security tab
         if: always()
         uses: github/codeql-action/upload-sarif@v4
