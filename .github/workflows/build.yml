@@ -104,7 +104,6 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=local,src=${{ runner.temp }}/.buildx-cache
           cache-to: type=local,dest=${{ runner.temp }}/.buildx-cache-new,mode=max
-          outputs: type=docker,dest=${{ runner.temp }}/${{ matrix.image }}.tar
       - name: Build Docker image
         if: ${{ github.event_name == 'pull_request' }}
         id: build-and-save
@@ -139,6 +138,7 @@ jobs:
           subject-digest: ${{ steps.build-and-push.outputs.digest }}
           push-to-registry: true
       - name: Upload Docker image to artifacts
+        if: ${{ github.event_name == 'pull_request' }}
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
         with:
           name: docker-image-${{ matrix.image }}
@@ -332,30 +332,43 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - context: target/mda
-            image: mailserver-mda
-          - context: target/mta
-            image: mailserver-mta
-          - context: target/filter
-            image: mailserver-filter
-          - context: target/web
-            image: mailserver-web
-          - context: target/ssl
-            image: mailserver-ssl
-          - context: target/unbound
-            image: mailserver-unbound
+          - image: mailserver-mda
+          - image: mailserver-mta
+          - image: mailserver-filter
+          - image: mailserver-web
+          - image: mailserver-ssl
+          - image: mailserver-unbound
     steps:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
       - name: Download Docker image artifacts
+        if: ${{ github.event_name == 'pull_request' }}
         uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7
         with:
           path: images
           pattern: docker-image-${{ matrix.image }}
           merge-multiple: true
       - name: Run Trivy vulnerability scanner
+        if: ${{ github.event_name == 'pull_request' }}
         uses: aquasecurity/trivy-action@0.33.1
         with:
           input: "images/${{ matrix.image }}.tar"
+          format: "sarif"
+          output: "trivy-results.sarif"
+          severity: "CRITICAL,HIGH"
+          scanners: "vuln,secret,misconfig,license"
+          github-pat: "${{ secrets.GITHUB_TOKEN }}"
+      - name: Log in to Container Registry (ghcr.io)
+        if: ${{ github.event_name != 'pull_request' }}
+        uses: docker/login-action@5e57cd118135c172c3672efd75eb46360885c0ef # v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Run Trivy vulnerability scanner
+        if: ${{ github.event_name != 'pull_request' }}
+        uses: aquasecurity/trivy-action@0.33.1
+        with:
+          image-ref: "ghcr.io/jeboehm/${{ matrix.image }}:latest"
           format: "sarif"
           output: "trivy-results.sarif"
           severity: "CRITICAL,HIGH"
