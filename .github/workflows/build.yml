@@ -104,6 +104,7 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=local,src=${{ runner.temp }}/.buildx-cache
           cache-to: type=local,dest=${{ runner.temp }}/.buildx-cache-new,mode=max
+          outputs: type=docker,dest=${{ runner.temp }}/${{ matrix.image }}.tar
       - name: Build Docker image
         if: ${{ github.event_name == 'pull_request' }}
         id: build-and-save
@@ -138,7 +139,6 @@ jobs:
           subject-digest: ${{ steps.build-and-push.outputs.digest }}
           push-to-registry: true
       - name: Upload Docker image to artifacts
-        if: ${{ github.event_name == 'pull_request' }}
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
         with:
           name: docker-image-${{ matrix.image }}
@@ -326,7 +326,7 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: write
       security-events: write
     strategy:
       fail-fast: false
