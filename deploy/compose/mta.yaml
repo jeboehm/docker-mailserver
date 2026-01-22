@@ -11,6 +11,7 @@ services:
     env_file: ../../.env
     volumes:
       - data-tls:/etc/postfix/tls:ro
+      - data-spool:/var/spool/postfix
       # For using external certificates uncomment the following lines
       # and change the path on the left side of the colon.
       # - /home/user/certs/mail.example.com.crt:/etc/postfix/tls.crt:ro
