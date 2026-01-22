@@ -29,3 +29,4 @@ volumes:
   data-tls:
   data-filter:
   data-redis:
+  data-spool:

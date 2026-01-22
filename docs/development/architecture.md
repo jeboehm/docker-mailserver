@@ -25,6 +25,7 @@ volumes:
   data-tls: # TLS certificates and keys
   data-filter: # RSpamd filter data and statistics
   data-redis: # Redis cache and session data
+  data-spool: # Postfix mail queue and spool directory
 ```
 
 ### Volume Mounts by Service
@@ -36,6 +37,7 @@ volumes:
 #### Mail Transfer Agent (`mta`)
 
 - **`data-tls:/etc/postfix/tls:ro`** - Read-only access to TLS certificates for SMTP encryption
+- **`data-spool:/var/spool/postfix`** - Postfix mail queue and spool directory for message processing
 
 #### Mail Delivery Agent (`mda`)
 
@@ -61,5 +63,6 @@ volumes:
 - **`data-tls`**: Required for maintaining SSL/TLS certificates and encryption keys
 - **`data-filter`**: Important for spam filter learning and statistics accumulation
 - **`data-redis`**: Used for session management and temporary data caching
+- **`data-spool`**: Stores Postfix mail queue and spool data, ensuring message processing continuity across restarts
 
 These volumes ensure that your mail server data survives container updates, restarts, and even complete system reboots, making the deployment production-ready and reliable.
