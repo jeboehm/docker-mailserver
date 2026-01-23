@@ -132,6 +132,22 @@ jobs:
       - name: Clone dovecot docker image repository
         if: ${{ matrix.context == 'target/mda' }}
         run: git clone --depth 1 https://github.com/dovecot/docker "${{ runner.temp }}/dovecot-docker"
+      - name: Ensure dovecot auth.conf exists
+        if: ${{ matrix.context == 'target/mda' }}
+        run: |
+          set -euo pipefail
+          dovecot_dir="${{ runner.temp }}/dovecot-docker/${{ steps.dovecot-base.outputs.dovecot_version }}"
+          if [ ! -f "${dovecot_dir}/auth.conf" ]; then
+            if [ -f "${{ runner.temp }}/dovecot-docker/2.4.2/auth.conf" ]; then
+              cp "${{ runner.temp }}/dovecot-docker/2.4.2/auth.conf" "${dovecot_dir}/auth.conf"
+            else
+              cat > "${dovecot_dir}/auth.conf" <<'EOF'
+          passdb static {
+            password = %{env:USER_PASSWORD}
+          }
+          EOF
+            fi
+          fi
       - name: Build dovecot base image
         if: ${{ matrix.context == 'target/mda' }}
         uses: docker/build-push-action@263435318d21b8e681c14492fe198d362a7d2c83 # v6.18.0
