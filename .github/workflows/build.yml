@@ -92,23 +92,40 @@ jobs:
             type=sha
       - name: Create banner
         run: .github/bin/create_banner.sh ${{ github.sha }} ${{ github.ref_name }}
-      - name: Resolve base image versions
-        id: base-image
-        if: ${{ matrix.context == 'target/mda' || matrix.context == 'target/filter' }}
+      - name: Resolve dovecot base image version
+        id: dovecot-base
+        if: ${{ matrix.context == 'target/mda' }}
         run: |
           set -euo pipefail
-          dovecot_image_tag=$(awk -F: '/^FROM dovecot\/dovecot:/ {print $2}' target/mda/Dockerfile | cut -d@ -f1)
+          dovecot_base_image=$(awk -F= '/^ARG DOVECOT_BASE_IMAGE=/{print $2}' target/mda/Dockerfile)
+          if [ -z "$dovecot_base_image" ]; then
+            echo "DOVECOT_BASE_IMAGE not found in target/mda/Dockerfile" >&2
+            exit 1
+          fi
+          dovecot_image_tag="${dovecot_base_image#dovecot/dovecot:}"
+          dovecot_image_tag="${dovecot_image_tag%@*}"
           dovecot_version="${dovecot_image_tag%-dev}"
-          rspamd_image_tag=$(awk -F: '/^FROM rspamd\/rspamd:/ {print $2}' target/filter/Dockerfile | cut -d@ -f1)
-          rspamd_docker_tag=$(git ls-remote --tags https://github.com/rspamd/rspamd-docker.git "refs/tags/v${rspamd_image_tag}.*+0" | awk -F/ '{print $3}' | sort -V | tail -n 1)
+          echo "dovecot_image_tag=${dovecot_image_tag}" >> "$GITHUB_OUTPUT"
+          echo "dovecot_version=${dovecot_version}" >> "$GITHUB_OUTPUT"
+      - name: Resolve rspamd base image version
+        id: rspamd-base
+        if: ${{ matrix.context == 'target/filter' }}
+        run: |
+          set -euo pipefail
+          rspamd_base_image=$(awk -F= '/^ARG RSPAMD_BASE_IMAGE=/{print $2}' target/filter/Dockerfile)
+          if [ -z "$rspamd_base_image" ]; then
+            echo "RSPAMD_BASE_IMAGE not found in target/filter/Dockerfile" >&2
+            exit 1
+          fi
+          rspamd_image_tag="${rspamd_base_image#rspamd/rspamd:}"
+          rspamd_image_tag="${rspamd_image_tag%@*}"
+          rspamd_docker_tag=$(git ls-remote --tags https://github.com/rspamd/rspamd-docker.git "refs/tags/v${rspamd_image_tag}*+0" | awk -F/ '{print $3}' | sort -V | tail -n 1)
           if [ -z "$rspamd_docker_tag" ]; then
             echo "Rspamd docker tag not found for ${rspamd_image_tag}" >&2
             exit 1
           fi
           rspamd_version="${rspamd_docker_tag#v}"
           rspamd_version="${rspamd_version%+0}"
-          echo "dovecot_image_tag=${dovecot_image_tag}" >> "$GITHUB_OUTPUT"
-          echo "dovecot_version=${dovecot_version}" >> "$GITHUB_OUTPUT"
           echo "rspamd_image_tag=${rspamd_image_tag}" >> "$GITHUB_OUTPUT"
           echo "rspamd_docker_tag=${rspamd_docker_tag}" >> "$GITHUB_OUTPUT"
           echo "rspamd_version=${rspamd_version}" >> "$GITHUB_OUTPUT"
@@ -119,13 +136,15 @@ jobs:
         if: ${{ matrix.context == 'target/mda' }}
         uses: docker/build-push-action@263435318d21b8e681c14492fe198d362a7d2c83 # v6.18.0
         with:
-          context: ${{ runner.temp }}/dovecot-docker/${{ steps.base-image.outputs.dovecot_version }}
+          context: ${{ runner.temp }}/dovecot-docker/${{ steps.dovecot-base.outputs.dovecot_version }}
           target: production-dev
           platforms: ${{ github.event_name == 'pull_request' && 'linux/amd64' || 'linux/amd64,linux/arm64' }}
-          outputs: type=image,name=dovecot/dovecot:${{ steps.base-image.outputs.dovecot_image_tag }},push=false
+          outputs: type=image,name=dovecot/dovecot:${{ steps.dovecot-base.outputs.dovecot_image_tag }},push=false
+          cache-from: type=gha,scope=base-dovecot-${{ steps.dovecot-base.outputs.dovecot_image_tag }}
+          cache-to: type=gha,scope=base-dovecot-${{ steps.dovecot-base.outputs.dovecot_image_tag }},mode=max
       - name: Clone rspamd docker image repository
         if: ${{ matrix.context == 'target/filter' }}
-        run: git clone --depth 1 --branch "${{ steps.base-image.outputs.rspamd_docker_tag }}" https://github.com/rspamd/rspamd-docker "${{ runner.temp }}/rspamd-docker"
+        run: git clone --depth 1 --branch "${{ steps.rspamd-base.outputs.rspamd_docker_tag }}" https://github.com/rspamd/rspamd-docker "${{ runner.temp }}/rspamd-docker"
       - name: Build rspamd package image
         if: ${{ matrix.context == 'target/filter' }}
         uses: docker/build-push-action@263435318d21b8e681c14492fe198d362a7d2c83 # v6.18.0
@@ -134,9 +153,11 @@ jobs:
           file: Dockerfile.pkg
           platforms: ${{ github.event_name == 'pull_request' && 'linux/amd64' || 'linux/amd64,linux/arm64' }}
           build-args: |
-            RSPAMD_GIT=${{ steps.base-image.outputs.rspamd_version }}
-            RSPAMD_VERSION=${{ steps.base-image.outputs.rspamd_version }}
-          outputs: type=image,name=rspamd/rspamd:pkg-${{ steps.base-image.outputs.rspamd_version }},push=false
+            RSPAMD_GIT=${{ steps.rspamd-base.outputs.rspamd_version }}
+            RSPAMD_VERSION=${{ steps.rspamd-base.outputs.rspamd_version }}
+          outputs: type=image,name=rspamd/rspamd:pkg-${{ steps.rspamd-base.outputs.rspamd_version }},push=false
+          cache-from: type=gha,scope=base-rspamd-pkg-${{ steps.rspamd-base.outputs.rspamd_version }}
+          cache-to: type=gha,scope=base-rspamd-pkg-${{ steps.rspamd-base.outputs.rspamd_version }},mode=max
       - name: Build rspamd base image
         if: ${{ matrix.context == 'target/filter' }}
         uses: docker/build-push-action@263435318d21b8e681c14492fe198d362a7d2c83 # v6.18.0
@@ -146,16 +167,23 @@ jobs:
           platforms: ${{ github.event_name == 'pull_request' && 'linux/amd64' || 'linux/amd64,linux/arm64' }}
           build-args: |
             PKG_IMG=rspamd/rspamd
-            PKG_TAG=pkg-${{ steps.base-image.outputs.rspamd_version }}
-          outputs: type=image,name=rspamd/rspamd:${{ steps.base-image.outputs.rspamd_image_tag }},push=false
+            PKG_TAG=pkg-${{ steps.rspamd-base.outputs.rspamd_version }}
+          outputs: type=image,name=rspamd/rspamd:${{ steps.rspamd-base.outputs.rspamd_image_tag }},push=false
+          cache-from: type=gha,scope=base-rspamd-${{ steps.rspamd-base.outputs.rspamd_image_tag }}
+          cache-to: type=gha,scope=base-rspamd-${{ steps.rspamd-base.outputs.rspamd_image_tag }},mode=max
       - name: Set base image build args
         id: base-image-args
         run: |
-          if [ "${{ matrix.context }}" = "target/mda" ] || [ "${{ matrix.context }}" = "target/filter" ]; then
+          if [ "${{ matrix.context }}" = "target/mda" ]; then
             {
               echo "args<<EOF"
-              echo "DOVECOT_BASE_IMAGE=dovecot/dovecot:${{ steps.base-image.outputs.dovecot_image_tag }}"
-              echo "RSPAMD_BASE_IMAGE=rspamd/rspamd:${{ steps.base-image.outputs.rspamd_image_tag }}"
+              echo "DOVECOT_BASE_IMAGE=dovecot/dovecot:${{ steps.dovecot-base.outputs.dovecot_image_tag }}"
+              echo "EOF"
+            } >> "$GITHUB_OUTPUT"
+          elif [ "${{ matrix.context }}" = "target/filter" ]; then
+            {
+              echo "args<<EOF"
+              echo "RSPAMD_BASE_IMAGE=rspamd/rspamd:${{ steps.rspamd-base.outputs.rspamd_image_tag }}"
               echo "EOF"
             } >> "$GITHUB_OUTPUT"
           else
