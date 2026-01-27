@@ -20,7 +20,7 @@ concurrency:
   group: "${{ github.workflow }}-${{ github.ref }}"
   cancel-in-progress: true
 env:
-  ADDITIONAL_DOCKER_IMAGES: "mysql:lts axllent/mailpit:v1.27 redis:8-alpine"
+  ADDITIONAL_DOCKER_IMAGES: "mysql:lts axllent/mailpit:v1.27 redis:8.2-alpine ghcr.io/jeboehm/fetchmailmgr:0.4.0"
 jobs:
   build:
     runs-on: ubuntu-latest
