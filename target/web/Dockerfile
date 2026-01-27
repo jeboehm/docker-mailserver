@@ -40,7 +40,7 @@ RUN printf '#!/bin/sh\nexec frankenphp php-cli "$@"\n' > /usr/bin/php && \
 FROM base AS composer
 
 ENV COMPOSER_ALLOW_SUPERUSER=1
-COPY --from=composer/composer:2.9.4@sha256:ba379c4c4f0eeb7d14722d4054e7ca187bc19c35dd873c3111da7e98e63502c3 /usr/bin/composer /usr/bin/composer
+COPY --from=composer/composer:2.9.4@sha256:ba379c4c4f0eeb7d14722d4054e7ca187bc19c35dd873c3111da7e98e63502c3 --link /usr/bin/composer /usr/bin/composer
 
 FROM composer AS roundcube-builder
 
@@ -93,8 +93,8 @@ RUN curl -sSLf \
 FROM base AS prod
 
 WORKDIR /
-COPY --chown=root:root --from=roundcube-builder /opt/roundcube/ /opt/roundcube/
-COPY --chown=root:root --from=admin-builder /opt/admin/ /opt/admin/
+COPY --chown=root:root --from=roundcube-builder --link /opt/roundcube/ /opt/roundcube/
+COPY --chown=root:root --from=admin-builder --link /opt/admin/ /opt/admin/
 COPY --chown=root:root rootfs/ /
 
 RUN mkdir -p ${SERVER_ROOT} && \
