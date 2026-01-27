@@ -40,7 +40,7 @@ RUN printf '#!/bin/sh\nexec frankenphp php-cli "$@"\n' > /usr/bin/php && \
 FROM base AS composer
 
 ENV COMPOSER_ALLOW_SUPERUSER=1
-COPY --from=composer/composer:2.9.3@sha256:3ba64722c36260502df9e776ae6450e43f20d448ea7a6df0a9776bb236a31494 /usr/bin/composer /usr/bin/composer
+COPY --from=composer/composer:2.9.4@sha256:ba379c4c4f0eeb7d14722d4054e7ca187bc19c35dd873c3111da7e98e63502c3 /usr/bin/composer /usr/bin/composer
 
 FROM composer AS roundcube-builder
 
@@ -79,7 +79,7 @@ RUN --mount=type=cache,target=/root/.composer \
 
 FROM composer AS admin-builder
 
-ARG ADMIN_VER=5.17.1 # renovate: depName=jeboehm/mailserver-admin
+ARG ADMIN_VER=5.17.3 # renovate: depName=jeboehm/mailserver-admin
 WORKDIR /opt/admin
 RUN curl -sSLf \
         -o /tmp/admin.tar.gz \
