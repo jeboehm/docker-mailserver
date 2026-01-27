@@ -56,7 +56,7 @@ RUN apk --no-cache add \
     && wget -q -O /usr/share/fixtures/gtube.txt https://spamassassin.apache.org/gtube/gtube.txt
 RUN apk add --no-cache --repository http://dl-cdn.alpinelinux.org/alpine/edge/testing/ swaks=20240103.0-r0
 
-COPY --from=dockerize /bin/dockerize /usr/local/bin/dockerize
+COPY --from=dockerize --link /bin/dockerize /usr/local/bin/dockerize
 COPY rootfs/ /
 
 WORKDIR /app/tests
