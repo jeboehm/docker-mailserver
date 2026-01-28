@@ -20,7 +20,7 @@ concurrency:
   group: "${{ github.workflow }}-${{ github.ref }}"
   cancel-in-progress: true
 env:
-  ADDITIONAL_DOCKER_IMAGES: "mysql:lts axllent/mailpit:v1.27 redis:8-alpine"
+  ADDITIONAL_DOCKER_IMAGES: "mysql:lts axllent/mailpit:v1.27 redis:8.2-alpine ghcr.io/jeboehm/fetchmailmgr:0.4.0"
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -372,7 +372,7 @@ jobs:
           severity: "CRITICAL,HIGH"
       - name: Upload Trivy scan results to GitHub Security tab
         if: always()
-        uses: github/codeql-action/upload-sarif@19b2f06db2b6f5108140aeb04014ef02b648f789 # v4
+        uses: github/codeql-action/upload-sarif@b20883b0cd1f46c72ae0ba6d1090936928f9fa30 # v4
         with:
           sarif_file: "trivy-results.sarif"
           category: "${{ matrix.image }}"
