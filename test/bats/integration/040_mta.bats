@@ -38,7 +38,7 @@ setup() {
 }
 
 @test "send junk mail to local address" {
-	run swaks -s "${SMTP_HOST}" --port "${SMTP_PORT}" --to admin@example.com --body "$BATS_TEST_DESCRIPTION" --header "X-Spam: Yes"
+	run swaks -s "${SMTP_HOST}" --port "${SMTP_PORT}" --to admin@example.com --body "$BATS_TEST_DESCRIPTION" --header "X-Is-Spam: Yes"
 	[ "$status" -eq 0 ]
 }
 
