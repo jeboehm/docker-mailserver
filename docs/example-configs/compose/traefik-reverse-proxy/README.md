@@ -1,30 +1,11 @@
 # Traefik Reverse Proxy Setup
 
-This example demonstrates how to deploy docker-mailserver with Traefik as a reverse proxy, providing automatic HTTPS with Let's Encrypt certificates.
-
-## Overview
-
-This setup extends the main `docker-compose.yml` and adds:
-
-- **Traefik Reverse Proxy**: Handles HTTP/HTTPS routing and SSL termination
-- **Automatic HTTPS**: Let's Encrypt certificates with automatic renewal
-- **HTTP to HTTPS Redirect**: Automatic redirection from HTTP to HTTPS
+This example demonstrates how to deploy docker-mailserver with Traefik as a reverse proxy.
 
 ## Configuration Details
 
-### Traefik Configuration
+1. Copy the `compose.yaml` file to your project's root folder with the name `docker-compose.override.yml`.
+2. Update the `Host(`mail.example.org`)` in the `docker-compose.override.yml` file to the domain you want to use for your mail server web interface.
+3. Run `bin/production.sh up -d` to start the services.
 
-The Traefik service is configured with:
-
-- **Entry Points**: HTTP (80) and HTTPS (443)
-- **Let's Encrypt**: Automatic SSL certificate management
-- **Docker Provider**: Automatic service discovery
-- **Security**: HTTP to HTTPS redirect
-- **Logging**: Access logs and debug information
-
-### Web Service
-
-The web service is configured with Traefik labels for:
-
-- **Host Routing**: `mail.example.org`
-- **SSL Termination**: Let's Encrypt certificates
+[compose.yaml](./compose.yaml)
