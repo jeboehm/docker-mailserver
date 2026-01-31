@@ -1,9 +1,7 @@
-FROM ghcr.io/jeboehm/dockerize:0.9.3@sha256:d4e824aa120670658d7012421d2fdf1b2437be34a6acbb7a4ad92ed52edec8eb AS dockerize
 FROM alpine:3.23@sha256:25109184c71bdad752c8312a8623239686a9a2071e8825f20acb8f2198c3f659
 
 LABEL maintainer="https://github.com/jeboehm/docker-mailserver"
 LABEL vendor="https://github.com/jeboehm/docker-mailserver"
-LABEL de.ressourcenkonflikt.docker-mailserver.autoheal="true"
 
 ENV MAILNAME=mail.example.com \
     MYNETWORKS=127.0.0.0/8 \
@@ -21,7 +19,9 @@ ENV MAILNAME=mail.example.com \
     WAITSTART_TIMEOUT=1m \
     RECIPIENT_DELIMITER=-
 
-RUN apk --no-cache add \
+RUN --mount=type=cache,target=/var/cache/apk \
+    apk add \
+      envsubst \
       postfix-mysql \
       postfix && \
     postconf virtual_mailbox_domains=mysql:/etc/postfix/mysql-virtual-mailbox-domains.cf && \
@@ -64,7 +64,7 @@ RUN apk --no-cache add \
     postconf smtpd_soft_error_limit=3 && \
     postconf smtpd_hard_error_limit=5 && \
     newaliases
-COPY --from=dockerize /bin/dockerize /usr/local/bin/dockerize
+
 COPY rootfs/ /
 
 EXPOSE 25 587
