@@ -23,7 +23,10 @@
   "customManagers": [
     {
       "customType": "regex",
-      "managerFilePatterns": ["/Dockerfile$/"],
+      "managerFilePatterns": [
+        "/Dockerfile$/",
+        "/(^|/)(workflow-templates|\\.(?:github|gitea|forgejo)/(?:workflows|actions))/.+\\.ya?ml$/"
+      ],
       "matchStrings": [
         "VER=(?<currentValue>.*?) # renovate: depName=(?<depName>.*?)\\n"
       ],
