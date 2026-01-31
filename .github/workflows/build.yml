@@ -56,19 +56,19 @@ jobs:
         uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3.12.0
       - name: Log in to Container Registry (ghcr.io)
         if: ${{ github.event_name != 'pull_request' }}
-        uses: docker/login-action@5e57cd118135c172c3672efd75eb46360885c0ef # v3
+        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Log in to Container Registry (docker.io)
         if: ${{ github.event_name != 'pull_request' }}
-        uses: docker/login-action@5e57cd118135c172c3672efd75eb46360885c0ef # v3
+        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3
         with:
           username: ${{ vars.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
       - name: Cache Docker layers
-        uses: actions/cache@8b402f58fbc84540c8b491a91e594a4576fec3d7 # v5
+        uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5
         with:
           path: ${{ runner.temp }}/.buildx-cache
           key: ${{ runner.os }}-buildx-${{ matrix.image }}-${{ github.ref }}-${{ github.sha }}
@@ -193,7 +193,7 @@ jobs:
             docker load --input images/${image}
           done
       - name: Cache Docker images
-        uses: actions/cache@8b402f58fbc84540c8b491a91e594a4576fec3d7 # v5
+        uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5
         id: docker-images-cache
         with:
           path: /tmp/docker-images
@@ -267,7 +267,7 @@ jobs:
           kind get clusters
           kubectl config use-context kind-${{ env.CLUSTER_NAME }}
       - name: Restore cached Docker images
-        uses: actions/cache/restore@8b402f58fbc84540c8b491a91e594a4576fec3d7 # v5
+        uses: actions/cache/restore@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5
         id: docker-images-cache
         with:
           path: /tmp/docker-images
@@ -357,7 +357,7 @@ jobs:
           severity: "CRITICAL,HIGH"
       - name: Log in to Container Registry (ghcr.io)
         if: ${{ github.event_name != 'pull_request' }}
-        uses: docker/login-action@5e57cd118135c172c3672efd75eb46360885c0ef # v3
+        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
