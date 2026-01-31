@@ -150,7 +150,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       CI: "true"
-      DIVE_VERSION: 0.13.1 # renovate: depName=wagoodman/dive
+      DIVE_VER: 0.13.1 # renovate: depName=wagoodman/dive
     steps:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
       - name: Download Docker image artifacts
@@ -161,8 +161,8 @@ jobs:
           merge-multiple: true
       - name: Install Dive
         run: |
-          curl -sfOL "https://github.com/wagoodman/dive/releases/download/v${DIVE_VERSION}/dive_${DIVE_VERSION}_linux_amd64.deb"
-          sudo dpkg -i ./dive_${DIVE_VERSION}_linux_amd64.deb
+          curl -sfOL "https://github.com/wagoodman/dive/releases/download/v${DIVE_VER}/dive_${DIVE_VER}_linux_amd64.deb"
+          sudo dpkg -i ./dive_${DIVE_VER}_linux_amd64.deb
       - name: Check container image efficiency
         run: |
           for image in $(ls images/); do
@@ -245,7 +245,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       CLUSTER_NAME: kind
-      POPEYE_VERSION: v0.22.1 # renovate: depName=derailed/popeye
+      POPEYE_VER: v0.22.1 # renovate: depName=derailed/popeye
     strategy:
       matrix:
         TEST_CASE:
@@ -260,7 +260,7 @@ jobs:
           cluster_name: ${{ env.CLUSTER_NAME }}
       - name: Install Popeye
         run: |
-          curl -sfOL https://github.com/derailed/popeye/releases/download/${{ env.POPEYE_VERSION }}/popeye_linux_amd64.deb
+          curl -sfOL https://github.com/derailed/popeye/releases/download/${{ env.POPEYE_VER }}/popeye_linux_amd64.deb
           sudo dpkg -i popeye_linux_amd64.deb
       - name: Use kubectl context
         run: |
