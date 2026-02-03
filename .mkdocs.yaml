@@ -15,40 +15,49 @@ exclude_docs: |
   requirements.txt
 nav:
   - Welcome: README.md
-  - Quick Start:
-      - installation.md
-      - upgrade.md
-  - Configuration:
-      - configuration/environment-variables.md
-      - "mailserver-admin": configuration/mailserver-admin.md
-      - configuration/dns-configuration.md
-      - configuration/external-mysql.md
-      - configuration/relayhost.md
-      - configuration/local-address-extension.md
-      - configuration/php-sessions.md
-      - configuration/reverse-proxy.md
-      - configuration/roundcube.md
-      - configuration/tls.md
-  - Administration:
-      - administration/login.md
-      - administration/dashboard.md
-      - administration/manage-domains.md
-      - administration/manage-users.md
-      - administration/manage-aliases.md
-      - administration/manage-fetchmail.md
-      - administration/dkim-signing.md
-      - administration/dns-validation-wizard.md
-      - administration/user-roles.md
-      - administration/ios-macos-profile.md
-  - Observability:
-      - observability/intro.md
+  - Tutorial:
+      - Getting Started: tutorials/getting-started.md
+  - How-to guides:
+      - Install with Docker: how-to/install-docker.md
+      - Install on Kubernetes: how-to/install-kubernetes.md
+      - Upgrade: how-to/upgrade.md
+      - Configure DNS: how-to/configure-dns.md
+      - Configure DKIM: how-to/configure-dkim.md
+      - Validate DNS (wizard): how-to/validate-dns.md
+      - Configure relay host: how-to/configure-relayhost.md
+      - Configure reverse proxy: how-to/configure-reverse-proxy.md
+      - Configure TLS certificates: how-to/configure-tls.md
+      - Configure OAuth2: how-to/configure-oauth2.md
+      - Configure external MySQL: how-to/configure-external-mysql.md
+      - Configure Roundcube plugins: how-to/configure-roundcube-plugins.md
+      - Configure PHP sessions: how-to/configure-php-sessions.md
+      - Manage domains: how-to/manage-domains.md
+      - Manage users: how-to/manage-users.md
+      - Manage aliases: how-to/manage-aliases.md
+      - Manage fetchmail: how-to/manage-fetchmail.md
+      - iOS / macOS profile: how-to/ios-macos-profile.md
+  - Reference:
+      - Environment variables: reference/environment-variables.md
+      - Ports: reference/ports.md
+      - DNS records: reference/dns-records.md
+      - Service architecture: reference/service-architecture.md
+      - User roles: reference/user-roles.md
+      - mailserver-admin config: reference/mailserver-admin-config.md
+      - Local address extension: reference/local-address-extension.md
+      - Upgrade changelog: reference/upgrade-changelog.md
+  - Administration (web UI):
+      - Login: administration/login.md
+      - Dashboard: administration/dashboard.md
+  - Explanation:
+      - Service architecture: explanation/architecture.md
+      - DNS and email delivery: explanation/dns-and-email.md
+      - Observability: explanation/observability.md
   - Recipes:
       - Docker:
           - Traefik Reverse Proxy: https://github.com/jeboehm/docker-mailserver/tree/main/docs/example-configs/compose/traefik-reverse-proxy
       - Kubernetes:
           - External Database and HTTPS Ingress: https://github.com/jeboehm/docker-mailserver/tree/main/docs/example-configs/kustomize/external-db-and-https-ingress
   - Development:
-      - development/architecture.md
-      - development/development.md
-      - "mailserver-admin": development/mailserver-admin.md
+      - Development guide: development/development.md
+      - mailserver-admin development: development/mailserver-admin.md
   - Issues: https://github.com/jeboehm/docker-mailserver/issues
