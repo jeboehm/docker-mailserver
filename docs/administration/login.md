@@ -1,17 +1,15 @@
 # Login
 
-The login page provides authentication to access the `mailserver-admin` interface. Users can authenticate using either regular email address and password credentials and OAuth2, depending on the configuration.
+The login page authenticates users to the mailserver-admin interface. Authentication methods are local (email + password) or OAuth2, depending on configuration.
 
 ![Login](../images/admin/login.png)
 
-## Authentication Methods
+## Authentication methods
 
-### Local Authentication
+### Local authentication
 
-By default, users authenticate using their email address and password configured in the mailserver.
+By default, users log in with their mailserver email address and password.
 
-### OAuth2 Authentication
+### OAuth2
 
-OAuth2 authentication can be enabled to allow users to log in using an external identity provider. When OAuth2 is enabled, a login button appears on the login page. Currently, this is only useful for granting admin rights to users.
-
-For OAuth2 configuration options, see [mailserver-admin configuration](../configuration/mailserver-admin.md#oauth2).
+When OAuth2 is enabled, an OAuth2 login button is shown. Users can sign in via an external identity provider. OAuth2 is typically used to grant admin rights based on group membership. For setup, see [How to configure OAuth2](../how-to/configure-oauth2.md). For OAuth2 variables, see [mailserver-admin configuration reference](../reference/mailserver-admin-config.md#oauth2).
