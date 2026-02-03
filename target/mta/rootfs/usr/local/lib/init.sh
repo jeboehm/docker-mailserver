@@ -44,14 +44,11 @@ if [ "${MTA_UPSTREAM_PROXY}" = "true" ]; then
 	echo "Enabling upstream proxy protocol"
 	postconf smtpd_upstream_proxy_protocol=haproxy
 	postconf postscreen_upstream_proxy_protocol=haproxy
-	postconf submission_upstream_proxy_protocol=haproxy
 fi
 
-dockerize \
-	-template /etc/postfix/mysql-email2email.cf.templ:/etc/postfix/mysql-email2email.cf \
-	-template /etc/postfix/mysql-virtual-alias-maps.cf.templ:/etc/postfix/mysql-virtual-alias-maps.cf \
-	-template /etc/postfix/mysql-virtual-mailbox-domains.cf.templ:/etc/postfix/mysql-virtual-mailbox-domains.cf \
-	-template /etc/postfix/mysql-virtual-mailbox-maps.cf.templ:/etc/postfix/mysql-virtual-mailbox-maps.cf \
-	-template /etc/postfix/mysql-recipient-access.cf.templ:/etc/postfix/mysql-recipient-access.cf \
-	-template /etc/postfix/mysql-email-submission.cf.templ:/etc/postfix/mysql-email-submission.cf \
-	/bin/true
+envsubst </etc/postfix/mysql-email2email.cf.templ >/etc/postfix/mysql-email2email.cf
+envsubst </etc/postfix/mysql-virtual-alias-maps.cf.templ >/etc/postfix/mysql-virtual-alias-maps.cf
+envsubst </etc/postfix/mysql-virtual-mailbox-domains.cf.templ >/etc/postfix/mysql-virtual-mailbox-domains.cf
+envsubst </etc/postfix/mysql-virtual-mailbox-maps.cf.templ >/etc/postfix/mysql-virtual-mailbox-maps.cf
+envsubst </etc/postfix/mysql-recipient-access.cf.templ >/etc/postfix/mysql-recipient-access.cf
+envsubst </etc/postfix/mysql-email-submission.cf.templ >/etc/postfix/mysql-email-submission.cf

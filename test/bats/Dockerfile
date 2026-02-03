@@ -1,5 +1,4 @@
-FROM ghcr.io/jeboehm/dockerize:0.9.3@sha256:d4e824aa120670658d7012421d2fdf1b2437be34a6acbb7a4ad92ed52edec8eb AS dockerize
-FROM alpine:3.23@sha256:865b95f46d98cf867a156fe4a135ad3fe50d2056aa3f25ed31662dff6da4eb62
+FROM alpine:3.23@sha256:25109184c71bdad752c8312a8623239686a9a2071e8825f20acb8f2198c3f659
 
 LABEL maintainer="https://github.com/jeboehm/docker-mailserver"
 LABEL vendor="https://github.com/jeboehm/docker-mailserver"
@@ -36,6 +35,7 @@ RUN apk --no-cache add \
       kubectl \
       mariadb-client \
       mariadb-connector-c \
+      netcat-openbsd \
       openssl \
       perl \
       perl-net-ssleay \
@@ -56,7 +56,6 @@ RUN apk --no-cache add \
     && wget -q -O /usr/share/fixtures/gtube.txt https://spamassassin.apache.org/gtube/gtube.txt
 RUN apk add --no-cache --repository http://dl-cdn.alpinelinux.org/alpine/edge/testing/ swaks=20240103.0-r0
 
-COPY --from=dockerize --link /bin/dockerize /usr/local/bin/dockerize
 COPY rootfs/ /
 
 WORKDIR /app/tests

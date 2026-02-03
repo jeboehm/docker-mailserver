@@ -1,9 +1,7 @@
-FROM ghcr.io/jeboehm/dockerize:0.9.3@sha256:d4e824aa120670658d7012421d2fdf1b2437be34a6acbb7a4ad92ed52edec8eb AS dockerize
-FROM alpine:3.23@sha256:865b95f46d98cf867a156fe4a135ad3fe50d2056aa3f25ed31662dff6da4eb62
+FROM alpine:3.23@sha256:25109184c71bdad752c8312a8623239686a9a2071e8825f20acb8f2198c3f659
 
 LABEL maintainer="https://github.com/jeboehm/docker-mailserver"
 LABEL vendor="https://github.com/jeboehm/docker-mailserver"
-LABEL de.ressourcenkonflikt.docker-mailserver.autoheal="true"
 
 ENV MAILNAME=mail.example.com \
     MYNETWORKS=127.0.0.0/8 \
@@ -21,7 +19,9 @@ ENV MAILNAME=mail.example.com \
     WAITSTART_TIMEOUT=1m \
     RECIPIENT_DELIMITER=-
 
-RUN apk --no-cache add \
+RUN --mount=type=cache,target=/var/cache/apk \
+    apk add \
+      envsubst \
       postfix-mysql \
       postfix && \
     postconf virtual_mailbox_domains=mysql:/etc/postfix/mysql-virtual-mailbox-domains.cf && \
@@ -55,16 +55,22 @@ RUN apk --no-cache add \
     postconf minimal_backoff_time=5m && \
     postconf queue_run_delay=5m && \
     postconf maillog_file=/dev/stdout && \
-    postconf smtpd_tls_mandatory_protocols="TLSv1.3, TLSv1.2, !TLSv1.1, !TLSv1, !SSLv3, !SSLv2" && \
-    postconf smtpd_tls_protocols="TLSv1.3, TLSv1.2, !TLSv1.1, !TLSv1, !SSLv3, !SSLv2" && \
-    postconf smtp_tls_mandatory_protocols="TLSv1.3, TLSv1.2, !TLSv1.1, !TLSv1, !SSLv3, !SSLv2" && \
-    postconf smtp_tls_protocols="TLSv1.3, TLSv1.2, !TLSv1.1, !TLSv1, !SSLv3, !SSLv2" && \
+    postconf tls_high_cipherlist="ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256" && \
+    postconf tls_preempt_cipherlist=yes && \
+    postconf smtp_tls_protocols="!SSLv2, !SSLv3, !TLSv1, !TLSv1.1" && \
+    postconf smtp_tls_ciphers=high && \
+    postconf smtp_tls_mandatory_ciphers=high && \
+    postconf smtpd_tls_protocols="!SSLv2, !SSLv3, !TLSv1, !TLSv1.1" && \
+    postconf smtpd_tls_ciphers=high && \
+    postconf smtpd_tls_mandatory_ciphers=high && \
     postconf smtpd_client_connection_rate_limit=20 && \
     postconf smtpd_error_sleep_time=10s && \
     postconf smtpd_soft_error_limit=3 && \
     postconf smtpd_hard_error_limit=5 && \
+    postconf local_recipient_maps = && \
+    postconf local_transport = "error:local mail delivery is disabled" && \
     newaliases
-COPY --from=dockerize /bin/dockerize /usr/local/bin/dockerize
+
 COPY rootfs/ /
 
 EXPOSE 25 587

@@ -1,121 +1,50 @@
 # Traefik Reverse Proxy Setup for docker-mailserver
 # This compose file extends the main docker-compose.yml and adds Traefik as reverse proxy
+# Copy the file to docker-compose.override.yml in the root folder of the project.
+# It'll be automatically picked up by the `bin/production.sh` wrapper script.
+
 services:
   # Include all services from main docker-compose.yml
-  ssl:
-    extends:
-      file: ../../../../docker-compose.yml
-      service: ssl
-  db:
-    extends:
-      file: ../../../../docker-compose.yml
-      service: db
-  redis:
-    extends:
-      file: ../../../../docker-compose.yml
-      service: redis
-  unbound:
-    extends:
-      file: ../../../../docker-compose.yml
-      service: unbound
-  filter:
-    extends:
-      file: ../../../../docker-compose.yml
-      service: filter
-  fetchmail:
-    extends:
-      file: ../../../../docker-compose.yml
-      service: fetchmail
   # Traefik reverse proxy
   traefik:
-    image: traefik:v3.0
-    container_name: traefik
+    image: traefik
     restart: unless-stopped
     command:
-      # API and dashboard
-      - --api.dashboard=false
-      - --api.insecure=false
       # Entry points
       - --entrypoints.web.address=:80
       - --entrypoints.websecure.address=:443
       # Let's Encrypt configuration
-      - --certificatesresolvers.letsencrypt.acme.tlschallenge=true
-      - --certificatesresolvers.letsencrypt.acme.email=admin@example.org
-      - --certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json
+      # - --certificatesresolvers.letsencrypt.acme.tlschallenge=true
+      # - --certificatesresolvers.letsencrypt.acme.email=admin@example.org
+      # - --certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json
       # Docker provider
       - --providers.docker=true
       - --providers.docker.exposedbydefault=false
       # Logging
-      - --log.level=INFO
-      - --accesslog=true
-      # Security headers
-      - --entrypoints.web.http.redirections.entrypoint.to=websecure
-      - --entrypoints.web.http.redirections.entrypoint.scheme=https
-      - --entrypoints.web.http.redirections.entrypoint.permanent=true
+      - --log.level=DEBUG
     ports:
       - "80:80"
       - "443:443"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - traefik-letsencrypt:/letsencrypt
-    networks:
-      - default
-      - traefik
-    labels:
-      # Enable Traefik for itself (dashboard)
-      - traefik.enable=true
   # Override web service to add Traefik labels
   web:
-    extends:
-      file: ../../../../docker-compose.yml
-      service: web
+    ports: []
     labels:
       # Enable Traefik for web service
       - traefik.enable=true
       # HTTP router (redirects to HTTPS)
       - traefik.http.routers.mail-web-http.rule=Host(`mail.example.org`)
       - traefik.http.routers.mail-web-http.entrypoints=web
-      - traefik.http.routers.mail-web-http.middlewares=redirect-to-https
-      # HTTPS router
-      - traefik.http.routers.mail-web.rule=Host(`mail.example.org`)
-      - traefik.http.routers.mail-web.entrypoints=websecure
-      - traefik.http.routers.mail-web.tls.certresolver=letsencrypt
+      - traefik.http.routers.mail-web-http.service=mail-web
+      # # HTTPS router
+      # - traefik.http.routers.mail-web.rule=Host(`mail.example.org`)
+      # - traefik.http.routers.mail-web.entrypoints=websecure
+      # - traefik.http.routers.mail-web-http.service=mail-web
+      # - traefik.http.routers.mail-web.tls.certresolver=letsencrypt
       # Service configuration
-      - traefik.http.services.mail-web.loadbalancer.server.port=80
-    networks:
-      - default
-      - traefik
-  # Override MTA service to expose ports for direct SMTP access
-  mta:
-    extends:
-      file: ../../../../docker-compose.yml
-      service: mta
-    ports:
-      - "25:25" # SMTP
-      - "587:587" # SMTP submission
-    networks:
-      - default
-  # Override MDA service to expose ports for direct IMAP access
-  mda:
-    extends:
-      file: ../../../../docker-compose.yml
-      service: mda
-    ports:
-      - "143:143" # IMAP
-      - "993:993" # IMAPS
-    networks:
-      - default
-# Define networks
-networks:
-  traefik:
-    external: false
-# Define volumes
+      - traefik.http.services.mail-web.loadbalancer.server.port=8080
+
 volumes:
   traefik-letsencrypt:
-    external: false
-  # Inherit volumes from main docker-compose.yml
-  data-db:
-  data-mail:
-  data-tls:
-  data-filter:
-  data-redis:
