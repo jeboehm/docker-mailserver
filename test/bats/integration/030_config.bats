@@ -36,3 +36,27 @@ setup() {
 
 	[ "$status" -eq 0 ]
 }
+
+@test "Check rspamd user id is 11333 and group id is 11333" {
+	run docker exec docker-mailserver-filter-1 id -u
+
+	[ "$status" -eq 0 ]
+	[ "$output" -eq 11333 ]
+
+	run docker exec docker-mailserver-filter-1 id -g
+
+	[ "$status" -eq 0 ]
+	[ "$output" -eq 11333 ]
+}
+
+@test "Check vmail user id is 1000 and group id is 1000" {
+	run docker exec docker-mailserver-mda-1 id -u
+
+	[ "$status" -eq 0 ]
+	[ "$output" -eq 1000 ]
+
+	run docker exec docker-mailserver-mda-1 id -g
+
+	[ "$status" -eq 0 ]
+	[ "$output" -eq 1000 ]
+}

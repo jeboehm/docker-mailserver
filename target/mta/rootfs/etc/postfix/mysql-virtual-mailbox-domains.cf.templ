@@ -1,6 +1,6 @@
-user = {{ .Env.MYSQL_USER }}
-password = {{ .Env.MYSQL_PASSWORD }}
-hosts = {{ .Env.MYSQL_HOST }}:{{ .Env.MYSQL_PORT }}
-dbname = {{ .Env.MYSQL_DATABASE }}
-tls_verify_cert = {{ .Env.MYSQL_TLS_VERIFY_CERT }}
+user = ${MYSQL_USER}
+password = ${MYSQL_PASSWORD}
+hosts = ${MYSQL_HOST}:${MYSQL_PORT}
+dbname = ${MYSQL_DATABASE}
+tls_verify_cert = ${MYSQL_TLS_VERIFY_CERT}
 query = SELECT 1 FROM mail_domains WHERE name='%s'

@@ -15,9 +15,6 @@ if ! [ -r /etc/postfix/tls/tls.crt ] || ! [ -r /etc/postfix/tls/tls.key ]; then
 	exit 1
 fi
 
-exec dockerize \
-	-wait "tcp://${MYSQL_HOST}:${MYSQL_PORT}" \
-	-wait "tcp://${MDA_LMTP_ADDRESS}" \
-	-wait "tcp://${FILTER_MILTER_ADDRESS}" \
-	-timeout "${WAITSTART_TIMEOUT}" \
-	/usr/sbin/postfix start-fg
+/usr/local/lib/wait-for-services.sh
+
+exec /usr/sbin/postfix start-fg
