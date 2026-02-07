@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><link rel="canonical" href="https://jeboehm.github.io/docker-mailserver/configuration/php-sessions/" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>PHP Session Configuration - docker-mailserver</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "PHP Session Configuration";
+        var mkdocs_page_input_path = "configuration/php-sessions.md";
+        var mkdocs_page_url = "/docker-mailserver/configuration/php-sessions/";
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../.." class="icon icon-home"> docker-mailserver
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../..">Welcome</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Quick Start</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../installation/">Installation Guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../upgrade/">Upgrade Guide</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Configuration</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../environment-variables/">Environment Variables Configuration</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../mailserver-admin/">mailserver-admin</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../dns-configuration/">DNS Configuration</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../external-mysql/">External MySQL Configuration</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../relayhost/">Relayhost Configuration</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../local-address-extension/">Local Address Extension</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">PHP Session Configuration</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#overview">Overview</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#environment-variables">Environment Variables</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#session-storage-options">Session Storage Options</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#redis-sessions-default">Redis Sessions (Default)</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#file-based-sessions">File-Based Sessions</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#implementation-examples">Implementation Examples</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#docker-compose-configuration">Docker Compose Configuration</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#php-configuration">PHP Configuration</a>
+    </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../reverse-proxy/">Reverse Proxy Configuration</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../roundcube/">Roundcube Configuration</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tls/">TLS Certificate Configuration</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Administration</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../administration/login/">Login</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../administration/dashboard/">Dashboard</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../administration/manage-domains/">Manage Domains</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../administration/manage-users/">Manage Users</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../administration/manage-aliases/">Manage Aliases</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../administration/manage-fetchmail/">Manage Fetchmail</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../administration/dkim-signing/">DKIM Signing</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../administration/dns-validation-wizard/">DNS Validation Wizard</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../administration/user-roles/">User Roles</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../administration/ios-macos-profile/">iOS / macOS Profile</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Observability</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../observability/intro/">Observability</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Recipes</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Docker</a>
+    <ul>
+                <li class="toctree-l2"><a class="" href="https://github.com/jeboehm/docker-mailserver/tree/main/docs/example-configs/compose/traefik-reverse-proxy">Traefik Reverse Proxy</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Kubernetes</a>
+    <ul>
+                <li class="toctree-l2"><a class="" href="https://github.com/jeboehm/docker-mailserver/tree/main/docs/example-configs/kustomize/external-db-and-https-ingress">External Database and HTTPS Ingress</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Development</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../development/architecture/">Service Architecture</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../development/development/">Developer Guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../development/mailserver-admin/">mailserver-admin</a>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="" href="https://github.com/jeboehm/docker-mailserver/issues">Issues</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">docker-mailserver</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Configuration</li>
+      <li class="breadcrumb-item active">PHP Session Configuration</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/jeboehm/docker-mailserver/blob/main/docs/configuration/php-sessions.md">Edit on jeboehm/docker-mailserver</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="php-session-configuration">PHP Session Configuration</h1>
+<p>This document explains how to configure PHP sessions in the docker-mailserver project, including both Redis and file-based session storage options.</p>
+<h2 id="overview">Overview</h2>
+<p>The web service supports configurable PHP session storage through environment variables. By default, sessions are stored in Redis, but you can easily switch to file-based storage or other session handlers.</p>
+<h2 id="environment-variables">Environment Variables</h2>
+<table>
+<thead>
+<tr>
+<th>Variable</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>PHP_SESSION_SAVE_HANDLER</code></td>
+<td><code>redis</code></td>
+<td>Session save handler</td>
+</tr>
+<tr>
+<td><code>PHP_SESSION_SAVE_PATH</code></td>
+<td><code>tcp://${REDIS_HOST}:${REDIS_PORT}?auth=${REDIS_PASSWORD}</code></td>
+<td>Session save path</td>
+</tr>
+</tbody>
+</table>
+<h2 id="session-storage-options">Session Storage Options</h2>
+<h3 id="redis-sessions-default">Redis Sessions (Default)</h3>
+<p>Redis is the default session storage mechanism, providing fast, scalable session management.</p>
+<p><strong>Configuration:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="nv">PHP_SESSION_SAVE_HANDLER</span><span class="o">=</span>redis
+<span class="nv">PHP_SESSION_SAVE_PATH</span><span class="o">=</span>tcp://<span class="si">${</span><span class="nv">REDIS_HOST</span><span class="si">}</span>:<span class="si">${</span><span class="nv">REDIS_PORT</span><span class="si">}</span>?auth<span class="o">=</span><span class="si">${</span><span class="nv">REDIS_PASSWORD</span><span class="si">}</span>
+</code></pre></div>
+<h3 id="file-based-sessions">File-Based Sessions</h3>
+<p>Store sessions as files on the local filesystem.</p>
+<p><strong>Configuration:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="nv">PHP_SESSION_SAVE_HANDLER</span><span class="o">=</span>files
+<span class="nv">PHP_SESSION_SAVE_PATH</span><span class="o">=</span>/tmp/sessions
+</code></pre></div>
+<h2 id="implementation-examples">Implementation Examples</h2>
+<h3 id="docker-compose-configuration">Docker Compose Configuration</h3>
+<p><strong>Redis Sessions (Default):</strong></p>
+<div class="highlight"><pre><span></span><code><span class="nt">services</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">web</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">environment</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">PHP_SESSION_SAVE_HANDLER=redis</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">PHP_SESSION_SAVE_PATH=tcp://redis:6379?auth=${REDIS_PASSWORD}</span>
+<span class="w">    </span><span class="nt">depends_on</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">redis</span>
+</code></pre></div>
+<p><strong>File-Based Sessions:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="nt">services</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">web</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">environment</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">PHP_SESSION_SAVE_HANDLER=files</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">PHP_SESSION_SAVE_PATH=/tmp/sessions</span>
+<span class="w">    </span><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">session_data:/tmp/sessions</span>
+</code></pre></div>
+<h2 id="php-configuration">PHP Configuration</h2>
+<p>The session configuration is applied through the PHP configuration file at:
+<code>target/web/rootfs/etc/frankenphp/php.ini</code></p>
+<div class="highlight"><pre><span></span><code><span class="na">session.save_handler</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">${PHP_SESSION_SAVE_HANDLER}</span>
+<span class="na">session.save_path</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;${PHP_SESSION_SAVE_PATH:-tcp://${REDIS_HOST}:${REDIS_PORT}?auth=${REDIS_PASSWORD}}&quot;</span>
+</code></pre></div>
+<p>This configuration:</p>
+<ul>
+<li>Uses the <code>PHP_SESSION_SAVE_HANDLER</code> environment variable</li>
+<li>Falls back to Redis configuration if <code>PHP_SESSION_SAVE_PATH</code> is not set</li>
+</ul>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../local-address-extension/" class="btn btn-neutral float-left" title="Local Address Extension"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../reverse-proxy/" class="btn btn-neutral float-right" title="Reverse Proxy Configuration">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/jeboehm/docker-mailserver" class="fa fa-code-fork" style="color: #fcfcfc"> jeboehm/docker-mailserver</a>
+        </span>
+    
+    
+      <span><a href="../local-address-extension/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../reverse-proxy/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../..";</script>
+    <script src="../../js/theme_extra.js"></script>
+    <script src="../../js/theme.js"></script>
+      <script src="../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>
