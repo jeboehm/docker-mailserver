@@ -14,5 +14,5 @@ services:
       - data-spool:/var/spool/postfix
       # For using external certificates uncomment the following lines
       # and change the path on the left side of the colon.
-      # - /home/user/certs/mail.example.com.crt:/etc/postfix/tls.crt:ro
-      # - /home/user/certs/mail.example.com.key:/etc/postfix/tls.key:ro
+      # - /home/user/certs/mail.example.com.crt:/etc/postfix/tls/tls.crt:ro
+      # - /home/user/certs/mail.example.com.key:/etc/postfix/tls/tls.key:ro
