@@ -2,11 +2,13 @@
 
 This guide describes how to install docker-mailserver using Docker Compose.
 
+If you are setting up docker-mailserver for the first time, the [Getting Started tutorial](../tutorials/getting-started.md) provides a step-by-step walkthrough that covers these same steps with more explanation.
+
 ## Prerequisites
 
-- Docker and Docker Compose
-- Domain name with DNS configured
-- Basic familiarity with email server administration
+- Docker and Docker Compose installed on the host
+- A domain name
+- Root or sudo access on the host
 
 ## Steps
 

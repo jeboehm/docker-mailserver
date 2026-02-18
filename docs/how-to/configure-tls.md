@@ -1,6 +1,8 @@
 # How to Configure TLS Certificates
 
-By default the mailserver uses a shared `data-tls` volume with internally generated certificates. To use external certificates (e.g. Let’s Encrypt), mount certificate and key files into the MTA and MDA containers.
+This guide covers TLS for mail protocols (SMTP, IMAP, POP3) served by the MTA (Postfix) and MDA (Dovecot) containers. To terminate TLS for the web interface (port 81), use a reverse proxy — see [How to configure a reverse proxy](configure-reverse-proxy.md).
+
+By default the mailserver uses a shared `data-tls` volume with internally generated certificates. To use external certificates (e.g. Let's Encrypt), mount certificate and key files into the MTA and MDA containers.
 
 ## Certificate locations
 

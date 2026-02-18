@@ -41,11 +41,34 @@ The documentation includes:
 
 See the [documentation](https://jeboehm.github.io/docker-mailserver/) for a complete feature list.
 
+## Quick start
+
+```bash
+# 1. Clone the repository or download a release
+git clone https://github.com/jeboehm/docker-mailserver.git
+cd docker-mailserver
+
+# 2. Copy and edit the environment file (set passwords for MYSQL_PASSWORD,
+#    REDIS_PASSWORD, CONTROLLER_PASSWORD, and DOVEADM_API_KEY)
+cp .env.dist .env
+
+# 3. Pull images and start services
+bin/production.sh pull
+bin/production.sh up -d --wait
+
+# 4. Create the first email account and admin user
+bin/production.sh run --rm web setup.sh
+```
+
+After setup, the management interface is at `http://127.0.0.1:81/manager/` and webmail at `http://127.0.0.1:81/webmail/`.
+
+For a complete walkthrough, see the [Getting Started tutorial](docs/tutorials/getting-started.md).
+
 ## Setup
 
 `docker-mailserver` can be set up using Docker or Kubernetes.
 
-For detailed installation instructions, see the [Installation Guide](https://jeboehm.github.io/docker-mailserver/installation/) in the documentation.
+For detailed installation instructions, see the [Installation Guide](docs/installation.md) in the documentation.
 
 ## Screenshots
 
