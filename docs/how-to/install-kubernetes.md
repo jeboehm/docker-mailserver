@@ -1,8 +1,10 @@
 # How to Install on Kubernetes
 
-This guide describes how to deploy docker-mailserver on Kubernetes with Kustomize. An external MySQL-compatible database is required; the kustomization does not provision a database.
+This guide describes how to deploy docker-mailserver on Kubernetes with
+Kustomize. An external MySQL-compatible database is required; the
+kustomization does not provision a database.
 
-A full example is in [example-configs/kustomize/external-db-and-https-ingress](https://github.com/jeboehm/docker-mailserver/tree/main/docs/example-configs/kustomize/external-db-and-https-ingress).
+A full example is in [example-configs/kustomize/external-db-and-https-ingress](../example-configs/kustomize/external-db-and-https-ingress/).
 
 ## Prerequisites
 
@@ -14,9 +16,14 @@ A full example is in [example-configs/kustomize/external-db-and-https-ingress](h
 
 ### 1. Configure environment (ConfigMap and Secrets)
 
-Use `.env.dist` as a reference for the required variables. Create a Kubernetes ConfigMap from the non-sensitive values and Kubernetes Secrets for sensitive values (database credentials, passwords, API keys). See [Environment variables reference](../reference/environment-variables.md) for the full variable list.
+Use `.env.dist` as a reference for required variables. Create a Kubernetes
+ConfigMap for non-sensitive values and Secrets for sensitive values
+(credentials, passwords, API keys). See [Environment variables reference](../reference/environment-variables.md) for the full list.
 
-The example configuration in [example-configs/kustomize/external-db-and-https-ingress](../example-configs/kustomize/external-db-and-https-ingress/) shows how to structure these resources.
+See the
+[example-configs/kustomize/external-db-and-https-ingress](../example-configs/kustomize/external-db-and-https-ingress/)
+directory for a sample configuration showing how to structure these
+resources.
 
 ### 2. Create namespace
 
@@ -30,7 +37,9 @@ kubectl create namespace mail
 bin/create-tls-certs.sh
 ```
 
-This writes a self-signed certificate and key to `config/tls/tls.crt` and `config/tls/tls.key`. For production, use certificates from a CA (e.g. cert-manager with Let's Encrypt) instead.
+This writes a self-signed certificate to `config/tls/tls.crt` and key to
+`config/tls/tls.key`. For production, use CA certificates (e.g.
+cert-manager with Let's Encrypt) instead.
 
 ### 4. Create TLS secret
 
@@ -62,7 +71,8 @@ Wait until all pods are running and healthy.
 kubectl exec -n mail -it deployment/web -c php-fpm -- setup.sh
 ```
 
-Use the wizard to set initial configuration, create the first email address, and create an admin user.
+Use the wizard to set initial configuration, create the first email
+address, and create an admin user.
 
 ### 8. Access the management interface
 
@@ -70,12 +80,15 @@ Use your configured ingress and the admin credentials from the wizard.
 
 ## Post-installation
 
-- Configure DNS and TLS as for Docker. See [How to configure DNS](configure-dns.md) and [How to configure TLS certificates](configure-tls.md).
+- Configure DNS and TLS like Docker deployment. See [How to configure DNS](configure-dns.md) and [How to configure TLS certificates](configure-tls.md).
 - Change `DOVEADM_API_KEY` from default if using observability (v7.3+).
 
 ## Troubleshooting
 
-- **Pods not starting:** Check pod logs with `kubectl logs -n mail <pod-name>` and events with `kubectl describe pod -n mail <pod-name>`.
-- **Database errors:** Verify database connectivity and that the `MYSQL_*` variables in the ConfigMap/Secrets are correct.
-- **TLS errors:** Confirm the `tls-certs` secret exists in the `mail` namespace and the certificate paths are correct.
+- **Pods not starting:** Check logs with `kubectl logs -n mail <pod-name>`
+  and events with `kubectl describe pod -n mail <pod-name>`.
+- **Database errors:** Verify database connectivity and that the
+  `MYSQL_*` variables in ConfigMap/Secrets are correct.
+- **TLS errors:** Confirm the `tls-certs` secret exists in the `mail`
+  namespace and certificate paths are correct.
 - **Setup wizard fails:** Ensure the web pod is running (`kubectl get pods -n mail`) before running the exec command.

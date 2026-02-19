@@ -46,10 +46,10 @@ When using the Redis service provided by docker-mailserver compose or kustomize,
 
 Set `RELAYHOST` to `[hostname]:port` to route all outgoing mail through an external SMTP server. Leave unset to deliver directly.
 
-| Variable            | Default        | Description                       |
-| ------------------- | -------------- | --------------------------------- |
-| `RELAYHOST`         | _(disabled)_   | SMTP relay host for outgoing mail (e.g. `[smtp.example.com]:587`) |
-| `RELAY_PASSWD_FILE` | _(disabled)_   | Path to relay authentication file (inside the MTA container) |
+| Variable            | Default      | Description                                                       |
+| ------------------- | ------------ | ----------------------------------------------------------------- |
+| `RELAYHOST`         | _(disabled)_ | SMTP relay host for outgoing mail (e.g. `[smtp.example.com]:587`) |
+| `RELAY_PASSWD_FILE` | _(disabled)_ | Path to relay authentication file (inside the MTA container)      |
 
 ### Filter
 

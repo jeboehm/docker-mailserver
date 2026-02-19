@@ -60,15 +60,18 @@ bin/production.sh up -d --wait
 bin/production.sh run --rm web setup.sh
 ```
 
-After setup, the management interface is at `http://127.0.0.1:81/manager/` and webmail at `http://127.0.0.1:81/webmail/`.
+After setup, access the management interface at
+`http://127.0.0.1:81/manager/` and webmail at `http://127.0.0.1:81/webmail/`.
 
-For a complete walkthrough, see the [Getting Started tutorial](docs/tutorials/getting-started.md).
+For a complete walkthrough, see the
+[Getting Started tutorial](docs/tutorials/getting-started.md).
 
 ## Setup
 
 `docker-mailserver` can be set up using Docker or Kubernetes.
 
-For detailed installation instructions, see the [Installation Guide](docs/installation.md) in the documentation.
+For detailed installation instructions, see the
+[Installation Guide](docs/installation.md).
 
 ## Screenshots
 
