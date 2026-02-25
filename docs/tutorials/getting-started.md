@@ -36,6 +36,8 @@ Edit `.env` and set at least:
 - `CONTROLLER_PASSWORD` (required for Rspamd)
 - `DOVEADM_API_KEY` (required for Dovecot API)
 
+Use strong, unique values for each password — do not leave them empty or use the same value for all. These credentials protect internal service communication.
+
 For a full list of variables, see [Environment variables reference](../reference/environment-variables.md).
 
 ## Step 3: Pull and start services
@@ -72,6 +74,8 @@ Open a browser and go to:
 - **Webmail:** `http://127.0.0.1:81/webmail/`
 
 Log in with the admin credentials you set in the wizard. You should see the dashboard.
+
+> **Note:** Port 81 uses plain HTTP. For production, place the mailserver behind a reverse proxy that terminates TLS. See [How to configure a reverse proxy](../how-to/configure-reverse-proxy.md).
 
 ## Step 6: Check the dashboard
 
