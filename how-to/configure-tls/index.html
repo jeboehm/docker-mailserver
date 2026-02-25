@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><link rel="canonical" href="https://jeboehm.github.io/docker-mailserver/how-to/configure-tls/" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>Configure TLS certificates - docker-mailserver</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Configure TLS certificates";
+        var mkdocs_page_input_path = "how-to/configure-tls.md";
+        var mkdocs_page_url = "/docker-mailserver/how-to/configure-tls/";
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../.." class="icon icon-home"> docker-mailserver
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../..">Welcome</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Tutorial</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../tutorials/getting-started/">Getting Started</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">How-to guides</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../install-docker/">Install with Docker</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../install-kubernetes/">Install on Kubernetes</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../upgrade/">Upgrade</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../configure-dns/">Configure DNS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../configure-dkim/">Configure DKIM</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../validate-dns/">Validate DNS (wizard)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../configure-relayhost/">Configure relay host</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../configure-reverse-proxy/">Configure reverse proxy</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Configure TLS certificates</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#certificate-locations">Certificate locations</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#steps-docker-compose">Steps (Docker Compose)</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#1-mount-certificates-in-mda">1. Mount certificates in MDA</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#2-mount-certificates-in-mta">2. Mount certificates in MTA</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#3-remove-or-disable-the-ssl-service-optional">3. Remove or disable the SSL service (optional)</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#4-restart-mta-and-mda">4. Restart MTA and MDA</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#lets-encrypt-example">Let’s Encrypt example</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#requirements">Requirements</a>
+    </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../configure-oauth2/">Configure OAuth2</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../configure-external-mysql/">Configure external MySQL</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../configure-roundcube-plugins/">Configure Roundcube plugins</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../configure-php-sessions/">Configure PHP sessions</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../manage-domains/">Manage domains</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../manage-users/">Manage users</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../manage-aliases/">Manage aliases</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../manage-fetchmail/">Manage fetchmail</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ios-macos-profile/">iOS / macOS profile</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Reference</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../reference/environment-variables/">Environment variables</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../reference/ports/">Ports</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../reference/dns-records/">DNS records</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../reference/service-architecture/">Service architecture</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../reference/user-roles/">User roles</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../reference/mailserver-admin-config/">mailserver-admin config</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../reference/local-address-extension/">Local address extension</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../reference/upgrade-changelog/">Upgrade changelog</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Administration (web UI)</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../administration/login/">Login</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../administration/dashboard/">Dashboard</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Explanation</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../explanation/architecture/">Service architecture</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../explanation/dns-and-email/">DNS and email delivery</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../explanation/observability/">Observability</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Recipes</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Docker</a>
+    <ul>
+                <li class="toctree-l2"><a class="" href="https://github.com/jeboehm/docker-mailserver/tree/main/docs/example-configs/compose/traefik-reverse-proxy">Traefik Reverse Proxy</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Kubernetes</a>
+    <ul>
+                <li class="toctree-l2"><a class="" href="https://github.com/jeboehm/docker-mailserver/tree/main/docs/example-configs/kustomize/external-db-and-https-ingress">External Database and HTTPS Ingress</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Development</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../development/development/">Development guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../development/mailserver-admin/">mailserver-admin development</a>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="" href="https://github.com/jeboehm/docker-mailserver/issues">Issues</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">docker-mailserver</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">How-to guides</li>
+      <li class="breadcrumb-item active">Configure TLS certificates</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/jeboehm/docker-mailserver/blob/main/docs/how-to/configure-tls.md">Edit on jeboehm/docker-mailserver</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="how-to-configure-tls-certificates">How to Configure TLS Certificates</h1>
+<p>This guide covers TLS for mail protocols (SMTP, IMAP, POP3) served by the MTA (Postfix) and MDA (Dovecot) containers. To terminate TLS for the web interface (port 81), use a reverse proxy — see <a href="../configure-reverse-proxy/">How to configure a reverse proxy</a>.</p>
+<p>By default the mailserver uses a shared <code>data-tls</code> volume with internally generated certificates. To use external certificates (e.g. Let's Encrypt), mount certificate and key files into the MTA and MDA containers.</p>
+<h2 id="certificate-locations">Certificate locations</h2>
+<ul>
+<li><strong>MDA (Dovecot):</strong> <code>/etc/dovecot/tls/tls.crt</code>, <code>/etc/dovecot/tls/tls.key</code></li>
+<li><strong>MTA (Postfix):</strong> <code>/etc/postfix/tls/tls.crt</code>, <code>/etc/postfix/tls/tls.key</code></li>
+</ul>
+<h2 id="steps-docker-compose">Steps (Docker Compose)</h2>
+<h3 id="1-mount-certificates-in-mda">1. Mount certificates in MDA</h3>
+<p>In <code>deploy/compose/mda.yaml</code>, replace the <code>data-tls</code> volume with file mounts:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">data-mail:/srv/vmail</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/path/to/certificate.crt:/etc/dovecot/tls/tls.crt:ro</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/path/to/private.key:/etc/dovecot/tls/tls.key:ro</span>
+</code></pre></div>
+<h3 id="2-mount-certificates-in-mta">2. Mount certificates in MTA</h3>
+<p>In <code>deploy/compose/mta.yaml</code>, replace the <code>data-tls</code> volume with file mounts:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/path/to/certificate.crt:/etc/postfix/tls/tls.crt:ro</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/path/to/private.key:/etc/postfix/tls/tls.key:ro</span>
+</code></pre></div>
+<h3 id="3-remove-or-disable-the-ssl-service-optional">3. Remove or disable the SSL service (optional)</h3>
+<p>If you no longer need internal certificate generation, remove the SSL service from your compose stack so it does not overwrite or conflict with your certificates.</p>
+<h3 id="4-restart-mta-and-mda">4. Restart MTA and MDA</h3>
+<div class="highlight"><pre><span></span><code>bin/production.sh<span class="w"> </span>up<span class="w"> </span>-d<span class="w"> </span>mta<span class="w"> </span>mda
+</code></pre></div>
+<h2 id="lets-encrypt-example">Let’s Encrypt example</h2>
+<p>If certificates are in <code>/etc/letsencrypt/live/yourdomain.com/</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># mda</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/etc/letsencrypt/live/yourdomain.com/fullchain.pem:/etc/dovecot/tls/tls.crt:ro</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/etc/letsencrypt/live/yourdomain.com/privkey.pem:/etc/dovecot/tls/tls.key:ro</span>
+
+<span class="c1"># mta</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/etc/letsencrypt/live/yourdomain.com/fullchain.pem:/etc/postfix/tls/tls.crt:ro</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/etc/letsencrypt/live/yourdomain.com/privkey.pem:/etc/postfix/tls/tls.key:ro</span>
+</code></pre></div>
+<p>Use <code>fullchain.pem</code> so the chain is complete.</p>
+<h2 id="requirements">Requirements</h2>
+<ul>
+<li><strong>Format:</strong> PEM (<code>.crt</code>, <code>.pem</code>, <code>.key</code>).</li>
+<li><strong>Permissions:</strong> Certificate and key readable by the container user; key with restricted permissions (e.g. 600).</li>
+</ul>
+<p>If TLS errors appear, check paths and permissions and review MTA/MDA logs: <code>bin/production.sh logs mta</code>, <code>bin/production.sh logs mda</code>.</p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../configure-reverse-proxy/" class="btn btn-neutral float-left" title="Configure reverse proxy"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../configure-oauth2/" class="btn btn-neutral float-right" title="Configure OAuth2">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/jeboehm/docker-mailserver" class="fa fa-code-fork" style="color: #fcfcfc"> jeboehm/docker-mailserver</a>
+        </span>
+    
+    
+      <span><a href="../configure-reverse-proxy/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../configure-oauth2/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../..";</script>
+    <script src="../../js/theme_extra.js"></script>
+    <script src="../../js/theme.js"></script>
+      <script src="../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

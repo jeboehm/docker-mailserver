@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><link rel="canonical" href="https://jeboehm.github.io/docker-mailserver/reference/environment-variables/" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>Environment variables - docker-mailserver</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Environment variables";
+        var mkdocs_page_input_path = "reference/environment-variables.md";
+        var mkdocs_page_url = "/docker-mailserver/reference/environment-variables/";
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../.." class="icon icon-home"> docker-mailserver
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../..">Welcome</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Tutorial</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../tutorials/getting-started/">Getting Started</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">How-to guides</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/install-docker/">Install with Docker</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/install-kubernetes/">Install on Kubernetes</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/upgrade/">Upgrade</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/configure-dns/">Configure DNS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/configure-dkim/">Configure DKIM</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/validate-dns/">Validate DNS (wizard)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/configure-relayhost/">Configure relay host</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/configure-reverse-proxy/">Configure reverse proxy</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/configure-tls/">Configure TLS certificates</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/configure-oauth2/">Configure OAuth2</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/configure-external-mysql/">Configure external MySQL</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/configure-roundcube-plugins/">Configure Roundcube plugins</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/configure-php-sessions/">Configure PHP sessions</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/manage-domains/">Manage domains</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/manage-users/">Manage users</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/manage-aliases/">Manage aliases</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/manage-fetchmail/">Manage fetchmail</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/ios-macos-profile/">iOS / macOS profile</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Reference</span></p>
+              <ul class="current">
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Environment variables</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#basic-configuration">Basic Configuration</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#database">Database</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#mail-server-identity">Mail Server Identity</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#redis">Redis</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#authentication">Authentication</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#relay">Relay</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#filter">Filter</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#extended-configuration">Extended Configuration</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#service-addresses">Service Addresses</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#mailserver-admin">mailserver-admin</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#php-sessions">PHP Sessions</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#proxy-protocol">Proxy Protocol</a>
+    </li>
+        </ul>
+    </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ports/">Ports</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../dns-records/">DNS records</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../service-architecture/">Service architecture</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../user-roles/">User roles</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../mailserver-admin-config/">mailserver-admin config</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../local-address-extension/">Local address extension</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../upgrade-changelog/">Upgrade changelog</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Administration (web UI)</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../administration/login/">Login</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../administration/dashboard/">Dashboard</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Explanation</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../explanation/architecture/">Service architecture</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../explanation/dns-and-email/">DNS and email delivery</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../explanation/observability/">Observability</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Recipes</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Docker</a>
+    <ul>
+                <li class="toctree-l2"><a class="" href="https://github.com/jeboehm/docker-mailserver/tree/main/docs/example-configs/compose/traefik-reverse-proxy">Traefik Reverse Proxy</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Kubernetes</a>
+    <ul>
+                <li class="toctree-l2"><a class="" href="https://github.com/jeboehm/docker-mailserver/tree/main/docs/example-configs/kustomize/external-db-and-https-ingress">External Database and HTTPS Ingress</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Development</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../development/development/">Development guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../development/mailserver-admin/">mailserver-admin development</a>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="" href="https://github.com/jeboehm/docker-mailserver/issues">Issues</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">docker-mailserver</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Reference</li>
+      <li class="breadcrumb-item active">Environment variables</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/jeboehm/docker-mailserver/blob/main/docs/reference/environment-variables.md">Edit on jeboehm/docker-mailserver</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="environment-variables-reference">Environment Variables Reference</h1>
+<p>Overview of environment variables used to configure docker-mailserver. Set these in your <code>.env</code> file or in the environment.</p>
+<h2 id="basic-configuration">Basic Configuration</h2>
+<h3 id="database">Database</h3>
+<p>When using the MySQL service provided by docker-mailserver compose, you do not need to set host, port, or database. You must set <code>MYSQL_PASSWORD</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Variable</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>MYSQL_HOST</code></td>
+<td><code>db</code></td>
+<td>MySQL database hostname</td>
+</tr>
+<tr>
+<td><code>MYSQL_PORT</code></td>
+<td><code>3306</code></td>
+<td>MySQL database port</td>
+</tr>
+<tr>
+<td><code>MYSQL_DATABASE</code></td>
+<td><code>mailserver</code></td>
+<td>MySQL database name</td>
+</tr>
+<tr>
+<td><code>MYSQL_USER</code></td>
+<td><code>root</code> (MTA/MDA), <code>mailserver</code> (Web)</td>
+<td>MySQL database username</td>
+</tr>
+<tr>
+<td><code>MYSQL_PASSWORD</code></td>
+<td><em>(empty)</em></td>
+<td>MySQL database password</td>
+</tr>
+<tr>
+<td><code>MYSQL_TLS_VERIFY_CERT</code></td>
+<td><code>no</code></td>
+<td>MySQL TLS certificate verification</td>
+</tr>
+</tbody>
+</table>
+<h3 id="mail-server-identity">Mail Server Identity</h3>
+<table>
+<thead>
+<tr>
+<th>Variable</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>MAILNAME</code></td>
+<td><code>mail.example.com</code></td>
+<td>Primary mail server hostname</td>
+</tr>
+<tr>
+<td><code>POSTMASTER</code></td>
+<td><code>postmaster@example.com</code></td>
+<td>Postmaster email address</td>
+</tr>
+<tr>
+<td><code>RECIPIENT_DELIMITER</code></td>
+<td><code>-</code></td>
+<td>Character used for address extensions (e.g., user+tag@domain.com)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="redis">Redis</h3>
+<p>When using the Redis service provided by docker-mailserver compose or kustomize, you do not need to configure host or port. You must set <code>REDIS_PASSWORD</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Variable</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>REDIS_HOST</code></td>
+<td><code>redis</code></td>
+<td>Redis server hostname</td>
+</tr>
+<tr>
+<td><code>REDIS_PORT</code></td>
+<td><code>6379</code></td>
+<td>Redis server port</td>
+</tr>
+<tr>
+<td><code>REDIS_PASSWORD</code></td>
+<td><em>(required)</em></td>
+<td>Redis server password</td>
+</tr>
+</tbody>
+</table>
+<h3 id="authentication">Authentication</h3>
+<table>
+<thead>
+<tr>
+<th>Variable</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>CONTROLLER_PASSWORD</code></td>
+<td><em>(required)</em></td>
+<td>Password for RSpamd controller access</td>
+</tr>
+<tr>
+<td><code>DOVEADM_API_KEY</code></td>
+<td><em>(required)</em></td>
+<td>API key for Dovecot API access</td>
+</tr>
+</tbody>
+</table>
+<h3 id="relay">Relay</h3>
+<p>Set <code>RELAYHOST</code> to <code>[hostname]:port</code> to route all outgoing mail through an external SMTP server. Leave unset to deliver directly.</p>
+<table>
+<thead>
+<tr>
+<th>Variable</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>RELAYHOST</code></td>
+<td><em>(disabled)</em></td>
+<td>SMTP relay host for outgoing mail (e.g. <code>[smtp.example.com]:587</code>)</td>
+</tr>
+<tr>
+<td><code>RELAY_PASSWD_FILE</code></td>
+<td><em>(disabled)</em></td>
+<td>Path to relay authentication file (inside the MTA container)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="filter">Filter</h3>
+<table>
+<thead>
+<tr>
+<th>Variable</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>FILTER_MIME</code></td>
+<td><em>(disabled)</em></td>
+<td>Enable MIME header filtering</td>
+</tr>
+</tbody>
+</table>
+<h2 id="extended-configuration">Extended Configuration</h2>
+<h3 id="service-addresses">Service Addresses</h3>
+<table>
+<thead>
+<tr>
+<th>Variable</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>FILTER_MILTER_ADDRESS</code></td>
+<td><code>filter:11332</code></td>
+<td>RSpamd milter service address</td>
+</tr>
+<tr>
+<td><code>FILTER_WEB_ADDRESS</code></td>
+<td><code>filter:11334</code></td>
+<td>RSpamd web interface address</td>
+</tr>
+<tr>
+<td><code>MDA_AUTH_ADDRESS</code></td>
+<td><code>mda:2004</code></td>
+<td>Dovecot authentication service address</td>
+</tr>
+<tr>
+<td><code>MDA_IMAP_ADDRESS</code></td>
+<td><code>mda:143</code></td>
+<td>Dovecot IMAP service address</td>
+</tr>
+<tr>
+<td><code>MDA_LMTP_ADDRESS</code></td>
+<td><code>mda:2003</code></td>
+<td>Dovecot LMTP service address</td>
+</tr>
+<tr>
+<td><code>MDA_MANAGESIEVE_ADDRESS</code></td>
+<td><code>mda:4190</code></td>
+<td>Dovecot ManageSieve service address</td>
+</tr>
+<tr>
+<td><code>MDA_DOVEADM_ADDRESS</code></td>
+<td><code>mda:8080</code></td>
+<td>Dovecot API address (default: mda:8080)</td>
+</tr>
+<tr>
+<td><code>MTA_HOST</code></td>
+<td><code>mta</code></td>
+<td>Postfix MTA hostname</td>
+</tr>
+<tr>
+<td><code>MTA_SMTP_ADDRESS</code></td>
+<td><code>mta:25</code></td>
+<td>Postfix SMTP service address</td>
+</tr>
+<tr>
+<td><code>MTA_SMTP_SUBMISSION_ADDRESS</code></td>
+<td><code>mta:587</code></td>
+<td>Postfix SMTP submission service address</td>
+</tr>
+<tr>
+<td><code>WEB_HTTP_ADDRESS</code></td>
+<td><code>web:80</code></td>
+<td>Web interface HTTP address</td>
+</tr>
+<tr>
+<td><code>RSPAMD_DNS_SERVERS</code></td>
+<td><code>round-robin:unbound:53</code></td>
+<td>DNS servers for RSpamd (Kubernetes)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="mailserver-admin">mailserver-admin</h3>
+<p>See <a href="../mailserver-admin-config/">mailserver-admin configuration reference</a>.</p>
+<h3 id="php-sessions">PHP Sessions</h3>
+<table>
+<thead>
+<tr>
+<th>Variable</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>PHP_SESSION_SAVE_HANDLER</code></td>
+<td><code>redis</code></td>
+<td>Session save handler</td>
+</tr>
+<tr>
+<td><code>PHP_SESSION_SAVE_PATH</code></td>
+<td><code>tcp://${REDIS_HOST}:${REDIS_PORT}?auth=${REDIS_PASSWORD}</code></td>
+<td>Session save path</td>
+</tr>
+</tbody>
+</table>
+<h3 id="proxy-protocol">Proxy Protocol</h3>
+<table>
+<thead>
+<tr>
+<th>Variable</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>MDA_UPSTREAM_PROXY</code></td>
+<td><code>false</code></td>
+<td>Enable Traefik / HAProxy PROXY protocol for MDA (Dovecot) IMAP/POP3 services</td>
+</tr>
+<tr>
+<td><code>MTA_UPSTREAM_PROXY</code></td>
+<td><code>false</code></td>
+<td>Enable Traefik / HAProxy PROXY protocol for MTA (Postfix) SMTP services</td>
+</tr>
+</tbody>
+</table>
+<p>When set to <code>true</code>, the mail server accepts the HAProxy PROXY protocol to receive the original client IP when behind a load balancer or reverse proxy.</p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../../how-to/ios-macos-profile/" class="btn btn-neutral float-left" title="iOS / macOS profile"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../ports/" class="btn btn-neutral float-right" title="Ports">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/jeboehm/docker-mailserver" class="fa fa-code-fork" style="color: #fcfcfc"> jeboehm/docker-mailserver</a>
+        </span>
+    
+    
+      <span><a href="../../how-to/ios-macos-profile/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../ports/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../..";</script>
+    <script src="../../js/theme_extra.js"></script>
+    <script src="../../js/theme.js"></script>
+      <script src="../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

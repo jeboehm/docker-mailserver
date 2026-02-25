@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><link rel="canonical" href="https://jeboehm.github.io/docker-mailserver/how-to/install-kubernetes/" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>Install on Kubernetes - docker-mailserver</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Install on Kubernetes";
+        var mkdocs_page_input_path = "how-to/install-kubernetes.md";
+        var mkdocs_page_url = "/docker-mailserver/how-to/install-kubernetes/";
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../.." class="icon icon-home"> docker-mailserver
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../..">Welcome</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Tutorial</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../tutorials/getting-started/">Getting Started</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">How-to guides</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../install-docker/">Install with Docker</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Install on Kubernetes</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#prerequisites">Prerequisites</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#steps">Steps</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#1-configure-environment-configmap-and-secrets">1. Configure environment (ConfigMap and Secrets)</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#2-create-namespace">2. Create namespace</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#3-generate-tls-certificates-if-not-using-cert-manager">3. Generate TLS certificates (if not using cert-manager)</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#4-create-tls-secret">4. Create TLS secret</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#5-apply-kustomize-manifests">5. Apply Kustomize manifests</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#6-verify-pods">6. Verify pods</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#7-run-setup-wizard">7. Run setup wizard</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#8-access-the-management-interface">8. Access the management interface</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#post-installation">Post-installation</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#troubleshooting">Troubleshooting</a>
+    </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../upgrade/">Upgrade</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../configure-dns/">Configure DNS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../configure-dkim/">Configure DKIM</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../validate-dns/">Validate DNS (wizard)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../configure-relayhost/">Configure relay host</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../configure-reverse-proxy/">Configure reverse proxy</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../configure-tls/">Configure TLS certificates</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../configure-oauth2/">Configure OAuth2</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../configure-external-mysql/">Configure external MySQL</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../configure-roundcube-plugins/">Configure Roundcube plugins</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../configure-php-sessions/">Configure PHP sessions</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../manage-domains/">Manage domains</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../manage-users/">Manage users</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../manage-aliases/">Manage aliases</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../manage-fetchmail/">Manage fetchmail</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ios-macos-profile/">iOS / macOS profile</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Reference</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../reference/environment-variables/">Environment variables</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../reference/ports/">Ports</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../reference/dns-records/">DNS records</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../reference/service-architecture/">Service architecture</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../reference/user-roles/">User roles</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../reference/mailserver-admin-config/">mailserver-admin config</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../reference/local-address-extension/">Local address extension</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../reference/upgrade-changelog/">Upgrade changelog</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Administration (web UI)</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../administration/login/">Login</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../administration/dashboard/">Dashboard</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Explanation</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../explanation/architecture/">Service architecture</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../explanation/dns-and-email/">DNS and email delivery</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../explanation/observability/">Observability</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Recipes</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Docker</a>
+    <ul>
+                <li class="toctree-l2"><a class="" href="https://github.com/jeboehm/docker-mailserver/tree/main/docs/example-configs/compose/traefik-reverse-proxy">Traefik Reverse Proxy</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Kubernetes</a>
+    <ul>
+                <li class="toctree-l2"><a class="" href="https://github.com/jeboehm/docker-mailserver/tree/main/docs/example-configs/kustomize/external-db-and-https-ingress">External Database and HTTPS Ingress</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Development</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../development/development/">Development guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../development/mailserver-admin/">mailserver-admin development</a>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="" href="https://github.com/jeboehm/docker-mailserver/issues">Issues</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">docker-mailserver</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">How-to guides</li>
+      <li class="breadcrumb-item active">Install on Kubernetes</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/jeboehm/docker-mailserver/blob/main/docs/how-to/install-kubernetes.md">Edit on jeboehm/docker-mailserver</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="how-to-install-on-kubernetes">How to Install on Kubernetes</h1>
+<p>This guide describes how to deploy docker-mailserver on Kubernetes with
+Kustomize. An external MySQL-compatible database is required; the
+kustomization does not provision a database.</p>
+<p>A full example is in <a href="../example-configs/kustomize/external-db-and-https-ingress/">example-configs/kustomize/external-db-and-https-ingress</a>.</p>
+<h2 id="prerequisites">Prerequisites</h2>
+<ul>
+<li>Kubernetes cluster with kubectl configured</li>
+<li>MySQL or Percona XtraDB (or compatible) database</li>
+<li>Domain and DNS (for ingress)</li>
+</ul>
+<h2 id="steps">Steps</h2>
+<h3 id="1-configure-environment-configmap-and-secrets">1. Configure environment (ConfigMap and Secrets)</h3>
+<p>Use <code>.env.dist</code> as a reference for required variables. Create a Kubernetes
+ConfigMap for non-sensitive values and Secrets for sensitive values
+(credentials, passwords, API keys). See <a href="../../reference/environment-variables/">Environment variables reference</a> for the full list.</p>
+<p>See the
+<a href="../example-configs/kustomize/external-db-and-https-ingress/">example-configs/kustomize/external-db-and-https-ingress</a>
+directory for a sample configuration showing how to structure these
+resources.</p>
+<h3 id="2-create-namespace">2. Create namespace</h3>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>create<span class="w"> </span>namespace<span class="w"> </span>mail
+</code></pre></div>
+<h3 id="3-generate-tls-certificates-if-not-using-cert-manager">3. Generate TLS certificates (if not using cert-manager)</h3>
+<div class="highlight"><pre><span></span><code>bin/create-tls-certs.sh
+</code></pre></div>
+<p>This writes a self-signed certificate to <code>config/tls/tls.crt</code> and key to
+<code>config/tls/tls.key</code>. For production, use CA certificates (e.g.
+cert-manager with Let's Encrypt) instead.</p>
+<h3 id="4-create-tls-secret">4. Create TLS secret</h3>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>create<span class="w"> </span>-n<span class="w"> </span>mail<span class="w"> </span>secret<span class="w"> </span>tls<span class="w"> </span>tls-certs<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--cert<span class="o">=</span>config/tls/tls.crt<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--key<span class="o">=</span>config/tls/tls.key
+</code></pre></div>
+<h3 id="5-apply-kustomize-manifests">5. Apply Kustomize manifests</h3>
+<p>From the project root:</p>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>apply<span class="w"> </span>-n<span class="w"> </span>mail<span class="w"> </span>-k<span class="w"> </span>.
+</code></pre></div>
+<h3 id="6-verify-pods">6. Verify pods</h3>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>-n<span class="w"> </span>mail
+</code></pre></div>
+<p>Wait until all pods are running and healthy.</p>
+<h3 id="7-run-setup-wizard">7. Run setup wizard</h3>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>mail<span class="w"> </span>-it<span class="w"> </span>deployment/web<span class="w"> </span>-c<span class="w"> </span>php-fpm<span class="w"> </span>--<span class="w"> </span>setup.sh
+</code></pre></div>
+<p>Use the wizard to set initial configuration, create the first email
+address, and create an admin user.</p>
+<h3 id="8-access-the-management-interface">8. Access the management interface</h3>
+<p>Use your configured ingress and the admin credentials from the wizard.</p>
+<h2 id="post-installation">Post-installation</h2>
+<ul>
+<li>Configure DNS and TLS like Docker deployment. See <a href="../configure-dns/">How to configure DNS</a> and <a href="../configure-tls/">How to configure TLS certificates</a>.</li>
+<li>Change <code>DOVEADM_API_KEY</code> from default if using observability (v7.3+).</li>
+</ul>
+<h2 id="troubleshooting">Troubleshooting</h2>
+<ul>
+<li><strong>Pods not starting:</strong> Check logs with <code>kubectl logs -n mail &lt;pod-name&gt;</code>
+  and events with <code>kubectl describe pod -n mail &lt;pod-name&gt;</code>.</li>
+<li><strong>Database errors:</strong> Verify database connectivity and that the
+  <code>MYSQL_*</code> variables in ConfigMap/Secrets are correct.</li>
+<li><strong>TLS errors:</strong> Confirm the <code>tls-certs</code> secret exists in the <code>mail</code>
+  namespace and certificate paths are correct.</li>
+<li><strong>Setup wizard fails:</strong> Ensure the web pod is running (<code>kubectl get pods -n mail</code>) before running the exec command.</li>
+</ul>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../install-docker/" class="btn btn-neutral float-left" title="Install with Docker"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../upgrade/" class="btn btn-neutral float-right" title="Upgrade">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/jeboehm/docker-mailserver" class="fa fa-code-fork" style="color: #fcfcfc"> jeboehm/docker-mailserver</a>
+        </span>
+    
+    
+      <span><a href="../install-docker/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../upgrade/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../..";</script>
+    <script src="../../js/theme_extra.js"></script>
+    <script src="../../js/theme.js"></script>
+      <script src="../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

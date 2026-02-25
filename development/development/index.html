@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><link rel="canonical" href="https://jeboehm.github.io/docker-mailserver/development/development/" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>Development guide - docker-mailserver</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Development guide";
+        var mkdocs_page_input_path = "development/development.md";
+        var mkdocs_page_url = "/docker-mailserver/development/development/";
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../.." class="icon icon-home"> docker-mailserver
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../..">Welcome</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Tutorial</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../tutorials/getting-started/">Getting Started</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">How-to guides</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/install-docker/">Install with Docker</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/install-kubernetes/">Install on Kubernetes</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/upgrade/">Upgrade</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/configure-dns/">Configure DNS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/configure-dkim/">Configure DKIM</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/validate-dns/">Validate DNS (wizard)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/configure-relayhost/">Configure relay host</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/configure-reverse-proxy/">Configure reverse proxy</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/configure-tls/">Configure TLS certificates</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/configure-oauth2/">Configure OAuth2</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/configure-external-mysql/">Configure external MySQL</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/configure-roundcube-plugins/">Configure Roundcube plugins</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/configure-php-sessions/">Configure PHP sessions</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/manage-domains/">Manage domains</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/manage-users/">Manage users</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/manage-aliases/">Manage aliases</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/manage-fetchmail/">Manage fetchmail</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/ios-macos-profile/">iOS / macOS profile</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Reference</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../reference/environment-variables/">Environment variables</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../reference/ports/">Ports</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../reference/dns-records/">DNS records</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../reference/service-architecture/">Service architecture</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../reference/user-roles/">User roles</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../reference/mailserver-admin-config/">mailserver-admin config</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../reference/local-address-extension/">Local address extension</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../reference/upgrade-changelog/">Upgrade changelog</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Administration (web UI)</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../administration/login/">Login</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../administration/dashboard/">Dashboard</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Explanation</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../explanation/architecture/">Service architecture</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../explanation/dns-and-email/">DNS and email delivery</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../explanation/observability/">Observability</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Recipes</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Docker</a>
+    <ul>
+                <li class="toctree-l2"><a class="" href="https://github.com/jeboehm/docker-mailserver/tree/main/docs/example-configs/compose/traefik-reverse-proxy">Traefik Reverse Proxy</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Kubernetes</a>
+    <ul>
+                <li class="toctree-l2"><a class="" href="https://github.com/jeboehm/docker-mailserver/tree/main/docs/example-configs/kustomize/external-db-and-https-ingress">External Database and HTTPS Ingress</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Development</span></p>
+              <ul class="current">
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Development guide</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#development-commands">Development Commands</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#make-clean">make clean</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#make-up">make up</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#make-test">make test</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#make-lint">make lint</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#development-workflow">Development Workflow</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#testing-specific-changes">Testing Specific Changes</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#example-testing-mda-service-changes">Example: Testing MDA Service Changes</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#additional-development-commands">Additional Development Commands</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#troubleshooting-development-issues">Troubleshooting Development Issues</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#project-structure">Project Structure</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#contributing">Contributing</a>
+    </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../mailserver-admin/">mailserver-admin development</a>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="" href="https://github.com/jeboehm/docker-mailserver/issues">Issues</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">docker-mailserver</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Development</li>
+      <li class="breadcrumb-item active">Development guide</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/jeboehm/docker-mailserver/blob/main/docs/development/development.md">Edit on jeboehm/docker-mailserver</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="developer-guide">Developer Guide</h1>
+<p>This document provides essential information for developers working on the <code>docker-mailserver</code> project.</p>
+<h2 id="development-commands">Development Commands</h2>
+<p>The following Make commands are essential for the development workflow:</p>
+<h3 id="make-clean"><code>make clean</code></h3>
+<p>Cleans the development environment by:</p>
+<ul>
+<li>Stopping and removing all running containers</li>
+<li>Removing all Docker volumes (data-db, data-mail, data-tls, data-filter, data-redis)</li>
+<li>Removing all built Docker images</li>
+<li>Cleaning up any temporary files</li>
+</ul>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>make<span class="w"> </span>clean
+</code></pre></div>
+<p><strong>When to use:</strong></p>
+<ul>
+<li>Before starting fresh development work</li>
+<li>When switching between different configurations</li>
+<li>To free up disk space from accumulated Docker data</li>
+<li>To have a fresh database</li>
+<li>When encountering persistent issues that might be related to cached data</li>
+</ul>
+<h3 id="make-up"><code>make up</code></h3>
+<p>Builds and starts all mailserver services in development mode:</p>
+<ul>
+<li>Builds all Docker images from source</li>
+<li>Waits for services to be ready</li>
+<li>Exposes services on local ports for testing</li>
+</ul>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>make<span class="w"> </span>up
+</code></pre></div>
+<p><strong>What it does:</strong></p>
+<ul>
+<li>Builds MTA, MDA, Web, Filter, SSL, and other service images</li>
+<li>Configures service networking and dependencies</li>
+<li>Makes services available for testing and development</li>
+</ul>
+<p><strong>When to use:</strong></p>
+<ul>
+<li>After making code changes to any service</li>
+<li>When setting up a new development environment</li>
+<li>After running <code>make clean</code> to rebuild everything</li>
+</ul>
+<h3 id="make-test"><code>make test</code></h3>
+<p>Runs the complete integration test suite against the running mailserver:</p>
+<ul>
+<li>Executes fixtures to populate the database</li>
+<li>Executes BATS (Bash Automated Testing System) tests</li>
+<li>Tests all major mailserver functionality</li>
+<li>Validates TLS/SSL configuration</li>
+<li>Tests database connectivity and user management</li>
+<li>Verifies MTA, MDA, and web service functionality</li>
+<li>Tests DKIM signing and spam filtering</li>
+<li>Validates fetchmail and DNS resolution</li>
+</ul>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>make<span class="w"> </span><span class="nb">test</span>
+</code></pre></div>
+<p><strong>Prerequisites:</strong></p>
+<ul>
+<li>Services must be running (run <code>make up</code> first)</li>
+<li>All services must be healthy and ready</li>
+</ul>
+<p><strong>Test Coverage:</strong></p>
+<ul>
+<li>TLS certificate generation and validation</li>
+<li>Database initialization and connectivity</li>
+<li>Configuration file generation</li>
+<li>MTA (Postfix) functionality</li>
+<li>Web interface accessibility</li>
+<li>MDA (Dovecot) IMAP/POP3 services</li>
+<li>Docker container health checks</li>
+<li>Relay host configuration</li>
+<li>DKIM signing and verification</li>
+<li>Fetchmail external mail retrieval</li>
+<li>Unbound DNS resolution</li>
+</ul>
+<h3 id="make-lint"><code>make lint</code></h3>
+<p>Lints all files in the project to ensure code quality and consistency:</p>
+<ul>
+<li>Checks shell scripts for syntax errors and best practices</li>
+<li>Validates YAML files for proper formatting</li>
+<li>Ensures Dockerfiles follow best practices</li>
+<li>Checks configuration files for syntax issues</li>
+<li>Validates documentation formatting</li>
+</ul>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>make<span class="w"> </span>lint
+</code></pre></div>
+<p><strong>What it checks:</strong></p>
+<ul>
+<li>Shell scripts (<code>.sh</code> files) using shellcheck</li>
+<li>YAML files (<code>.yml</code>, <code>.yaml</code>) for syntax and formatting</li>
+<li>Dockerfiles for best practices and security issues</li>
+<li>Configuration files for proper syntax</li>
+<li>Documentation files for formatting consistency</li>
+</ul>
+<p><strong>When to use:</strong></p>
+<ul>
+<li>Before committing changes to ensure code quality</li>
+<li>As part of the development workflow</li>
+<li>To catch syntax errors and style issues early</li>
+<li>To maintain consistent code formatting across the project</li>
+</ul>
+<h2 id="development-workflow">Development Workflow</h2>
+<p>The typical development workflow is:</p>
+<ol type="1">
+<li><strong>Clean environment:</strong></li>
+</ol>
+<div class="highlight"><pre><span></span><code>make<span class="w"> </span>clean
+</code></pre></div>
+<ol start="2" type="1">
+<li><strong>Build and start services:</strong></li>
+</ol>
+<div class="highlight"><pre><span></span><code>make<span class="w"> </span>build<span class="w"> </span>up
+</code></pre></div>
+<ol start="3" type="1">
+<li><strong>Run tests:</strong></li>
+</ol>
+<div class="highlight"><pre><span></span><code>make<span class="w"> </span><span class="nb">test</span>
+</code></pre></div>
+<ol start="4" type="1">
+<li>
+<p><strong>Make changes to code and repeat steps 2-3 as needed</strong></p>
+</li>
+<li>
+<p><strong>Lint your changes before committing:</strong>
+   <div class="highlight"><pre><span></span><code>make<span class="w"> </span>lint
+</code></pre></div></p>
+</li>
+</ol>
+<h2 id="testing-specific-changes">Testing Specific Changes</h2>
+<p>When making changes to a specific service (e.g., MDA, MTA, Web, Filter), you can test your changes more efficiently:</p>
+<h3 id="example-testing-mda-service-changes">Example: Testing MDA Service Changes</h3>
+<ol type="1">
+<li>
+<p><strong>Make your changes</strong> to the MDA service (e.g., modify <code>target/mda/Dockerfile</code> or configuration files)</p>
+</li>
+<li>
+<p><strong>Rebuild and restart services:</strong></p>
+</li>
+</ol>
+<div class="highlight"><pre><span></span><code>make<span class="w"> </span>build<span class="w"> </span>up
+</code></pre></div>
+<p>This will rebuild the changed service and restart all services.</p>
+<ol start="3" type="1">
+<li><strong>Run a specific test</strong> to verify your changes:
+   <div class="highlight"><pre><span></span><code>./bin/test.sh<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span><span class="nb">test</span><span class="w"> </span>bats<span class="w"> </span>070_docker.bats
+</code></pre></div>
+   This runs only the Docker-related tests instead of the full test suite.</li>
+</ol>
+<h2 id="additional-development-commands">Additional Development Commands</h2>
+<ul>
+<li><strong>View logs:</strong> <code>bin/test.sh logs -f [service-name]</code></li>
+<li><strong>Access service shell:</strong> <code>bin/test.sh exec [service-name] sh</code></li>
+<li><strong>Check service status:</strong> <code>bin/test.sh ps</code></li>
+<li><strong>Restart specific service:</strong> <code>bin/test.sh restart [service-name]</code></li>
+</ul>
+<h2 id="troubleshooting-development-issues">Troubleshooting Development Issues</h2>
+<ul>
+<li><strong>Services won't start:</strong> Run <code>make clean</code> then <code>make up</code></li>
+<li><strong>Tests failing:</strong> Ensure all services are healthy with <code>bin/test.sh ps</code></li>
+<li><strong>Build issues:</strong> Check Docker daemon is running and has sufficient resources</li>
+<li><strong>Port conflicts:</strong> Ensure ports 25, 143, 587, 993, 995, 80, 81 are available</li>
+</ul>
+<h2 id="project-structure">Project Structure</h2>
+<p>The project is organized into several key directories:</p>
+<ul>
+<li><code>target/</code> - Contains Dockerfiles and configuration for each service</li>
+<li><code>test/</code> - Integration tests using BATS</li>
+<li><code>docs/</code> - Documentation and example configurations</li>
+<li><code>deploy/</code> - Kubernetes and Compose deployment configurations</li>
+<li><code>bin/</code> - Utility scripts for development and deployment</li>
+</ul>
+<h2 id="contributing">Contributing</h2>
+<p>When contributing to the project:</p>
+<ol type="1">
+<li>Follow the development workflow above</li>
+<li>Ensure all tests pass before submitting changes</li>
+<li>Update documentation as needed</li>
+<li>Test your changes in both Docker Compose and Kubernetes environments</li>
+<li>Follow the existing code style and patterns</li>
+</ol>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../../explanation/observability/" class="btn btn-neutral float-left" title="Observability"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../mailserver-admin/" class="btn btn-neutral float-right" title="mailserver-admin development">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/jeboehm/docker-mailserver" class="fa fa-code-fork" style="color: #fcfcfc"> jeboehm/docker-mailserver</a>
+        </span>
+    
+    
+      <span><a href="../../explanation/observability/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../mailserver-admin/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../..";</script>
+    <script src="../../js/theme_extra.js"></script>
+    <script src="../../js/theme.js"></script>
+      <script src="../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>
