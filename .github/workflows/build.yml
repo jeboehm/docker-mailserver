@@ -349,7 +349,7 @@ jobs:
           merge-multiple: true
       - name: Run Trivy vulnerability scanner
         if: ${{ github.event_name == 'pull_request' }}
-        uses: aquasecurity/trivy-action@e368e328979b113139d6f9068e03accaed98a518 # 0.34.1
+        uses: aquasecurity/trivy-action@97e0b3872f55f89b95b2f65b3dbab56962816478 # 0.34.2
         with:
           input: "images/${{ matrix.image }}.tar"
           format: "sarif"
@@ -364,7 +364,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Run Trivy vulnerability scanner
         if: ${{ github.event_name != 'pull_request' }}
-        uses: aquasecurity/trivy-action@e368e328979b113139d6f9068e03accaed98a518 # 0.34.1
+        uses: aquasecurity/trivy-action@97e0b3872f55f89b95b2f65b3dbab56962816478 # 0.34.2
         with:
           image-ref: "ghcr.io/jeboehm/${{ matrix.image }}:latest"
           format: "sarif"
