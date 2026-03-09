@@ -18,7 +18,7 @@ setup() {
 	[ "$status" -eq 0 ]
 }
 
-@test "send mail to mta with smtp authentification, external recipient" {
+@test "send mail to mta with smtp authentication, external recipient" {
 	if [ "${RELAYHOST}" = "false" ]; then
 		echo '# Relayhost is disabled, skipping test' >&3
 		skip
@@ -38,6 +38,6 @@ setup() {
 
 	RESULT=$(curl -s "http://mailpit:8025/api/v1/messages" | jq -cr ".messages[0].Snippet" | tr -d '[:space:]')
 
-	# send mail to mta with smtp authentification, external recipient
-	[ "$RESULT" = "sendmailtomtawithsmtpauthentification,externalrecipient" ]
+	# send mail to mta with smtp authentication, external recipient
+	[ "$RESULT" = "sendmailtomtawithsmtpauthentication,externalrecipient" ]
 }
