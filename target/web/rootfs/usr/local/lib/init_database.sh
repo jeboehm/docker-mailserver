@@ -6,7 +6,7 @@ roundcube_init() {
 	cd /opt/roundcube
 	PWD=$(pwd)
 
-	bin/initdb.sh --dir="$PWD/SQL" || bin/updatedb.sh --dir="$PWD/SQL" --package=roundcube || echo "Failed to initialize databse. Please run $PWD/bin/initdb.sh manually."
+	bin/initdb.sh --dir="$PWD/SQL" || bin/updatedb.sh --dir="$PWD/SQL" --package=roundcube || echo "Failed to initialize database. Please run $PWD/bin/initdb.sh manually."
 	rm -f /opt/roundcube/logs/errors.log
 }
 
