@@ -49,7 +49,7 @@ jobs:
             --exclude='renovate.json' \
             -czf /tmp/release-${{ steps.changelog.outputs.tag }}.tar.gz .
       - name: Create GitHub Release
-        uses: ncipollo/release-action@b7eabc95ff50cbeeedec83973935c8f306dfcd0b # v1
+        uses: ncipollo/release-action@339a81892b84b4eeb0f6e744e4574d79d0d9b8dd # v1
         if: ${{ steps.changelog.outputs.skipped == 'false' }}
         with:
           tag: ${{ steps.changelog.outputs.tag }}
