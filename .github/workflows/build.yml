@@ -67,14 +67,6 @@ jobs:
         with:
           username: ${{ vars.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
-      - name: Cache Docker layers
-        uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5
-        with:
-          path: ${{ runner.temp }}/.buildx-cache
-          key: ${{ runner.os }}-buildx-${{ matrix.image }}-${{ github.ref }}-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-buildx-${{ matrix.image }}-${{ github.ref }}-
-            ${{ runner.os }}-buildx-${{ matrix.image }}-
       - name: Extract Docker metadata
         id: meta
         uses: docker/metadata-action@c299e40c65443455700f0fdfc63efafe5b349051 # v5.10.0
@@ -93,36 +85,17 @@ jobs:
       - name: Create banner
         run: .github/bin/create_banner.sh ${{ github.sha }} ${{ github.ref_name }}
       - name: Build and push Docker image
-        if: ${{ github.event_name != 'pull_request' }}
         id: build-and-push
         uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8 # v6.19.2
         with:
           context: ${{ matrix.context }}
-          platforms: linux/amd64,linux/arm64
-          push: ${{ matrix.image != 'mailserver-test' }}
-          tags: ${{ steps.meta.outputs.tags }}
+          platforms: ${{ github.event_name == 'pull_request' && 'linux/amd64' || 'linux/amd64,linux/arm64' }}
+          push: ${{ github.event_name != 'pull_request' && matrix.image != 'mailserver-test' }}
+          tags: ${{ github.event_name == 'pull_request' && format('jeboehm/{0}', matrix.image) || steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=local,src=${{ runner.temp }}/.buildx-cache
-          cache-to: type=local,dest=${{ runner.temp }}/.buildx-cache-new,mode=max
-      - name: Build Docker image
-        if: ${{ github.event_name == 'pull_request' }}
-        id: build-and-save
-        uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8 # v6.19.2
-        with:
-          context: ${{ matrix.context }}
-          push: false
-          tags: jeboehm/${{ matrix.image }}
-          labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=local,src=${{ runner.temp }}/.buildx-cache
-          cache-to: type=local,dest=${{ runner.temp }}/.buildx-cache-new,mode=max
-          outputs: type=docker,dest=${{ runner.temp }}/${{ matrix.image }}.tar
-      - # Temp fix
-        # https://github.com/docker/build-push-action/issues/252
-        # https://github.com/moby/buildkit/issues/1896
-        name: Move cache
-        run: |
-          rm -rf ${{ runner.temp }}/.buildx-cache
-          mv ${{ runner.temp }}/.buildx-cache-new ${{ runner.temp }}/.buildx-cache
+          cache-from: type=gha,scope=${{ matrix.image }}
+          cache-to: type=gha,scope=${{ matrix.image }},mode=max
+          outputs: ${{ github.event_name == 'pull_request' && format('type=docker,dest={0}/{1}.tar', runner.temp, matrix.image) || '' }}
       - name: Generate artifact attestation (ghcr.io)
         if: ${{ github.event_name != 'pull_request' && matrix.image != 'mailserver-test' }}
         uses: actions/attest-build-provenance@977bb373ede98d70efdf65b84cb5f73e068dcc2a # v3
@@ -159,10 +132,19 @@ jobs:
           path: images
           pattern: docker-image-*
           merge-multiple: true
+      - name: Cache Dive
+        id: cache-dive
+        uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5
+        with:
+          path: /tmp/dive_${{ env.DIVE_VER }}_linux_amd64.deb
+          key: ${{ runner.os }}-dive-${{ env.DIVE_VER }}
       - name: Install Dive
         run: |
-          curl -sfOL "https://github.com/wagoodman/dive/releases/download/v${DIVE_VER}/dive_${DIVE_VER}_linux_amd64.deb"
-          sudo dpkg -i ./dive_${DIVE_VER}_linux_amd64.deb
+          if [ ! -f "/tmp/dive_${DIVE_VER}_linux_amd64.deb" ]; then
+            curl -sfL -o "/tmp/dive_${DIVE_VER}_linux_amd64.deb" \
+              "https://github.com/wagoodman/dive/releases/download/v${DIVE_VER}/dive_${DIVE_VER}_linux_amd64.deb"
+          fi
+          sudo dpkg -i "/tmp/dive_${DIVE_VER}_linux_amd64.deb"
       - name: Check container image efficiency
         run: |
           for image in $(ls images/); do
@@ -197,10 +179,7 @@ jobs:
         id: docker-images-cache
         with:
           path: /tmp/docker-images
-          key: ${{ runner.os }}-images-additional-${{ github.ref }}-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-images-additional-${{ github.ref }}-
-            ${{ runner.os }}-images-additional-
+          key: ${{ runner.os }}-images-additional-${{ hashFiles('.github/workflows/build.yml') }}
       - name: Load or pull Docker images
         run: |
           mkdir -p /tmp/docker-images
@@ -258,32 +237,44 @@ jobs:
         uses: helm/kind-action@ef37e7f390d99f746eb8b610417061a60e82a6cc # v1
         with:
           cluster_name: ${{ env.CLUSTER_NAME }}
+      - name: Cache Popeye
+        id: cache-popeye
+        uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5
+        with:
+          path: /tmp/popeye_linux_amd64.deb
+          key: ${{ runner.os }}-popeye-${{ env.POPEYE_VER }}
       - name: Install Popeye
         run: |
-          curl -sfOL https://github.com/derailed/popeye/releases/download/${{ env.POPEYE_VER }}/popeye_linux_amd64.deb
-          sudo dpkg -i popeye_linux_amd64.deb
+          if [ ! -f "/tmp/popeye_linux_amd64.deb" ]; then
+            curl -sfL -o "/tmp/popeye_linux_amd64.deb" \
+              "https://github.com/derailed/popeye/releases/download/${{ env.POPEYE_VER }}/popeye_linux_amd64.deb"
+          fi
+          sudo dpkg -i /tmp/popeye_linux_amd64.deb
       - name: Use kubectl context
         run: |
           kind get clusters
           kubectl config use-context kind-${{ env.CLUSTER_NAME }}
-      - name: Restore cached Docker images
-        uses: actions/cache/restore@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5
+      - name: Cache Docker images
+        uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5
         id: docker-images-cache
         with:
           path: /tmp/docker-images
-          key: ${{ runner.os }}-images-additional-${{ github.ref }}-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-images-additional-${{ github.ref }}-
-            ${{ runner.os }}-images-additional-
-      - name: Load cached Docker images
-        if: steps.docker-images-cache.outputs.cache-hit == 'true'
+          key: ${{ runner.os }}-images-additional-${{ hashFiles('.github/workflows/build.yml') }}
+      - name: Load or pull Docker images into kind cluster
         run: |
+          mkdir -p /tmp/docker-images
           read -a IMAGES <<< "${{ env.ADDITIONAL_DOCKER_IMAGES }}"
           for IMAGE in "${IMAGES[@]}"; do
             FILENAME=$(echo "$IMAGE" | tr '/:' '-').tar
             CACHE_PATH="/tmp/docker-images/$FILENAME"
             if [ -f "$CACHE_PATH" ]; then
               echo "::group::Loading $IMAGE from cache into kind cluster"
+              kind load image-archive "$CACHE_PATH"
+              echo "::endgroup::"
+            else
+              echo "::group::Pulling $IMAGE and loading into kind cluster"
+              docker pull "$IMAGE"
+              docker save "$IMAGE" -o "$CACHE_PATH"
               kind load image-archive "$CACHE_PATH"
               echo "::endgroup::"
             fi
