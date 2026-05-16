@@ -40,7 +40,7 @@ RUN printf '#!/bin/sh\nexec frankenphp php-cli "$@"\n' > /usr/bin/php && \
 FROM base AS composer
 
 ENV COMPOSER_ALLOW_SUPERUSER=1
-COPY --from=composer/composer:2.9.7@sha256:90178397f00f3bc9cbc0595a504b489c6357d8af264ad8517aff5f7c0a2a673b --link /usr/bin/composer /usr/bin/composer
+COPY --from=composer/composer:2.9.8@sha256:a250c6759909bd7abe2090457e9dc68aa7b11bc19078a3d1a7f0be1294332377 --link /usr/bin/composer /usr/bin/composer
 
 FROM composer AS roundcube-builder
 
