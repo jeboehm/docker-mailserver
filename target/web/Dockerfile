@@ -1,4 +1,4 @@
-FROM alpine:3.24@sha256:a2d49ea686c2adfe3c992e47dc3b5e7fa6e6b5055609400dc2acaeb241c829f4 AS base
+FROM alpine:3.24@sha256:28bd5fe8b56d1bd048e5babf5b10710ebe0bae67db86916198a6eec434943f8b AS base
 
 LABEL maintainer="https://github.com/jeboehm/docker-mailserver"
 LABEL vendor="https://github.com/jeboehm/docker-mailserver"
@@ -40,7 +40,7 @@ RUN printf '#!/bin/sh\nexec frankenphp php-cli "$@"\n' > /usr/bin/php && \
 FROM base AS composer
 
 ENV COMPOSER_ALLOW_SUPERUSER=1
-COPY --from=composer/composer:2.10.1@sha256:070d18a1d8c7b3b53aafe2959b22bc958d540e04b03dbe7a67c564e7e28b58d5 --link /usr/bin/composer /usr/bin/composer
+COPY --from=composer/composer:2.10.1@sha256:1cd7868121fb6b1a7e50cfae740ba9d06e972b8661f7ea6298de12bf51498587 --link /usr/bin/composer /usr/bin/composer
 
 FROM composer AS roundcube-builder
 
