@@ -1,4 +1,4 @@
-FROM rspamd/rspamd:4.1@sha256:129750bead8861f2839884b8224731ab23da625e7c10dbf1776a7061a7628ea6
+FROM rspamd/rspamd:4.1@sha256:7f69a2167c552cd5a21237b8395bb20a097d115feda62f2d1cda61258d9db497
 
 LABEL maintainer="https://github.com/jeboehm/docker-mailserver"
 LABEL vendor="https://github.com/jeboehm/docker-mailserver"
