@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><link rel="canonical" href="https://jeboehm.github.io/docker-mailserver/how-to/configure-roundcube-plugins/" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>Configure Roundcube plugins - docker-mailserver</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Configure Roundcube plugins";
+        var mkdocs_page_input_path = "how-to/configure-roundcube-plugins.md";
+        var mkdocs_page_url = "/docker-mailserver/how-to/configure-roundcube-plugins/";
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../.." class="icon icon-home"> docker-mailserver
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../..">Welcome</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Tutorial</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../tutorials/getting-started/">Getting Started</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">How-to guides</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../install-docker/">Install with Docker</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../install-kubernetes/">Install on Kubernetes</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../upgrade/">Upgrade</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../configure-dns/">Configure DNS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../configure-dkim/">Configure DKIM</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../validate-dns/">Validate DNS (wizard)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../configure-relayhost/">Configure relay host</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../configure-reverse-proxy/">Configure reverse proxy</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../configure-tls/">Configure TLS certificates</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../configure-oauth2/">Configure OAuth2</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../configure-external-mysql/">Configure external MySQL</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Configure Roundcube plugins</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#steps">Steps</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#1-set-rc_plugins-in-the-web-build">1. Set RC_PLUGINS in the web build</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#2-rebuild-and-start-the-web-service">2. Rebuild and start the web service</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#plugin-sources">Plugin sources</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#notes">Notes</a>
+    </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../configure-php-sessions/">Configure PHP sessions</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../manage-domains/">Manage domains</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../manage-users/">Manage users</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../manage-aliases/">Manage aliases</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../manage-fetchmail/">Manage fetchmail</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ios-macos-profile/">iOS / macOS profile</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Reference</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../reference/environment-variables/">Environment variables</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../reference/ports/">Ports</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../reference/dns-records/">DNS records</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../reference/service-architecture/">Service architecture</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../reference/user-roles/">User roles</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../reference/mailserver-admin-config/">mailserver-admin config</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../reference/local-address-extension/">Local address extension</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../reference/upgrade-changelog/">Upgrade changelog</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Administration (web UI)</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../administration/login/">Login</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../administration/dashboard/">Dashboard</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Explanation</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../explanation/architecture/">Service architecture</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../explanation/dns-and-email/">DNS and email delivery</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../explanation/observability/">Observability</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Recipes</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Docker</a>
+    <ul>
+                <li class="toctree-l2"><a class="" href="https://github.com/jeboehm/docker-mailserver/tree/main/docs/example-configs/compose/traefik-reverse-proxy">Traefik Reverse Proxy</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Kubernetes</a>
+    <ul>
+                <li class="toctree-l2"><a class="" href="https://github.com/jeboehm/docker-mailserver/tree/main/docs/example-configs/kustomize/external-db-and-https-ingress">External Database and HTTPS Ingress</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Development</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../development/development/">Development guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../development/mailserver-admin/">mailserver-admin development</a>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="" href="https://github.com/jeboehm/docker-mailserver/issues">Issues</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">docker-mailserver</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">How-to guides</li>
+      <li class="breadcrumb-item active">Configure Roundcube plugins</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/jeboehm/docker-mailserver/blob/main/docs/how-to/configure-roundcube-plugins.md">Edit on jeboehm/docker-mailserver</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="how-to-add-roundcube-plugins">How to Add Roundcube Plugins</h1>
+<p>The web image supports installing Roundcube plugins at build time via the <code>RC_PLUGINS</code> build argument.</p>
+<h2 id="steps">Steps</h2>
+<h3 id="1-set-rc_plugins-in-the-web-build">1. Set RC_PLUGINS in the web build</h3>
+<p>In <code>deploy/compose/web.yaml</code> (or your override), add or edit the build args:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">services</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">web</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">build</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">context</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">../../target/web</span>
+<span class="w">      </span><span class="nt">args</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">RC_PLUGINS</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;vendor/plugin-name</span><span class="nv"> </span><span class="s">another-vendor/another-plugin&quot;</span>
+</code></pre></div>
+<p>Use a space-separated list of plugins in <code>vendor/plugin-name</code> form. Example:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">RC_PLUGINS</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;johndoh/contextmenu</span><span class="nv"> </span><span class="s">jfcherng-roundcube/show-folder-size</span><span class="nv"> </span><span class="s">kolab/calendar&quot;</span>
+</code></pre></div>
+<h3 id="2-rebuild-and-start-the-web-service">2. Rebuild and start the web service</h3>
+<div class="highlight"><pre><span></span><code>docker-compose<span class="w"> </span>build<span class="w"> </span>web
+docker-compose<span class="w"> </span>up<span class="w"> </span>-d<span class="w"> </span>web
+</code></pre></div>
+<p>(or <code>bin/production.sh</code> if you use that). Changes to <code>RC_PLUGINS</code> require a rebuild.</p>
+<h2 id="plugin-sources">Plugin sources</h2>
+<p>Plugins are typically installed from Packagist (<a href="https://packagist.org/?type=roundcube-plugin">roundcube-plugin</a>), GitHub, or other Composer-compatible sources. Ensure plugins match the Roundcube version in the image.</p>
+<h2 id="notes">Notes</h2>
+<ul>
+<li>Plugin names must be <code>vendor/plugin-name</code>.</li>
+<li>Multiple plugins are space-separated.</li>
+<li>Plugins are installed during the Docker build; changing <code>RC_PLUGINS</code> means rebuilding the image.</li>
+</ul>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../configure-external-mysql/" class="btn btn-neutral float-left" title="Configure external MySQL"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../configure-php-sessions/" class="btn btn-neutral float-right" title="Configure PHP sessions">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/jeboehm/docker-mailserver" class="fa fa-code-fork" style="color: #fcfcfc"> jeboehm/docker-mailserver</a>
+        </span>
+    
+    
+      <span><a href="../configure-external-mysql/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../configure-php-sessions/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../..";</script>
+    <script src="../../js/theme_extra.js"></script>
+    <script src="../../js/theme.js"></script>
+      <script src="../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

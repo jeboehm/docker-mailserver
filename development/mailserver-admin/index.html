@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><link rel="canonical" href="https://jeboehm.github.io/docker-mailserver/development/mailserver-admin/" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>mailserver-admin development - docker-mailserver</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "mailserver-admin development";
+        var mkdocs_page_input_path = "development/mailserver-admin.md";
+        var mkdocs_page_url = "/docker-mailserver/development/mailserver-admin/";
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../.." class="icon icon-home"> docker-mailserver
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../..">Welcome</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Tutorial</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../tutorials/getting-started/">Getting Started</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">How-to guides</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/install-docker/">Install with Docker</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/install-kubernetes/">Install on Kubernetes</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/upgrade/">Upgrade</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/configure-dns/">Configure DNS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/configure-dkim/">Configure DKIM</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/validate-dns/">Validate DNS (wizard)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/configure-relayhost/">Configure relay host</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/configure-reverse-proxy/">Configure reverse proxy</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/configure-tls/">Configure TLS certificates</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/configure-oauth2/">Configure OAuth2</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/configure-external-mysql/">Configure external MySQL</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/configure-roundcube-plugins/">Configure Roundcube plugins</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/configure-php-sessions/">Configure PHP sessions</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/manage-domains/">Manage domains</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/manage-users/">Manage users</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/manage-aliases/">Manage aliases</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/manage-fetchmail/">Manage fetchmail</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/ios-macos-profile/">iOS / macOS profile</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Reference</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../reference/environment-variables/">Environment variables</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../reference/ports/">Ports</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../reference/dns-records/">DNS records</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../reference/service-architecture/">Service architecture</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../reference/user-roles/">User roles</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../reference/mailserver-admin-config/">mailserver-admin config</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../reference/local-address-extension/">Local address extension</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../reference/upgrade-changelog/">Upgrade changelog</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Administration (web UI)</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../administration/login/">Login</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../administration/dashboard/">Dashboard</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Explanation</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../explanation/architecture/">Service architecture</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../explanation/dns-and-email/">DNS and email delivery</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../explanation/observability/">Observability</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Recipes</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Docker</a>
+    <ul>
+                <li class="toctree-l2"><a class="" href="https://github.com/jeboehm/docker-mailserver/tree/main/docs/example-configs/compose/traefik-reverse-proxy">Traefik Reverse Proxy</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Kubernetes</a>
+    <ul>
+                <li class="toctree-l2"><a class="" href="https://github.com/jeboehm/docker-mailserver/tree/main/docs/example-configs/kustomize/external-db-and-https-ingress">External Database and HTTPS Ingress</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Development</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../development/">Development guide</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">mailserver-admin development</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#technical-stack">Technical Stack</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#development-environment-setup">Development Environment Setup</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#prerequisites">Prerequisites</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#initial-setup">Initial Setup</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#starting-the-web-server">Starting the Web Server</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#development-commands">Development Commands</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#code-style-fixing">Code Style Fixing</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#static-analysis">Static Analysis</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#running-tests">Running Tests</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#code-refactoring">Code Refactoring</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#project-structure">Project Structure</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#development-workflow">Development Workflow</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#debugging">Debugging</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#database-migrations">Database Migrations</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#additional-resources">Additional Resources</a>
+    </li>
+    </ul>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="" href="https://github.com/jeboehm/docker-mailserver/issues">Issues</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">docker-mailserver</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Development</li>
+      <li class="breadcrumb-item active">mailserver-admin development</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/jeboehm/docker-mailserver/blob/main/docs/development/mailserver-admin.md">Edit on jeboehm/docker-mailserver</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="development-guide-for-mailserver-admin">Development Guide for mailserver-admin</h1>
+<p>This document describes the development setup and workflow for the <code>mailserver-admin</code> project.
+The project is located in a separate repository: <a href="https://github.com/jeboehm/mailserver-admin">mailserver-admin</a>.</p>
+<h2 id="technical-stack">Technical Stack</h2>
+<ul>
+<li>PHP</li>
+<li>Symfony</li>
+<li>EasyAdmin</li>
+<li>MySQL</li>
+<li>Redis</li>
+<li>PHPUnit</li>
+</ul>
+<h2 id="development-environment-setup">Development Environment Setup</h2>
+<p>The project uses <a href="https://devenv.sh/">devenv</a> to provide a reproducible development environment with all necessary services and dependencies.</p>
+<h3 id="prerequisites">Prerequisites</h3>
+<ul>
+<li><a href="https://nixos.org/download.html">Nix</a> installed on your system</li>
+<li><a href="https://devenv.sh/getting-started/">devenv</a> installed</li>
+</ul>
+<h3 id="initial-setup">Initial Setup</h3>
+<ol type="1">
+<li>Clone the repository:</li>
+</ol>
+<div class="highlight"><pre><span></span><code>git<span class="w"> </span>clone<span class="w"> </span>&lt;repository-url&gt;
+<span class="nb">cd</span><span class="w"> </span>mailserver-admin
+</code></pre></div>
+<ol start="2" type="1">
+<li>Start the development environment:</li>
+</ol>
+<div class="highlight"><pre><span></span><code>devenv<span class="w"> </span>up
+</code></pre></div>
+<p>This command will:</p>
+<ul>
+<li>Set up PHP 8.4 with required extensions (Redis, PDO MySQL, Xdebug)</li>
+<li>Start MySQL database server</li>
+<li>Start Redis server</li>
+<li>Start Caddy web server on port 8000</li>
+<li>Configure PHP-FPM pool for the web server</li>
+<li>Set up environment variables for database and Redis connections</li>
+</ul>
+<ol start="3" type="1">
+<li>Install dependencies:</li>
+</ol>
+<div class="highlight"><pre><span></span><code>composer<span class="w"> </span>install
+</code></pre></div>
+<h3 id="starting-the-web-server">Starting the Web Server</h3>
+<p><strong>Important</strong>: You must run <code>devenv up</code> to start the web server. This command starts all required services:</p>
+<ul>
+<li><strong>Caddy web server</strong> on <code>http://localhost:8000</code></li>
+<li><strong>MySQL database</strong> (accessible at <code>127.0.0.1</code>)</li>
+<li><strong>Redis server</strong> (accessible at <code>localhost:6379</code>)</li>
+</ul>
+<p>The web server is configured to serve files from the <code>public/</code> directory and uses PHP-FPM for PHP execution.</p>
+<h2 id="development-commands">Development Commands</h2>
+<p>The project includes several composer scripts for development tasks:</p>
+<h3 id="code-style-fixing">Code Style Fixing</h3>
+<p>Fix code style issues using PHP CS Fixer:</p>
+<div class="highlight"><pre><span></span><code>composer<span class="w"> </span>run<span class="w"> </span>csfix
+</code></pre></div>
+<p>This command runs PHP CS Fixer with the configuration defined in <code>.php-cs-fixer.dist.php</code>. It applies PSR-2, Symfony, and PHP 8.0 migration rules to the following directories:</p>
+<ul>
+<li><code>bin/</code></li>
+<li><code>public/</code></li>
+<li><code>tests/</code></li>
+<li><code>src/</code></li>
+<li><code>migrations/</code></li>
+</ul>
+<h3 id="static-analysis">Static Analysis</h3>
+<p>Run PHPStan to perform static analysis:</p>
+<div class="highlight"><pre><span></span><code>composer<span class="w"> </span>run<span class="w"> </span>phpstan
+</code></pre></div>
+<p>PHPStan is configured to analyze code at level 6 (as defined in <code>phpstan.dist.neon</code>) and checks the following directories:</p>
+<ul>
+<li><code>bin/</code></li>
+<li><code>config/</code></li>
+<li><code>public/</code></li>
+<li><code>src/</code></li>
+<li><code>tests/</code></li>
+</ul>
+<h3 id="running-tests">Running Tests</h3>
+<p>Execute the test suite:</p>
+<div class="highlight"><pre><span></span><code>composer<span class="w"> </span>run<span class="w"> </span><span class="nb">test</span>
+</code></pre></div>
+<p>This runs PHPUnit with the configuration from <code>phpunit.dist.xml</code>. The test suite includes the following:</p>
+<ul>
+<li>Unit tests in <code>tests/Unit/</code></li>
+<li>Integration tests in <code>tests/Integration/</code></li>
+</ul>
+<p>Tests run in the <code>test</code> environment and use the database configured in <code>.env.test</code>.</p>
+<h3 id="code-refactoring">Code Refactoring</h3>
+<p>Run Rector to automatically refactor code:</p>
+<div class="highlight"><pre><span></span><code>composer<span class="w"> </span>run<span class="w"> </span>rector
+</code></pre></div>
+<p>Rector uses the configuration from <code>rector.php</code> to apply automated code improvements and migrations.</p>
+<h2 id="project-structure">Project Structure</h2>
+<ul>
+<li><code>src/</code>: Application source code</li>
+<li><code>tests/</code>: Test files (Unit and Integration)</li>
+<li><code>config/</code>: Symfony configuration files</li>
+<li><code>public/</code>: Web server document root</li>
+<li><code>migrations/</code>: Database migration files</li>
+<li><code>templates/</code>: Twig templates</li>
+<li><code>bin/</code>: Executable scripts (console, phpunit)</li>
+</ul>
+<h2 id="development-workflow">Development Workflow</h2>
+<ol type="1">
+<li><strong>Start the environment</strong>: <code>devenv up</code></li>
+<li><strong>Make your changes</strong> in the appropriate directories</li>
+<li><strong>Fix code style</strong>: <code>composer run csfix</code></li>
+<li><strong>Check static analysis</strong>: <code>composer run phpstan</code></li>
+<li><strong>Run tests</strong>: <code>composer run test</code></li>
+<li><strong>Commit your changes</strong> following the project's commit message conventions</li>
+</ol>
+<h2 id="debugging">Debugging</h2>
+<p>Xdebug is configured in the devenv setup with the following settings:</p>
+<ul>
+<li>Mode: <code>debug</code></li>
+<li>Client port: <code>9003</code></li>
+<li>Start with request: enabled</li>
+</ul>
+<p>Configure your IDE to connect to Xdebug on port 9003 for debugging.</p>
+<h2 id="database-migrations">Database Migrations</h2>
+<p>When making database schema changes:</p>
+<ol type="1">
+<li>Create a migration:</li>
+</ol>
+<div class="highlight"><pre><span></span><code>php<span class="w"> </span>bin/console<span class="w"> </span>doctrine:migrations:generate
+</code></pre></div>
+<ol start="2" type="1">
+<li>
+<p>Edit the generated migration file in <code>migrations/</code></p>
+</li>
+<li>
+<p>Run migrations:</p>
+</li>
+</ol>
+<div class="highlight"><pre><span></span><code>php<span class="w"> </span>bin/console<span class="w"> </span>doctrine:migrations:migrate
+</code></pre></div>
+<h2 id="additional-resources">Additional Resources</h2>
+<ul>
+<li><a href="https://symfony.com/doc/current/index.html">Symfony Documentation</a></li>
+<li><a href="https://symfony.com/bundles/EasyAdminBundle/current/index.html">EasyAdmin Bundle Documentation</a></li>
+<li><a href="https://devenv.sh/">devenv Documentation</a></li>
+<li><a href="https://cs.symfony.com/">PHP CS Fixer Documentation</a></li>
+<li><a href="https://phpstan.org/">PHPStan Documentation</a></li>
+</ul>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../development/" class="btn btn-neutral float-left" title="Development guide"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/jeboehm/docker-mailserver" class="fa fa-code-fork" style="color: #fcfcfc"> jeboehm/docker-mailserver</a>
+        </span>
+    
+    
+      <span><a href="../development/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+  </span>
+</div>
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../..";</script>
+    <script src="../../js/theme_extra.js"></script>
+    <script src="../../js/theme.js"></script>
+      <script src="../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

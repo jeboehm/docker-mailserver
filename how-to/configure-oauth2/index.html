@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><link rel="canonical" href="https://jeboehm.github.io/docker-mailserver/how-to/configure-oauth2/" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>Configure OAuth2 - docker-mailserver</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Configure OAuth2";
+        var mkdocs_page_input_path = "how-to/configure-oauth2.md";
+        var mkdocs_page_url = "/docker-mailserver/how-to/configure-oauth2/";
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../.." class="icon icon-home"> docker-mailserver
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../..">Welcome</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Tutorial</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../tutorials/getting-started/">Getting Started</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">How-to guides</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../install-docker/">Install with Docker</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../install-kubernetes/">Install on Kubernetes</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../upgrade/">Upgrade</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../configure-dns/">Configure DNS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../configure-dkim/">Configure DKIM</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../validate-dns/">Validate DNS (wizard)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../configure-relayhost/">Configure relay host</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../configure-reverse-proxy/">Configure reverse proxy</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../configure-tls/">Configure TLS certificates</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Configure OAuth2</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#steps">Steps</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#1-create-an-oauth2-client-in-your-identity-provider">1. Create an OAuth2 client in your identity provider</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#2-set-environment-variables">2. Set environment variables</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#3-configure-the-user-identifier">3. Configure the user identifier</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#4-optional-auto-create-users">4. Optional: auto-create users</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#5-restart-the-web-service">5. Restart the web service</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#flow">Flow</a>
+    </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../configure-external-mysql/">Configure external MySQL</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../configure-roundcube-plugins/">Configure Roundcube plugins</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../configure-php-sessions/">Configure PHP sessions</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../manage-domains/">Manage domains</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../manage-users/">Manage users</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../manage-aliases/">Manage aliases</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../manage-fetchmail/">Manage fetchmail</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ios-macos-profile/">iOS / macOS profile</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Reference</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../reference/environment-variables/">Environment variables</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../reference/ports/">Ports</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../reference/dns-records/">DNS records</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../reference/service-architecture/">Service architecture</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../reference/user-roles/">User roles</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../reference/mailserver-admin-config/">mailserver-admin config</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../reference/local-address-extension/">Local address extension</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../reference/upgrade-changelog/">Upgrade changelog</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Administration (web UI)</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../administration/login/">Login</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../administration/dashboard/">Dashboard</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Explanation</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../explanation/architecture/">Service architecture</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../explanation/dns-and-email/">DNS and email delivery</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../explanation/observability/">Observability</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Recipes</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Docker</a>
+    <ul>
+                <li class="toctree-l2"><a class="" href="https://github.com/jeboehm/docker-mailserver/tree/main/docs/example-configs/compose/traefik-reverse-proxy">Traefik Reverse Proxy</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Kubernetes</a>
+    <ul>
+                <li class="toctree-l2"><a class="" href="https://github.com/jeboehm/docker-mailserver/tree/main/docs/example-configs/kustomize/external-db-and-https-ingress">External Database and HTTPS Ingress</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Development</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../development/development/">Development guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../development/mailserver-admin/">mailserver-admin development</a>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="" href="https://github.com/jeboehm/docker-mailserver/issues">Issues</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">docker-mailserver</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">How-to guides</li>
+      <li class="breadcrumb-item active">Configure OAuth2</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/jeboehm/docker-mailserver/blob/main/docs/how-to/configure-oauth2.md">Edit on jeboehm/docker-mailserver</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="how-to-configure-oauth2-login">How to Configure OAuth2 Login</h1>
+<p>mailserver-admin can use OAuth2/OIDC for login. When enabled, users sign in via an external identity provider instead of (or in addition to) local credentials. OAuth2 is typically used to grant admin rights based on group membership.</p>
+<h2 id="steps">Steps</h2>
+<h3 id="1-create-an-oauth2-client-in-your-identity-provider">1. Create an OAuth2 client in your identity provider</h3>
+<p>Create a client with:</p>
+<ul>
+<li><strong>Redirect URI:</strong> <code>https://your-domain/login/check-oauth</code> (use your actual domain)</li>
+<li><strong>Client ID</strong> and <strong>Client secret</strong> for use in <code>.env</code></li>
+</ul>
+<h3 id="2-set-environment-variables">2. Set environment variables</h3>
+<p>In <code>.env</code> (or the environment):</p>
+<div class="highlight"><pre><span></span><code><span class="nv">OAUTH_ENABLED</span><span class="o">=</span><span class="nb">true</span>
+<span class="nv">OAUTH_CLIENT_ID</span><span class="o">=</span>your-client-id
+<span class="nv">OAUTH_CLIENT_SECRET</span><span class="o">=</span>your-client-secret
+<span class="nv">OAUTH_AUTHORIZATION_URL</span><span class="o">=</span>https://id.example.com/authorize
+<span class="nv">OAUTH_ACCESS_TOKEN_URL</span><span class="o">=</span>https://id.example.com/api/oidc/token
+<span class="nv">OAUTH_INFOS_URL</span><span class="o">=</span>https://id.example.com/api/oidc/userinfo
+<span class="nv">OAUTH_BUTTON_TEXT</span><span class="o">=</span><span class="s2">&quot;Login with OIDC&quot;</span>
+<span class="nv">OAUTH_ADMIN_GROUP</span><span class="o">=</span>admin
+<span class="nv">OAUTH_PATHS_IDENTIFIER</span><span class="o">=</span>sub
+<span class="nv">OAUTH_CREATE_USER</span><span class="o">=</span><span class="nb">false</span>
+</code></pre></div>
+<p>Adjust URLs, scopes, and button text to match your provider.</p>
+<h3 id="3-configure-the-user-identifier">3. Configure the user identifier</h3>
+<p><code>OAUTH_PATHS_IDENTIFIER</code> must point to a field in the provider’s userinfo that contains an email address that exists as a user in the mailserver (same domain). The field should be write-protected in the provider so users cannot change it. Do not use a normal “email” claim that users can edit.</p>
+<h3 id="4-optional-auto-create-users">4. Optional: auto-create users</h3>
+<p>Set <code>OAUTH_CREATE_USER=true</code> to create a mailserver user when someone logs in via OAuth2 and no matching user exists. Use only if your provider guarantees a stable, domain-valid email identifier.</p>
+<h3 id="5-restart-the-web-service">5. Restart the web service</h3>
+<p>Restart the web container so the new variables are loaded. A login button for OAuth2 will appear on the login page.</p>
+<h2 id="flow">Flow</h2>
+<ol type="1">
+<li>User clicks the OAuth2 login button and is redirected to the provider.</li>
+<li>After authentication, the provider redirects back to <code>/login/check-oauth</code>.</li>
+<li>The application reads userinfo and takes the identifier from <code>OAUTH_PATHS_IDENTIFIER</code>.</li>
+<li>If the identifier matches an existing user, that user is logged in. If <code>OAUTH_ADMIN_GROUP</code> is set and the user is in that group, they get admin rights.</li>
+<li>If there is no match and <code>OAUTH_CREATE_USER=true</code>, a new user is created; otherwise login is denied.</li>
+</ol>
+<p>For all OAuth2 variables, see <a href="../../reference/mailserver-admin-config/">mailserver-admin configuration reference</a>.</p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../configure-tls/" class="btn btn-neutral float-left" title="Configure TLS certificates"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../configure-external-mysql/" class="btn btn-neutral float-right" title="Configure external MySQL">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/jeboehm/docker-mailserver" class="fa fa-code-fork" style="color: #fcfcfc"> jeboehm/docker-mailserver</a>
+        </span>
+    
+    
+      <span><a href="../configure-tls/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../configure-external-mysql/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../..";</script>
+    <script src="../../js/theme_extra.js"></script>
+    <script src="../../js/theme.js"></script>
+      <script src="../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

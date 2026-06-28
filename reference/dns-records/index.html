@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><link rel="canonical" href="https://jeboehm.github.io/docker-mailserver/reference/dns-records/" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>DNS records - docker-mailserver</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "DNS records";
+        var mkdocs_page_input_path = "reference/dns-records.md";
+        var mkdocs_page_url = "/docker-mailserver/reference/dns-records/";
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../.." class="icon icon-home"> docker-mailserver
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../..">Welcome</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Tutorial</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../tutorials/getting-started/">Getting Started</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">How-to guides</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/install-docker/">Install with Docker</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/install-kubernetes/">Install on Kubernetes</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/upgrade/">Upgrade</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/configure-dns/">Configure DNS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/configure-dkim/">Configure DKIM</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/validate-dns/">Validate DNS (wizard)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/configure-relayhost/">Configure relay host</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/configure-reverse-proxy/">Configure reverse proxy</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/configure-tls/">Configure TLS certificates</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/configure-oauth2/">Configure OAuth2</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/configure-external-mysql/">Configure external MySQL</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/configure-roundcube-plugins/">Configure Roundcube plugins</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/configure-php-sessions/">Configure PHP sessions</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/manage-domains/">Manage domains</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/manage-users/">Manage users</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/manage-aliases/">Manage aliases</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/manage-fetchmail/">Manage fetchmail</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/ios-macos-profile/">iOS / macOS profile</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Reference</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../environment-variables/">Environment variables</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ports/">Ports</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">DNS records</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#summary">Summary</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#mx-record">MX Record</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#a-and-aaaa-records">A and AAAA Records</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#spf-record-txt">SPF Record (TXT)</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#dkim-record-txt">DKIM Record (TXT)</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#dmarc-record-txt">DMARC Record (TXT)</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#verification">Verification</a>
+    </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../service-architecture/">Service architecture</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../user-roles/">User roles</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../mailserver-admin-config/">mailserver-admin config</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../local-address-extension/">Local address extension</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../upgrade-changelog/">Upgrade changelog</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Administration (web UI)</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../administration/login/">Login</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../administration/dashboard/">Dashboard</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Explanation</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../explanation/architecture/">Service architecture</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../explanation/dns-and-email/">DNS and email delivery</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../explanation/observability/">Observability</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Recipes</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Docker</a>
+    <ul>
+                <li class="toctree-l2"><a class="" href="https://github.com/jeboehm/docker-mailserver/tree/main/docs/example-configs/compose/traefik-reverse-proxy">Traefik Reverse Proxy</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Kubernetes</a>
+    <ul>
+                <li class="toctree-l2"><a class="" href="https://github.com/jeboehm/docker-mailserver/tree/main/docs/example-configs/kustomize/external-db-and-https-ingress">External Database and HTTPS Ingress</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Development</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../development/development/">Development guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../development/mailserver-admin/">mailserver-admin development</a>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="" href="https://github.com/jeboehm/docker-mailserver/issues">Issues</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">docker-mailserver</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Reference</li>
+      <li class="breadcrumb-item active">DNS records</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/jeboehm/docker-mailserver/blob/main/docs/reference/dns-records.md">Edit on jeboehm/docker-mailserver</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="dns-records-reference">DNS Records Reference</h1>
+<p>DNS record types and formats required for the mailserver. Configure these in your domain's DNS zone.</p>
+<h2 id="summary">Summary</h2>
+<table>
+<thead>
+<tr>
+<th>Record Type</th>
+<th>Name</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>MX</td>
+<td><code>@</code></td>
+<td>Direct incoming mail</td>
+</tr>
+<tr>
+<td>A</td>
+<td><code>mail</code></td>
+<td>Resolve mailserver hostname (IPv4)</td>
+</tr>
+<tr>
+<td>AAAA</td>
+<td><code>mail</code></td>
+<td>Resolve mailserver hostname (IPv6)</td>
+</tr>
+<tr>
+<td>TXT (SPF)</td>
+<td><code>@</code></td>
+<td>Authorize sending servers</td>
+</tr>
+<tr>
+<td>TXT (DKIM)</td>
+<td><code>default._domainkey</code></td>
+<td>Email signature verification</td>
+</tr>
+<tr>
+<td>TXT (DMARC)</td>
+<td><code>_dmarc</code></td>
+<td>Authentication policy</td>
+</tr>
+</tbody>
+</table>
+<h2 id="mx-record">MX Record</h2>
+<p>Directs incoming mail to the mailserver. Use the value of <code>MAILNAME</code>.</p>
+<div class="highlight"><pre><span></span><code>Type: MX
+Name: @ (or domain name)
+Priority: 10
+Value: mail.example.com
+</code></pre></div>
+<p>Example for <code>example.com</code>:</p>
+<div class="highlight"><pre><span></span><code>example.com.    IN    MX    10    mail.example.com.
+</code></pre></div>
+<p>Lower priority values have higher precedence when multiple MX records exist.</p>
+<h2 id="a-and-aaaa-records">A and AAAA Records</h2>
+<p>Resolve the mailserver hostname to IP addresses. Required for the MX record to work.</p>
+<div class="highlight"><pre><span></span><code>Type: A
+Name: mail (or hostname without domain)
+Value: 192.0.2.1
+
+Type: AAAA
+Name: mail
+Value: 2001:db8::1
+</code></pre></div>
+<p>Example for <code>mail.example.com</code>:</p>
+<div class="highlight"><pre><span></span><code>mail.example.com.    IN    A        192.0.2.1
+mail.example.com.    IN    AAAA    2001:db8::1
+</code></pre></div>
+<h2 id="spf-record-txt">SPF Record (TXT)</h2>
+<p>Authorizes which servers may send mail for the domain. Published as a TXT record.</p>
+<div class="highlight"><pre><span></span><code>Type: TXT
+Name: @
+Value: v=spf1 mx a ip4:192.0.2.1 ip6:2001:db8::1 ~all
+</code></pre></div>
+<p>Common mechanisms:</p>
+<ul>
+<li><code>mx</code>: Authorize MX hosts</li>
+<li><code>a</code>: Authorize A record(s) for the domain</li>
+<li><code>ip4:</code>, <code>ip6:</code>: Authorize specific IPs</li>
+<li><code>include:domain</code>: Include another domain's SPF</li>
+<li><code>~all</code>: Soft fail for others (testing)</li>
+<li><code>-all</code>: Hard fail for others (production)</li>
+</ul>
+<p>Example:</p>
+<div class="highlight"><pre><span></span><code>example.com.    IN    TXT    &quot;v=spf1 mx a ip4:192.0.2.1 ~all&quot;
+</code></pre></div>
+<h2 id="dkim-record-txt">DKIM Record (TXT)</h2>
+<p>Publishes the public key for DKIM verification. The management interface generates the exact record; the name uses a selector and <code>_domainkey</code>.</p>
+<div class="highlight"><pre><span></span><code>Type: TXT
+Name: default._domainkey (or selector._domainkey)
+Value: v=DKIM1; k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC...
+</code></pre></div>
+<p>Example for <code>example.com</code> with selector <code>default</code>:</p>
+<div class="highlight"><pre><span></span><code>default._domainkey.example.com.    IN    TXT    &quot;v=DKIM1; k=rsa; p=...&quot;
+</code></pre></div>
+<h2 id="dmarc-record-txt">DMARC Record (TXT)</h2>
+<p>Defines policy for messages that fail SPF/DKIM and optional reporting.</p>
+<div class="highlight"><pre><span></span><code>Type: TXT
+Name: _dmarc
+Value: v=DMARC1; p=none; rua=mailto:dmarc@example.com
+</code></pre></div>
+<p>Policy (<code>p=</code>):</p>
+<ul>
+<li><code>none</code>: Monitor only</li>
+<li><code>quarantine</code>: Quarantine failures</li>
+<li><code>reject</code>: Reject failures</li>
+</ul>
+<p>Common tags:</p>
+<ul>
+<li><code>v=DMARC1</code>: Version (required)</li>
+<li><code>p=</code>: Policy (none, quarantine, reject)</li>
+<li><code>rua=mailto:...</code>: Aggregate report address</li>
+<li><code>ruf=mailto:...</code>: Forensic report address</li>
+<li><code>aspf=r</code>, <code>adkim=r</code>: Alignment (relaxed or strict)</li>
+</ul>
+<p>Example monitoring policy:</p>
+<div class="highlight"><pre><span></span><code>_dmarc.example.com.    IN    TXT    &quot;v=DMARC1; p=none; rua=mailto:dmarc@example.com&quot;
+</code></pre></div>
+<p>Example reject policy:</p>
+<div class="highlight"><pre><span></span><code>_dmarc.example.com.    IN    TXT    &quot;v=DMARC1; p=reject; rua=mailto:dmarc@example.com; aspf=r; adkim=r&quot;
+</code></pre></div>
+<h2 id="verification">Verification</h2>
+<p>Use <code>dig</code> or <code>nslookup</code> to verify records:</p>
+<div class="highlight"><pre><span></span><code>dig<span class="w"> </span>MX<span class="w"> </span>example.com
+dig<span class="w"> </span>A<span class="w"> </span>mail.example.com
+dig<span class="w"> </span>TXT<span class="w"> </span>example.com
+dig<span class="w"> </span>TXT<span class="w"> </span>default._domainkey.example.com
+dig<span class="w"> </span>TXT<span class="w"> </span>_dmarc.example.com
+</code></pre></div>
+<p>For context on why these records matter, see <a href="../../explanation/dns-and-email/">DNS and email delivery</a>.</p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../ports/" class="btn btn-neutral float-left" title="Ports"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../service-architecture/" class="btn btn-neutral float-right" title="Service architecture">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/jeboehm/docker-mailserver" class="fa fa-code-fork" style="color: #fcfcfc"> jeboehm/docker-mailserver</a>
+        </span>
+    
+    
+      <span><a href="../ports/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../service-architecture/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../..";</script>
+    <script src="../../js/theme_extra.js"></script>
+    <script src="../../js/theme.js"></script>
+      <script src="../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>
