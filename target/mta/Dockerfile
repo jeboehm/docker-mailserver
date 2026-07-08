@@ -58,15 +58,19 @@ RUN --mount=type=cache,target=/var/cache/apk \
     postconf tls_high_cipherlist="ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256" && \
     postconf tls_preempt_cipherlist=yes && \
     postconf smtp_tls_protocols="!SSLv2, !SSLv3, !TLSv1, !TLSv1.1" && \
+    postconf smtp_tls_mandatory_protocols="!SSLv2, !SSLv3, !TLSv1, !TLSv1.1" && \
     postconf smtp_tls_ciphers=high && \
     postconf smtp_tls_mandatory_ciphers=high && \
     postconf smtpd_tls_protocols="!SSLv2, !SSLv3, !TLSv1, !TLSv1.1" && \
+    postconf smtpd_tls_mandatory_protocols="!SSLv2, !SSLv3, !TLSv1, !TLSv1.1" && \
     postconf smtpd_tls_ciphers=high && \
     postconf smtpd_tls_mandatory_ciphers=high && \
     postconf smtpd_client_connection_rate_limit=20 && \
     postconf smtpd_error_sleep_time=10s && \
     postconf smtpd_soft_error_limit=3 && \
     postconf smtpd_hard_error_limit=5 && \
+    postconf disable_vrfy_command=yes && \
+    postconf smtpd_helo_required=yes && \
     postconf local_recipient_maps = && \
     postconf local_transport = "error:local mail delivery is disabled" && \
     newaliases

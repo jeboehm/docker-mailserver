@@ -40,3 +40,13 @@
 	run bash -c 'echo -e "QUIT\r\n" | openssl s_client -quiet -brief -connect ${MTA_SMTP_SUBMISSION_ADDRESS} -starttls smtp'
 	[ "$status" -eq 0 ]
 }
+
+@test "submission rejects TLS 1.1" {
+	run bash -c 'echo -e "QUIT\r\n" | openssl s_client -quiet -brief -connect ${MTA_SMTP_SUBMISSION_ADDRESS} -starttls smtp -tls1_1'
+	[ "$status" -ne 0 ]
+}
+
+@test "submission accepts TLS 1.2" {
+	run bash -c 'echo -e "QUIT\r\n" | openssl s_client -quiet -brief -connect ${MTA_SMTP_SUBMISSION_ADDRESS} -starttls smtp -tls1_2'
+	[ "$status" -eq 0 ]
+}
