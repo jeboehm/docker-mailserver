@@ -139,6 +139,19 @@ setup() {
 	[ "$status" -eq 0 ]
 }
 
+@test "mail via submission service has client session hidden in Received header" {
+	# Locate the exact message delivered by the authenticated submission test above.
+	run grep -rl "send mail to mta with smtp authentication (submission service)" /srv/vmail/example.com/admin/Maildir/
+	[ "$status" -eq 0 ]
+	mail_file="${lines[0]}"
+
+	# With "smtpd_hide_client_session=yes" (master.cf, submission service) the
+	# submission smtpd must NOT leak the client's SASL login, TLS session or the
+	# authenticated ESMTP protocol into the Received: header it generates.
+	run grep -E "Authenticated sender:|with ESMTPSA|\(using TLS" "$mail_file"
+	[ "$status" -ne 0 ]
+}
+
 @test "mail to mta with smtp authentication, with address extension (submission service) is stored" {
 	run grep -r "send mail to mta with smtp authentication, with address extension (submission service)" /srv/vmail/example.com/admin/Maildir/
 	[ "$status" -eq 0 ]
