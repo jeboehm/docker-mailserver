@@ -36,3 +36,4 @@ submission inet n       -       n       -       -       smtpd
  -o smtpd_relay_restrictions=
  -o smtpd_recipient_restrictions=permit_sasl_authenticated,reject
  -o milter_macro_daemon_name=ORIGINATING
+ -o smtpd_hide_client_session=yes
