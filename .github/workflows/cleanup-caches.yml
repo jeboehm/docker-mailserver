@@ -6,6 +6,7 @@ on:
 jobs:
   cleanup:
     runs-on: ubuntu-latest
+    continue-on-error: true
     steps:
       - name: Delete all caches for the PR ref
         env:
