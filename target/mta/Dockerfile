@@ -71,6 +71,10 @@ RUN --mount=type=cache,target=/var/cache/apk \
     postconf smtpd_hard_error_limit=5 && \
     postconf disable_vrfy_command=yes && \
     postconf smtpd_helo_required=yes && \
+    postconf smtpd_forbid_bare_newline=yes && \
+    postconf 'smtpd_forbid_bare_newline_exclusions=$mynetworks' && \
+    postconf smtpd_helo_restrictions="permit_mynetworks, permit_sasl_authenticated, reject_invalid_helo_hostname" && \
+    postconf smtpd_data_restrictions="permit_mynetworks, permit_sasl_authenticated, reject_unauth_pipelining" && \
     postconf local_recipient_maps = && \
     postconf local_transport = "error:local mail delivery is disabled" && \
     newaliases
