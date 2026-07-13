@@ -98,14 +98,14 @@ jobs:
           outputs: ${{ github.event_name == 'pull_request' && format('type=docker,dest={0}/{1}.tar', runner.temp, matrix.image) || '' }}
       - name: Generate artifact attestation (ghcr.io)
         if: ${{ github.event_name != 'pull_request' && matrix.image != 'mailserver-test' }}
-        uses: actions/attest-build-provenance@977bb373ede98d70efdf65b84cb5f73e068dcc2a # v3
+        uses: actions/attest-build-provenance@0f67c3f4856b2e3261c31976d6725780e5e4c373 # v4
         with:
           subject-name: ghcr.io/jeboehm/${{ matrix.image }}
           subject-digest: ${{ steps.build-and-push.outputs.digest }}
           push-to-registry: true
       - name: Generate artifact attestation (docker.io)
         if: ${{ github.event_name != 'pull_request' && matrix.image != 'mailserver-test' }}
-        uses: actions/attest-build-provenance@977bb373ede98d70efdf65b84cb5f73e068dcc2a # v3
+        uses: actions/attest-build-provenance@0f67c3f4856b2e3261c31976d6725780e5e4c373 # v4
         with:
           subject-name: index.docker.io/jeboehm/${{ matrix.image }}
           subject-digest: ${{ steps.build-and-push.outputs.digest }}
