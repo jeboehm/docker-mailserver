@@ -1,4 +1,4 @@
-FROM alpinelinux/unbound:latest@sha256:7b54409d68f7550ee31b4417d76807ff6cdc274ae3acfa32d178e05c5d1cd0c6
+FROM alpinelinux/unbound:latest@sha256:aba3b1d6685608d1835bd0fbac06a9aaad2885eaf1aa8878f07fb493fad087a7
 
 LABEL maintainer="https://github.com/jeboehm/docker-mailserver"
 LABEL vendor="https://github.com/jeboehm/docker-mailserver"
