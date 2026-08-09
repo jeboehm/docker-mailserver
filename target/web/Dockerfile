@@ -45,7 +45,7 @@ COPY --from=composer/composer:2.10.2@sha256:16988c546890b7078a7a1415f535caab8f25
 FROM composer AS roundcube-builder
 
 ARG RC_PLUGINS=""
-ARG RC_VER=1.7.2 # renovate: depName=roundcube/roundcubemail
+ARG RC_VER=1.7.3 # renovate: depName=roundcube/roundcubemail
 WORKDIR /opt/roundcube
 RUN --mount=type=cache,target=/root/.composer \
     curl -sSLf \
