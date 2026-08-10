@@ -5,11 +5,11 @@ LABEL vendor="https://github.com/jeboehm/docker-mailserver"
 
 ENV MAILNAME=mail.example.com \
     MYNETWORKS=127.0.0.0/8 \
-    MYSQL_HOST=db \
-    MYSQL_PORT=3306 \
-    MYSQL_USER=root \
-    MYSQL_DATABASE=mailserver \
-    MYSQL_TLS_VERIFY_CERT=no \
+    DB_HOST=db \
+    DB_PORT=3306 \
+    DB_USER=root \
+    DB_NAME=mailserver \
+    DB_TLS_VERIFY_CERT=no \
     MDA_LMTP_ADDRESS=mda:2003 \
     MDA_AUTH_ADDRESS=mda:2004 \
     FILTER_MILTER_ADDRESS=filter:11332 \

@@ -10,14 +10,15 @@ LABEL maintainer="https://github.com/jeboehm/docker-mailserver"
 LABEL vendor="https://github.com/jeboehm/docker-mailserver"
 LABEL de.ressourcenkonflikt.docker-mailserver.autoheal="true"
 
-ENV MYSQL_HOST=db \
-    MYSQL_PORT=3306 \
-    MYSQL_DATABASE=mailserver \
-    MYSQL_USER=mailserver \
+ENV DB_HOST=db \
+    DB_PORT=3306 \
+    DB_NAME=mailserver \
+    DB_USER=mailserver \
+    DB_SCHEME=mysql \
     REDIS_HOST=redis \
     REDIS_PORT=6379 \
     APP_SHARE_DIR="var/cache" \
-    DATABASE_URL="mysql://%env(MYSQL_USER)%:%env(MYSQL_PASSWORD)%@%env(MYSQL_HOST)%:%env(MYSQL_PORT)%/%env(MYSQL_DATABASE)%?serverVersion=8.4" \
+    DATABASE_URL="%env(DB_SCHEME)%://%env(DB_USER)%:%env(DB_PASSWORD)%@%env(DB_HOST)%:%env(DB_PORT)%/%env(DB_NAME)%?serverVersion=8.4" \
     DOVEADM_HTTP_URL="https://%env(MDA_DOVEADM_ADDRESS)%" \
     FILTER_WEB_ADDRESS=filter:11334 \
     MAILNAME=mail.example.com \

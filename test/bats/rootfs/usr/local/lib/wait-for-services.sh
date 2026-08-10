@@ -37,12 +37,12 @@ wait_for_service() {
 	)
 }
 
-# Wait for MySQL
-if [ -z "$MYSQL_HOST" ] || [ -z "$MYSQL_PORT" ]; then
-	echo "Error: MYSQL_HOST or MYSQL_PORT not set"
+# Wait for the database
+if [ -z "$DB_HOST" ] || [ -z "$DB_PORT" ]; then
+	echo "Error: DB_HOST or DB_PORT not set"
 	exit 1
 fi
-wait_for_service "$MYSQL_HOST" "$MYSQL_PORT" "MySQL"
+wait_for_service "$DB_HOST" "$DB_PORT" "Database"
 
 # Wait for Filter Web
 if [ -z "$FILTER_WEB_ADDRESS" ]; then

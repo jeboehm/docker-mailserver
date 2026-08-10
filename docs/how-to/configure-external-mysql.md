@@ -19,8 +19,8 @@ Create a user with access to that database and set a password.
 Import the mailserver and webmail schema from the project:
 
 ```bash
-mysql -h your-mysql-host -u root -p mailserver < target/db/rootfs/docker-entrypoint-initdb.d/001_mailserver.sql
-mysql -h your-mysql-host -u root -p mailserver < target/db/rootfs/docker-entrypoint-initdb.d/002_webmail.sql
+mysql -h your-mysql-host -u root -p mailserver < target/db/mysql/initdb.d/001_mailserver.sql
+mysql -h your-mysql-host -u root -p mailserver < target/db/mysql/initdb.d/002_webmail.sql
 ```
 
 Adjust host, user, and paths as needed.
@@ -30,10 +30,10 @@ Adjust host, user, and paths as needed.
 In `.env`:
 
 ```bash
-MYSQL_HOST=your-mysql-host.example.com
-MYSQL_DATABASE=mailserver
-MYSQL_USER=mailserver_user
-MYSQL_PASSWORD=your_secure_password
+DB_HOST=your-mysql-host.example.com
+DB_NAME=mailserver
+DB_USER=mailserver_user
+DB_PASSWORD=your_secure_password
 ```
 
 ### 4. Remove or exclude the database service (Docker Compose)

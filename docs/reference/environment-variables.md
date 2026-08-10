@@ -6,16 +6,42 @@ Overview of environment variables used to configure docker-mailserver. Set these
 
 ### Database
 
-When using the MySQL service provided by docker-mailserver compose, you do not need to set host, port, or database. You must set `MYSQL_PASSWORD`.
+When using the database service provided by docker-mailserver compose, you do not need to set host, port, or database name. You must set `DB_PASSWORD`.
 
-| Variable                | Default                              | Description                        |
-| ----------------------- | ------------------------------------ | ---------------------------------- |
-| `MYSQL_HOST`            | `db`                                 | MySQL database hostname            |
-| `MYSQL_PORT`            | `3306`                               | MySQL database port                |
-| `MYSQL_DATABASE`        | `mailserver`                         | MySQL database name                |
-| `MYSQL_USER`            | `root` (MTA/MDA), `mailserver` (Web) | MySQL database username            |
-| `MYSQL_PASSWORD`        | _(empty)_                            | MySQL database password            |
-| `MYSQL_TLS_VERIFY_CERT` | `no`                                 | MySQL TLS certificate verification |
+| Variable             | Default                              | Description                     |
+| -------------------- | ------------------------------------ | ------------------------------- |
+| `DB_HOST`            | `db`                                 | Database hostname               |
+| `DB_PORT`            | `3306`                               | Database port                   |
+| `DB_NAME`            | `mailserver`                         | Database name                   |
+| `DB_USER`            | `root` (MTA/MDA), `mailserver` (Web) | Database username               |
+| `DB_PASSWORD`        | _(empty)_                            | Database password               |
+| `DB_TLS_VERIFY_CERT` | `no`                                 | TLS certificate verification    |
+
+These variables configure the bundled database container only:
+
+| Variable           | Default     | Description                                             |
+| ------------------ | ----------- | ------------------------------------------------------- |
+| `DB_IMAGE`         | `mysql:lts` | Image of the bundled database container                 |
+| `DB_DATA_DIR`      | _(engine)_  | Data directory inside that container                    |
+| `DB_ROOT_PASSWORD` | _(empty)_   | Superuser password of that container                    |
+
+#### Renamed From MYSQL_\*
+
+The database variables were renamed from `MYSQL_*` to `DB_*`. Docker Compose deployments keep
+working with the old names, which are used as a fallback.
+
+| Old name                | New name             |
+| ----------------------- | -------------------- |
+| `MYSQL_HOST`            | `DB_HOST`            |
+| `MYSQL_PORT`            | `DB_PORT`            |
+| `MYSQL_DATABASE`        | `DB_NAME`            |
+| `MYSQL_USER`            | `DB_USER`            |
+| `MYSQL_PASSWORD`        | `DB_PASSWORD`        |
+| `MYSQL_TLS_VERIFY_CERT` | `DB_TLS_VERIFY_CERT` |
+| `MYSQL_ROOT_PASSWORD`   | `DB_ROOT_PASSWORD`   |
+
+Kubernetes deployments have no such fallback, because the variables reach the containers straight
+from the generated ConfigMap. Rename them in your `.env` before applying the manifests.
 
 ### Mail Server Identity
 

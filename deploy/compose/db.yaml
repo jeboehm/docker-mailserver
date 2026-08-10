@@ -1,10 +1,22 @@
 services:
   # Responsible for storing users and their aliases. Remove
-  # if you already have a MySQL server.
+  # if you already have a database server.
+  #
+  # DB_IMAGE, DB_DATA_DIR and DB_DRIVER select the engine. The credential
+  # variables of both engines are set side by side; each image ignores the
+  # ones it does not know.
   db:
-    image: mysql:lts
+    image: ${DB_IMAGE:-mysql:lts}
     restart: on-failure:5
     env_file: ../../.env
+    environment:
+      MYSQL_DATABASE: ${DB_NAME:-${MYSQL_DATABASE:-mailserver}}
+      MYSQL_USER: ${DB_USER:-${MYSQL_USER:-mailserver}}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-${MYSQL_PASSWORD:-}}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-${MYSQL_ROOT_PASSWORD:-}}
+      POSTGRES_DB: ${DB_NAME:-${MYSQL_DATABASE:-mailserver}}
+      POSTGRES_USER: ${DB_USER:-${MYSQL_USER:-mailserver}}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-${MYSQL_PASSWORD:-}}
     volumes:
-      - ../../target/db/rootfs/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d:ro
-      - data-db:/var/lib/mysql
+      - ../../target/db/${DB_DRIVER:-mysql}/initdb.d:/docker-entrypoint-initdb.d:ro
+      - data-db:${DB_DATA_DIR:-/var/lib/mysql}

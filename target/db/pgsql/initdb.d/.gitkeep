@@ -1,0 +1,3 @@
+# PostgreSQL needs no bootstrap SQL: doctrine creates migration_versions
+# itself, the baseline migration builds the schema, and roundcube picks its
+# own postgres schema based on the DSN.

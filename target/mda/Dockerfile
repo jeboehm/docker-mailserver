@@ -4,10 +4,10 @@ LABEL maintainer="https://github.com/jeboehm/docker-mailserver"
 LABEL vendor="https://github.com/jeboehm/docker-mailserver"
 LABEL de.ressourcenkonflikt.docker-mailserver.autoheal="true"
 
-ENV MYSQL_HOST=db \
-    MYSQL_PORT=3306 \
-    MYSQL_USER=root \
-    MYSQL_DATABASE=mailserver \
+ENV DB_HOST=db \
+    DB_PORT=3306 \
+    DB_USER=root \
+    DB_NAME=mailserver \
     FILTER_WEB_ADDRESS=filter:11334 \
     MAILNAME=mail.example.com \
     MDA_UPSTREAM_PROXY=no \
