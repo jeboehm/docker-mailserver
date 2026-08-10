@@ -61,6 +61,43 @@ composer install
 
 The web server is configured to serve files from the `public/` directory and uses PHP-FPM for PHP execution.
 
+## Building the web Image From a Local Checkout
+
+By default the `web` image downloads the release tarball pinned by `ADMIN_VER` in
+`target/web/Dockerfile`. To test unreleased changes in the full mailserver stack, build the image
+from a local `mailserver-admin` checkout instead.
+
+Place the checkout next to `docker-mailserver`:
+
+```text
+Projects/
+├── docker-mailserver/
+└── mailserver-admin/
+```
+
+Then build:
+
+```bash
+make build-local-admin
+```
+
+Override `ADMIN_SRC` if the checkout lives elsewhere. The path is resolved relative to
+`deploy/compose/`:
+
+```bash
+make build-local-admin ADMIN_SRC=../../../../src/mailserver-admin
+```
+
+To make the whole stack use the local build, set both variables in `.env`:
+
+```dotenv
+ADMIN_SOURCE=local
+ADMIN_SRC=../../../mailserver-admin
+```
+
+The build reproduces the steps of the upstream release workflow, so the resulting image has the
+same layout as a release build. Unset `ADMIN_SOURCE` to return to the pinned release.
+
 ## Development Commands
 
 The project includes several composer scripts for development tasks:

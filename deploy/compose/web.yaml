@@ -5,7 +5,15 @@ services:
     image: jeboehm/mailserver-web:latest
     build:
       context: ../../target/web
+      additional_contexts:
+        # Only read when ADMIN_SOURCE=local. The default points at an existing
+        # directory because compose always resolves the path, even when the
+        # stage using it is not built.
+        admin-src: ${ADMIN_SRC:-../../target/web}
       args:
+        # Build mailserver-admin from a local checkout instead of the pinned
+        # release. See docs/development/mailserver-admin.md.
+        ADMIN_SOURCE: ${ADMIN_SOURCE:-release}
         # Roundcube plugins can be added here.
         # Documentation available at docs/configuration/roundcube.md
         RC_PLUGINS: "johndoh/contextmenu jfcherng-roundcube/show-folder-size"

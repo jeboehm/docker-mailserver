@@ -1,5 +1,7 @@
 COMPOSE_PRODUCTION = bin/production.sh
 COMPOSE_TEST       = bin/test.sh
+# Path to a mailserver-admin checkout, relative to deploy/compose/.
+ADMIN_SRC          = ../../../mailserver-admin
 
 .PHONY: prod
 prod: up
@@ -7,6 +9,10 @@ prod: up
 .PHONY: build
 build:
 	$(COMPOSE_TEST) build
+
+.PHONY: build-local-admin
+build-local-admin:
+	ADMIN_SOURCE=local ADMIN_SRC=$(ADMIN_SRC) $(COMPOSE_TEST) build web
 
 .PHONY: pull
 pull:

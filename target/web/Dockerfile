@@ -1,3 +1,9 @@
+# Selects how mailserver-admin is obtained:
+#   release (default) - download the pinned release tarball from GitHub
+#   local             - build from the "admin-src" build context, for developing
+#                       mailserver-admin alongside this repository
+ARG ADMIN_SOURCE=release
+
 FROM alpine:3.24@sha256:28bd5fe8b56d1bd048e5babf5b10710ebe0bae67db86916198a6eec434943f8b AS base
 
 LABEL maintainer="https://github.com/jeboehm/docker-mailserver"
@@ -77,7 +83,7 @@ RUN --mount=type=cache,target=/root/.composer \
         public_html/installer.php && \
     find . -type f -name '.htaccess' -delete
 
-FROM composer AS admin-builder
+FROM composer AS admin-release
 
 ARG ADMIN_VER=5.17.36 # renovate: depName=jeboehm/mailserver-admin
 WORKDIR /opt/admin
@@ -89,6 +95,61 @@ RUN curl -sSLf \
     chmod 777 \
         /opt/admin/var/cache \
         /opt/admin/var/log
+
+# Reproduces the steps of mailserver-admin's own release workflow against a
+# working copy provided as the "admin-src" build context. Only built when
+# ADMIN_SOURCE=local, see docs/development/mailserver-admin.md.
+FROM composer AS admin-local
+
+# sqlite keeps asset-map:compile and dump-env from needing a real database,
+# matching what the upstream release workflow does.
+ENV APP_ENV=prod \
+    DATABASE_URL="sqlite:///%kernel.project_dir%/var/app.db"
+WORKDIR /opt/admin
+
+# Dependencies first, so editing application code does not invalidate them.
+# hadolint ignore=DL3022
+COPY --from=admin-src composer.json composer.lock symfony.lock importmap.php ./
+RUN --mount=type=cache,target=/root/.composer \
+    composer install --no-progress --prefer-dist -a --no-dev --no-scripts
+
+# hadolint ignore=DL3022
+COPY --from=admin-src . ./
+# Composer's auto-scripts are skipped: flex resolves the console through
+# PHP_BINARY, which is the frankenphp binary rather than the php shim, and
+# frankenphp rejects a script path as a subcommand. Running the same commands
+# through the shim works.
+RUN --mount=type=cache,target=/root/.composer \
+    composer install --no-progress --prefer-dist -a --no-dev --no-scripts && \
+    php bin/console importmap:install && \
+    php bin/console assets:install --symlink --relative public && \
+    php bin/console asset-map:compile && \
+    composer dump-env prod && \
+    rm -rf \
+        .php-cs-fixer.dist.php \
+        _coverage/ \
+        assets/ \
+        bin/phpunit \
+        composer.lock \
+        devenv.* \
+        phpstan.dist.neon \
+        phpunit.dist.xml \
+        rector.php \
+        renovate.json \
+        symfony.lock \
+        tests/ \
+        tls/ \
+        var/ && \
+    mkdir -p \
+        var/cache \
+        var/log && \
+    chmod 777 \
+        /opt/admin/var/cache \
+        /opt/admin/var/log
+
+# Resolves to either admin-release or admin-local.
+# hadolint ignore=DL3006
+FROM admin-${ADMIN_SOURCE} AS admin-builder
 
 FROM base AS prod
 
