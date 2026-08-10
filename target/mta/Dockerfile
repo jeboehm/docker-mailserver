@@ -5,6 +5,7 @@ LABEL vendor="https://github.com/jeboehm/docker-mailserver"
 
 ENV MAILNAME=mail.example.com \
     MYNETWORKS=127.0.0.0/8 \
+    DB_DRIVER=mysql \
     DB_HOST=db \
     DB_PORT=3306 \
     DB_USER=root \
@@ -23,12 +24,8 @@ RUN --mount=type=cache,target=/var/cache/apk \
     apk add \
       envsubst \
       postfix-mysql \
+      postfix-pgsql \
       postfix && \
-    postconf virtual_mailbox_domains=mysql:/etc/postfix/mysql-virtual-mailbox-domains.cf && \
-    postconf virtual_mailbox_maps=mysql:/etc/postfix/mysql-virtual-mailbox-maps.cf && \
-    postconf virtual_alias_maps=mysql:/etc/postfix/mysql-virtual-alias-maps.cf,mysql:/etc/postfix/mysql-email2email.cf && \
-    postconf smtpd_sender_login_maps=mysql:/etc/postfix/mysql-email-submission.cf && \
-    postconf smtpd_recipient_restrictions="reject_unauth_destination,check_recipient_access mysql:/etc/postfix/mysql-recipient-access.cf" && \
     postconf smtpd_milters="inet:${FILTER_MILTER_ADDRESS}" && \
     postconf non_smtpd_milters="inet:${FILTER_MILTER_ADDRESS}" && \
     postconf milter_protocol=6 && \

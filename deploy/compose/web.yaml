@@ -22,6 +22,8 @@ services:
     restart: on-failure:5
     env_file: ../../.env
     environment:
+      DB_DRIVER: ${DB_DRIVER:-mysql}
+      DB_SERVER_VERSION: ${DB_SERVER_VERSION:-8.4}
       # Accepts the former MYSQL_* names as a fallback.
       DB_HOST: ${DB_HOST:-${MYSQL_HOST:-db}}
       DB_NAME: ${DB_NAME:-${MYSQL_DATABASE:-mailserver}}

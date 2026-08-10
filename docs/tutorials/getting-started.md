@@ -31,7 +31,7 @@ cp .env.dist .env
 
 Edit `.env` and set at least:
 
-- `MYSQL_PASSWORD` (required when using the included database)
+- `DB_PASSWORD` (required when using the included database)
 - `REDIS_PASSWORD` (required when using the included Redis)
 - `CONTROLLER_PASSWORD` (required for Rspamd)
 - `DOVEADM_API_KEY` (required for Dovecot API)

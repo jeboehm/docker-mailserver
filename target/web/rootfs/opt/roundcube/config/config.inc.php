@@ -4,8 +4,10 @@ $config['smtp_log'] = false;
 $config['log_dir'] = '/opt/roundcube/logs';
 $config['temp_dir'] = '/opt/roundcube/temp';
 $config['imap_cache'] = 'apcu';
+// Roundcube uses the same scheme names as DB_DRIVER: mysql and pgsql.
 $config['db_dsnw'] = sprintf(
-    'mysql://%s:%s@%s:%s/%s',
+    '%s://%s:%s@%s:%s/%s',
+    getenv('DB_DRIVER'),
     getenv('DB_USER'),
     getenv('DB_PASSWORD'),
     getenv('DB_HOST'),

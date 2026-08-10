@@ -27,7 +27,7 @@ Do not mix the four types in a single doc. When in doubt, use the [Diátaxis com
 The docs are organised by Diátaxis type:
 
 - **`tutorials/`** — Learning path (e.g. `getting-started.md`).
-- **`how-to/`** — Task guides: install (Docker/Kubernetes), upgrade, configure (DNS, DKIM, TLS, relay, reverse proxy, OAuth2, MySQL, Roundcube, PHP sessions), manage (domains, users, aliases, fetchmail), iOS/macOS profile.
+- **`how-to/`** — Task guides: install (Docker/Kubernetes), upgrade, configure (DNS, DKIM, TLS, relay, reverse proxy, OAuth2, database, Roundcube, PHP sessions), manage (domains, users, aliases, fetchmail), iOS/macOS profile.
 - **`reference/`** — Technical reference: `environment-variables.md`, `ports.md`, `dns-records.md`, `service-architecture.md`, `user-roles.md`, `mailserver-admin-config.md`, `local-address-extension.md`, `upgrade-changelog.md`.
 - **`explanation/`** — Context: `architecture.md`, `dns-and-email.md`, `observability.md`.
 - **`administration/`** — Short reference for the web UI: `login.md`, `dashboard.md`; other admin topics live as how-to or reference and are linked from here.

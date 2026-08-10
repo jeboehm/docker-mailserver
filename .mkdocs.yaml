@@ -28,7 +28,7 @@ nav:
       - Configure reverse proxy: how-to/configure-reverse-proxy.md
       - Configure TLS certificates: how-to/configure-tls.md
       - Configure OAuth2: how-to/configure-oauth2.md
-      - Configure external MySQL: how-to/configure-external-mysql.md
+      - Configure external database: how-to/configure-external-database.md
       - Configure Roundcube plugins: how-to/configure-roundcube-plugins.md
       - Configure PHP sessions: how-to/configure-php-sessions.md
       - Manage domains: how-to/manage-domains.md
@@ -50,6 +50,7 @@ nav:
       - Dashboard: administration/dashboard.md
   - Explanation:
       - Service architecture: explanation/architecture.md
+      - Database backends: explanation/database-backends.md
       - DNS and email delivery: explanation/dns-and-email.md
       - Observability: explanation/observability.md
   - Recipes:

@@ -3,7 +3,8 @@ FROM alpine:3.24@sha256:28bd5fe8b56d1bd048e5babf5b10710ebe0bae67db86916198a6eec4
 LABEL maintainer="https://github.com/jeboehm/docker-mailserver"
 LABEL vendor="https://github.com/jeboehm/docker-mailserver"
 
-ENV DB_HOST=db \
+ENV DB_DRIVER=mysql \
+    DB_HOST=db \
     DB_PORT=3306 \
     DB_USER=root \
     DB_NAME=mailserver \
@@ -35,6 +36,7 @@ RUN apk --no-cache add \
       kubectl \
       mariadb-client \
       mariadb-connector-c \
+      postgresql17-client \
       netcat-openbsd \
       openssl \
       perl \

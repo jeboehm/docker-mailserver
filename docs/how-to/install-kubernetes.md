@@ -1,7 +1,7 @@
 # How to Install on Kubernetes
 
 This guide describes how to deploy docker-mailserver on Kubernetes with
-Kustomize. An external MySQL-compatible database is required; the
+Kustomize. An external database is required (MySQL/MariaDB or PostgreSQL); the
 kustomization does not provision a database.
 
 A full example is in [example-configs/kustomize/external-db-and-https-ingress](../example-configs/kustomize/external-db-and-https-ingress/).
@@ -9,7 +9,7 @@ A full example is in [example-configs/kustomize/external-db-and-https-ingress](.
 ## Prerequisites
 
 - Kubernetes cluster with kubectl configured
-- MySQL or Percona XtraDB (or compatible) database
+- MySQL, MariaDB, Percona XtraDB or PostgreSQL database
 - Domain and DNS (for ingress)
 
 ## Steps
@@ -88,7 +88,7 @@ Use your configured ingress and the admin credentials from the wizard.
 - **Pods not starting:** Check logs with `kubectl logs -n mail <pod-name>`
   and events with `kubectl describe pod -n mail <pod-name>`.
 - **Database errors:** Verify database connectivity and that the
-  `MYSQL_*` variables in ConfigMap/Secrets are correct.
+  `DB_*` variables in ConfigMap/Secrets are correct.
 - **TLS errors:** Confirm the `tls-certs` secret exists in the `mail`
   namespace and certificate paths are correct.
 - **Setup wizard fails:** Ensure the web pod is running (`kubectl get pods -n mail`) before running the exec command.

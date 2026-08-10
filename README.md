@@ -48,7 +48,7 @@ See the [documentation](https://jeboehm.github.io/docker-mailserver/) for a comp
 git clone https://github.com/jeboehm/docker-mailserver.git
 cd docker-mailserver
 
-# 2. Copy and edit the environment file (set passwords for MYSQL_PASSWORD,
+# 2. Copy and edit the environment file (set passwords for DB_PASSWORD,
 #    REDIS_PASSWORD, CONTROLLER_PASSWORD, and DOVEADM_API_KEY)
 cp .env.dist .env
 

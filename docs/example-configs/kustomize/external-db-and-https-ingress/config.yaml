@@ -4,10 +4,10 @@ metadata:
   name: config-env
 data:
   MAILNAME: mail.example.org
-  MYSQL_DATABASE: mail_db
-  MYSQL_HOST: pxc-operator-pxc-db-haproxy.mysql.svc.cluster.local
-  MYSQL_PORT: "3306"
-  MYSQL_USER: database_user
+  DB_NAME: mail_db
+  DB_HOST: pxc-operator-pxc-db-haproxy.mysql.svc.cluster.local
+  DB_PORT: "3306"
+  DB_USER: database_user
   OAUTH_ENABLED: "true"
   OAUTH_CLIENT_SCOPES: openid email profile groups
   OAUTH_MAPPING_IDENTIFIER: preferred_username

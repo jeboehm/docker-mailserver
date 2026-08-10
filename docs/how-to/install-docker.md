@@ -56,7 +56,7 @@ Follow the wizard to create your first account and admin user.
 ## Troubleshooting
 
 - **Services not starting:** Check logs with `docker-compose logs` or `bin/production.sh logs`.
-- **Database errors:** Verify `MYSQL_*` and database accessibility.
+- **Database errors:** Verify `DB_*` and database accessibility.
 - **TLS issues:** Check certificate paths and permissions.
 - **Port conflicts:** Ensure ports 25, 110, 143, 587, 993, 995, 81 are free.
 

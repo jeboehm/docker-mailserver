@@ -1,5 +1,19 @@
 #!/usr/bin/env bash
 
+# Run a query against whichever database engine is configured.
+# Usage: db_query "select * from mail_users;"
+db_query() {
+	if [ "${DB_DRIVER}" = "pgsql" ]; then
+		PGPASSWORD="${DB_PASSWORD}" psql --no-psqlrc --quiet --tuples-only \
+			-h "${DB_HOST}" -p "${DB_PORT}" -U "${DB_USER}" -d "${DB_NAME}" \
+			-c "$1"
+	else
+		mariadb --skip-ssl-verify-server-cert --batch -u "${DB_USER}" \
+			--password="${DB_PASSWORD}" -h "${DB_HOST}" -P "${DB_PORT}" \
+			"${DB_NAME}" -e "$1"
+	fi
+}
+
 skip_in_kubernetes() {
 	if [ "${IS_KUBERNETES}" -eq "1" ]; then
 		skip "Skipping test in Kubernetes"

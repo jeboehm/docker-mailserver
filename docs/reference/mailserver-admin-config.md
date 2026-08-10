@@ -15,10 +15,10 @@ Environment variables for the mailserver-admin (web) application. Set in `.env` 
 
 | Variable         | Description         |
 | ---------------- | ------------------- |
-| `MYSQL_USER`     | MySQL user          |
-| `MYSQL_PASSWORD` | MySQL password      |
-| `MYSQL_HOST`     | MySQL host          |
-| `MYSQL_DATABASE` | MySQL database name |
+| `DB_USER`     | Database user     |
+| `DB_PASSWORD` | Database password |
+| `DB_HOST`     | Database host     |
+| `DB_NAME`     | Database name     |
 | `REDIS_HOST`     | Redis host          |
 | `REDIS_PORT`     | Redis port          |
 | `REDIS_PASSWORD` | Redis password      |

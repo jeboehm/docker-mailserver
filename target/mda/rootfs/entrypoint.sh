@@ -5,6 +5,15 @@ if [ -r /run/dovecot/master.pid ]; then
 	rm /run/dovecot/master.pid
 fi
 
+# The driver settings block is named after the engine, so it cannot be
+# selected through an environment variable. /run/dovecot is the writable
+# location available on a read-only root filesystem.
+if [ ! -r "/etc/dovecot/auth-driver-${DB_DRIVER}.conf" ]; then
+	echo "Unsupported DB_DRIVER: ${DB_DRIVER} (expected mysql or pgsql)"
+	exit 1
+fi
+cp "/etc/dovecot/auth-driver-${DB_DRIVER}.conf" /run/dovecot/auth-driver.conf
+
 if [ -n "${MDA_UPSTREAM_PROXY}" ]; then
 	if [ "${MDA_UPSTREAM_PROXY}" = "true" ]; then
 		export MDA_UPSTREAM_PROXY="yes"

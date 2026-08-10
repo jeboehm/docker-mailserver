@@ -16,7 +16,7 @@ Email delivery involves distinct tasks: accepting and relaying mail (MTA), stori
 
 - **Web** runs the admin UI (mailserver-admin) and Roundcube webmail. It talks to the database for users, domains, aliases, and DKIM, and to Dovecot for authentication and mailbox operations. Observability features pull data from Rspamd and Dovecot (e.g. Doveadm HTTP API).
 
-- **Database (MySQL)** holds users, domains, aliases, DKIM config, and application data. All services that need this data connect to the same database.
+- **Database (MySQL/MariaDB or PostgreSQL)** holds users, domains, aliases, DKIM config, and application data. All services that need this data connect to the same database. See [Database backends](database-backends.md).
 
 - **Redis** is used for sessions and caching so the web service can run across multiple instances without losing session state.
 
