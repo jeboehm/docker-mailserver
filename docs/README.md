@@ -15,13 +15,18 @@ The documentation is organised by purpose:
 - **[Tutorial: Getting Started](tutorials/getting-started.md)** — A step-by-step lesson to install docker-mailserver with Docker Compose and create your first mailbox.
 - **How-to guides** — Task-oriented guides for specific goals: [install with Docker](how-to/install-docker.md), [install on Kubernetes](how-to/install-kubernetes.md), [configure DNS](how-to/configure-dns.md), [configure TLS](how-to/configure-tls.md), [manage users](how-to/manage-users.md), and more.
 - **Reference** — Technical descriptions: [environment variables](reference/environment-variables.md), [DNS records](reference/dns-records.md), [ports](reference/ports.md), [service architecture](reference/service-architecture.md), [user roles](reference/user-roles.md), and related topics.
+- **Administration (web UI)** — Working with the management interface: [login](administration/login.md), [dashboard](administration/dashboard.md).
 - **Explanation** — Background and context: [architecture](explanation/architecture.md), [database backends](explanation/database-backends.md), [DNS and email delivery](explanation/dns-and-email.md), [observability](explanation/observability.md).
+- **Recipes** — Ready-made deployment examples: [Traefik reverse proxy](https://github.com/jeboehm/docker-mailserver/tree/main/docs/example-configs/compose/traefik-reverse-proxy) for Docker, [external database and HTTPS ingress](https://github.com/jeboehm/docker-mailserver/tree/main/docs/example-configs/kustomize/external-db-and-https-ingress) for Kubernetes.
+- **Development** — Building and contributing: [development guide](development/development.md), [mailserver-admin development](development/mailserver-admin.md).
 
 ## Key features
 
 - **Email protocols:** POP3, IMAP, and SMTP with user authentication
 - **Web management:** Web-based interface for account, domain, and alias administration
 - **Webmail:** Integrated webmail interface
+- **Client provisioning:** Configuration profiles for iOS and macOS, plus assisted client configuration in Outlook and Thunderbird
+- **DNS Validation Wizard:** Checks all mail-related DNS records for your domains
 - **External mail retrieval:** Fetchmail integration for retrieving emails from external providers
 - **Email authentication:** DKIM message signing for email authenticity
 - **Spam filtering:** Server-side mail filtering with configurable rules via web frontend
@@ -78,7 +83,3 @@ Container images are available at:
 - [Roundcube Documentation](https://docs.roundcube.net/doc/help/1.1/en_US/)
 - [Redis Documentation](https://redis.io/docs/latest/)
 - [Unbound Documentation](https://unbound.docs.nlnetlabs.nl/en/latest/)
-
-## Star history
-
-[![Star History Chart](https://api.star-history.com/svg?repos=jeboehm/docker-mailserver&type=date&legend=top-left)](https://www.star-history.com/#jeboehm/docker-mailserver&type=date&legend=top-left)

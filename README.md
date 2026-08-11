@@ -1,6 +1,6 @@
 # docker-mailserver
 
-![Logo](/docs/logo/logo.png)
+![Logo](docs/logo/logo.png)
 
 `docker-mailserver` is inspired by the renowned [ISPMail guide](https://workaround.org/).
 This project lets you run your own email services, giving you independence from large providers. It is a secure, customizable, and feature-rich solution for managing your email infrastructure.
@@ -30,8 +30,10 @@ The documentation includes:
 - Integrated webmail interface
 - DKIM message signing and spam filtering with Rspamd
 - Real-time spam prevention using RBLs (Real-Time Blackhole Lists)
+- Spam training by moving messages into and out of the Junk folder
 - Fetchmail integration for external mail retrieval
-- Quota management, catch-all addresses, and send-only accounts
+- Quota management with notifications, catch-all addresses, and send-only accounts
+- Local address extension (RFC 5233) for per-address sub-addressing
 - Restriction of sender addresses for enhanced security
 - Full-text search and enforced TLS
 - DNS Validation Wizard for all mail related DNS records
@@ -61,7 +63,7 @@ bin/production.sh run --rm web setup.sh
 ```
 
 After setup, access the management interface at
-`http://127.0.0.1:81/manager/` and webmail at `http://127.0.0.1:81/webmail/`.
+`http://127.0.0.1:81/` and webmail at `http://127.0.0.1:81/webmail/`.
 
 For a complete walkthrough, see the
 [Getting Started tutorial](docs/tutorials/getting-started.md).
@@ -96,8 +98,10 @@ For detailed installation instructions, see
 ## Links
 
 - [Documentation](https://jeboehm.github.io/docker-mailserver/) - Complete documentation and guides
+- [Development guide](docs/development/development.md) - Build, test, and contribute
 - [Issues](https://github.com/jeboehm/docker-mailserver/issues) - Report bugs and request features
 - [Releases](https://github.com/jeboehm/docker-mailserver/releases) - Release notes and changelog
+- [License](LICENSE) - MIT
 - Container Images:
   - [GitHub Container Registry](https://github.com/jeboehm?tab=packages&repo_name=docker-mailserver)
   - [Docker Hub](https://hub.docker.com/u/jeboehm?page=1&search=mailserver)

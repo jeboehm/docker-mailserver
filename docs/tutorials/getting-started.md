@@ -70,7 +70,7 @@ The wizard will ask for configuration details, create your first email address, 
 
 Open a browser and go to:
 
-- **Management interface:** `http://127.0.0.1:81/manager/`
+- **Management interface:** `http://127.0.0.1:81/`
 - **Webmail:** `http://127.0.0.1:81/webmail/`
 
 Log in with the admin credentials you set in the wizard. You should see the dashboard.
