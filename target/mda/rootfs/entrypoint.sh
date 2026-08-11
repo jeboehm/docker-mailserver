@@ -12,7 +12,19 @@ if [ ! -r "/etc/dovecot/auth-driver-${DB_DRIVER}.conf" ]; then
 	echo "Unsupported DB_DRIVER: ${DB_DRIVER} (expected mysql or pgsql)"
 	exit 1
 fi
-cp "/etc/dovecot/auth-driver-${DB_DRIVER}.conf" /run/dovecot/auth-driver.conf
+
+# The TLS settings are booleans, which are not expanded from the environment,
+# so database TLS lives in a second driver file that is selected here instead.
+driver_conf="/etc/dovecot/auth-driver-${DB_DRIVER}.conf"
+if [ "${DB_TLS_VERIFY_CERT}" = "true" ] || [ "${DB_TLS_VERIFY_CERT}" = "yes" ]; then
+	if [ -r "/etc/dovecot/auth-driver-${DB_DRIVER}-tls.conf" ]; then
+		driver_conf="/etc/dovecot/auth-driver-${DB_DRIVER}-tls.conf"
+	else
+		echo "DB_TLS_VERIFY_CERT is not supported with DB_DRIVER=${DB_DRIVER}"
+		exit 1
+	fi
+fi
+cp "${driver_conf}" /run/dovecot/auth-driver.conf
 
 if [ -n "${MDA_UPSTREAM_PROXY}" ]; then
 	if [ "${MDA_UPSTREAM_PROXY}" = "true" ]; then
