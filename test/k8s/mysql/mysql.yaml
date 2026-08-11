@@ -66,9 +66,6 @@ spec:
           volumeMounts:
             - name: mysql-data
               mountPath: /var/lib/mysql
-            - name: mysql-init
-              mountPath: /docker-entrypoint-initdb.d
-              readOnly: true
           resources:
             requests:
               cpu: 50m
@@ -79,11 +76,3 @@ spec:
       volumes:
         - name: mysql-data
           emptyDir: {}
-        - name: mysql-init
-          configMap:
-            name: mysql-initdb
-            items:
-              - key: 001_mailserver.sql
-                path: 001_mailserver.sql
-              - key: 002_webmail.sql
-                path: 002_webmail.sql

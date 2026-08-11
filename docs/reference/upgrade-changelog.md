@@ -52,6 +52,10 @@ Switching engines migrates no data. Lookups are now wrapped in `lower()`, so exi
 
 See [Database backends](../explanation/database-backends.md) and the [environment variables reference](environment-variables.md).
 
+### Schema creation
+
+The web service creates the schema on both engines. The MySQL bootstrap SQL under `target/db/` is gone, and with it the manual import step for external MySQL databases; that database user now needs DDL privileges instead. Existing installations are unaffected, because the migrations detect the existing schema and skip the baseline.
+
 ## v7.4
 
 - **mda:** Dovecot 2.4.2 on an Alpine base image again, superseding the `dovecot/dovecot` base noted under v5.x to v6.0. Configuration was simplified in the same step.

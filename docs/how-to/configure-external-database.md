@@ -20,23 +20,11 @@ On PostgreSQL:
 CREATE DATABASE mailserver ENCODING 'UTF8';
 ```
 
-Create a user with access to that database and set a password.
+Create a user with access to that database and set a password. The user needs DDL privileges
+(`CREATE`, `ALTER`, `DROP`, `INDEX`), because the web service creates the tables itself on first
+start and migrates them afterwards. No schema import is needed on either engine.
 
-### 2. Import the schema
-
-On MySQL, import the mailserver and webmail schema from the project:
-
-```bash
-mysql -h your-database-host -u root -p mailserver < target/db/mysql/initdb.d/001_mailserver.sql
-mysql -h your-database-host -u root -p mailserver < target/db/mysql/initdb.d/002_webmail.sql
-```
-
-Adjust host, user, and paths as needed.
-
-On PostgreSQL, skip this step. The web service creates the schema through migrations, and
-Roundcube creates its own tables on first start.
-
-### 3. Configure environment variables
+### 2. Configure environment variables
 
 In `.env`, for MySQL:
 
@@ -61,13 +49,14 @@ DB_SERVER_VERSION=18
 
 Set `DB_SERVER_VERSION` to the major version of your server.
 
-### 4. Remove or exclude the database service (Docker Compose)
+### 3. Remove or exclude the database service (Docker Compose)
 
 If using Docker Compose, remove or do not include the `db` service (e.g. comment out or omit `deploy/compose/db.yaml`). Remove `depends_on: db` from services that referenced it so they use the external host instead.
 
-### 5. Restart the web service
+### 4. Restart the web service
 
-Restart the web service so it connects to the external database and runs any migrations:
+Restart the web service. It connects to the external database, creates the schema if the database is
+empty, and applies any pending migrations:
 
 - Docker: `bin/production.sh restart web` or `docker-compose restart web`
 - Kubernetes: `kubectl rollout restart deployment/web -n mail`

@@ -74,20 +74,20 @@ SELECT name FROM mail_domains WHERE name <> lower(name);
 
 ## Schema Differences
 
-The two schemas are equivalent but not identical, because MySQL installations carry history that
-PostgreSQL ones do not.
+Neither engine needs bootstrap SQL. The web service creates the schema on start: Doctrine creates its
+own bookkeeping table, a baseline migration issues the DDL for whichever platform it finds, and
+Roundcube runs its installer against the schema its DSN selects.
 
-The MySQL schema grew through migrations reaching back to a 2018 table rename, and that rename
-left the foreign keys under their previous names. A PostgreSQL database is created from a baseline
-migration and gets the canonical names instead. Likewise, `mail_users.domain_admin` has a default
-of `0` on MySQL, added by the migration that introduced it, and no default on PostgreSQL, because
-the mapping declares none. Nothing writes to these tables outside the ORM, so neither difference is
-observable at runtime.
+Fresh installations therefore get the same schema on both engines, down to the index and foreign key
+names. The migrations that predate the baseline describe the history of a MySQL schema that began as
+a pre-2018 `virtual_*` layout; each one checks for that history and does nothing on an empty
+database.
 
-PostgreSQL installations need no bootstrap SQL at all. Doctrine creates its own bookkeeping table,
-the baseline migration builds the schema, and Roundcube picks its PostgreSQL schema based on the
-DSN. `target/db/mysql/initdb.d/` exists only because the MySQL migration history cannot be replayed
-from scratch.
+The differences that remain are between installations, not between engines. A MySQL database that
+grew through the full migration history keeps the foreign key names from the 2018 table rename, and
+its `mail_users.domain_admin` carries the default of `0` that the migration adding the column set.
+Fresh databases get the canonical names and no default, because the mapping declares none. Nothing
+writes to these tables outside the ORM, so neither difference is observable at runtime.
 
 ## Server Version
 
