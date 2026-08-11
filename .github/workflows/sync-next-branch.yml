@@ -3,22 +3,24 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch:
 concurrency:
-  group: "${{ github.workflow }}-${{ github.ref }}"
+  group: "${{ github.workflow }}"
   cancel-in-progress: false
+permissions:
+  contents: read
 jobs:
   sync-branch:
     runs-on: ubuntu-latest
-    continue-on-error: true
-    permissions:
-      contents: write
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
-      - name: Sync branch main to next
-        uses: devmasx/merge-branch@854d3ac71ed1e9deb668e0074781b81fdd6e771f # 1.4.0
         with:
-          from_branch: main
-          target_branch: next
-          type: now
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          # merge-base needs the full history of both branches, and the push has
+          # to happen with a token that triggers build.yml on `next`.
+          fetch-depth: 0
+          token: ${{ secrets.GH_RELEASE_PAT }}
+      - name: Sync branch main to next
+        env:
+          GH_TOKEN: ${{ secrets.GH_RELEASE_PAT }}
+        run: .github/bin/sync_next_branch.sh
