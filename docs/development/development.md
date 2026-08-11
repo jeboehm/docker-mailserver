@@ -198,6 +198,24 @@ The project is organized into several key directories:
 - `deploy/` - Kubernetes and Compose deployment configurations
 - `bin/` - Utility scripts for development and deployment
 
+## Branching Model
+
+The project uses two long-lived branches:
+
+- `main` is the released state. Every push is checked for conventional commits, and a new
+  version is tagged and released automatically when they warrant one. Container images are
+  published under the resulting semantic version tags plus `latest`.
+- `next` collects work for future versions that must not ship yet, typically breaking
+  changes. Its images are published under the `next` tag, so they can be tried out without
+  affecting anyone on `latest`.
+
+`next` is kept current automatically: every push to `main` triggers
+`.github/workflows/sync-next-branch.yml`, which fast-forwards `next` while it carries no
+commits of its own and merges `main` into it once it does. If that merge conflicts, the
+workflow opens a pull request from `main` into `next` and fails, so the conflict is resolved
+once, by hand. Base a pull request on `next` when it targets the next major version;
+otherwise base it on `main`. A major version is cut by merging `next` into `main`.
+
 ## Contributing
 
 When contributing to the project:
