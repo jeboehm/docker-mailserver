@@ -44,7 +44,7 @@ Follow the wizard to create your first account and admin user.
 
 ### 5. Access the management interface
 
-- Management: `http://127.0.0.1:81/manager/`
+- Management: `http://127.0.0.1:81/`
 - Webmail: `http://127.0.0.1:81/webmail/`
 
 ## Post-installation
