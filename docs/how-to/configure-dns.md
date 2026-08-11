@@ -18,7 +18,7 @@ Add a TXT record at the domain root with your SPF policy, e.g. `v=spf1 mx a ~all
 
 ### 4. Add DKIM record
 
-Configure DKIM in the management interface (see [How to configure DKIM signing](configure-dkim.md)). The interface shows the TXT record to add; publish it at the indicated name (e.g. `default._domainkey.example.com`).
+Configure DKIM in the management interface (see [How to configure DKIM signing](configure-dkim.md)). The interface shows the TXT record to add; publish it at the indicated name (`dkim._domainkey.example.com`).
 
 ### 5. Add DMARC record (recommended)
 

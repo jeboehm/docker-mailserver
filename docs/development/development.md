@@ -11,9 +11,10 @@ The following Make commands are essential for the development workflow:
 Cleans the development environment by:
 
 - Stopping and removing all running containers
-- Removing all Docker volumes (data-db, data-mail, data-tls, data-filter, data-redis)
-- Removing all built Docker images
-- Cleaning up any temporary files
+- Removing all Docker volumes (data-db, data-mail, data-tls, data-filter, data-redis, data-spool)
+- Removing orphaned containers
+
+Built images are not removed. Use `docker image rm` for that.
 
 **Usage:**
 
@@ -31,11 +32,9 @@ make clean
 
 ### `make up`
 
-Builds and starts all mailserver services in development mode:
+Starts all mailserver services in development mode and exposes them on local ports for testing.
 
-- Builds all Docker images from source
-- Waits for services to be ready
-- Exposes services on local ports for testing
+Images are not rebuilt; run `make build` first when sources changed. The target does not wait for the services to become healthy.
 
 **Usage:**
 
@@ -187,7 +186,7 @@ When making changes to a specific service (e.g., MDA, MTA, Web, Filter), you can
 - **Services won't start:** Run `make clean` then `make up`
 - **Tests failing:** Ensure all services are healthy with `bin/test.sh ps`
 - **Build issues:** Check Docker daemon is running and has sufficient resources
-- **Port conflicts:** Ensure ports 25, 143, 587, 993, 995, 80, 81 are available
+- **Port conflicts:** Ensure ports 25, 110, 143, 587, 993, 995, 81 are available
 
 ## Project Structure
 

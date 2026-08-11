@@ -8,22 +8,37 @@ Overview of environment variables used to configure docker-mailserver. Set these
 
 When using the database service provided by docker-mailserver compose, you do not need to set host, port, or database name. You must set `DB_PASSWORD`.
 
-| Variable             | Default                              | Description                                            |
-| -------------------- | ------------------------------------ | ------------------------------------------------------ |
-| `DB_DRIVER`          | `mysql`                              | Database engine, `mysql` or `pgsql`                    |
-| `DB_HOST`            | `db`                                 | Database hostname                                      |
-| `DB_PORT`            | `3306`                               | Database port                                          |
-| `DB_NAME`            | `mailserver`                         | Database name                                          |
-| `DB_USER`            | `root` (MTA/MDA), `mailserver` (Web) | Database username                                      |
-| `DB_PASSWORD`        | _(empty)_                            | Database password                                      |
-| `DB_SERVER_VERSION`  | `8.4`                                | Server version reported to Doctrine                    |
-| `DB_TLS_VERIFY_CERT` | `no`                                 | TLS certificate verification, `mysql` only             |
+| Variable             | Default                              | Description                         |
+| -------------------- | ------------------------------------ | ----------------------------------- |
+| `DB_DRIVER`          | `mysql`                              | Database engine, `mysql` or `pgsql` |
+| `DB_HOST`            | `db`                                 | Database hostname                   |
+| `DB_PORT`            | `3306`                               | Database port                       |
+| `DB_NAME`            | `mailserver`                         | Database name                       |
+| `DB_USER`            | `root` (MTA/MDA), `mailserver` (Web) | Database username                   |
+| `DB_PASSWORD`        | _(empty)_                            | Database password                   |
+| `DB_SERVER_VERSION`  | `8.4`                                | Server version reported to Doctrine |
+| `DB_TLS_VERIFY_CERT` | `no`                                 | TLS to the database, `mysql` only   |
+
+The `DB_USER` defaults above are the image defaults, which a Kubernetes deployment gets when it does
+not set the variable. Every compose service overrides it to `mailserver`.
 
 `DB_SERVER_VERSION` has to match the server, because Doctrine cannot detect the PostgreSQL
 version by itself in this image. Use the major version, for example `18`.
 
-`DB_TLS_VERIFY_CERT` has no PostgreSQL counterpart. Postfix and Dovecot negotiate TLS with
-`sslmode=prefer` there.
+`DB_TLS_VERIFY_CERT` applies to the MTA and the MDA, and only with `DB_DRIVER=mysql`. The two
+services interpret it slightly differently, because Postfix and Dovecot expose different settings:
+
+| Value | MTA (Postfix)                              | MDA (Dovecot)                             |
+| ----- | ------------------------------------------ | ----------------------------------------- |
+| `no`  | TLS if the server offers it, no validation | no TLS                                    |
+| `yes` | TLS with certificate validation            | TLS required, with certificate validation |
+
+Certificates are validated against the system trust store, so `yes` requires a database certificate
+signed by a public CA. The bundled database container ships a self-signed certificate and fails
+validation.
+
+PostgreSQL has no equivalent setting. Dovecot connects with `sslmode=prefer`; Postfix leaves the
+mode unset and uses the libpq default.
 
 These variables configure the bundled database container only:
 
@@ -47,7 +62,7 @@ DB_DATA_DIR=/var/lib/postgresql
 Switching engines does not migrate any data. Run `make clean` first when using the bundled
 container: PostgreSQL refuses to initialise into a data directory that is not empty.
 
-#### Renamed From MYSQL_\*
+#### Renamed From MYSQL\_\*
 
 The database variables were renamed from `MYSQL_*` to `DB_*`. Docker Compose deployments keep
 working with the old names, which are used as a fallback.
@@ -71,7 +86,8 @@ from the generated ConfigMap. Rename them in your `.env` before applying the man
 | --------------------- | ------------------------ | ----------------------------------------------------------------- |
 | `MAILNAME`            | `mail.example.com`       | Primary mail server hostname                                      |
 | `POSTMASTER`          | `postmaster@example.com` | Postmaster email address                                          |
-| `RECIPIENT_DELIMITER` | `-`                      | Character used for address extensions (e.g., user+tag@domain.com) |
+| `RECIPIENT_DELIMITER` | `-`                      | Character used for address extensions (e.g., user-tag@domain.com) |
+| `MYNETWORKS`          | `127.0.0.0/8`            | Networks Postfix relays for without authentication                |
 
 ### Redis
 
@@ -105,24 +121,66 @@ Set `RELAYHOST` to `[hostname]:port` to route all outgoing mail through an exter
 | ------------- | ------------ | ---------------------------- |
 | `FILTER_MIME` | _(disabled)_ | Enable MIME header filtering |
 
+### Fetchmail
+
+| Variable             | Default      | Description                                 |
+| -------------------- | ------------ | ------------------------------------------- |
+| `FETCHMAIL_INTERVAL` | _(required)_ | Seconds between polls of external mailboxes |
+
+The fetchmail service passes this value straight to `fetchmail --interval` and has no fallback, so it must be set. `.env.dist` ships `300`.
+
+### Startup
+
+| Variable            | Default   | Description                                                     |
+| ------------------- | --------- | --------------------------------------------------------------- |
+| `WAITSTART_TIMEOUT` | `1m`      | How long the MTA and web containers wait for their dependencies |
+| `SKIP_INIT`         | _(unset)_ | Skip database provisioning in the web container                 |
+
+`.env.dist` ships `WAITSTART_TIMEOUT=2m`. The Kubernetes web Deployment sets `SKIP_INIT=true`, because an init container performs the provisioning instead.
+
+### TLS Certificate Generation
+
+These configure the `ssl` container, which generates a self-signed certificate when none is mounted.
+
+| Variable                       | Description                              |
+| ------------------------------ | ---------------------------------------- |
+| `SSL_CERT`                     | Path of the generated certificate        |
+| `SSL_KEY`                      | Path of the generated private key        |
+| `SSL_CSR`                      | Path of the certificate signing request  |
+| `SSL_SUBJ_COUNTRY`             | Certificate subject: country             |
+| `SSL_SUBJ_STATE`               | Certificate subject: state               |
+| `SSL_SUBJ_LOCALITY`            | Certificate subject: locality            |
+| `SSL_SUBJ_ORGANIZATION`        | Certificate subject: organization        |
+| `SSL_SUBJ_ORGANIZATIONAL_UNIT` | Certificate subject: organizational unit |
+
 ## Extended Configuration
 
 ### Service Addresses
 
-| Variable                      | Default                  | Description                             |
-| ----------------------------- | ------------------------ | --------------------------------------- |
-| `FILTER_MILTER_ADDRESS`       | `filter:11332`           | RSpamd milter service address           |
-| `FILTER_WEB_ADDRESS`          | `filter:11334`           | RSpamd web interface address            |
-| `MDA_AUTH_ADDRESS`            | `mda:2004`               | Dovecot authentication service address  |
-| `MDA_IMAP_ADDRESS`            | `mda:143`                | Dovecot IMAP service address            |
-| `MDA_LMTP_ADDRESS`            | `mda:2003`               | Dovecot LMTP service address            |
-| `MDA_MANAGESIEVE_ADDRESS`     | `mda:4190`               | Dovecot ManageSieve service address     |
-| `MDA_DOVEADM_ADDRESS`         | `mda:8080`               | Dovecot API address (default: mda:8080) |
-| `MTA_HOST`                    | `mta`                    | Postfix MTA hostname                    |
-| `MTA_SMTP_ADDRESS`            | `mta:25`                 | Postfix SMTP service address            |
-| `MTA_SMTP_SUBMISSION_ADDRESS` | `mta:587`                | Postfix SMTP submission service address |
-| `WEB_HTTP_ADDRESS`            | `web:80`                 | Web interface HTTP address              |
-| `RSPAMD_DNS_SERVERS`          | `round-robin:unbound:53` | DNS servers for RSpamd (Kubernetes)     |
+| Variable                      | Default                    | Description                             |
+| ----------------------------- | -------------------------- | --------------------------------------- |
+| `FILTER_MILTER_ADDRESS`       | `filter:11332`             | RSpamd milter service address           |
+| `FILTER_WEB_ADDRESS`          | `filter:11334`             | RSpamd web interface address            |
+| `MDA_AUTH_ADDRESS`            | `mda:2004`                 | Dovecot authentication service address  |
+| `MDA_IMAP_ADDRESS`            | `mda:31143`                | Dovecot IMAP service address            |
+| `MDA_IMAPS_ADDRESS`           | _(unset)_                  | Dovecot IMAPS service address           |
+| `MDA_POP3_ADDRESS`            | _(unset)_                  | Dovecot POP3 service address            |
+| `MDA_POP3S_ADDRESS`           | _(unset)_                  | Dovecot POP3S service address           |
+| `MDA_LMTP_ADDRESS`            | `mda:2003`                 | Dovecot LMTP service address            |
+| `MDA_MANAGESIEVE_ADDRESS`     | `mda:4190`                 | Dovecot ManageSieve service address     |
+| `MDA_DOVEADM_ADDRESS`         | `mda:8080`                 | Dovecot API address                     |
+| `MTA_HOST`                    | `mta`                      | Postfix MTA hostname                    |
+| `MTA_SMTP_ADDRESS`            | `mta:25`                   | Postfix SMTP service address            |
+| `MTA_SMTP_SUBMISSION_ADDRESS` | `mta:587`                  | Postfix SMTP submission service address |
+| `WEB_HTTP_ADDRESS`            | _(unset)_                  | Web interface HTTP address              |
+| `UNBOUND_DNS_ADDRESS`         | _(unset)_                  | Unbound resolver address                |
+| `RSPAMD_DNS_SERVERS`          | `round-robin:unbound:5353` | DNS servers for Rspamd                  |
+
+The defaults above are the image defaults, which apply to Docker Compose. Kubernetes deployments
+override several of them in `deploy/kustomize/common/configmap.yaml`, because the Services publish
+different ports than the containers listen on: `MDA_IMAP_ADDRESS` becomes `mda:143`,
+`WEB_HTTP_ADDRESS` becomes `web:80`, and `RSPAMD_DNS_SERVERS` becomes `round-robin:unbound:53`. See
+[Ports reference](ports.md).
 
 ### mailserver-admin
 
@@ -137,9 +195,12 @@ See [mailserver-admin configuration reference](mailserver-admin-config.md).
 
 ### Proxy Protocol
 
-| Variable             | Default | Description                                                                  |
-| -------------------- | ------- | ---------------------------------------------------------------------------- |
-| `MDA_UPSTREAM_PROXY` | `false` | Enable Traefik / HAProxy PROXY protocol for MDA (Dovecot) IMAP/POP3 services |
-| `MTA_UPSTREAM_PROXY` | `false` | Enable Traefik / HAProxy PROXY protocol for MTA (Postfix) SMTP services      |
+| Variable             | Default   | Description                                                                  |
+| -------------------- | --------- | ---------------------------------------------------------------------------- |
+| `MDA_UPSTREAM_PROXY` | `no`      | Enable Traefik / HAProxy PROXY protocol for MDA (Dovecot) IMAP/POP3 services |
+| `MTA_UPSTREAM_PROXY` | _(unset)_ | Enable Traefik / HAProxy PROXY protocol for MTA (Postfix) SMTP services      |
+| `TRUSTED_PROXIES`    | _(unset)_ | Networks allowed to send PROXY protocol headers                              |
 
 When set to `true`, the mail server accepts the HAProxy PROXY protocol to receive the original client IP when behind a load balancer or reverse proxy.
+
+`TRUSTED_PROXIES` sets Dovecot's `haproxy_trusted_networks`. Without it, Dovecot rejects PROXY protocol connections even when `MDA_UPSTREAM_PROXY` is enabled. The same variable configures trusted proxies in mailserver-admin, see [mailserver-admin configuration reference](mailserver-admin-config.md).

@@ -40,6 +40,10 @@ This fallback is transitional and will be removed. Rename the variables in `.env
 
 Old keys do not fail loudly. The containers fall back to their image defaults (`DB_HOST=db`, `DB_USER=root`, `DB_NAME=mailserver`, empty password) and try to reach a host named `db`, which does not exist in a Kustomize deployment. See `docs/example-configs/kustomize/external-db-and-https-ingress/` for updated examples.
 
+### Database TLS
+
+`DB_TLS_VERIFY_CERT` now applies to the MDA as well. Dovecot previously connected to the database without TLS in every configuration. The default `no` keeps that behaviour, so nothing changes unless you opt in.
+
 ### PostgreSQL
 
 Set `DB_DRIVER=pgsql`, `DB_PORT=5432`, and `DB_SERVER_VERSION` to the server major version. `DB_SERVER_VERSION` is required, because Doctrine cannot detect it in this image. `DB_TLS_VERIFY_CERT` has no PostgreSQL counterpart.
@@ -47,6 +51,10 @@ Set `DB_DRIVER=pgsql`, `DB_PORT=5432`, and `DB_SERVER_VERSION` to the server maj
 Switching engines migrates no data. Lookups are now wrapped in `lower()`, so existing mixed-case domains, mailboxes, and aliases resolve on MySQL but not on PostgreSQL.
 
 See [Database backends](../explanation/database-backends.md) and the [environment variables reference](environment-variables.md).
+
+## v7.4
+
+- **mda:** Dovecot 2.4.2 on an Alpine base image again, superseding the `dovecot/dovecot` base noted under v5.x to v6.0. Configuration was simplified in the same step.
 
 ## v7.3
 

@@ -27,13 +27,11 @@ Do not mix the four types in a single doc. When in doubt, use the [Diátaxis com
 The docs are organised by Diátaxis type:
 
 - **`tutorials/`** — Learning path (e.g. `getting-started.md`).
-- **`how-to/`** — Task guides: install (Docker/Kubernetes), upgrade, configure (DNS, DKIM, TLS, relay, reverse proxy, OAuth2, database, Roundcube, PHP sessions), manage (domains, users, aliases, fetchmail), iOS/macOS profile.
+- **`how-to/`** — Task guides: install (Docker/Kubernetes), upgrade, configure (DNS, DKIM, TLS, relay, reverse proxy, OAuth2, database, Roundcube, PHP sessions), manage (domains, users, aliases, fetchmail), validate DNS, iOS/macOS profile.
 - **`reference/`** — Technical reference: `environment-variables.md`, `ports.md`, `dns-records.md`, `service-architecture.md`, `user-roles.md`, `mailserver-admin-config.md`, `local-address-extension.md`, `upgrade-changelog.md`.
-- **`explanation/`** — Context: `architecture.md`, `dns-and-email.md`, `observability.md`.
-- **`administration/`** — Short reference for the web UI: `login.md`, `dashboard.md`; other admin topics live as how-to or reference and are linked from here.
-- **`configuration/`** — Legacy entry points; these files redirect to the appropriate how-to or reference.
-- **`development/`** — Developer how-to: `development.md` (Make, test, lint), `mailserver-admin.md` (mailserver-admin repository setup); `architecture.md` redirects to reference + explanation.
-- **`observability/`** — `intro.md` redirects to `explanation/observability.md`.
+- **`explanation/`** — Context: `architecture.md`, `database-backends.md`, `dns-and-email.md`, `observability.md`.
+- **`administration/`** — Short reference for the web UI: `login.md`, `dashboard.md`; other admin topics live as how-to or reference.
+- **`development/`** — Developer how-to: `development.md` (Make, test, lint), `mailserver-admin.md` (mailserver-admin repository setup).
 
 MkDocs config is **`.mkdocs.yaml`**; the `nav` there reflects this structure (Tutorial, How-to guides, Reference, Administration, Explanation, Recipes, Development).
 
@@ -47,7 +45,7 @@ MkDocs config is **`.mkdocs.yaml`**; the `nav` there reflects this structure (Tu
 ## Project structure
 
 - **Architecture:** The mailserver is made of multiple containers/pods (MTA, MDA, Web, Filter, SSL, Database, Redis, Unbound, Fetchmail) that together provide mail and management.
-- **Container images:** Built under **`target/`**. Each subdirectory is one service (e.g. `target/mta/`, `target/mda/`, `target/filter/`, `target/web/`, `target/db/`, `target/unbound/`, `target/ssl/`).
+- **Container images:** Built under **`target/`**. Each subdirectory is one service (e.g. `target/mta/`, `target/mda/`, `target/filter/`, `target/web/`, `target/unbound/`, `target/ssl/`). `target/db/` holds no image, only the bootstrap SQL for each engine; the `db` service runs an upstream image.
 - **Deployment manifests:**
   - **Docker Compose:** `deploy/compose/` (e.g. `mta.yaml`, `mda.yaml`, `web.yaml`, `db.yaml`).
   - **Kubernetes (Kustomize):** `deploy/kustomize/` (e.g. `mta/`, `mda/`, `web/`, `ingress/`).

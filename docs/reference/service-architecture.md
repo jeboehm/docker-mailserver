@@ -30,6 +30,7 @@ docker-mailserver consists of the following services:
 - **db:** `data-db:$DB_DATA_DIR` (`/var/lib/mysql` or `/var/lib/postgresql`)
 - **mta:** `data-tls:/etc/postfix/tls:ro`, `data-spool:/var/spool/postfix`
 - **mda:** `data-mail:/srv/vmail`, `data-tls:/etc/dovecot/tls:ro`
+- **web:** `data-tls:/opt/admin/tls:ro` (required for mobileconfig generation)
 - **filter:** `data-filter:/var/lib/rspamd`
 - **redis:** `data-redis:/data`
 - **SSL:** `data-tls:/media/tls:rw`

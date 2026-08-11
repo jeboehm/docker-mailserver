@@ -13,30 +13,30 @@ Environment variables for the mailserver-admin (web) application. Set in `.env` 
 
 ## Database
 
-| Variable         | Description         |
-| ---------------- | ------------------- |
-| `DB_USER`     | Database user     |
-| `DB_PASSWORD` | Database password |
-| `DB_HOST`     | Database host     |
-| `DB_NAME`     | Database name     |
-| `REDIS_HOST`     | Redis host          |
-| `REDIS_PORT`     | Redis port          |
-| `REDIS_PASSWORD` | Redis password      |
+| Variable         | Description       |
+| ---------------- | ----------------- |
+| `DB_USER`        | Database user     |
+| `DB_PASSWORD`    | Database password |
+| `DB_HOST`        | Database host     |
+| `DB_NAME`        | Database name     |
+| `REDIS_HOST`     | Redis host        |
+| `REDIS_PORT`     | Redis port        |
+| `REDIS_PASSWORD` | Redis password    |
 
 ## OAuth2
 
-| Variable                  | Default                  | Description                                   |
-| ------------------------- | ------------------------ | --------------------------------------------- |
-| `OAUTH_ENABLED`           | `false`                  | Enable OAuth2 login                           |
-| `OAUTH_CLIENT_ID`         | —                        | OAuth2 client ID                              |
-| `OAUTH_CLIENT_SECRET`     | —                        | OAuth2 client secret                          |
-| `OAUTH_CLIENT_SCOPES`     | `"email profile groups"` | Requested scopes                              |
-| `OAUTH_AUTHORIZATION_URL` | —                        | Authorization URL                             |
-| `OAUTH_ACCESS_TOKEN_URL`  | —                        | Token URL                                     |
-| `OAUTH_INFOS_URL`         | —                        | Userinfo URL                                  |
-| `OAUTH_ADMIN_GROUP`       | —                        | Group name for admin rights                   |
-| `OAUTH_BUTTON_TEXT`       | `"Login with OIDC"`      | Login button label                            |
-| `OAUTH_PATHS_IDENTIFIER`  | `sub`                    | Field containing user identifier (e.g. email) |
-| `OAUTH_CREATE_USER`       | `false`                  | Create user if no match                       |
+| Variable                  | Default                         | Description                                   |
+| ------------------------- | ------------------------------- | --------------------------------------------- |
+| `OAUTH_ENABLED`           | `false`                         | Enable OAuth2 login                           |
+| `OAUTH_CLIENT_ID`         | —                               | OAuth2 client ID                              |
+| `OAUTH_CLIENT_SECRET`     | —                               | OAuth2 client secret                          |
+| `OAUTH_CLIENT_SCOPES`     | `"openid email profile groups"` | Requested scopes                              |
+| `OAUTH_AUTHORIZATION_URL` | —                               | Authorization URL                             |
+| `OAUTH_ACCESS_TOKEN_URL`  | —                               | Token URL                                     |
+| `OAUTH_INFOS_URL`         | —                               | Userinfo URL                                  |
+| `OAUTH_ADMIN_GROUP`       | `admin`                         | Group name for admin rights                   |
+| `OAUTH_BUTTON_TEXT`       | `"Login with OIDC"`             | Login button label                            |
+| `OAUTH_PATHS_IDENTIFIER`  | `email`                         | Field containing user identifier (e.g. email) |
+| `OAUTH_CREATE_USER`       | `false`                         | Create user if no match                       |
 
 For setting up OAuth2, see [How to configure OAuth2](../how-to/configure-oauth2.md).
