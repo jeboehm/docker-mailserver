@@ -8,7 +8,10 @@ on:
   pull_request:
     paths:
       - ".env.dist"
-      - ".github/text-matrix/**"
+      - ".github/actions/**"
+      - ".github/bin/**"
+      - ".github/images.txt"
+      - ".github/test-matrix/**"
       - ".github/workflows/build.yml"
       - "bin/**"
       - "deploy/**"
@@ -20,9 +23,19 @@ on:
 concurrency:
   group: "${{ github.workflow }}-${{ github.ref }}"
   cancel-in-progress: true
-env:
-  ADDITIONAL_DOCKER_IMAGES: "mysql:lts postgres:18-alpine axllent/mailpit:v1.27 redis:8.2-alpine ghcr.io/jeboehm/fetchmailmgr:0.4.0"
 jobs:
+  # Populates the additional-image cache from a ref that pull requests can read.
+  # Caches written by a pull request are scoped to that pull request only, so
+  # without this job every pull request pays a full registry pull.
+  warm_image_cache:
+    if: ${{ github.event_name != 'pull_request' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: ./.github/actions/additional-images
+        with:
+          mode: none
+          save: "true"
   build:
     runs-on: ubuntu-latest
     strategy:
@@ -51,7 +64,7 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
       - name: Set up QEMU
-        if: ${{ github.event_name != 'pull_request' }}
+        if: ${{ github.event_name != 'pull_request' && matrix.image != 'mailserver-test' }}
         uses: docker/setup-qemu-action@96fe6ef7f33517b61c61be40b68a1882f3264fb8 # v4.2.0
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@bb05f3f5519dd87d3ba754cc423b652a5edd6d2c # v4.2.0
@@ -83,6 +96,9 @@ jobs:
             type=semver,pattern={{major}}.{{minor}}
             type=semver,pattern={{major}}
             type=sha
+            # Deterministic ref for the Trivy scan on push: metadata-action does
+            # not emit `latest` for next-branch or tag pushes.
+            type=sha,format=long
       - name: Create banner
         run: .github/bin/create_banner.sh ${{ github.sha }} ${{ github.ref_name }}
       - name: Build and push Docker image
@@ -90,7 +106,10 @@ jobs:
         uses: docker/build-push-action@53b7df96c91f9c12dcc8a07bcb9ccacbed38856a # v7.3.0
         with:
           context: ${{ matrix.context }}
-          platforms: ${{ github.event_name == 'pull_request' && 'linux/amd64' || 'linux/amd64,linux/arm64' }}
+          # mailserver-test is never pushed, so building it for arm64 under QEMU
+          # would be wasted work. It is still built on push to keep its buildx
+          # cache scope warm for pull requests.
+          platforms: ${{ (github.event_name == 'pull_request' || matrix.image == 'mailserver-test') && 'linux/amd64' || 'linux/amd64,linux/arm64' }}
           push: ${{ github.event_name != 'pull_request' && matrix.image != 'mailserver-test' }}
           tags: ${{ github.event_name == 'pull_request' && format('jeboehm/{0}', matrix.image) || steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
@@ -149,20 +168,28 @@ jobs:
       - name: Check container image efficiency
         run: |
           for image in $(ls images/); do
+            # mailserver-test is never published, so its layer efficiency does not matter.
+            if [ "${image}" = "mailserver-test.tar" ]; then
+              continue
+            fi
             echo "::group::Checking image ${image}"
             dive --ci-config .github/linters/.dive-ci.yml docker-archive://images/${image}
             echo "::endgroup::"
           done
   test_docker_matrix:
+    name: test_docker_matrix (${{ matrix.TEST_CASE }})
     needs: build
     if: ${{ github.event_name == 'pull_request' }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        TEST_CASE:
-          - default
-          - relayhost
-          - postgres
+        include:
+          - TEST_CASE: default
+            SKIP_IMAGES: postgres:18-alpine
+          - TEST_CASE: relayhost
+            SKIP_IMAGES: postgres:18-alpine
+          - TEST_CASE: postgres
+            SKIP_IMAGES: mysql:lts
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
       - name: Download Docker image artifacts
@@ -176,37 +203,13 @@ jobs:
           for image in $(ls images/); do
             docker load --input images/${image}
           done
-      - name: Cache Docker images
-        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
-        id: docker-images-cache
+      - name: Load additional Docker images
+        uses: ./.github/actions/additional-images
         with:
-          path: /tmp/docker-images
-          key: ${{ runner.os }}-images-additional-${{ hashFiles('.github/workflows/build.yml') }}
-      - name: Load or pull Docker images
-        run: |
-          mkdir -p /tmp/docker-images
-          read -a IMAGES <<< "${{ env.ADDITIONAL_DOCKER_IMAGES }}"
-          for IMAGE in "${IMAGES[@]}"; do
-            # Convert image name to filename-safe format
-            FILENAME=$(echo "$IMAGE" | tr '/:' '-').tar
-            CACHE_PATH="/tmp/docker-images/$FILENAME"
-            if [ -f "$CACHE_PATH" ]; then
-              echo "::group::Loading $IMAGE from cache"
-              docker load --input "$CACHE_PATH"
-              echo "::endgroup::"
-            else
-              echo "::group::Pulling $IMAGE from registry"
-              docker pull "$IMAGE"
-              docker save "$IMAGE" -o "$CACHE_PATH"
-              echo "::endgroup::"
-            fi
-          done
+          mode: docker
+          skip: ${{ matrix.SKIP_IMAGES }}
       - name: Prepare environment
-        run: |
-          make .env
-          cat .env .github/test-matrix/${{ matrix.TEST_CASE }}.env > .env.tmp
-          awk -F= '{seen[$1]=$0} END {for (key in seen) print seen[key]}' .env.tmp > .env
-          rm .env.tmp
+        run: .github/bin/prepare_env.sh ${{ matrix.TEST_CASE }}
       - name: Output environment
         run: cat .env
       - name: Start components
@@ -221,6 +224,7 @@ jobs:
           make logs
           docker ps -a
   test_kubernetes_matrix:
+    name: test_kubernetes_matrix (${{ matrix.TEST_CASE }})
     needs: build
     if: ${{ github.event_name == 'pull_request' }}
     runs-on: ubuntu-latest
@@ -229,11 +233,15 @@ jobs:
       POPEYE_VER: v0.22.1 # renovate: depName=derailed/popeye
     strategy:
       matrix:
-        TEST_CASE:
-          - default
-          - relayhost
-          - postgres
-          - proxy
+        include:
+          - TEST_CASE: default
+            SKIP_IMAGES: postgres:18-alpine
+          - TEST_CASE: relayhost
+            SKIP_IMAGES: postgres:18-alpine
+          - TEST_CASE: proxy
+            SKIP_IMAGES: postgres:18-alpine
+          - TEST_CASE: postgres
+            SKIP_IMAGES: mysql:lts
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
       - name: Setup Kind
@@ -257,31 +265,11 @@ jobs:
         run: |
           kind get clusters
           kubectl config use-context kind-${{ env.CLUSTER_NAME }}
-      - name: Cache Docker images
-        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
-        id: docker-images-cache
+      - name: Load additional Docker images into kind cluster
+        uses: ./.github/actions/additional-images
         with:
-          path: /tmp/docker-images
-          key: ${{ runner.os }}-images-additional-${{ hashFiles('.github/workflows/build.yml') }}
-      - name: Load or pull Docker images into kind cluster
-        run: |
-          mkdir -p /tmp/docker-images
-          read -a IMAGES <<< "${{ env.ADDITIONAL_DOCKER_IMAGES }}"
-          for IMAGE in "${IMAGES[@]}"; do
-            FILENAME=$(echo "$IMAGE" | tr '/:' '-').tar
-            CACHE_PATH="/tmp/docker-images/$FILENAME"
-            if [ -f "$CACHE_PATH" ]; then
-              echo "::group::Loading $IMAGE from cache into kind cluster"
-              kind load image-archive "$CACHE_PATH"
-              echo "::endgroup::"
-            else
-              echo "::group::Pulling $IMAGE and loading into kind cluster"
-              docker pull "$IMAGE"
-              docker save "$IMAGE" -o "$CACHE_PATH"
-              kind load image-archive "$CACHE_PATH"
-              echo "::endgroup::"
-            fi
-          done
+          mode: kind
+          skip: ${{ matrix.SKIP_IMAGES }}
       - name: Download docker image artifacts
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
         with:
@@ -291,16 +279,17 @@ jobs:
       - name: Load downloaded docker images
         run: |
           for image in $(ls images/); do
+            # TLS in Kubernetes comes from `make kubernetes-tls`, no manifest
+            # references the ssl image.
+            if [ "${image}" = "mailserver-ssl.tar" ]; then
+              continue
+            fi
             echo "::group::Loading $image from downloaded artifacts into kind cluster"
             kind load image-archive images/${image}
             echo "::endgroup::"
           done
       - name: Prepare environment
-        run: |
-          make .env
-          cat .env .github/test-matrix/${{ matrix.TEST_CASE }}.env > .env.tmp
-          awk -F= '{seen[$1]=$0} END {for (key in seen) print seen[key]}' .env.tmp > .env
-          rm .env.tmp
+        run: .github/bin/prepare_env.sh ${{ matrix.TEST_CASE }}
       - name: Prepare tls certs
         run: make kubernetes-tls
       - name: Deploy Kubernetes resources
@@ -360,12 +349,12 @@ jobs:
         if: ${{ github.event_name != 'pull_request' }}
         uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
         with:
-          image-ref: "ghcr.io/jeboehm/${{ matrix.image }}:latest"
+          image-ref: "ghcr.io/jeboehm/${{ matrix.image }}:sha-${{ github.sha }}"
           format: "sarif"
           output: "trivy-results.sarif"
           severity: "CRITICAL,HIGH"
       - name: Upload Trivy scan results to GitHub Security tab
-        if: always()
+        if: ${{ !cancelled() }}
         uses: github/codeql-action/upload-sarif@5595ccaf912efad79be6eef63a5619ff05969be3 # v4
         with:
           sarif_file: "trivy-results.sarif"

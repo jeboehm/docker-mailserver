@@ -130,7 +130,6 @@ kind-load: build
 
 .PHONY: popeye-score
 popeye-score:
-	popeye
 	.github/bin/popeye_score.sh
 
 .PHONY: docs-build
