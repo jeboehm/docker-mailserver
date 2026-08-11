@@ -1,6 +1,11 @@
 COMPOSE_PRODUCTION = bin/production.sh
 COMPOSE_TEST       = bin/test.sh
 
+# The kubernetes test overlay follows the database engine configured in .env.
+# Override with e.g. `make kubernetes-deploy-helper DB_DRIVER=pgsql`.
+DB_DRIVER ?= $(shell sed -n 's/^DB_DRIVER=//p' .env 2>/dev/null | tail -n1)
+DB_DRIVER := $(or $(strip $(DB_DRIVER)),mysql)
+
 .PHONY: prod
 prod: up
 
@@ -74,7 +79,7 @@ kubernetes-deploy-helper:
 	helm repo add traefik https://traefik.github.io/charts
 	helm repo update
 	helm upgrade --install traefik traefik/traefik --version 37.1.2 --namespace default --values test/k8s/traefik-values.yaml
-	kustomize build --load-restrictor=LoadRestrictionsNone test/k8s | kubectl apply -f -
+	kustomize build --load-restrictor=LoadRestrictionsNone test/k8s/$(DB_DRIVER) | kubectl apply -f -
 
 .PHONY: kubernetes-tls
 kubernetes-tls:
@@ -87,6 +92,7 @@ kubernetes-wait:
 
 .PHONY: kubernetes-logs
 kubernetes-logs:
+	kubectl logs --ignore-errors -l app.kubernetes.io/name=db
 	kubectl logs --ignore-errors -l app.kubernetes.io/name=fetchmail
 	kubectl logs --ignore-errors -l app.kubernetes.io/name=filter
 	kubectl logs --ignore-errors -l app.kubernetes.io/name=mda
