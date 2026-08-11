@@ -9,6 +9,15 @@ services:
         - type=registry,ref=ghcr.io/jeboehm/mailserver-mta:buildcache
     restart: on-failure:5
     env_file: ../../.env
+    environment:
+      DB_DRIVER: ${DB_DRIVER:-mysql}
+      # Accepts the former MYSQL_* names as a fallback.
+      DB_HOST: ${DB_HOST:-${MYSQL_HOST:-db}}
+      DB_NAME: ${DB_NAME:-${MYSQL_DATABASE:-mailserver}}
+      DB_PASSWORD: ${DB_PASSWORD:-${MYSQL_PASSWORD:-}}
+      DB_PORT: ${DB_PORT:-${MYSQL_PORT:-3306}}
+      DB_TLS_VERIFY_CERT: ${DB_TLS_VERIFY_CERT:-${MYSQL_TLS_VERIFY_CERT:-no}}
+      DB_USER: ${DB_USER:-${MYSQL_USER:-mailserver}}
     volumes:
       - data-tls:/etc/postfix/tls:ro
       - data-spool:/var/spool/postfix

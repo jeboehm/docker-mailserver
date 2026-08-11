@@ -1,22 +1,32 @@
 #!/usr/bin/env bats
 
+setup() {
+	load '_helper'
+}
+
 @test "user table exists" {
-	run mariadb --skip-ssl-verify-server-cert --batch -u "${MYSQL_USER}" --password="${MYSQL_PASSWORD}" \
-		-h "${MYSQL_HOST}" -P "${MYSQL_PORT}" "${MYSQL_DATABASE}" \
-		-e "select * from mail_users;"
+	run db_query "select * from mail_users;"
 	[ "$status" = 0 ]
 }
 
 @test "alias table exists" {
-	run mariadb --skip-ssl-verify-server-cert --batch -u "${MYSQL_USER}" --password="${MYSQL_PASSWORD}" \
-		-h "${MYSQL_HOST}" -P "${MYSQL_PORT}" "${MYSQL_DATABASE}" \
-		-e "select * from mail_aliases;"
+	run db_query "select * from mail_aliases;"
 	[ "$status" = 0 ]
 }
 
 @test "domain table exists" {
-	run mariadb --skip-ssl-verify-server-cert --batch -u "${MYSQL_USER}" --password="${MYSQL_PASSWORD}" \
-		-h "${MYSQL_HOST}" -P "${MYSQL_PORT}" "${MYSQL_DATABASE}" \
-		-e "select * from mail_domains;"
+	run db_query "select * from mail_domains;"
 	[ "$status" = 0 ]
+}
+
+@test "addresses are stored in lower case" {
+	# Postfix and dovecot look addresses up with lower('%s'), which only
+	# resolves mixed case input as long as the stored values are lower case.
+	run db_query "select count(*) from mail_users where name <> lower(name);"
+	[ "$status" = 0 ]
+	[[ "$output" =~ 0 ]]
+
+	run db_query "select count(*) from mail_domains where name <> lower(name);"
+	[ "$status" = 0 ]
+	[[ "$output" =~ 0 ]]
 }

@@ -9,7 +9,7 @@ docker-mailserver consists of the following services:
 | Web       | Admin + Roundcube | Management UI and webmail          |
 | Filter    | Rspamd            | Spam filtering                     |
 | SSL       | —                 | Certificate generation             |
-| Database  | MySQL             | User and configuration data        |
+| Database  | MySQL/PostgreSQL  | User and configuration data        |
 | Redis     | Redis             | Caching and sessions               |
 | Unbound   | Unbound           | DNS resolver for filter            |
 | Fetchmail | Fetchmail         | External mail retrieval (optional) |
@@ -18,7 +18,7 @@ docker-mailserver consists of the following services:
 
 | Volume        | Purpose                             |
 | ------------- | ----------------------------------- |
-| `data-db`     | MySQL data (users, aliases, config) |
+| `data-db`     | Database data (users, aliases, ...) |
 | `data-mail`   | User mailboxes (maildir)            |
 | `data-tls`    | TLS certificates and keys           |
 | `data-filter` | Rspamd data and statistics          |
@@ -27,7 +27,7 @@ docker-mailserver consists of the following services:
 
 ## Volume Mounts by Service
 
-- **db:** `data-db:/var/lib/mysql`
+- **db:** `data-db:$DB_DATA_DIR` (`/var/lib/mysql` or `/var/lib/postgresql`)
 - **mta:** `data-tls:/etc/postfix/tls:ro`, `data-spool:/var/spool/postfix`
 - **mda:** `data-mail:/srv/vmail`, `data-tls:/etc/dovecot/tls:ro`
 - **filter:** `data-filter:/var/lib/rspamd`
