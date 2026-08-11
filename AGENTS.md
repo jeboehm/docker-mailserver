@@ -45,7 +45,7 @@ MkDocs config is **`.mkdocs.yaml`**; the `nav` there reflects this structure (Tu
 ## Project structure
 
 - **Architecture:** The mailserver is made of multiple containers/pods (MTA, MDA, Web, Filter, SSL, Database, Redis, Unbound, Fetchmail) that together provide mail and management.
-- **Container images:** Built under **`target/`**. Each subdirectory is one service (e.g. `target/mta/`, `target/mda/`, `target/filter/`, `target/web/`, `target/unbound/`, `target/ssl/`). `target/db/` holds no image, only the bootstrap SQL for each engine; the `db` service runs an upstream image.
+- **Container images:** Built under **`target/`**. Each subdirectory is one service (e.g. `target/mta/`, `target/mda/`, `target/filter/`, `target/web/`, `target/unbound/`, `target/ssl/`). The `db`, `redis` and `fetchmail` services run upstream images and have no directory here.
 - **Deployment manifests:**
   - **Docker Compose:** `deploy/compose/` (e.g. `mta.yaml`, `mda.yaml`, `web.yaml`, `db.yaml`).
   - **Kubernetes (Kustomize):** `deploy/kustomize/` (e.g. `mta/`, `mda/`, `web/`, `ingress/`).

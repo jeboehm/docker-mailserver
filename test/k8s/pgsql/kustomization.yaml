@@ -1,8 +1,5 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-# PostgreSQL needs no bootstrap SQL, so there is no initdb generator here. The
-# schema is created by the doctrine migrations that run in the prepare-service
-# init container of the web deployment.
 resources:
   - ../base/
   - postgres.yaml
