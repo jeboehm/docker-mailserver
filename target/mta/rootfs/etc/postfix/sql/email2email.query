@@ -1,0 +1,1 @@
+query = SELECT CONCAT(mail_users.name, '@', mail_domains.name) AS email FROM mail_users JOIN mail_domains ON mail_users.domain_id = mail_domains.id WHERE CONCAT(mail_users.name, '@', mail_domains.name) = lower('%s')

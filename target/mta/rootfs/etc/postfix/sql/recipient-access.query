@@ -1,0 +1,1 @@
+query = SELECT CASE WHEN send_only = true THEN 'REJECT' ELSE 'OK' END AS access FROM mail_users JOIN mail_domains ON mail_users.domain_id = mail_domains.id WHERE mail_users.name = lower('%u') AND mail_domains.name = lower('%d')

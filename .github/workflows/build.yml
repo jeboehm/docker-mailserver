@@ -20,7 +20,7 @@ concurrency:
   group: "${{ github.workflow }}-${{ github.ref }}"
   cancel-in-progress: true
 env:
-  ADDITIONAL_DOCKER_IMAGES: "mysql:lts axllent/mailpit:v1.27 redis:8.2-alpine ghcr.io/jeboehm/fetchmailmgr:0.4.0"
+  ADDITIONAL_DOCKER_IMAGES: "mysql:lts postgres:18-alpine axllent/mailpit:v1.27 redis:8.2-alpine ghcr.io/jeboehm/fetchmailmgr:0.4.0"
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -161,6 +161,7 @@ jobs:
         TEST_CASE:
           - default
           - relayhost
+          - postgres
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
       - name: Download Docker image artifacts

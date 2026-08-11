@@ -22,6 +22,14 @@ services:
       # For development
       - ./test/bats/integration:/app/tests:ro
     env_file: .env
+    environment:
+      DB_DRIVER: ${DB_DRIVER:-mysql}
+      # Accepts the former MYSQL_* names as a fallback.
+      DB_HOST: ${DB_HOST:-${MYSQL_HOST:-db}}
+      DB_NAME: ${DB_NAME:-${MYSQL_DATABASE:-mailserver}}
+      DB_PASSWORD: ${DB_PASSWORD:-${MYSQL_PASSWORD:-}}
+      DB_PORT: ${DB_PORT:-${MYSQL_PORT:-3306}}
+      DB_USER: ${DB_USER:-${MYSQL_USER:-mailserver}}
     depends_on:
       - mailpit
       - fetchmail

@@ -51,7 +51,7 @@ The mailserver consists of multiple microservices:
 - **Web** — Admin interface and Roundcube webmail
 - **Filter** — RSpamd for spam filtering
 - **SSL** — Certificate generation and management
-- **Database** — MySQL for user and configuration data
+- **Database** — MySQL or PostgreSQL for user and configuration data
 - **Redis** — Caching and session storage
 - **Unbound** — DNS resolver for the filter service
 - **Fetchmail** — External mail retrieval (optional)

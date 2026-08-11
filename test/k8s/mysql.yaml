@@ -38,6 +38,28 @@ spec:
           envFrom:
             - configMapRef:
                 name: config-env
+          # The mysql image expects MYSQL_*, the rest of the stack uses DB_*.
+          env:
+            - name: MYSQL_DATABASE
+              valueFrom:
+                configMapKeyRef:
+                  name: config-env
+                  key: DB_NAME
+            - name: MYSQL_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: config-env
+                  key: DB_USER
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  name: config-env
+                  key: DB_PASSWORD
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  name: config-env
+                  key: DB_ROOT_PASSWORD
           ports:
             - containerPort: 3306
               name: mysql
