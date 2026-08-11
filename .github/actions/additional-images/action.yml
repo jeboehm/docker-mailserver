@@ -1,0 +1,38 @@
+name: Additional Docker images
+description: Restore the third-party test images from the cache and load them into docker or kind.
+inputs:
+  mode:
+    description: Where to load the images. One of docker, kind or none.
+    required: true
+  skip:
+    description: Space separated images from .github/images.txt that are not needed.
+    default: ""
+  save:
+    description: Save the cache afterwards. Only the cache warming job sets this.
+    default: "false"
+runs:
+  using: composite
+  steps:
+    # The key is centralised here on purpose: a mismatch between the call sites
+    # would silently disable the cache instead of failing.
+    - name: Restore Docker image cache
+      id: restore
+      uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
+      with:
+        path: /tmp/docker-images
+        key: ${{ runner.os }}-images-additional-${{ hashFiles('.github/images.txt') }}
+        # Lets a single changed image reuse the other archives instead of
+        # re-pulling all of them.
+        restore-keys: ${{ runner.os }}-images-additional-
+    - name: Load Docker images
+      shell: bash
+      env:
+        MODE: ${{ inputs.mode }}
+        SKIP: ${{ inputs.skip }}
+      run: .github/bin/load_images.sh
+    - name: Save Docker image cache
+      if: ${{ inputs.save == 'true' && steps.restore.outputs.cache-hit != 'true' }}
+      uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
+      with:
+        path: /tmp/docker-images
+        key: ${{ runner.os }}-images-additional-${{ hashFiles('.github/images.txt') }}
