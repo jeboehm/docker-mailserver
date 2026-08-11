@@ -1,12 +1,12 @@
 # External Database and HTTPS Ingress Example
 
-This example demonstrates how to deploy the docker-mailserver in Kubernetes with an external MySQL database and HTTPS ingress configuration. This setup is ideal for production environments where you want to use an existing database infrastructure and provide secure web access to the mail administration interface.
+This example demonstrates how to deploy the docker-mailserver in Kubernetes with an external database and HTTPS ingress configuration. It uses MySQL; PostgreSQL works the same way with `DB_DRIVER` set accordingly. This setup is ideal for production environments where you want to use an existing database infrastructure and provide secure web access to the mail administration interface.
 
 ## Overview
 
 This configuration extends the base docker-mailserver kustomization with:
 
-- **External MySQL Database**: Uses an existing MySQL/Percona XtraDB Cluster instead of the built-in database
+- **External Database**: Uses an existing MySQL/Percona XtraDB Cluster instead of the built-in database
 - **HTTPS Ingress**: Provides secure web access to the mail administration interface with automatic TLS certificate management
 - **LoadBalancer Services**: Exposes SMTP/IMAP services through LoadBalancer services for external access
 - **OAuth Integration**: Configures OAuth2/OIDC authentication for enhanced security
@@ -31,9 +31,9 @@ Creates the `mail` namespace with pod security policies set to baseline level fo
 
 ConfigMap containing environment variables for:
 
-- **Database Configuration**: External MySQL connection details
+- **Database Configuration**: External database connection details
 - **OAuth Settings**: OIDC authentication configuration
-- **Mail Settings**: Domain, postmaster, and delimiter configuration
+- **Mail Settings**: Mail server hostname
 - **Security**: HTTPS enforcement and trusted proxy settings
 
 ### `secret.yaml`

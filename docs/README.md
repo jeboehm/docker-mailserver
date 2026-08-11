@@ -15,7 +15,7 @@ The documentation is organised by purpose:
 - **[Tutorial: Getting Started](tutorials/getting-started.md)** — A step-by-step lesson to install docker-mailserver with Docker Compose and create your first mailbox.
 - **How-to guides** — Task-oriented guides for specific goals: [install with Docker](how-to/install-docker.md), [install on Kubernetes](how-to/install-kubernetes.md), [configure DNS](how-to/configure-dns.md), [configure TLS](how-to/configure-tls.md), [manage users](how-to/manage-users.md), and more.
 - **Reference** — Technical descriptions: [environment variables](reference/environment-variables.md), [DNS records](reference/dns-records.md), [ports](reference/ports.md), [service architecture](reference/service-architecture.md), [user roles](reference/user-roles.md), and related topics.
-- **Explanation** — Background and context: [architecture](explanation/architecture.md), [DNS and email delivery](explanation/dns-and-email.md), [observability](explanation/observability.md).
+- **Explanation** — Background and context: [architecture](explanation/architecture.md), [database backends](explanation/database-backends.md), [DNS and email delivery](explanation/dns-and-email.md), [observability](explanation/observability.md).
 
 ## Key features
 

@@ -2,17 +2,34 @@
 
 Services and ports exposed by docker-mailserver.
 
-| Service                             | Address                      |
-| ----------------------------------- | ---------------------------- |
-| POP3 (STARTTLS required)            | 127.0.0.1:110                |
-| POP3S                               | 127.0.0.1:995                |
-| IMAP (STARTTLS required)            | 127.0.0.1:143                |
-| IMAPS                               | 127.0.0.1:993                |
-| SMTP                                | 127.0.0.1:25                 |
-| Mail Submission (STARTTLS required) | 127.0.0.1:587                |
-| Management Interface                | http://127.0.0.1:81/manager/ |
-| Webmail                             | http://127.0.0.1:81/webmail/ |
-| Rspamd web interface                | http://127.0.0.1:81/rspamd/  |
+## Docker Compose
+
+Host ports published by `docker-compose.production.yml`, with the container port they map to:
+
+| Service                             | Host port | Container port | Path        |
+| ----------------------------------- | --------- | -------------- | ----------- |
+| POP3 (STARTTLS required)            | 110       | 31110          | —           |
+| POP3S                               | 995       | 31995          | —           |
+| IMAP (STARTTLS required)            | 143       | 31143          | —           |
+| IMAPS                               | 993       | 31993          | —           |
+| SMTP                                | 25        | 25             | —           |
+| Mail Submission (STARTTLS required) | 587       | 587            | —           |
+| Management Interface                | 81        | 8080           | `/`         |
+| Webmail                             | 81        | 8080           | `/webmail/` |
+| Rspamd web interface                | 81        | 8080           | `/rspamd/`  |
+
+## Kubernetes
+
+The Kustomize Services publish different ports than the containers listen on. Variables such as `MDA_IMAP_ADDRESS` and `WEB_HTTP_ADDRESS` are overridden in `deploy/kustomize/common/configmap.yaml` to match.
+
+| Service | Service ports                              |
+| ------- | ------------------------------------------ |
+| mta     | 25, 587                                    |
+| mda     | 110, 143, 993, 995, 2003, 2004, 4190, 8080 |
+| web     | 80                                         |
+| filter  | 11332, 11334                               |
+| redis   | 6379                                       |
+| unbound | 53 (TCP and UDP)                           |
 
 ## Binding and exposure
 

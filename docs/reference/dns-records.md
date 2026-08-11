@@ -4,14 +4,14 @@ DNS record types and formats required for the mailserver. Configure these in you
 
 ## Summary
 
-| Record Type | Name                 | Purpose                            |
-| ----------- | -------------------- | ---------------------------------- |
-| MX          | `@`                  | Direct incoming mail               |
-| A           | `mail`               | Resolve mailserver hostname (IPv4) |
-| AAAA        | `mail`               | Resolve mailserver hostname (IPv6) |
-| TXT (SPF)   | `@`                  | Authorize sending servers          |
-| TXT (DKIM)  | `default._domainkey` | Email signature verification       |
-| TXT (DMARC) | `_dmarc`             | Authentication policy              |
+| Record Type | Name              | Purpose                            |
+| ----------- | ----------------- | ---------------------------------- |
+| MX          | `@`               | Direct incoming mail               |
+| A           | `mail`            | Resolve mailserver hostname (IPv4) |
+| AAAA        | `mail`            | Resolve mailserver hostname (IPv6) |
+| TXT (SPF)   | `@`               | Authorize sending servers          |
+| TXT (DKIM)  | `dkim._domainkey` | Email signature verification       |
+| TXT (DMARC) | `_dmarc`          | Authentication policy              |
 
 ## MX Record
 
@@ -84,14 +84,16 @@ Publishes the public key for DKIM verification. The management interface generat
 
 ```text
 Type: TXT
-Name: default._domainkey (or selector._domainkey)
+Name: dkim._domainkey
 Value: v=DKIM1; k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC...
 ```
 
-Example for `example.com` with selector `default`:
+The selector is `dkim`. Rspamd verifies its own public key before signing and does not sign when the published record does not match, so a record under a different name disables signing silently.
+
+Example for `example.com`:
 
 ```text
-default._domainkey.example.com.    IN    TXT    "v=DKIM1; k=rsa; p=..."
+dkim._domainkey.example.com.    IN    TXT    "v=DKIM1; k=rsa; p=..."
 ```
 
 ## DMARC Record (TXT)
@@ -138,7 +140,7 @@ Use `dig` or `nslookup` to verify records:
 dig MX example.com
 dig A mail.example.com
 dig TXT example.com
-dig TXT default._domainkey.example.com
+dig TXT dkim._domainkey.example.com
 dig TXT _dmarc.example.com
 ```
 

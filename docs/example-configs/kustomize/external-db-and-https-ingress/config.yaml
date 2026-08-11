@@ -8,9 +8,12 @@ data:
   DB_HOST: pxc-operator-pxc-db-haproxy.mysql.svc.cluster.local
   DB_PORT: "3306"
   DB_USER: database_user
+  # For PostgreSQL, set these as well:
+  # DB_DRIVER: pgsql
+  # DB_SERVER_VERSION: "18"
   OAUTH_ENABLED: "true"
   OAUTH_CLIENT_SCOPES: openid email profile groups
-  OAUTH_MAPPING_IDENTIFIER: preferred_username
+  OAUTH_PATHS_IDENTIFIER: preferred_username
   OAUTH_AUTHORIZATION_URL: https://id.example.org/authorize
   OAUTH_ACCESS_TOKEN_URL: https://id.example.org/api/oidc/token
   OAUTH_INFOS_URL: https://id.example.org/api/oidc/userinfo

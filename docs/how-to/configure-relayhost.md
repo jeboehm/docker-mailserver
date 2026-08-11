@@ -31,10 +31,12 @@ In `deploy/compose/mta.yaml` (or your compose override), add a volume for the cr
 ```yaml
 volumes:
   - data-tls:/etc/postfix/tls:ro
-  - ./sasl_passwd:/etc/postfix/sasl_passwd_ext:ro
+  - ./sasl_passwd:/etc/postfix/sasl_passwd_ext
 ```
 
 Use the path where the MTA expects it (e.g. `/etc/postfix/sasl_passwd_ext`).
+
+Do not mount the file read-only. The entrypoint runs `chown`, `chmod`, and `postmap` on it, which fail on a read-only mount and abort the container. `postmap` writes the lookup table next to the source file, so the directory containing it must be writable as well.
 
 ### 3. Set environment variables
 
