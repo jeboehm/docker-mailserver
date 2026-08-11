@@ -18,5 +18,4 @@ services:
       POSTGRES_USER: ${DB_USER:-${MYSQL_USER:-mailserver}}
       POSTGRES_PASSWORD: ${DB_PASSWORD:-${MYSQL_PASSWORD:-}}
     volumes:
-      - ../../target/db/${DB_DRIVER:-mysql}/initdb.d:/docker-entrypoint-initdb.d:ro
       - data-db:${DB_DATA_DIR:-/var/lib/mysql}
