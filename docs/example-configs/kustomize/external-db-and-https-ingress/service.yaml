@@ -13,8 +13,9 @@ spec:
   internalTrafficPolicy: Local
   externalTrafficPolicy: Local
   selector:
-    app.kubernetes.io/instance: mail
-    app.kubernetes.io/component: mta
+    app.kubernetes.io/name: mta
+    app.kubernetes.io/component: mail
+    app.kubernetes.io/part-of: docker-mailserver
   ports:
     - name: smtp
       port: 25
@@ -32,8 +33,9 @@ metadata:
 spec:
   type: LoadBalancer
   selector:
-    app.kubernetes.io/instance: mail
-    app.kubernetes.io/component: mda
+    app.kubernetes.io/name: mda
+    app.kubernetes.io/component: mail
+    app.kubernetes.io/part-of: docker-mailserver
   ports:
     - name: imap
       port: 143

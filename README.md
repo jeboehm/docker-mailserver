@@ -70,8 +70,9 @@ For a complete walkthrough, see the
 
 `docker-mailserver` can be set up using Docker or Kubernetes.
 
-For detailed installation instructions, see the
-[Installation Guide](docs/installation.md).
+For detailed installation instructions, see
+[How to install with Docker Compose](docs/how-to/install-docker.md) or
+[How to install on Kubernetes](docs/how-to/install-kubernetes.md).
 
 ## Screenshots
 

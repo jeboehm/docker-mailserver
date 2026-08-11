@@ -13,6 +13,13 @@ markdown_extensions:
 exclude_docs: |
   example-configs/**
   requirements.txt
+# Escalated to warnings so that --strict fails on pages missing from the nav
+# and on links that do not resolve to a built page.
+validation:
+  nav:
+    omitted_files: warn
+  links:
+    unrecognized_links: warn
 nav:
   - Welcome: README.md
   - Tutorial:

@@ -3,8 +3,9 @@ kind: StatefulSet
 metadata:
   name: filter
   labels:
-    app.kubernetes.io/component: filter
-    app.kubernetes.io/instance: mail
+    app.kubernetes.io/name: filter
+    app.kubernetes.io/component: mail
+    app.kubernetes.io/part-of: docker-mailserver
 spec:
   serviceName: filter
   replicas: 1

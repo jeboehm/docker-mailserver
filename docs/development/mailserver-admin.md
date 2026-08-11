@@ -8,7 +8,7 @@ The project is located in a separate repository: [mailserver-admin](https://gith
 - PHP
 - Symfony
 - EasyAdmin
-- MySQL
+- MySQL or PostgreSQL
 - Redis
 - PHPUnit
 
@@ -58,6 +58,8 @@ composer install
 - **Caddy web server** on `http://localhost:8000`
 - **MySQL database** (accessible at `127.0.0.1`)
 - **Redis server** (accessible at `localhost:6379`)
+
+PostgreSQL is supported as well, but disabled by default. Enable `services.postgres` in `devenv.nix` and point `DATABASE_URL` at it.
 
 The web server is configured to serve files from the `public/` directory and uses PHP-FPM for PHP execution.
 

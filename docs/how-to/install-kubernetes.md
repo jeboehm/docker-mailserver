@@ -4,7 +4,7 @@ This guide describes how to deploy docker-mailserver on Kubernetes with
 Kustomize. An external database is required (MySQL/MariaDB or PostgreSQL); the
 kustomization does not provision a database.
 
-A full example is in [example-configs/kustomize/external-db-and-https-ingress](../example-configs/kustomize/external-db-and-https-ingress/).
+A full example is in [example-configs/kustomize/external-db-and-https-ingress](https://github.com/jeboehm/docker-mailserver/tree/main/docs/example-configs/kustomize/external-db-and-https-ingress).
 
 ## Prerequisites
 
@@ -21,7 +21,7 @@ ConfigMap for non-sensitive values and Secrets for sensitive values
 (credentials, passwords, API keys). See [Environment variables reference](../reference/environment-variables.md) for the full list.
 
 See the
-[example-configs/kustomize/external-db-and-https-ingress](../example-configs/kustomize/external-db-and-https-ingress/)
+[example-configs/kustomize/external-db-and-https-ingress](https://github.com/jeboehm/docker-mailserver/tree/main/docs/example-configs/kustomize/external-db-and-https-ingress)
 directory for a sample configuration showing how to structure these
 resources.
 
@@ -68,7 +68,7 @@ Wait until all pods are running and healthy.
 ### 7. Run setup wizard
 
 ```bash
-kubectl exec -n mail -it deployment/web -c php-fpm -- setup.sh
+kubectl exec -n mail -it deployment/web -- setup.sh
 ```
 
 Use the wizard to set initial configuration, create the first email
