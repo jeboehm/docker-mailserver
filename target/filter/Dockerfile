@@ -9,10 +9,12 @@ ENV REDIS_HOST=redis \
     RSPAMD_DNS_SERVERS="round-robin:unbound:5353"
 
 USER root
-COPY --chown=root:root rootfs/ /
+
 RUN apt-get update && \
     apt-get install --no-install-recommends -y netcat-openbsd && \
     rm -rf /var/lib/apt/lists/*
+
+COPY --chown=root:root rootfs/ /
 
 USER _rspamd
 

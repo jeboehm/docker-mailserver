@@ -9,15 +9,23 @@ jobs:
     permissions:
       contents: read
       packages: read
+      issues: write
+      pull-requests: write
       statuses: write
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           fetch-depth: 0
+          persist-credentials: false
       - name: Prepare environment
         run: grep -v '^#' .github/linters/super-linter.env >> "$GITHUB_ENV"
       - name: Super-Linter
         uses: super-linter/super-linter/slim@4ce20838b8ab83717e78138c5b3a1407148e0918 # v8.7.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Set here rather than in super-linter.env, because that file is also
+          # mounted by test/super-linter/compose.yaml for `make lint`, where a
+          # diff against main in a dirty working copy would lint nothing.
+          VALIDATE_ALL_CODEBASE: "false"
+          IGNORE_GITIGNORED_FILES: "true"
