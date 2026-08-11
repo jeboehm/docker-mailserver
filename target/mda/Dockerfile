@@ -9,6 +9,7 @@ ENV DB_DRIVER=mysql \
     DB_PORT=3306 \
     DB_USER=root \
     DB_NAME=mailserver \
+    DB_TLS_VERIFY_CERT=no \
     FILTER_WEB_ADDRESS=filter:11334 \
     MAILNAME=mail.example.com \
     MDA_UPSTREAM_PROXY=no \
