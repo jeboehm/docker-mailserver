@@ -17,6 +17,7 @@ services:
       DB_NAME: ${DB_NAME:-${MYSQL_DATABASE:-mailserver}}
       DB_PASSWORD: ${DB_PASSWORD:-${MYSQL_PASSWORD:-}}
       DB_PORT: ${DB_PORT:-${MYSQL_PORT:-3306}}
+      DB_TLS_VERIFY_CERT: ${DB_TLS_VERIFY_CERT:-${MYSQL_TLS_VERIFY_CERT:-no}}
       DB_USER: ${DB_USER:-${MYSQL_USER:-mailserver}}
     tmpfs:
       - /tmp:mode=0755,uid=1000,gid=1000
