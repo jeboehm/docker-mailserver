@@ -46,9 +46,29 @@ if [ "${MTA_UPSTREAM_PROXY}" = "true" ]; then
 	postconf postscreen_upstream_proxy_protocol=haproxy
 fi
 
-envsubst </etc/postfix/mysql-email2email.cf.templ >/etc/postfix/mysql-email2email.cf
-envsubst </etc/postfix/mysql-virtual-alias-maps.cf.templ >/etc/postfix/mysql-virtual-alias-maps.cf
-envsubst </etc/postfix/mysql-virtual-mailbox-domains.cf.templ >/etc/postfix/mysql-virtual-mailbox-domains.cf
-envsubst </etc/postfix/mysql-virtual-mailbox-maps.cf.templ >/etc/postfix/mysql-virtual-mailbox-maps.cf
-envsubst </etc/postfix/mysql-recipient-access.cf.templ >/etc/postfix/mysql-recipient-access.cf
-envsubst </etc/postfix/mysql-email-submission.cf.templ >/etc/postfix/mysql-email-submission.cf
+# The lookup queries are written to work on both engines, so only the
+# connection block differs. DB_DRIVER doubles as the postfix map type.
+case "${DB_DRIVER}" in
+mysql | pgsql) ;;
+*)
+	echo "Unsupported DB_DRIVER: ${DB_DRIVER} (expected mysql or pgsql)"
+	exit 1
+	;;
+esac
+
+for map in \
+	virtual-mailbox-domains \
+	virtual-mailbox-maps \
+	virtual-alias-maps \
+	email2email \
+	email-submission \
+	recipient-access; do
+	cat "/etc/postfix/sql/connection-${DB_DRIVER}.templ" "/etc/postfix/sql/${map}.query" |
+		envsubst >"/etc/postfix/sql/${map}.cf"
+done
+
+postconf virtual_mailbox_domains="${DB_DRIVER}:/etc/postfix/sql/virtual-mailbox-domains.cf"
+postconf virtual_mailbox_maps="${DB_DRIVER}:/etc/postfix/sql/virtual-mailbox-maps.cf"
+postconf virtual_alias_maps="${DB_DRIVER}:/etc/postfix/sql/virtual-alias-maps.cf,${DB_DRIVER}:/etc/postfix/sql/email2email.cf"
+postconf smtpd_sender_login_maps="${DB_DRIVER}:/etc/postfix/sql/email-submission.cf"
+postconf smtpd_recipient_restrictions="reject_unauth_destination,check_recipient_access ${DB_DRIVER}:/etc/postfix/sql/recipient-access.cf"

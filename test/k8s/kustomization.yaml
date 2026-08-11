@@ -5,8 +5,8 @@ generatorOptions:
 configMapGenerator:
   - name: mysql-initdb
     files:
-      - ../../target/db/rootfs/docker-entrypoint-initdb.d/001_mailserver.sql
-      - ../../target/db/rootfs/docker-entrypoint-initdb.d/002_webmail.sql
+      - ../../target/db/mysql/initdb.d/001_mailserver.sql
+      - ../../target/db/mysql/initdb.d/002_webmail.sql
   - name: config-env
     envs:
       - ../../.env

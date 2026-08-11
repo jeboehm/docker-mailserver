@@ -7,13 +7,13 @@ if ! nc -z 0.0.0.0 25; then
 	exit 1
 fi
 
-# 2. test connection to $MYSQL_HOST:$MYSQL_PORT
-if [ -z "$MYSQL_HOST" ] || [ -z "$MYSQL_PORT" ]; then
-	echo "Healthcheck failed: MYSQL_HOST or MYSQL_PORT not set"
+# 2. test connection to $DB_HOST:$DB_PORT
+if [ -z "$DB_HOST" ] || [ -z "$DB_PORT" ]; then
+	echo "Healthcheck failed: DB_HOST or DB_PORT not set"
 	exit 1
 fi
-if ! nc -z "$MYSQL_HOST" "$MYSQL_PORT"; then
-	echo "Healthcheck failed: cannot connect to $MYSQL_HOST:$MYSQL_PORT"
+if ! nc -z "$DB_HOST" "$DB_PORT"; then
+	echo "Healthcheck failed: cannot connect to $DB_HOST:$DB_PORT"
 	exit 1
 fi
 

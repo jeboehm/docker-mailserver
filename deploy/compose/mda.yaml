@@ -10,6 +10,14 @@ services:
         - type=registry,ref=ghcr.io/jeboehm/mailserver-mda:buildcache
     restart: on-failure:5
     env_file: ../../.env
+    environment:
+      DB_DRIVER: ${DB_DRIVER:-mysql}
+      # Accepts the former MYSQL_* names as a fallback.
+      DB_HOST: ${DB_HOST:-${MYSQL_HOST:-db}}
+      DB_NAME: ${DB_NAME:-${MYSQL_DATABASE:-mailserver}}
+      DB_PASSWORD: ${DB_PASSWORD:-${MYSQL_PASSWORD:-}}
+      DB_PORT: ${DB_PORT:-${MYSQL_PORT:-3306}}
+      DB_USER: ${DB_USER:-${MYSQL_USER:-mailserver}}
     tmpfs:
       - /tmp:mode=0755,uid=1000,gid=1000
       - /run/dovecot:mode=0755,uid=1000,gid=1000
