@@ -15,8 +15,7 @@ spec:
         - name: mta
           port: smtp
           nativeLB: true
-          proxyProtocol:
-            version: 2
+          serversTransport: proxyprotocol
 ---
 apiVersion: traefik.io/v1alpha1
 kind: IngressRouteTCP
@@ -35,5 +34,4 @@ spec:
         - name: mta
           port: submission
           nativeLB: true
-          proxyProtocol:
-            version: 2
+          serversTransport: proxyprotocol
