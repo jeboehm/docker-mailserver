@@ -15,8 +15,7 @@ spec:
         - name: mda
           port: imap
           nativeLB: true
-          proxyProtocol:
-            version: 2
+          serversTransport: proxyprotocol
 ---
 apiVersion: traefik.io/v1alpha1
 kind: IngressRouteTCP
@@ -35,8 +34,7 @@ spec:
         - name: mda
           port: imaps
           nativeLB: true
-          proxyProtocol:
-            version: 2
+          serversTransport: proxyprotocol
 ---
 apiVersion: traefik.io/v1alpha1
 kind: IngressRouteTCP
@@ -55,8 +53,7 @@ spec:
         - name: mda
           port: pop3
           nativeLB: true
-          proxyProtocol:
-            version: 2
+          serversTransport: proxyprotocol
 ---
 apiVersion: traefik.io/v1alpha1
 kind: IngressRouteTCP
@@ -75,5 +72,4 @@ spec:
         - name: mda
           port: pop3s
           nativeLB: true
-          proxyProtocol:
-            version: 2
+          serversTransport: proxyprotocol

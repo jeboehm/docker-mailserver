@@ -1,0 +1,10 @@
+apiVersion: traefik.io/v1alpha1
+kind: ServersTransportTCP
+metadata:
+  name: proxyprotocol
+  labels:
+    app.kubernetes.io/component: mail
+    app.kubernetes.io/part-of: docker-mailserver
+spec:
+  proxyProtocol:
+    version: 2
