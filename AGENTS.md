@@ -1,59 +1,177 @@
 # Agent instructions for docker-mailserver
 
-This file gives AI agents and contributors the project conventions, documentation framework, and structure they need to work consistently on the codebase and docs.
+This file gives AI agents and contributors the conventions they need to work on the codebase: services, repository layout,
+configuration conventions, build and test workflow, CI and Git conventions. Documentation work (everything under `docs/`)
+has its own guide in [`docs/AGENTS.md`](docs/AGENTS.md).
 
-## Documentation framework: Diátaxis
+## Services
 
-Documentation follows **[Diátaxis](https://diataxis.fr)** (“A systematic approach to technical documentation authoring”). Diátaxis defines four kinds of documentation, each with a different purpose and style:
+`docker-mailserver` runs one container (Docker Compose) or pod (Kubernetes) per service. Images built from this repository
+live under `target/<service>/`; the remaining services use upstream images.
 
-| Kind             | Purpose                      | Serves                       | Style                                                                                                                      |
-| ---------------- | ---------------------------- | ---------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
-| **Tutorial**     | Learning by doing            | Acquisition of skill (study) | Lesson: take the learner through a concrete path; minimal explanation; visible results early; one main path, no branching. |
-| **How-to guide** | Accomplish a specific task   | Application of skill (work)  | Task-oriented: clear steps to reach a goal; for users who already know what they want; no teaching, no long explanations.  |
-| **Reference**    | Look up facts                | Application of skill (work)  | Technical description: accurate, complete, neutral; structure mirrors the product; consulted, not read.                    |
-| **Explanation**  | Understand context and “why” | Acquisition of skill (study) | Background and discussion: design, trade-offs, connections; can include opinion and perspective.                           |
+| Service     | Software                                                | Compose                         | Kustomize                                              | Internal address                                                |
+| ----------- | ------------------------------------------------------- | ------------------------------- | ------------------------------------------------------ | --------------------------------------------------------------- |
+| `mta`       | Postfix                                                 | `deploy/compose/mta.yaml`       | `deploy/kustomize/mta/` (StatefulSet)                  | `mta:25` (SMTP), `mta:587` (submission)                         |
+| `mda`       | Dovecot                                                 | `deploy/compose/mda.yaml`       | `deploy/kustomize/mda/` (StatefulSet)                  | IMAP/POP3 (see below), LMTP `mda:2003`, doveadm HTTP `mda:8080` |
+| `filter`    | Rspamd                                                  | `deploy/compose/filter.yaml`    | `deploy/kustomize/filter/` (StatefulSet)               | `filter:11332` (milter), `filter:11334` (controller / web UI)   |
+| `web`       | FrankenPHP with mailserver-admin and Roundcube          | `deploy/compose/web.yaml`       | `deploy/kustomize/web/` (Deployment)                   | `web:8080` in Compose (published as 81), `web:80` in Kubernetes |
+| `unbound`   | Unbound, DNSSEC-validating recursive resolver           | `deploy/compose/unbound.yaml`   | `deploy/kustomize/unbound/` (Deployment)               | `unbound:5353` in Compose, `unbound:53` in Kubernetes           |
+| `ssl`       | Self-signed certificate generator                       | `deploy/compose/ssl.yaml`       | — (`make kubernetes-tls` creates `tls-certs`)          | —                                                               |
+| `db`        | MySQL (`mysql:lts`) or PostgreSQL (`DB_IMAGE`)          | `deploy/compose/db.yaml`        | — (bring your own; `test/k8s/{mysql,pgsql}/` ship one) | `db:3306` / `db:5432`                                           |
+| `redis`     | Redis (upstream image)                                  | `deploy/compose/redis.yaml`     | `deploy/kustomize/redis/` (StatefulSet)                | `redis:6379`                                                    |
+| `fetchmail` | [fetchmailmgr](https://github.com/jeboehm/fetchmailmgr) | `deploy/compose/fetchmail.yaml` | `deploy/kustomize/fetchmail/` (Deployment)             | —                                                               |
 
-**Guidelines:**
+Dovecot listens on `31143`/`31993`/`31110`/`31995` (IMAP/IMAPS/POP3/POP3S) in Compose, published as 143/993/110/995 by
+`docker-compose.production.yml`, and on the standard ports in Kubernetes. It also serves auth on `2004` and ManageSieve on
+`4190`. `web` runs FrankenPHP serving mailserver-admin (`/opt/admin`) and Roundcube (`/opt/roundcube`).
 
-- **Tutorials:** One or few. One main path; show the result early; avoid options and long explanations; link to reference/explanation for depth.
-- **How-to guides:** One goal per guide; title = “How to …”; steps only; link to reference for options and formats.
-- **Reference:** Describe the machinery (env vars, ports, record formats, APIs); austere; structured like the product; no instruction or opinion.
-- **Explanation:** Answer “why?” and “how does it fit together?”; can compare alternatives and give context; do not mix in procedures or reference tables.
+Mail flow: SMTP (25) or submission (587) on `mta` → Rspamd milter (`filter:11332`) → LMTP to `mda` → Maildir under
+`/srv/vmail/<domain>/<user>/Maildir` (volume `data-mail`). Domains, users, aliases and the DKIM configuration live in the
+database, whose schema is owned by mailserver-admin; Postfix and Dovecot query the `mail_domains`, `mail_users` and
+`mail_aliases` tables directly. Rspamd keeps all of its state (Bayes, fuzzy, DKIM keys) in Redis and never touches the
+database.
 
-Do not mix the four types in a single doc. When in doubt, use the [Diátaxis compass](https://diataxis.fr/compass/): “Does it inform action or cognition? Does it serve study or work?”
+mailserver-admin is a separate project ([jeboehm/mailserver-admin](https://github.com/jeboehm/mailserver-admin));
+`target/web/Dockerfile` downloads a release tarball (`ADMIN_VER`). Its console (`/opt/admin/bin/console`) is the CLI for
+domains, users, aliases, DKIM and fetchmail accounts.
 
-## Documentation structure (docs/)
+## Repository layout
 
-The docs are organised by Diátaxis type:
+- `target/<service>/` — Dockerfile plus a `rootfs/` overlay that is copied to `/` of the image.
+- `deploy/compose/` — one Compose file per service, included by `docker-compose.yml`. `docker-compose.production.yml`
+  publishes the host ports, `docker-compose.test.yml` adds mailpit and the test runner. A git-ignored
+  `docker-compose.override.yml` is picked up by `bin/production.sh` when present.
+- `deploy/kustomize/` — one directory per service plus `common/` (ConfigMap `config-service-map` with the internal
+  addresses) and `ingress/traefik/`. The root `kustomization.yaml` generates the `config-env` ConfigMap from `.env`.
+- `bin/` — `production.sh` and `test.sh` (Compose wrappers, see below) and `create-tls-certs.sh`.
+- `test/bats/` — test runner image and BATS integration tests; `test/k8s/` — Kubernetes test overlay and test job;
+  `test/pajv/` — JSON schema check of the pod security contexts; `test/super-linter/` — lint runner.
+- `docs/` — MkDocs documentation, configured by `.mkdocs.yaml` in the root. See `docs/AGENTS.md`.
+- `.github/` — workflows, helper scripts (`bin/`), composite actions, linter configuration (`linters/`), CI test matrix
+  (`test-matrix/*.env`) and the list of third-party test images (`images.txt`).
+- `.env.dist` — canonical list of user-facing environment variables; `make .env` copies it to the git-ignored `.env`.
+- `config/` — git-ignored; `config/tls/` holds the certificates created by `bin/create-tls-certs.sh` for Kubernetes.
 
-- **`tutorials/`** — Learning path (e.g. `getting-started.md`).
-- **`how-to/`** — Task guides: install (Docker/Kubernetes), upgrade, configure (DNS, DKIM, TLS, relay, reverse proxy, OAuth2, database, Roundcube, PHP sessions), manage (domains, users, aliases, fetchmail), validate DNS, iOS/macOS profile.
-- **`reference/`** — Technical reference: `environment-variables.md`, `ports.md`, `dns-records.md`, `service-architecture.md`, `user-roles.md`, `mailserver-admin-config.md`, `local-address-extension.md`, `upgrade-changelog.md`.
-- **`explanation/`** — Context: `architecture.md`, `database-backends.md`, `dns-and-email.md`, `observability.md`.
-- **`administration/`** — Short reference for the web UI: `login.md`, `dashboard.md`; other admin topics live as how-to or reference.
-- **`development/`** — Developer how-to: `development.md` (Make, test, lint), `mailserver-admin.md` (mailserver-admin repository setup).
+## Deployment parity
 
-MkDocs config is **`.mkdocs.yaml`**; the `nav` there reflects this structure (Tutorial, How-to guides, Reference, Administration, Explanation, Recipes, Development).
+Compose and Kustomize must offer the same capabilities. When changing environment variables, volumes, ports or services
+in `deploy/compose/`, apply the same logical change in `deploy/kustomize/` (and vice versa). Internal addresses differ on
+purpose: Compose uses the container ports directly, Kubernetes Services publish the standard ports and
+`deploy/kustomize/common/configmap.yaml` overrides the `*_ADDRESS` variables accordingly. New user-facing variables go
+into `.env.dist` and `docs/reference/environment-variables.md`. Third-party images used by the tests are listed in
+`.github/images.txt`; keep it in sync with `deploy/compose/*.yaml` and `test/k8s/`.
 
-## Documentation writing style
+## Configuration conventions
 
-- Use **technical documentation language**, not marketing. Avoid subjective terms (“powerful”, “particularly useful”, “sophisticated”).
-- Use **direct, factual** statements about what the software does. Include **technical references** (e.g. RFCs) and **concrete examples** where useful.
-- Focus on **implementation and configuration**; keep prose concise and suitable for technical readers.
-- Prefer **functional descriptions** over promotional copy.
+- Services find each other through `<SERVICE>_<PROTOCOL>_ADDRESS=host:port` variables (e.g. `MTA_SMTP_SUBMISSION_ADDRESS`,
+  `FILTER_MILTER_ADDRESS`, `UNBOUND_DNS_ADDRESS`). The Compose defaults are baked into the Dockerfiles; Kubernetes
+  overrides them through `config-service-map`.
+- Database access uses `DB_DRIVER`, `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, `DB_PASSWORD`, `DB_SERVER_VERSION` (plus
+  `DB_IMAGE`, `DB_DATA_DIR`, `DB_TLS_VERIFY_CERT`). Compose accepts the former `MYSQL_*` names as a fallback, Kubernetes
+  does not.
+- Rspamd reads environment variables in its UCL configuration as `{= env.NAME =}`, which resolves to the process variable
+  `RSPAMD_NAME`. `target/filter/rootfs/entrypoint.sh` exports `REDIS_*` and the encrypted controller password under that
+  prefix; `RSPAMD_DNS_SERVERS` (Dockerfile, Kubernetes ConfigMap) is templated into `override.d/options.inc`.
+- Postfix is configured with `postconf` in `target/mta/Dockerfile`; settings that depend on the environment (`RELAYHOST`,
+  milter address, PROXY protocol) are applied at start by `target/mta/rootfs/usr/local/lib/init.sh`.
+- Entrypoints share one shape: `[ "$#" -gt 0 ] && exec "$@"` (a command override or `docker exec` bypasses the daemon),
+  an optional `/.banner.sh` generated in CI, then `exec` of the daemon.
+- Images run as non-root with fixed IDs (Rspamd 11333, Dovecot/vmail 1000, web 1000, Unbound 100) on a read-only root
+  filesystem with `tmpfs`/`emptyDir` for writable paths. Each image ships `/usr/local/bin/healthcheck.sh`;
+  `070_docker.bats` fails when any container is unhealthy.
+- Base images are pinned by digest. Versions of downloaded artifacts are declared as `ARG X_VER=... # renovate:
+depName=...` so Renovate can bump them.
 
-## Project structure
+## Build, run, test
 
-- **Architecture:** The mailserver is made of multiple containers/pods (MTA, MDA, Web, Filter, SSL, Database, Redis, Unbound, Fetchmail) that together provide mail and management.
-- **Container images:** Built under **`target/`**. Each subdirectory is one service (e.g. `target/mta/`, `target/mda/`, `target/filter/`, `target/web/`, `target/unbound/`, `target/ssl/`). The `db`, `redis` and `fetchmail` services run upstream images and have no directory here.
-- **Deployment manifests:**
-  - **Docker Compose:** `deploy/compose/` (e.g. `mta.yaml`, `mda.yaml`, `web.yaml`, `db.yaml`).
-  - **Kubernetes (Kustomize):** `deploy/kustomize/` (e.g. `mta/`, `mda/`, `web/`, `ingress/`).
-- **Deployment consistency:** The same capabilities should be reflected in both Compose and Kustomize. When you change one (e.g. env vars, volumes, services), update the other so Docker and Kubernetes deployments stay in parity.
+| Target                                | Effect                                                                                                 |
+| ------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| `make build`                          | Builds all images (`bin/test.sh build`).                                                               |
+| `make up`                             | `bin/production.sh up -d`; does not wait for the services to become healthy.                           |
+| `make fixtures`                       | Seeds domains, users, aliases, DKIM and a fetchmail account through mailserver-admin console commands. |
+| `make test`                           | `up` + `fixtures` + `bin/test.sh run --build --rm test` (full BATS suite).                             |
+| `make clean`                          | Stops everything and removes the project volumes (local data is lost).                                 |
+| `make logs`                           | Dumps the logs of all services.                                                                        |
+| `make lint`                           | Runs super-linter (see below).                                                                         |
+| `make docs-build` / `make docs-serve` | MkDocs strict build / live preview.                                                                    |
+| `make kubernetes-*`, `make kind-load` | Kubernetes test flow: kind cluster, Traefik chart, Kustomize overlay under `test/k8s/`, test job.      |
 
-## Quick reference for agents
+`bin/production.sh` stacks `docker-compose.yml` + `docker-compose.production.yml` + `docker-compose.override.yml` (if
+present); `bin/test.sh` stacks `docker-compose.yml` + `docker-compose.production.yml` + `docker-compose.test.yml`. Both
+pass their arguments to `docker compose` (`bin/test.sh logs -f filter`, `bin/test.sh exec filter sh`).
 
-- **Adding a new feature that needs docs:** Add or update the right Diátaxis type (tutorial step, how-to, reference section, or explanation). Keep one purpose per doc; link between them.
-- **Adding env vars or ports:** Document in **`reference/environment-variables.md`** or **`reference/ports.md`**; mention in the relevant how-to if it affects a procedure.
-- **Adding a new how-to:** Create under **`how-to/`** with a “How to …” title; add the page to **`.mkdocs.yaml`** under “How-to guides”.
-- **Changing deployment (Compose or Kustomize):** Apply the same logical change in **`deploy/compose/`** and **`deploy/kustomize/`** where applicable.
+## Integration tests
+
+- Runner image `test/bats/Dockerfile` (Alpine): bats with bats-assert/bats-support, `swaks`, `dig`, `curl`, `jq`,
+  `openssl`, `redis-cli`, `mariadb` and `psql` clients, the `docker` and `kubectl` CLIs, `php` with imap-tester.
+  `test/bats/rootfs/entrypoint.sh` waits for the services (`wait-for-services.sh`) and then runs `bats .`.
+- Tests live in `test/bats/integration/NNN_<topic>.bats` and run in numeric order. Files depend on each other
+  (`040_mta.bats` sends the mails that later files inspect), so place new files accordingly. `_helper.bash` provides
+  `db_query`, `skip_in_kubernetes`, `skip_in_non_kubernetes`, `split_by_colon`, `exec_in_service` (`docker exec` /
+  `kubectl exec` into a service), `wait_for_mail` (poll a Maildir for a message) and `mail_header` (unfolded header
+  value). Load it with `load '_helper'`; the `assert_*` functions need `load '/usr/lib/bats/bats-support/load'` and
+  `load '/usr/lib/bats/bats-assert/load'`.
+- Environment inside the runner: the `*_ADDRESS` variables from the Dockerfile (Compose defaults) or from
+  `config-service-map` (Kubernetes), everything from `.env`, and `IS_KUBERNETES=1` on Kubernetes. Delivered mail is
+  mounted read-only at `/srv/vmail`, the TLS certificates at `/media/tls`, and on Compose the Docker socket at
+  `/var/run/docker.sock`. Compose container names follow `docker-mailserver-<service>-1` (project name = directory name;
+  `exec_in_service` honours `COMPOSE_PROJECT_NAME`).
+- Fixtures (`make fixtures`, mirrored in `test/k8s/test-job.yaml`): domains `example.com` and `example.org`;
+  `admin@example.com`/`changeme` (admin), `sendonly@example.com` (send-only), `quota@example.com` (1 MB quota),
+  `disabled@example.com`, `disabledsendonly@example.com`, `fetchmailsource@example.org`, `fetchmailreceiver@example.org`
+  (all `test1234`); aliases `foo@example.com`, `foo@example.org` and a catch-all for `example.com` pointing to admin;
+  DKIM enabled for `example.com` with selector `dkim`.
+- `./test/bats/integration` is bind-mounted into the runner, so test changes need no image rebuild. Run a single file
+  with `bin/test.sh run --rm test bats 090_dkim.bats`.
+- mailpit (`mailpit:1025`, API on `mailpit:8025`) only receives mail in the `relayhost` matrix case
+  (`RELAYHOST=[mailpit]:1025`); in all other cases inspect the Maildir under `/srv/vmail`.
+
+## CI
+
+`.github/workflows/build.yml` builds all images including the test runner, then runs the Docker matrix (`default`,
+`relayhost`, `postgres`) with `make up`, `make fixtures` and `bin/test.sh run --rm test`, and the Kubernetes matrix
+(`default`, `relayhost`, `proxy`, `postgres`) on kind with the `make kubernetes-*` targets. `.github/bin/prepare_env.sh
+<case>` builds `.env` from `.env.dist` plus `.github/test-matrix/<case>.env`. The same workflow runs dive (image
+efficiency), Trivy (vulnerabilities) and Popeye (cluster sanity). Further workflows: `lint.yml` (super-linter),
+`docs.yml` (MkDocs strict build on pull requests, `gh-deploy` on `main`), `test-yaml-schema.yml` (`kustomize build` and
+the pod security-context schema in `test/pajv/`), `release.yml` (conventional-changelog release; `update_image_tags.py`
+pins the image tags inside the release tarball), `sync-next-branch.yml`, `renovate.yml`, `stale-issues.yml`,
+`dockerhub.yml`, `cleanup-caches.yml`.
+
+## Lint and formatting
+
+`make lint` runs super-linter (`test/super-linter/compose.yaml`) with `.github/linters/super-linter.env` and
+`super-linter-fix.env` (autofix enabled). Shell scripts: shfmt (tabs) and shellcheck; Markdown, YAML and JSON:
+prettier; Dockerfiles: hadolint (`.hadolint.yaml`); Markdown rules in `.markdown-lint.yml` (lines up to 400 characters,
+inline HTML allowed); prose is checked by textlint (terminology, e.g. "Git", "Docker"). `.bats` files are linted like
+shell scripts.
+
+## Git conventions
+
+- Conventional commits (`feat(mta): ...`, `fix(kubernetes): ...`, `test: ...`, `docs: ...`, `chore(deps): ...`);
+  `release.yml` derives the next version from them on every push to `main`.
+- `main` is the released state; `next` collects breaking changes and is synced from `main` automatically
+  (`sync-next-branch.yml`). Base pull requests on `main` unless they target the next major version.
+- Renovate (`renovate.json`): digest pinning, grouped digest updates, automerge for minor, patch and digest updates,
+  custom manager for `# renovate: depName=` comments. `deploy/**`, `docker-compose*.yml`, `docs/**` and
+  `kustomization.yaml` are ignored because the image tags there are rewritten at release time.
+
+## Key flows
+
+- **DKIM:** mailserver-admin generates the key (`console dkim:setup <domain> --enable --selector dkim` or the web UI),
+  stores it in the database and mirrors it into the Redis hash `dkim_keys` (field `dkim.<domain>`); `dkim:refresh`
+  publishes all keys again on every `web` start. Rspamd (`target/filter/rootfs/etc/rspamd/local.d/dkim_signing.conf`,
+  `use_redis`) signs authenticated and local mail for the header-From domain only when the TXT record
+  `dkim._domainkey.<domain>` resolves and matches the private key (`check_pubkey = true`,
+  `allow_pubkey_mismatch = false`); otherwise the mail leaves unsigned and without an error
+  (`milter_default_action=accept`). `090_dkim.bats` publishes that record into the running unbound with
+  `unbound-control local_data` before it sends mail, then rotates the key to prove that a stale record stops signing.
+  `dkim:setup` sets the enabled flag from `--enable` on every call, so `--regenerate` without `--enable` disables signing
+  for the domain.
+- **DNS:** Only Rspamd resolves through `unbound` (`RSPAMD_DNS_SERVERS`); every other container uses the platform
+  resolver. Unbound needs internet access, also for its healthcheck.
+- **Spam learning:** Moving mail into or out of the Junk folder over IMAP runs Dovecot's `learn-spam`/`learn-ham` sieve
+  scripts (`target/mda/rootfs/etc/dovecot/sieve/global/`), which pipe the message through
+  `target/mda/rootfs/usr/local/lib/rspamc.sh` to the Rspamd controller (`FILTER_WEB_ADDRESS`, `CONTROLLER_PASSWORD`).
+- **TLS:** `ssl` writes a self-signed certificate for `MAILNAME` into `data-tls`, which `mta`, `mda`, `web` (and mailpit
+  in tests) mount read-only. See `docs/how-to/configure-tls.md` for real certificates.

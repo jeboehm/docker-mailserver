@@ -174,6 +174,28 @@ When making changes to a specific service (e.g., MDA, MTA, Web, Filter), you can
    ```
    This runs only the Docker-related tests instead of the full test suite.
 
+### Example: DKIM signing test
+
+Rspamd signs outgoing mail only when the public key of the sender domain resolves through unbound (`check_pubkey` in `target/filter/rootfs/etc/rspamd/local.d/dkim_signing.conf`). Nothing publishes DNS records for `example.com` in the test environment, so `test/bats/integration/090_dkim.bats` publishes the record itself:
+
+1. It derives the public key from the private key that `dkim:setup` stored in Redis (`HGET dkim_keys dkim.example.com`).
+2. It adds the TXT record `dkim._domainkey.example.com` to the running unbound with `unbound-control local_data`, executed inside the unbound container (`docker exec` on Docker Compose, `kubectl exec` on Kubernetes).
+3. It sends a mail through the submission service, checks the `DKIM-Signature` header of the stored message and lets Rspamd verify the signature through its `/checkv2` API.
+4. It rotates the key with `dkim:setup example.com --regenerate --enable` while the published record still holds the old public key, sends another mail and checks that this one is not signed.
+
+The record only lives in unbound's memory. It disappears when the container is recreated and is published again on the next test run; `teardown_file` republishes the rotated key so signing keeps working afterwards. Run the file on its own with:
+
+```bash
+./bin/test.sh run --rm test bats 090_dkim.bats
+```
+
+Useful commands when the test fails:
+
+```bash
+bin/test.sh logs filter | grep -iE 'dkim|public key'
+docker exec docker-mailserver-unbound-1 unbound-control list_local_data
+```
+
 ## Additional Development Commands
 
 - **View logs:** `bin/test.sh logs -f [service-name]`
