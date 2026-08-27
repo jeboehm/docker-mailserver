@@ -11,6 +11,7 @@ markdown_extensions:
   - pymdownx.fancylists
   - pymdownx.superfences
 exclude_docs: |
+  AGENTS.md
   example-configs/**
   requirements.txt
 # Escalated to warnings so that --strict fails on pages missing from the nav
