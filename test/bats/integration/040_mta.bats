@@ -1,203 +1,225 @@
 #!/usr/bin/env bats
 
+# Every test sends its own mail with a unique body (mail_needle) and, where a
+# delivery is expected, waits for that body to show up in the Maildir. Mail is
+# sent through send_mail, which copes with Postfix's per-client connection
+# rate limit.
+
 setup() {
 	load '_helper'
-
-	mapfile -t parts < <(split_by_colon "${MTA_SMTP_ADDRESS}")
-	SMTP_HOST="${parts[0]}"
-	SMTP_PORT="${parts[1]}"
-
-	mapfile -t parts < <(split_by_colon "${MTA_SMTP_SUBMISSION_ADDRESS}")
-	SMTP_SUBMISSION_HOST="${parts[0]}"
-	SMTP_SUBMISSION_PORT="${parts[1]}"
 }
 
-@test "send mail to local account address" {
-	run swaks -s "${SMTP_HOST}" --port "${SMTP_PORT}" --to admin@example.com --body "$BATS_TEST_DESCRIPTION"
-	[ "$status" -eq 0 ]
+# --- inbound mail on port 25 -------------------------------------------------
+
+@test "mail to local account address is delivered" {
+	run send_mail --server "${MTA_SMTP_ADDRESS}" --to admin@example.com --body "$(mail_needle)"
+	assert_success
+
+	run wait_for_mail "$(mail_needle)" "$(maildir admin@example.com)"
+	assert_success
 }
 
-@test "send mail to local address with extension" {
-	run swaks -s "${SMTP_HOST}" --port "${SMTP_PORT}" --to admin-test@example.com --body "$BATS_TEST_DESCRIPTION"
-	[ "$status" -eq 0 ]
+@test "mail to local address with extension is delivered" {
+	run send_mail --server "${MTA_SMTP_ADDRESS}" --to admin-test@example.com --body "$(mail_needle)"
+	assert_success
+
+	run wait_for_mail "$(mail_needle)" "$(maildir admin@example.com)"
+	assert_success
 }
 
-@test "send mail to unknown address (catchall)" {
-	run swaks -s "${SMTP_HOST}" --port "${SMTP_PORT}" --to notexisting@example.com --body "$BATS_TEST_DESCRIPTION"
-	[ "$status" -eq 0 ]
+@test "mail to unknown address is delivered to the catchall" {
+	run send_mail --server "${MTA_SMTP_ADDRESS}" --to notexisting@example.com --body "$(mail_needle)"
+	assert_success
+
+	run wait_for_mail "$(mail_needle)" "$(maildir admin@example.com)"
+	assert_success
 }
 
-@test "send mail to unknown address should fail" {
-	run swaks -s "${SMTP_HOST}" --port "${SMTP_PORT}" --to notexisting@example.org --body "$BATS_TEST_DESCRIPTION"
-	[ "$status" -eq 24 ]
+@test "mail to unknown address without catchall is rejected" {
+	run send_mail --server "${MTA_SMTP_ADDRESS}" --to notexisting@example.org --body "$(mail_needle)"
+	assert_failure 24
 }
 
-@test "send mail to local alias" {
-	run swaks -s "${SMTP_HOST}" --port "${SMTP_PORT}" --to foo@example.com --body "$BATS_TEST_DESCRIPTION"
-	[ "$status" -eq 0 ]
+@test "mail to local alias is delivered" {
+	run send_mail --server "${MTA_SMTP_ADDRESS}" --to foo@example.com --body "$(mail_needle)"
+	assert_success
+
+	run wait_for_mail "$(mail_needle)" "$(maildir admin@example.com)"
+	assert_success
 }
 
-@test "send junk mail to local address" {
-	run swaks -s "${SMTP_HOST}" --port "${SMTP_PORT}" --to admin@example.com --body "$BATS_TEST_DESCRIPTION" --header "X-Is-Spam: Yes"
-	[ "$status" -eq 0 ]
+@test "mail to a mailbox in the second domain is delivered" {
+	# Not fetchmailsource@example.org: fetchmail empties that mailbox within
+	# seconds, which would race with the check below.
+	run send_mail --server "${MTA_SMTP_ADDRESS}" --to fetchmailreceiver@example.org --body "$(mail_needle)"
+	assert_success
+
+	run wait_for_mail "$(mail_needle)" "$(maildir fetchmailreceiver@example.org)"
+	assert_success
 }
 
-@test "send mail to quota user to fill quota for about 80%" {
-	dd if=/dev/urandom of=/tmp/bigfile bs=100K count=8
-	run swaks -s "${SMTP_HOST}" --port "${SMTP_PORT}" --to quota@example.com --body "$BATS_TEST_DESCRIPTION" --attach @/tmp/bigfile
-	[ "$status" -eq 0 ]
+@test "junk mail is sorted into the Junk folder" {
+	run send_mail --server "${MTA_SMTP_ADDRESS}" --to admin@example.com --header "X-Is-Spam: Yes" --body "$(mail_needle)"
+	assert_success
+
+	run wait_for_mail "$(mail_needle)" "$(maildir admin@example.com Junk)"
+	assert_success
 }
 
-@test "send mail with too big attachment to quota user" {
-	dd if=/dev/urandom of=/tmp/bigfile bs=1M count=5
-	run swaks -s "${SMTP_HOST}" --port "${SMTP_PORT}" --to quota@example.com --body "$BATS_TEST_DESCRIPTION" --attach @/tmp/bigfile
-	[ "$status" -eq 0 ]
+@test "gtube mail is rejected" {
+	run send_mail --server "${MTA_SMTP_ADDRESS}" --to admin@example.com --data /usr/share/fixtures/gtube.txt
+	assert_failure 26
 }
 
-@test "send mail to disabled user" {
-	run swaks -s "${SMTP_HOST}" --port "${SMTP_PORT}" --to disabled@example.com --body "$BATS_TEST_DESCRIPTION"
-	[ "$status" -eq 0 ]
+@test "mail to disabled user is delivered anyway" {
+	run send_mail --server "${MTA_SMTP_ADDRESS}" --to disabled@example.com --body "$(mail_needle)"
+	assert_success
+
+	run wait_for_mail "$(mail_needle)" "$(maildir disabled@example.com)"
+	assert_success
 }
 
-@test "authentication on smtp with disabled account should fail (submission service)" {
-	run swaks -s "${SMTP_SUBMISSION_HOST}" --port "${SMTP_SUBMISSION_PORT}" --to admin@example.com --from disabled@example.com -a -au disabled@example.com -ap test1234 -tls --body "$BATS_TEST_DESCRIPTION"
-	[ "$status" -eq 28 ]
+@test "mail to send only mailbox is rejected" {
+	run send_mail --server "${MTA_SMTP_ADDRESS}" --to sendonly@example.com --body "$(mail_needle)"
+	assert_failure 24
 }
 
-@test "authentication on smtp with disabled and send only account should fail (submission service)" {
-	run swaks -s "${SMTP_SUBMISSION_HOST}" --port "${SMTP_SUBMISSION_PORT}" --to admin@example.com --from disabledsendonly@example.com -a -au disabled@example.com -ap test1234 -tls --body "$BATS_TEST_DESCRIPTION"
-	[ "$status" -eq 28 ]
+@test "mail to disabled and send only mailbox is rejected anyway" {
+	run send_mail --server "${MTA_SMTP_ADDRESS}" --to disabledsendonly@example.com --body "$(mail_needle)"
+	assert_failure 24
 }
 
-@test "send mail to mta with smtp authentication (submission service)" {
-	run swaks -s "${SMTP_SUBMISSION_HOST}" --port "${SMTP_SUBMISSION_PORT}" --to admin@example.com --from admin@example.com -a -au admin@example.com -ap changeme -tls --body "$BATS_TEST_DESCRIPTION"
-	[ "$status" -eq 0 ]
+@test "smtp authentication on port 25 is refused" {
+	run send_mail --server "${MTA_SMTP_ADDRESS}" --to admin@example.com --from admin@example.com --auth --auth-user admin@example.com --auth-password changeme --tls --body "$(mail_needle)"
+	assert_failure
 }
 
-@test "send mail to mta with smtp authentication, with address extension (submission service)" {
-	run swaks -s "${SMTP_SUBMISSION_HOST}" --port "${SMTP_SUBMISSION_PORT}" --to admin@example.com --from admin-extension@example.com -a -au admin@example.com -ap changeme -tls --body "$BATS_TEST_DESCRIPTION"
-	[ "$status" -eq 0 ]
+# --- quota -------------------------------------------------------------------
+#
+# quota@example.com has a quota of 1 MiB (fixtures). Dovecot sends a warning
+# when a delivery crosses one of the thresholds in 90-quota.conf (95% is
+# listed first and wins when both are crossed at once), and quota_storage_grace
+# (10 MiB by default) lets a delivery overshoot the limit as long as the
+# mailbox is still below it. Both tests therefore start from an empty mailbox.
+
+@test "mail filling the quota to about 80% triggers the quota warning" {
+	run mailbox_reset quota@example.com
+	assert_success
+
+	# 640 KiB of random data is about 890 KiB once base64 encoded: above the
+	# 80% threshold, below the 95% one.
+	dd if=/dev/urandom of="${BATS_TEST_TMPDIR}/attachment" bs=64K count=10
+	run send_mail --server "${MTA_SMTP_ADDRESS}" --to quota@example.com --body "$(mail_needle)" --attach "@${BATS_TEST_TMPDIR}/attachment"
+	assert_success
+
+	# Delivered into the mailbox by quota-warning.sh.
+	run wait_for_mail "Subject: Quota warning - 80% reached" "$(maildir quota@example.com)"
+	assert_success
+
+	run quota_percentage quota@example.com
+	assert_success
+	[ "${output}" -ge 80 ]
+	[ "${output}" -lt 95 ]
 }
 
-@test "send mail to mta from sendonly account with smtp authentication (submission service)" {
-	run swaks -s "${SMTP_SUBMISSION_HOST}" --port "${SMTP_SUBMISSION_PORT}" --to admin@example.com --from sendonly@example.com -a -au sendonly@example.com -ap test1234 -tls --body "$BATS_TEST_DESCRIPTION"
-	[ "$status" -eq 0 ]
+@test "mail exceeding the quota is bounced" {
+	run mailbox_reset quota@example.com
+	assert_success
+
+	# Fill the mailbox beyond its limit first. This delivery is still accepted
+	# because of the grace; everything after it has to be rejected.
+	dd if=/dev/urandom of="${BATS_TEST_TMPDIR}/filler" bs=100K count=8
+	run send_mail --server "${MTA_SMTP_ADDRESS}" --to quota@example.com --body "$(mail_needle) filler" --attach "@${BATS_TEST_TMPDIR}/filler"
+	assert_success
+
+	run wait_for_mail "$(mail_needle) filler" "$(maildir quota@example.com)"
+	assert_success
+
+	dd if=/dev/urandom of="${BATS_TEST_TMPDIR}/attachment" bs=1M count=5
+	run send_mail --server "${MTA_SMTP_ADDRESS}" --to quota@example.com --body "$(mail_needle) oversized" --attach "@${BATS_TEST_TMPDIR}/attachment"
+	assert_success
+
+	# Postfix accepts the mail and Dovecot rejects it on LMTP delivery. Follow
+	# the queue id from the SMTP response to the bounce in the MTA log.
+	queue_id="$(sed -nE 's/.*queued as ([0-9A-Za-z]+).*/\1/p' <<<"${output}")"
+	[ -n "${queue_id}" ]
+
+	run wait_for_log mta "${queue_id}: to=<quota@example.com>.*status=bounced.*Quota exceeded"
+	assert_success
+
+	run find_mail "$(mail_needle) oversized" "$(maildir quota@example.com)"
+	assert_failure
 }
 
-@test "send mail to mta with smtp authentication, with unknown sender address should fail (submission service)" {
-	run swaks -s "${SMTP_SUBMISSION_HOST}" --port "${SMTP_SUBMISSION_PORT}" --to admin@example.com --from unknown@example.org -a -au admin@example.com -ap changeme -tls --body "$BATS_TEST_DESCRIPTION"
-	[ "$status" -eq 24 ]
+# --- submission service ------------------------------------------------------
+
+@test "authentication with disabled account is refused" {
+	run send_mail --server "${MTA_SMTP_SUBMISSION_ADDRESS}" --to admin@example.com --from disabled@example.com --auth --auth-user disabled@example.com --auth-password test1234 --tls --body "$(mail_needle)"
+	assert_failure 28
 }
 
-@test "send mail to mta with smtp authentication, with alias sender address (submission service)" {
-	run swaks -s "${SMTP_SUBMISSION_HOST}" --port "${SMTP_SUBMISSION_PORT}" --to admin@example.com --from foo@example.org -a -au admin@example.com -ap changeme -tls --body "$BATS_TEST_DESCRIPTION"
-	[ "$status" -eq 0 ]
+@test "authentication with disabled send only account is refused" {
+	run send_mail --server "${MTA_SMTP_SUBMISSION_ADDRESS}" --to admin@example.com --from disabledsendonly@example.com --auth --auth-user disabledsendonly@example.com --auth-password test1234 --tls --body "$(mail_needle)"
+	assert_failure 28
 }
 
-@test "send mail to mta without authentication (submission service)" {
-	run swaks -s "${SMTP_SUBMISSION_HOST}" --port "${SMTP_SUBMISSION_PORT}" --to admin@example.com --from disabled@example.com -tls --body "$BATS_TEST_DESCRIPTION"
-	[ "$status" -eq 24 ]
+@test "authentication without tls is refused" {
+	run send_mail --server "${MTA_SMTP_SUBMISSION_ADDRESS}" --to admin@example.com --from admin@example.com --auth --auth-user admin@example.com --auth-password changeme --body "$(mail_needle)"
+	assert_failure 28
 }
 
-@test "send mail to mta without tls (submission service)" {
-	run swaks -s "${SMTP_SUBMISSION_HOST}" --port "${SMTP_SUBMISSION_PORT}" --to admin@example.com --from admin@example.com -a -au admin@example.com -ap changeme --body "$BATS_TEST_DESCRIPTION"
-	[ "$status" -eq 28 ]
+@test "unauthenticated mail is rejected" {
+	run send_mail --server "${MTA_SMTP_SUBMISSION_ADDRESS}" --to admin@example.com --from disabled@example.com --tls --body "$(mail_needle)"
+	assert_failure 24
 }
 
-@test "sending mail to mta with smtp authentication on port 25 should fail" {
-	run swaks -s "${SMTP_HOST}" --port "${SMTP_PORT}" --to admin@example.com --from admin@example.com -a -au admin@example.com -ap changeme -tls --body "$BATS_TEST_DESCRIPTION"
-	[ "$status" != 0 ]
+@test "authenticated mail is delivered" {
+	run send_mail --server "${MTA_SMTP_SUBMISSION_ADDRESS}" --to admin@example.com --from admin@example.com --auth --auth-user admin@example.com --auth-password changeme --tls --body "$(mail_needle)"
+	assert_success
+
+	run wait_for_mail "$(mail_needle)" "$(maildir admin@example.com)"
+	assert_success
 }
 
-@test "send mail to mta to fetchmail source account address" {
-	run swaks -s "${SMTP_HOST}" --port "${SMTP_PORT}" --to fetchmailsource@example.org --body "$BATS_TEST_DESCRIPTION"
-	[ "$status" -eq 0 ]
-}
+@test "authenticated mail has the client session hidden in the Received header" {
+	run send_mail --server "${MTA_SMTP_SUBMISSION_ADDRESS}" --to admin@example.com --from admin@example.com --auth --auth-user admin@example.com --auth-password changeme --tls --body "$(mail_needle)"
+	assert_success
 
-@test "maildir was created (wait 10 seconds)" {
-	sleep 10 # MTA + MDA need some time. :)
-	[ -d /srv/vmail/example.com/admin/Maildir/new/ ]
-}
-
-@test "mail to local account address is stored" {
-	run grep -r "send mail to local account address" /srv/vmail/example.com/admin/Maildir/
-	[ "$status" -eq 0 ]
-}
-
-@test "mail to local alias is stored" {
-	run grep -r "send mail to local alias" /srv/vmail/example.com/admin/Maildir/
-	[ "$status" -eq 0 ]
-}
-
-@test "mail to local address with extension is stored" {
-	run grep -r "send mail to local address with extension" /srv/vmail/example.com/admin/Maildir/
-	[ "$status" -eq 0 ]
-}
-
-@test "mail to mta with smtp authentication (submission service) is stored" {
-	run grep -r "send mail to mta with smtp authentication (submission service)" /srv/vmail/example.com/admin/Maildir/
-	[ "$status" -eq 0 ]
-}
-
-@test "mail via submission service has client session hidden in Received header" {
-	# Locate the exact message delivered by the authenticated submission test above.
-	run grep -rl "send mail to mta with smtp authentication (submission service)" /srv/vmail/example.com/admin/Maildir/
-	[ "$status" -eq 0 ]
-	mail_file="${lines[0]}"
+	mail_file="$(wait_for_mail "$(mail_needle)" "$(maildir admin@example.com)")"
+	[ -n "${mail_file}" ]
 
 	# With "smtpd_hide_client_session=yes" (master.cf, submission service) the
 	# submission smtpd must NOT leak the client's SASL login, TLS session or the
 	# authenticated ESMTP protocol into the Received: header it generates.
-	run grep -E "Authenticated sender:|with ESMTPSA|\(using TLS" "$mail_file"
-	[ "$status" -ne 0 ]
+	run grep -E "Authenticated sender:|with ESMTPSA|\(using TLS" "${mail_file}"
+	assert_failure
 }
 
-@test "mail to mta with smtp authentication, with address extension (submission service) is stored" {
-	run grep -r "send mail to mta with smtp authentication, with address extension (submission service)" /srv/vmail/example.com/admin/Maildir/
-	[ "$status" -eq 0 ]
+@test "authenticated mail with address extension in the sender is delivered" {
+	run send_mail --server "${MTA_SMTP_SUBMISSION_ADDRESS}" --to admin@example.com --from admin-extension@example.com --auth --auth-user admin@example.com --auth-password changeme --tls --body "$(mail_needle)"
+	assert_success
+
+	run wait_for_mail "$(mail_needle)" "$(maildir admin@example.com)"
+	assert_success
 }
 
-@test "mail to mta from sendonly account with smtp authentication (submission service) is stored" {
-	run grep -r "send mail to mta from sendonly account with smtp authentication (submission service)" /srv/vmail/example.com/admin/Maildir/
-	[ "$status" -eq 0 ]
+@test "authenticated mail from send only account is delivered" {
+	run send_mail --server "${MTA_SMTP_SUBMISSION_ADDRESS}" --to admin@example.com --from sendonly@example.com --auth --auth-user sendonly@example.com --auth-password test1234 --tls --body "$(mail_needle)"
+	assert_success
+
+	run wait_for_mail "$(mail_needle)" "$(maildir admin@example.com)"
+	assert_success
 }
 
-@test "catchall mail is delivered" {
-	run grep -r "send mail to unknown address (catchall)" /srv/vmail/example.com/admin/Maildir/
-	[ "$status" -eq 0 ]
+@test "authenticated mail with an alias as sender is delivered" {
+	run send_mail --server "${MTA_SMTP_SUBMISSION_ADDRESS}" --to admin@example.com --from foo@example.org --auth --auth-user admin@example.com --auth-password changeme --tls --body "$(mail_needle)"
+	assert_success
+
+	run wait_for_mail "$(mail_needle)" "$(maildir admin@example.com)"
+	assert_success
 }
 
-@test "junk mail is assorted to the junk folder" {
-	run grep -r "send junk mail to local address" /srv/vmail/example.com/admin/Maildir/.Junk/
-	[ "$status" -eq 0 ]
-}
-
-@test "mail with too big attachment is not found" {
-	run grep -r "send mail with too big attachment to quota user" /srv/vmail/example.com/quota/Maildir/
-	[ "$status" -ne 0 ]
-}
-
-@test "mail to disabled user is stored anyway" {
-	run grep -r "send mail to disabled user" /srv/vmail/example.com/disabled/Maildir/
-	[ "$status" -eq 0 ]
-}
-
-@test "quota warn mail was sent" {
-	run grep -r "Your mailbox can only store a limited amount of emails." /srv/vmail/example.com/quota/Maildir/
-	[ "$status" -eq 0 ]
-}
-
-@test "send gtube mail is rejected" {
-	run swaks -s "${SMTP_HOST}" --port "${SMTP_PORT}" --to admin@example.com --data /usr/share/fixtures/gtube.txt
-	[ "$status" -eq 26 ]
-}
-
-@test "mail to send only mailbox is rejected" {
-	run swaks -s "${SMTP_HOST}" --port "${SMTP_PORT}" --to sendonly@example.com --body "$BATS_TEST_DESCRIPTION"
-	[ "$status" -eq 24 ]
-}
-
-@test "mail to disabled and send only mailbox is rejected anyway" {
-	run swaks -s "${SMTP_HOST}" --port "${SMTP_PORT}" --to disabledsendonly@example.com --body "$BATS_TEST_DESCRIPTION"
-	[ "$status" -eq 24 ]
+@test "authenticated mail with an unknown sender is rejected" {
+	run send_mail --server "${MTA_SMTP_SUBMISSION_ADDRESS}" --to admin@example.com --from unknown@example.org --auth --auth-user admin@example.com --auth-password changeme --tls --body "$(mail_needle)"
+	assert_failure 24
 }

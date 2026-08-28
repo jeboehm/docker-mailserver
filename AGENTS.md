@@ -84,17 +84,17 @@ depName=...` so Renovate can bump them.
 
 ## Build, run, test
 
-| Target                                | Effect                                                                                                 |
-| ------------------------------------- | ------------------------------------------------------------------------------------------------------ |
-| `make build`                          | Builds all images (`bin/test.sh build`).                                                               |
-| `make up`                             | `bin/production.sh up -d`; does not wait for the services to become healthy.                           |
-| `make fixtures`                       | Seeds domains, users, aliases, DKIM and a fetchmail account through mailserver-admin console commands. |
-| `make test`                           | `up` + `fixtures` + `bin/test.sh run --build --rm test` (full BATS suite).                             |
-| `make clean`                          | Stops everything and removes the project volumes (local data is lost).                                 |
-| `make logs`                           | Dumps the logs of all services.                                                                        |
-| `make lint`                           | Runs super-linter (see below).                                                                         |
-| `make docs-build` / `make docs-serve` | MkDocs strict build / live preview.                                                                    |
-| `make kubernetes-*`, `make kind-load` | Kubernetes test flow: kind cluster, Traefik chart, Kustomize overlay under `test/k8s/`, test job.      |
+| Target                                | Effect                                                                                                         |
+| ------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| `make build`                          | Builds all images (`bin/test.sh build`).                                                                       |
+| `make up`                             | `bin/production.sh up -d`; does not wait for the services to become healthy.                                   |
+| `make fixtures`                       | Runs `test/fixtures.sh` in the `web` container (domains, users, aliases, DKIM, fetchmail account); rerunnable. |
+| `make test`                           | `up` + `fixtures` + `bin/test.sh run --build --rm test` (full BATS suite).                                     |
+| `make clean`                          | Stops everything and removes the project volumes (local data is lost).                                         |
+| `make logs`                           | Dumps the logs of all services.                                                                                |
+| `make lint`                           | Runs super-linter (see below).                                                                                 |
+| `make docs-build` / `make docs-serve` | MkDocs strict build / live preview.                                                                            |
+| `make kubernetes-*`, `make kind-load` | Kubernetes test flow: kind cluster, Traefik chart, Kustomize overlay under `test/k8s/`, test job.              |
 
 `bin/production.sh` stacks `docker-compose.yml` + `docker-compose.production.yml` + `docker-compose.override.yml` (if
 present); `bin/test.sh` stacks `docker-compose.yml` + `docker-compose.production.yml` + `docker-compose.test.yml`. Both
@@ -104,19 +104,36 @@ pass their arguments to `docker compose` (`bin/test.sh logs -f filter`, `bin/tes
 
 - Runner image `test/bats/Dockerfile` (Alpine): bats with bats-assert/bats-support, `swaks`, `dig`, `curl`, `jq`,
   `openssl`, `redis-cli`, `mariadb` and `psql` clients, the `docker` and `kubectl` CLIs, `php` with imap-tester.
-  `test/bats/rootfs/entrypoint.sh` waits for the services (`wait-for-services.sh`) and then runs `bats .`.
-- Tests live in `test/bats/integration/NNN_<topic>.bats` and run in numeric order. Files depend on each other
-  (`040_mta.bats` sends the mails that later files inspect), so place new files accordingly. `_helper.bash` provides
-  `db_query`, `skip_in_kubernetes`, `skip_in_non_kubernetes`, `split_by_colon`, `exec_in_service` (`docker exec` /
-  `kubectl exec` into a service), `wait_for_mail` (poll a Maildir for a message) and `mail_header` (unfolded header
-  value). Load it with `load '_helper'`; the `assert_*` functions need `load '/usr/lib/bats/bats-support/load'` and
-  `load '/usr/lib/bats/bats-assert/load'`.
+  `test/bats/rootfs/entrypoint.sh` waits for the services (`wait-for-services.sh`) and then runs bats with
+  `--timing`, `--print-output-on-failure` and a JUnit report in `/app/report` (bind-mounted to the git-ignored
+  `test/report/`).
+- Tests live in `test/bats/integration/NNN_<topic>.bats` and run in numeric order. Every test is self-contained: it
+  sends its own mail with a body from `mail_needle` (unique per test and bats run, so mails left in the persistent
+  Maildir by earlier runs never match) and polls for the outcome instead of sleeping. Only loose ordering remains
+  (`060_mda.bats` counts the mails that `040_mta.bats` delivered).
+- `_helper.bash` is loaded with `load '_helper'` in `setup()`; it loads bats-support and bats-assert itself, so use
+  `assert_success`, `assert_failure [status]` and `assert_output` rather than `[ "$status" -eq 0 ]`. It provides
+  skips (`skip_in_kubernetes`, `skip_in_non_kubernetes`, `skip_without_relayhost`), service access that works on
+  both platforms (`exec_in_service`, `service_logs`, `service_log_count`, `service_logs_contain`; Kubernetes
+  container names differ from the service names, see `kubernetes_container`), polling (`wait_for`, `wait_for_log`,
+  `wait_for_mail`, which prints the file it found), mail inspection (`mail_needle`, `maildir`, `find_mail`,
+  `mail_header` for unfolded header values), mailbox state through doveadm in `mda` (`mailbox_reset`,
+  `quota_percentage`) and clients (`send_mail` wraps `swaks` and retries when Postfix's connection rate limit of 20
+  per minute and client answers `421`, `db_query` prints rows only, `redis_cli`, `dns_query`
+  against unbound, `imap_tester`, `tls_connect`, `tls_fingerprint`). Each function documents its arguments in a
+  comment. `swaks --server host:port` takes the `*_ADDRESS` variables as they are.
+- Put new checks into the topic file, not into a platform file: `070_docker.bats` only holds what needs the Docker
+  CLI, everything else runs on both platforms through the helpers.
 - Environment inside the runner: the `*_ADDRESS` variables from the Dockerfile (Compose defaults) or from
   `config-service-map` (Kubernetes), everything from `.env`, and `IS_KUBERNETES=1` on Kubernetes. Delivered mail is
   mounted read-only at `/srv/vmail`, the TLS certificates at `/media/tls`, and on Compose the Docker socket at
-  `/var/run/docker.sock`. Compose container names follow `docker-mailserver-<service>-1` (project name = directory name;
-  `exec_in_service` honours `COMPOSE_PROJECT_NAME`).
-- Fixtures (`make fixtures`, mirrored in `test/k8s/test-job.yaml`): domains `example.com` and `example.org`;
+  `/var/run/docker.sock`. `exec_in_service`/`service_logs` find Compose containers through their Compose labels (the
+  project name is read from the runner's own container; `COMPOSE_PROJECT_NAME` overrides it), so renamed checkouts
+  and `docker compose -p` work.
+- Fixtures: `test/fixtures.sh`, run by `make fixtures` inside the `web` container and by the `load-fixtures` init
+  container of `test/k8s/test-job.yaml` (mounted from the `test-fixtures` ConfigMap that
+  `test/k8s/base/kustomization.yaml` generates). It is rerunnable (exits early when `example.com` exists) and takes
+  the fetchmail source address from `FIXTURES_MDA_IMAP_ADDRESS`. It creates domains `example.com` and `example.org`;
   `admin@example.com`/`changeme` (admin), `sendonly@example.com` (send-only), `quota@example.com` (1 MB quota),
   `disabled@example.com`, `disabledsendonly@example.com`, `fetchmailsource@example.org`, `fetchmailreceiver@example.org`
   (all `test1234`); aliases `foo@example.com`, `foo@example.org` and a catch-all for `example.com` pointing to admin;
@@ -130,8 +147,10 @@ pass their arguments to `docker compose` (`bin/test.sh logs -f filter`, `bin/tes
 
 `.github/workflows/build.yml` builds all images including the test runner, then runs the Docker matrix (`default`,
 `relayhost`, `postgres`) with `make up`, `make fixtures` and `bin/test.sh run --rm test`, and the Kubernetes matrix
-(`default`, `relayhost`, `proxy`, `postgres`) on kind with the `make kubernetes-*` targets. `.github/bin/prepare_env.sh
-<case>` builds `.env` from `.env.dist` plus `.github/test-matrix/<case>.env`. The same workflow runs dive (image
+(`default`, `relayhost`, `proxy`, `postgres`) on kind with the `make kubernetes-*` targets. Every Docker matrix job
+uploads the JUnit report (`test/report/report.xml`) as artifact `bats-report-<case>`; when a job fails, `make logs` /
+`make kubernetes-logs` print the service logs as collapsible groups. `.github/bin/prepare_env.sh <case>` builds `.env`
+from `.env.dist` plus `.github/test-matrix/<case>.env`. The same workflow runs dive (image
 efficiency), Trivy (vulnerabilities) and Popeye (cluster sanity). Further workflows: `lint.yml` (super-linter),
 `docs.yml` (MkDocs strict build on pull requests, `gh-deploy` on `main`), `test-yaml-schema.yml` (`kustomize build` and
 the pod security-context schema in `test/pajv/`), `release.yml` (conventional-changelog release; `update_image_tags.py`

@@ -3,86 +3,92 @@
 setup() {
 	load '_helper'
 
-	mapfile -t parts < <(split_by_colon "${MDA_IMAP_ADDRESS}")
-	MDA_IMAP_HOST="${parts[0]}"
-	MDA_IMAP_PORT="${parts[1]}"
-
-	mapfile -t parts < <(split_by_colon "${MDA_IMAPS_ADDRESS}")
-	MDA_IMAPS_HOST="${parts[0]}"
-	MDA_IMAPS_PORT="${parts[1]}"
-
-	mapfile -t parts < <(split_by_colon "${MDA_POP3_ADDRESS}")
-	MDA_POP3_HOST="${parts[0]}"
-	MDA_POP3_PORT="${parts[1]}"
-
-	mapfile -t parts < <(split_by_colon "${MDA_POP3S_ADDRESS}")
-	MDA_POP3S_HOST="${parts[0]}"
-	MDA_POP3S_PORT="${parts[1]}"
+	# Messages in the INBOX of admin@example.com as stored on disk. The counts
+	# reported over IMAP and POP3 have to match it exactly.
+	INBOX_COUNT="$(find "$(maildir admin@example.com)/new" "$(maildir admin@example.com)/cur" -type f | wc -l | tr -d ' ')"
 }
 
 @test "count mails in inbox via imap" {
-	run imap-tester test:count "${MDA_IMAP_HOST}" "${MDA_IMAP_PORT}" admin@example.com changeme imap tls INBOX
-	[ "$output" -gt 3 ]
+	[ "${INBOX_COUNT}" -gt 0 ]
+
+	run imap_tester test:count "${MDA_IMAP_ADDRESS}" admin@example.com changeme imap tls INBOX
+	assert_success
+	assert_output "${INBOX_COUNT}"
 }
 
 @test "count mails in inbox via imaps" {
-	run imap-tester test:count "${MDA_IMAPS_HOST}" "${MDA_IMAPS_PORT}" admin@example.com changeme imap ssl INBOX
-	[ "$output" -gt 3 ]
+	[ "${INBOX_COUNT}" -gt 0 ]
+
+	run imap_tester test:count "${MDA_IMAPS_ADDRESS}" admin@example.com changeme imap ssl INBOX
+	assert_success
+	assert_output "${INBOX_COUNT}"
 }
 
 @test "count mails in inbox via pop3" {
-	run imap-tester test:count "${MDA_POP3_HOST}" "${MDA_POP3_PORT}" admin@example.com changeme pop3 tls INBOX
-	[ "$output" -gt 3 ]
+	[ "${INBOX_COUNT}" -gt 0 ]
+
+	run imap_tester test:count "${MDA_POP3_ADDRESS}" admin@example.com changeme pop3 tls INBOX
+	assert_success
+	assert_output "${INBOX_COUNT}"
 }
 
 @test "count mails in inbox via pop3s" {
-	run imap-tester test:count "${MDA_POP3S_HOST}" "${MDA_POP3S_PORT}" admin@example.com changeme pop3 ssl INBOX
-	[ "$output" -gt 3 ]
+	[ "${INBOX_COUNT}" -gt 0 ]
+
+	run imap_tester test:count "${MDA_POP3S_ADDRESS}" admin@example.com changeme pop3 ssl INBOX
+	assert_success
+	assert_output "${INBOX_COUNT}"
 }
 
-@test "move mail to Junk folder (will test rspamc communication later)" {
-	run imap-tester test:move "${MDA_IMAP_HOST}" "${MDA_IMAP_PORT}" admin@example.com changeme imap tls INBOX 0 Junk
-	[ "$status" -eq 0 ]
+@test "mail moved to the Junk folder is learned as spam by rspamd" {
+	# Moving mail into Junk runs Dovecot's learn-spam sieve script, which
+	# feeds the message to the rspamd controller (rspamc.sh).
+	learned_before="$(service_log_count filter 'learned message as spam')"
+
+	run imap_tester test:move "${MDA_IMAP_ADDRESS}" admin@example.com changeme imap tls INBOX 0 Junk
+	assert_success
+
+	run wait_for_log filter 'rspamd_controller_learn_fin_task.*learned message as spam' "$((learned_before + 1))"
+	assert_success
 }
 
 @test "imap login to send only mailbox is not possible" {
-	run imap-tester test:count "${MDA_IMAP_HOST}" "${MDA_IMAP_PORT}" sendonly@example.com test1234 imap tls INBOX
-	[ "$status" -ne 0 ]
+	run imap_tester test:count "${MDA_IMAP_ADDRESS}" sendonly@example.com test1234 imap tls INBOX
+	assert_failure
 }
 
 @test "pop3 login to send only mailbox is not possible" {
-	run imap-tester test:count "${MDA_POP3_HOST}" "${MDA_POP3_PORT}" sendonly@example.com test1234 pop3 tls INBOX
-	[ "$status" -ne 0 ]
+	run imap_tester test:count "${MDA_POP3_ADDRESS}" sendonly@example.com test1234 pop3 tls INBOX
+	assert_failure
 }
 
 @test "pop3 login to quota mailbox is possible" {
-	run imap-tester test:count "${MDA_POP3_HOST}" "${MDA_POP3_PORT}" quota@example.com test1234 pop3 tls INBOX
-	[ "$status" -eq 0 ]
+	run imap_tester test:count "${MDA_POP3_ADDRESS}" quota@example.com test1234 pop3 tls INBOX
+	assert_success
 }
 
 @test "imap login to quota mailbox is possible" {
-	run imap-tester test:count "${MDA_IMAP_HOST}" "${MDA_IMAP_PORT}" quota@example.com test1234 imap tls INBOX
-	[ "$status" -eq 0 ]
+	run imap_tester test:count "${MDA_IMAP_ADDRESS}" quota@example.com test1234 imap tls INBOX
+	assert_success
 }
 
 @test "pop3 login to disabled mailbox is not possible" {
-	run imap-tester test:count "${MDA_POP3_HOST}" "${MDA_POP3_PORT}" disabled@example.com test1234 pop3 tls INBOX
-	[ "$status" -ne 0 ]
+	run imap_tester test:count "${MDA_POP3_ADDRESS}" disabled@example.com test1234 pop3 tls INBOX
+	assert_failure
 }
 
 @test "imap login to disabled mailbox is not possible" {
-	run imap-tester test:count "${MDA_IMAP_HOST}" "${MDA_IMAP_PORT}" disabled@example.com test1234 imap tls INBOX
-	[ "$status" -ne 0 ]
+	run imap_tester test:count "${MDA_IMAP_ADDRESS}" disabled@example.com test1234 imap tls INBOX
+	assert_failure
 }
 
 @test "mails are owned by vmail" {
 	run find /srv/vmail/example.com/ -not -user 1000
-	[ "$status" -eq 0 ]
-	[ "$output" = "" ]
+	assert_success
+	assert_output ""
 }
 
 @test "fulltext search index exists" {
-	run ls /srv/vmail/example.com/admin/Maildir/fts-flatcurve/*
-
-	[ "$status" -eq 0 ]
+	run ls "$(maildir admin@example.com)/fts-flatcurve/"*
+	assert_success
 }

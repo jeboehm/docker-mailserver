@@ -10,6 +10,12 @@ configMapGenerator:
   - name: config-env
     envs:
       - ../../../.env
+  # Mounted by the load-fixtures init container in ../test-job.yaml, which is
+  # applied with plain `kubectl apply -f` outside this build, so the name must
+  # stay test-fixtures.
+  - name: test-fixtures
+    files:
+      - fixtures.sh=../../fixtures.sh
 resources:
   - mailpit.yaml
   - ../../../deploy/kustomize/ingress/traefik/

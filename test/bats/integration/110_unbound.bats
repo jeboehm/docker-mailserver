@@ -2,13 +2,10 @@
 
 setup() {
 	load '_helper'
-
-	mapfile -t parts < <(split_by_colon "${UNBOUND_DNS_ADDRESS}")
-	UNBOUND_DNS_HOST="${parts[0]}"
-	UNBOUND_DNS_PORT="${parts[1]}"
 }
 
 @test "unbound is able to resolve dns" {
-	run dig "@${UNBOUND_DNS_HOST}" -p "${UNBOUND_DNS_PORT}" github.com
-	[ "$status" -eq 0 ]
+	run dns_query +short github.com A
+	assert_success
+	assert_output --regexp '[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+'
 }

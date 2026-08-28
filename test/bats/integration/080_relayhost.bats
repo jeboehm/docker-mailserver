@@ -2,42 +2,26 @@
 
 setup() {
 	load '_helper'
+	skip_without_relayhost
 
-	mapfile -t parts < <(split_by_colon "${MTA_SMTP_SUBMISSION_ADDRESS}")
-	SMTP_SUBMISSION_HOST="${parts[0]}"
-	SMTP_SUBMISSION_PORT="${parts[1]}"
+	MAILPIT_API="http://mailpit:8025/api/v1"
 }
 
-@test "check mailpit api for messages" {
-	if [ "${RELAYHOST}" = "false" ]; then
-		echo '# Relayhost is disabled, skipping test' >&3
-		skip
-	fi
-
-	run curl "http://mailpit:8025/api/v1/messages"
-	[ "$status" -eq 0 ]
+# Succeed when mailpit holds a message whose body contains the needle.
+# Usage: mailpit_has_message <needle>
+mailpit_has_message() {
+	curl -fsS "${MAILPIT_API}/messages" | jq -e --arg needle "$1" '.messages[] | select((.Snippet // "") | contains($needle))' >/dev/null
 }
 
-@test "send mail to mta with smtp authentication, external recipient" {
-	if [ "${RELAYHOST}" = "false" ]; then
-		echo '# Relayhost is disabled, skipping test' >&3
-		skip
-	fi
-
-	run swaks -s "${SMTP_SUBMISSION_HOST}" --port "${SMTP_SUBMISSION_PORT}" --to nobody@ressourcenkonflikt.de --from admin@example.com -a -au admin@example.com -ap changeme -tls --body "$BATS_TEST_DESCRIPTION"
-	[ "$status" -eq 0 ]
+@test "mailpit api is reachable" {
+	run curl -fsS "${MAILPIT_API}/messages"
+	assert_success
 }
 
-@test "check mailpit api for outgoing message" {
-	if [ "${RELAYHOST}" = "false" ]; then
-		echo '# Relayhost is disabled, skipping test' >&3
-		skip
-	fi
+@test "authenticated mail to an external recipient is relayed to mailpit" {
+	run send_mail --server "${MTA_SMTP_SUBMISSION_ADDRESS}" --to nobody@example.net --from admin@example.com --auth --auth-user admin@example.com --auth-password changeme --tls --body "$(mail_needle)"
+	assert_success
 
-	sleep 5 # Give mailpit some time
-
-	RESULT=$(curl -s "http://mailpit:8025/api/v1/messages" | jq -cr ".messages[0].Snippet" | tr -d '[:space:]')
-
-	# send mail to mta with smtp authentication, external recipient
-	[ "$RESULT" = "sendmailtomtawithsmtpauthentication,externalrecipient" ]
+	run wait_for 60 mailpit_has_message "$(mail_needle)"
+	assert_success
 }

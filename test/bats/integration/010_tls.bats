@@ -1,52 +1,57 @@
 #!/usr/bin/env bats
 
+setup() {
+	load '_helper'
+}
+
 @test "certificates were created" {
 	[ -f /media/tls/tls.crt ]
 }
 
-@test "compare certificate fingerprints" {
-	MDA_FINGERPRINT=$(echo | openssl s_client -showcerts -connect "${MDA_IMAPS_ADDRESS}" 2>&1 | openssl x509 -fingerprint -noout)
-	MTA_FINGERPRINT=$(echo | openssl s_client -showcerts -connect "${MTA_SMTP_ADDRESS}" -starttls smtp 2>&1 | openssl x509 -fingerprint -noout)
+@test "mda and mta present the same certificate" {
+	mda_fingerprint="$(tls_fingerprint "${MDA_IMAPS_ADDRESS}")"
+	mta_fingerprint="$(tls_fingerprint "${MTA_SMTP_ADDRESS}" -starttls smtp)"
 
-	[ "$MDA_FINGERPRINT" = "$MTA_FINGERPRINT" ]
+	[ -n "${mda_fingerprint}" ]
+	[ "${mda_fingerprint}" = "${mta_fingerprint}" ]
 }
 
 @test "connection to imaps" {
-	run bash -c 'echo -e "a1 LOGOUT\r\n" | openssl s_client -showcerts -quiet -brief -connect ${MDA_IMAPS_ADDRESS}'
-	[ "$status" -eq 0 ]
+	run tls_connect "${MDA_IMAPS_ADDRESS}" "a1 LOGOUT"
+	assert_success
 }
 
 @test "connection to pop3s" {
-	run bash -c 'echo -e "QUIT\r\n" | openssl s_client -quiet -brief -connect ${MDA_POP3S_ADDRESS}'
-	[ "$status" -eq 0 ]
+	run tls_connect "${MDA_POP3S_ADDRESS}" "QUIT"
+	assert_success
 }
 
 @test "connection to pop3 with starttls" {
-	run bash -c 'echo -e "QUIT\r\n" | openssl s_client -quiet -brief -connect ${MDA_POP3_ADDRESS} -starttls pop3'
-	[ "$status" -eq 0 ]
+	run tls_connect "${MDA_POP3_ADDRESS}" "QUIT" -starttls pop3
+	assert_success
 }
 
 @test "connection to imap with starttls" {
-	run bash -c 'echo -e "a1 LOGOUT\r\n" | openssl s_client -quiet -brief -connect ${MDA_IMAP_ADDRESS} -starttls imap'
-	[ "$status" -eq 0 ]
+	run tls_connect "${MDA_IMAP_ADDRESS}" "a1 LOGOUT" -starttls imap
+	assert_success
 }
 
 @test "connection to smtp with starttls" {
-	run bash -c 'echo -e "QUIT\r\n" | openssl s_client -quiet -brief -connect ${MTA_SMTP_ADDRESS} -starttls smtp'
-	[ "$status" -eq 0 ]
+	run tls_connect "${MTA_SMTP_ADDRESS}" "QUIT" -starttls smtp
+	assert_success
 }
 
 @test "connection to submission with starttls" {
-	run bash -c 'echo -e "QUIT\r\n" | openssl s_client -quiet -brief -connect ${MTA_SMTP_SUBMISSION_ADDRESS} -starttls smtp'
-	[ "$status" -eq 0 ]
+	run tls_connect "${MTA_SMTP_SUBMISSION_ADDRESS}" "QUIT" -starttls smtp
+	assert_success
 }
 
 @test "submission rejects TLS 1.1" {
-	run bash -c 'echo -e "QUIT\r\n" | openssl s_client -quiet -brief -connect ${MTA_SMTP_SUBMISSION_ADDRESS} -starttls smtp -tls1_1'
-	[ "$status" -ne 0 ]
+	run tls_connect "${MTA_SMTP_SUBMISSION_ADDRESS}" "QUIT" -starttls smtp -tls1_1
+	assert_failure
 }
 
 @test "submission accepts TLS 1.2" {
-	run bash -c 'echo -e "QUIT\r\n" | openssl s_client -quiet -brief -connect ${MTA_SMTP_SUBMISSION_ADDRESS} -starttls smtp -tls1_2'
-	[ "$status" -eq 0 ]
+	run tls_connect "${MTA_SMTP_SUBMISSION_ADDRESS}" "QUIT" -starttls smtp -tls1_2
+	assert_success
 }

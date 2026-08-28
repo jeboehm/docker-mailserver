@@ -2,60 +2,54 @@
 
 setup() {
 	load '_helper'
-	skip_in_kubernetes
 }
 
 @test "Check postfix configuration" {
-	run docker exec docker-mailserver-mta-1 postfix check
+	run exec_in_service mta postfix check
+	assert_success
 
-	[ "$status" -eq 0 ]
-	[ "$output" = "" ]
+	# On Kubernetes the mounted configuration and queue directories trigger
+	# permission warnings; anything but warnings is unexpected.
+	run grep -v 'warning:' <<<"${output}"
+	assert_output ""
 }
 
 @test "Check frankenphp configuration" {
-	run docker exec docker-mailserver-web-1 frankenphp fmt /etc/frankenphp/Caddyfile
-
-	[ "$status" -eq 0 ]
+	run exec_in_service web frankenphp fmt /etc/frankenphp/Caddyfile
+	assert_success
 }
 
 @test "Check dovecot configuration" {
-	run docker exec docker-mailserver-mda-1 doveconf -n
-
-	[ "$status" -eq 0 ]
+	run exec_in_service mda doveconf -n
+	assert_success
 }
 
 @test "Check rspamd configuration" {
-	run docker exec docker-mailserver-filter-1 rspamadm configtest
-
-	[ "$status" -eq 0 ]
+	run exec_in_service filter rspamadm configtest
+	assert_success
 }
 
 @test "Check unbound configuration" {
-	run docker exec docker-mailserver-unbound-1 unbound-checkconf
-
-	[ "$status" -eq 0 ]
+	run exec_in_service unbound unbound-checkconf
+	assert_success
 }
 
 @test "Check rspamd user id is 11333 and group id is 11333" {
-	run docker exec docker-mailserver-filter-1 id -u
+	run exec_in_service filter id -u
+	assert_success
+	assert_output "11333"
 
-	[ "$status" -eq 0 ]
-	[ "$output" -eq 11333 ]
-
-	run docker exec docker-mailserver-filter-1 id -g
-
-	[ "$status" -eq 0 ]
-	[ "$output" -eq 11333 ]
+	run exec_in_service filter id -g
+	assert_success
+	assert_output "11333"
 }
 
 @test "Check vmail user id is 1000 and group id is 1000" {
-	run docker exec docker-mailserver-mda-1 id -u
+	run exec_in_service mda id -u
+	assert_success
+	assert_output "1000"
 
-	[ "$status" -eq 0 ]
-	[ "$output" -eq 1000 ]
-
-	run docker exec docker-mailserver-mda-1 id -g
-
-	[ "$status" -eq 0 ]
-	[ "$output" -eq 1000 ]
+	run exec_in_service mda id -g
+	assert_success
+	assert_output "1000"
 }
