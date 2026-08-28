@@ -7,3 +7,4 @@ site/
 .mypy_cache
 **/rootfs/.banner.sh
 /Pipfile*
+/test/report/

@@ -218,6 +218,13 @@ jobs:
         run: make fixtures
       - name: Run tests
         run: bin/test.sh run --rm test
+      - name: Upload test report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: bats-report-${{ matrix.TEST_CASE }}
+          path: test/report/report.xml
+          retention-days: 7
       - name: Collect logs
         if: failure()
         run: |

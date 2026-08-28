@@ -63,5 +63,9 @@ COPY rootfs/ /
 WORKDIR /app/tests
 COPY integration/ /app/tests/
 
+# bats writes the JUnit report here; docker-compose.test.yml bind-mounts the
+# directory to ./test/report so that CI can upload it.
+RUN mkdir -p /app/report
+
 ENTRYPOINT ["/entrypoint.sh"]
-CMD ["bats", "."]
+CMD ["bats", "--timing", "--print-output-on-failure", "--report-formatter", "junit", "--output", "/app/report", "."]

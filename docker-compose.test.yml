@@ -21,6 +21,8 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       # For development
       - ./test/bats/integration:/app/tests:ro
+      # JUnit report written by bats (see test/bats/Dockerfile)
+      - ./test/report:/app/report
     env_file: .env
     environment:
       DB_DRIVER: ${DB_DRIVER:-mysql}

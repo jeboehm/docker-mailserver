@@ -1,10 +1,10 @@
 #!/usr/bin/env bats
 
-setup_file() {
-	# Shared by the send, inspect and verify tests below.
-	DKIM_TEST_NEEDLE="dkim-signing-test-$(date +%s)-${RANDOM}"
-	DKIM_ROTATED_NEEDLE="dkim-rotated-test-$(date +%s)-${RANDOM}"
-	export DKIM_TEST_NEEDLE DKIM_ROTATED_NEEDLE
+setup() {
+	load '_helper'
+
+	DKIM_RECORD_NAME="dkim._domainkey.example.com"
+	ADMIN_MAILDIR="$(maildir admin@example.com)"
 }
 
 teardown_file() {
@@ -14,29 +14,11 @@ teardown_file() {
 	publish_dkim_record dkim.example.com >/dev/null 2>&1 || true
 }
 
-setup() {
-	load '_helper'
-	load '/usr/lib/bats/bats-support/load'
-	load '/usr/lib/bats/bats-assert/load'
-
-	mapfile -t parts < <(split_by_colon "${UNBOUND_DNS_ADDRESS}")
-	UNBOUND_DNS_HOST="${parts[0]}"
-	UNBOUND_DNS_PORT="${parts[1]}"
-
-	mapfile -t parts < <(split_by_colon "${MTA_SMTP_SUBMISSION_ADDRESS}")
-	SMTP_SUBMISSION_HOST="${parts[0]}"
-	SMTP_SUBMISSION_PORT="${parts[1]}"
-
-	DKIM_RECORD_NAME="dkim._domainkey.example.com"
-	ADMIN_MAILDIR="/srv/vmail/example.com/admin/Maildir"
-}
-
 # Print the base64 encoded public key (the "p=" value of the DNS record)
 # derived from the private key rspamd loads from redis.
 # Usage: dkim_public_key <selector>.<domain>
 dkim_public_key() {
-	REDISCLI_AUTH="${REDIS_PASSWORD}" redis-cli -h "${REDIS_HOST}" -p "${REDIS_PORT}" --raw hget dkim_keys "$1" |
-		openssl pkey -pubout 2>/dev/null | sed '/^-----/d' | tr -d '\n'
+	redis_cli --raw hget dkim_keys "$1" | openssl pkey -pubout 2>/dev/null | sed '/^-----/d' | tr -d '\n'
 }
 
 # Split a TXT value into quoted character-strings of at most 255 bytes.
@@ -76,18 +58,19 @@ publish_dkim_record() {
 # Print the joined TXT value that unbound returns for a name.
 # Usage: dns_txt_record <name>
 dns_txt_record() {
-	dig +short "@${UNBOUND_DNS_HOST}" -p "${UNBOUND_DNS_PORT}" "$1" TXT | sed 's/" "//g; s/^"//; s/"$//'
+	dns_query +short "$1" TXT | sed 's/" "//g; s/^"//; s/"$//'
 }
 
-# Send a mail through the submission service with the given needle as subject
-# and body. The needle is used to find the stored message afterwards.
+# Send a mail through the submission service with the needle as subject and
+# body. The needle is used to find the stored message afterwards.
 # Usage: send_submission_mail <needle>
 send_submission_mail() {
-	swaks -s "${SMTP_SUBMISSION_HOST}" --port "${SMTP_SUBMISSION_PORT}" --to admin@example.com --from admin@example.com -a -au admin@example.com -ap changeme -tls --header "Subject: $1" --body "$1"
+	send_mail --server "${MTA_SMTP_SUBMISSION_ADDRESS}" --to admin@example.com --from admin@example.com --auth --auth-user admin@example.com --auth-password changeme --tls --header "Subject: $1" --body "$1"
 }
 
 @test "check DKIM key for example.com exists" {
-	run redis-cli -a "${REDIS_PASSWORD}" -h "${REDIS_HOST}" -p "${REDIS_PORT}" hmget dkim_keys dkim.example.com
+	run redis_cli hget dkim_keys dkim.example.com
+	assert_success
 	assert_output --partial "BEGIN PRIVATE KEY"
 }
 
@@ -107,13 +90,11 @@ send_submission_mail() {
 	assert_output --partial "p=${pubkey}"
 }
 
-@test "send mail via submission service to be signed with DKIM" {
-	run send_submission_mail "${DKIM_TEST_NEEDLE}"
-	assert_success
-}
-
 @test "mail via submission service is signed with DKIM" {
-	mail_file="$(wait_for_mail "${DKIM_TEST_NEEDLE}" "${ADMIN_MAILDIR}" 60)"
+	run send_submission_mail "$(mail_needle)"
+	assert_success
+
+	mail_file="$(wait_for_mail "$(mail_needle)" "${ADMIN_MAILDIR}")"
 	[ -n "${mail_file}" ]
 
 	run mail_header "${mail_file}" DKIM-Signature
@@ -124,7 +105,10 @@ send_submission_mail() {
 }
 
 @test "DKIM signature is valid for the published record" {
-	mail_file="$(wait_for_mail "${DKIM_TEST_NEEDLE}" "${ADMIN_MAILDIR}" 5)"
+	run send_submission_mail "$(mail_needle)"
+	assert_success
+
+	mail_file="$(wait_for_mail "$(mail_needle)" "${ADMIN_MAILDIR}")"
 	[ -n "${mail_file}" ]
 
 	# rspamd does not verify DKIM for local or authenticated senders
@@ -158,15 +142,13 @@ send_submission_mail() {
 	assert_output --partial "p=${old_pubkey}"
 }
 
-@test "send mail via submission service after the DKIM key rotation" {
-	run send_submission_mail "${DKIM_ROTATED_NEEDLE}"
-	assert_success
-}
-
 @test "mail sent after the DKIM key rotation is not signed" {
 	# The DNS record does not match the new private key, so rspamd refuses to
 	# sign (allow_pubkey_mismatch = false) and the mail leaves unsigned.
-	mail_file="$(wait_for_mail "${DKIM_ROTATED_NEEDLE}" "${ADMIN_MAILDIR}" 60)"
+	run send_submission_mail "$(mail_needle)"
+	assert_success
+
+	mail_file="$(wait_for_mail "$(mail_needle)" "${ADMIN_MAILDIR}")"
 	[ -n "${mail_file}" ]
 
 	run mail_header "${mail_file}" DKIM-Signature

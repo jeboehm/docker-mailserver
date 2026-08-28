@@ -73,6 +73,8 @@ Runs the complete integration test suite against the running mailserver:
 make test
 ```
 
+`make test` can be repeated against the same stack: `test/fixtures.sh` exits early when the database is already seeded, and the tests reset the state they depend on themselves. bats writes a JUnit report to `test/report/report.xml` (git-ignored), which CI uploads as an artifact.
+
 **Prerequisites:**
 
 - Services must be running (run `make up` first)
@@ -173,6 +175,15 @@ When making changes to a specific service (e.g., MDA, MTA, Web, Filter), you can
    ./bin/test.sh run --rm test bats 070_docker.bats
    ```
    This runs only the Docker-related tests instead of the full test suite.
+
+### Writing integration tests
+
+The tests in `test/bats/integration/` share `_helper.bash`, which also loads bats-support and bats-assert. A few conventions keep them independent of timing and of each other:
+
+- A test that expects a delivery sends the mail itself with `send_mail` (swaks plus a retry when Postfix's connection rate limit answers `421`), with `$(mail_needle)` as body, and waits for it with `wait_for_mail "$(mail_needle)" "$(maildir admin@example.com)"`. The needle is unique per test and per run, so mails from earlier runs in the same Maildir do not satisfy the check.
+- Never `sleep`; poll with `wait_for`, `wait_for_log` or `wait_for_mail`, which return as soon as the condition holds and fail with a message after the timeout.
+- Use `exec_in_service` and `service_logs` instead of `docker exec` or `kubectl`, so the test runs on Docker Compose and Kubernetes alike.
+- Tests that depend on mailbox state reset it first (`mailbox_reset quota@example.com` runs `doveadm` in the `mda` container). A subset such as `./bin/test.sh run --rm test bats -f quota 040_mta.bats` therefore runs on its own.
 
 ### Example: DKIM signing test
 

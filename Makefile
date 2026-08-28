@@ -1,6 +1,10 @@
 COMPOSE_PRODUCTION = bin/production.sh
 COMPOSE_TEST       = bin/test.sh
 
+# Services whose logs `make logs` / `make kubernetes-logs` print.
+COMPOSE_SERVICES    = db ssl mta mda filter web fetchmail unbound redis mailpit
+KUBERNETES_SERVICES = db fetchmail filter mda mta redis unbound web mailpit test-runner-job
+
 # The kubernetes test overlay follows the database engine configured in .env.
 # Override with e.g. `make kubernetes-deploy-helper DB_DRIVER=pgsql`.
 DB_DRIVER ?= $(shell sed -n 's/^DB_DRIVER=//p' .env 2>/dev/null | tail -n1)
@@ -28,17 +32,15 @@ clean:
 .env:
 	cp .env.dist .env
 
+# Logs of every service, one block per service. In GitHub Actions the blocks
+# are folded into groups.
 .PHONY: logs
 logs:
-	$(COMPOSE_PRODUCTION) logs db
-	$(COMPOSE_PRODUCTION) logs ssl
-	$(COMPOSE_PRODUCTION) logs mta
-	$(COMPOSE_PRODUCTION) logs mda
-	$(COMPOSE_PRODUCTION) logs filter
-	$(COMPOSE_PRODUCTION) logs web
-	$(COMPOSE_PRODUCTION) logs fetchmail
-	$(COMPOSE_PRODUCTION) logs unbound
-	$(COMPOSE_TEST) logs mailpit
+	@for service in $(COMPOSE_SERVICES); do \
+		[ -z "$$GITHUB_ACTIONS" ] || echo "::group::$$service"; \
+		$(COMPOSE_TEST) logs $$service; \
+		[ -z "$$GITHUB_ACTIONS" ] || echo "::endgroup::"; \
+	done
 
 .PHONY: up
 up: .env
@@ -46,21 +48,7 @@ up: .env
 
 .PHONY: fixtures
 fixtures:
-	$(COMPOSE_PRODUCTION) exec web /opt/admin/bin/console system:check --wait
-	$(COMPOSE_PRODUCTION) exec web /opt/admin/bin/console domain:add example.com
-	$(COMPOSE_PRODUCTION) exec web /opt/admin/bin/console domain:add example.org
-	$(COMPOSE_PRODUCTION) exec web /opt/admin/bin/console user:add --admin --password=changeme --enable admin example.com
-	$(COMPOSE_PRODUCTION) exec web /opt/admin/bin/console user:add --password=test1234 --enable --sendonly sendonly example.com
-	$(COMPOSE_PRODUCTION) exec web /opt/admin/bin/console user:add --password=test1234 --enable --quota=1 quota example.com
-	$(COMPOSE_PRODUCTION) exec web /opt/admin/bin/console user:add --password=test1234 disabled example.com
-	$(COMPOSE_PRODUCTION) exec web /opt/admin/bin/console user:add --password=test1234 --sendonly disabledsendonly example.com
-	$(COMPOSE_PRODUCTION) exec web /opt/admin/bin/console user:add --password=test1234 --enable fetchmailsource example.org
-	$(COMPOSE_PRODUCTION) exec web /opt/admin/bin/console user:add --password=test1234 --enable fetchmailreceiver example.org
-	$(COMPOSE_PRODUCTION) exec web /opt/admin/bin/console alias:add foo@example.com admin@example.com
-	$(COMPOSE_PRODUCTION) exec web /opt/admin/bin/console alias:add foo@example.org admin@example.com
-	$(COMPOSE_PRODUCTION) exec web /opt/admin/bin/console alias:add --catchall @example.com admin@example.com
-	$(COMPOSE_PRODUCTION) exec web /opt/admin/bin/console dkim:setup example.com --enable --selector dkim
-	$(COMPOSE_PRODUCTION) exec web /opt/admin/bin/console fetchmail:account:add --force fetchmailreceiver@example.org mda.local imap 31143 fetchmailsource@example.org test1234
+	$(COMPOSE_PRODUCTION) exec -T web sh < test/fixtures.sh
 
 .PHONY: setup
 setup:
@@ -92,23 +80,28 @@ kubernetes-wait:
 
 .PHONY: kubernetes-logs
 kubernetes-logs:
-	kubectl logs --ignore-errors -l app.kubernetes.io/name=db
-	kubectl logs --ignore-errors -l app.kubernetes.io/name=fetchmail
-	kubectl logs --ignore-errors -l app.kubernetes.io/name=filter
-	kubectl logs --ignore-errors -l app.kubernetes.io/name=mda
-	kubectl logs --ignore-errors -l app.kubernetes.io/name=mta
-	kubectl logs --ignore-errors -l app.kubernetes.io/name=redis
-	kubectl logs --ignore-errors -l app.kubernetes.io/name=unbound
-	kubectl logs --ignore-errors -l app.kubernetes.io/name=web
-	kubectl logs --ignore-errors -l app.kubernetes.io/name=mailpit
-	kubectl logs --ignore-errors -l app.kubernetes.io/name=test-runner-job
+	@for service in $(KUBERNETES_SERVICES); do \
+		[ -z "$$GITHUB_ACTIONS" ] || echo "::group::$$service"; \
+		kubectl logs --ignore-errors --tail=-1 -l app.kubernetes.io/name=$$service; \
+		[ -z "$$GITHUB_ACTIONS" ] || echo "::endgroup::"; \
+	done
 
+# Runs the test job, prints the runner log whatever the outcome and fails
+# unless the job completed. Polling instead of `kubectl wait` so that a
+# failed job is reported at once rather than after the timeout.
 .PHONY: kubernetes-test
 kubernetes-test:
 	kubectl delete -f test/k8s/test-job.yaml --ignore-not-found
 	kubectl apply -f test/k8s/test-job.yaml
-	kubectl wait --timeout=5m --for=condition=complete job -l app.kubernetes.io/name=test-runner-job
-	kubectl logs --ignore-errors -l app.kubernetes.io/name=test-runner-job
+	@status=""; \
+	for _ in $$(seq 1 60); do \
+		status="$$(kubectl get job test-runner-job -o jsonpath='{.status.conditions[?(@.status=="True")].type}')"; \
+		case "$$status" in *Complete* | *Failed*) break ;; esac; \
+		sleep 5; \
+	done; \
+	kubectl logs --ignore-errors --tail=-1 -l app.kubernetes.io/name=test-runner-job; \
+	echo "Job conditions: $${status:-none (timeout)}"; \
+	case "$$status" in *Complete*) exit 0 ;; *) exit 1 ;; esac
 
 .PHONY: kubernetes-up
 kubernetes-up:

@@ -1,18 +1,18 @@
 #!/usr/bin/env bats
 
-@test "wait ${FETCHMAIL_INTERVAL} seconds to give fetchmail time to run" {
-	if [ "${MDA_UPSTREAM_PROXY}" = "true" ]; then
-		skip "MDA upstream proxy is enabled, skipping fetchmail test"
-	fi
+setup() {
+	load '_helper'
 
-	run sleep "${FETCHMAIL_INTERVAL}"
+	if [ "${MDA_UPSTREAM_PROXY}" = "true" ]; then
+		skip "MDA upstream proxy is enabled, fetchmail cannot connect to the mda"
+	fi
 }
 
-@test "fetchmail collected the mail from the fetchmailsource account and put it into fetchmailreceiver account" {
-	if [ "${MDA_UPSTREAM_PROXY}" = "true" ]; then
-		skip "MDA upstream proxy is enabled, skipping fetchmail test"
-	fi
+@test "fetchmail collects mail from the fetchmailsource account into the fetchmailreceiver account" {
+	run send_mail --server "${MTA_SMTP_ADDRESS}" --to fetchmailsource@example.org --body "$(mail_needle)"
+	assert_success
 
-	run grep -r "send mail to mta to fetchmail source account address" /srv/vmail/example.org/fetchmailreceiver/Maildir/
-	[ "$status" -eq 0 ]
+	# fetchmail polls the source account every FETCHMAIL_INTERVAL seconds.
+	run wait_for_mail "$(mail_needle)" "$(maildir fetchmailreceiver@example.org)" "$((FETCHMAIL_INTERVAL + 60))"
+	assert_success
 }
