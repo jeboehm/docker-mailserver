@@ -81,7 +81,7 @@ RUN --mount=type=cache,target=/root/.composer \
 
 FROM composer AS admin-builder
 
-ARG ADMIN_VER=5.18.2 # renovate: depName=jeboehm/mailserver-admin
+ARG ADMIN_VER=5.18.4 # renovate: depName=jeboehm/mailserver-admin
 WORKDIR /opt/admin
 RUN curl -sSLf \
         -o /tmp/admin.tar.gz \
