@@ -4,7 +4,6 @@
     "config:best-practices",
     "schedule:weekends",
     ":approveMajorUpdates",
-    "group:allDigest",
     "group:recommended",
     ":automergeMinor",
     ":automergePatch",
