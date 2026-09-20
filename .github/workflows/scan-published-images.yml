@@ -1,0 +1,84 @@
+name: Scan published images
+# What CI scans is only a snapshot of build time. Renovate runs on weekends, a
+# release only happens on releasable commits, and a fixed package does not
+# change the pinned base image digest, so a CVE published in between stays
+# invisible. This scans what users actually run.
+on:
+  schedule:
+    - cron: "0 4 * * *" # daily, ahead of the release run at 06:00
+  workflow_dispatch:
+concurrency:
+  group: "${{ github.workflow }}"
+  cancel-in-progress: true
+jobs:
+  trivy:
+    name: trivy (${{ matrix.image }})
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - image: mailserver-mda
+          - image: mailserver-mta
+          - image: mailserver-filter
+          - image: mailserver-web
+          - image: mailserver-ssl
+          - image: mailserver-unbound
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - name: Log in to Container Registry (ghcr.io)
+        uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      # `latest` is the last release and therefore what the Compose files and
+      # the documentation tell users to run.
+      - name: Run Trivy vulnerability scanner
+        uses: ./.github/actions/trivy-scan
+        with:
+          image-ref: ghcr.io/jeboehm/${{ matrix.image }}:latest
+          category: ${{ matrix.image }}
+          gate: "true"
+      - name: Upload the summary
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: trivy-summary-${{ matrix.image }}
+          path: trivy-summary-${{ matrix.image }}.md
+          retention-days: 7
+          # A missing summary means the scan itself did not finish; the report
+          # job turns that into a finding of its own.
+          if-no-files-found: ignore
+  report:
+    needs: trivy
+    if: ${{ !cancelled() }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - name: Download the summaries
+        # When every scan failed there is nothing to download, and that is
+        # exactly when the issue has to be filed: the script turns each missing
+        # summary into a finding of its own.
+        continue-on-error: true
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
+        with:
+          path: summaries
+          pattern: trivy-summary-*
+          merge-multiple: true
+      - name: Report the findings
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          SUMMARY_DIR: summaries
+          # Keep in sync with the matrix above; the script needs the expected
+          # set to notice a scan that did not produce a summary at all.
+          IMAGES: mailserver-mda mailserver-mta mailserver-filter mailserver-web mailserver-ssl mailserver-unbound
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: .github/bin/report_vulnerable_images.sh

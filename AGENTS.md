@@ -151,11 +151,28 @@ pass their arguments to `docker compose` (`bin/test.sh logs -f filter`, `bin/tes
 uploads the JUnit report (`test/report/report.xml`) as artifact `bats-report-<case>`; when a job fails, `make logs` /
 `make kubernetes-logs` print the service logs as collapsible groups. `.github/bin/prepare_env.sh <case>` builds `.env`
 from `.env.dist` plus `.github/test-matrix/<case>.env`. The same workflow runs dive (image
-efficiency), Trivy (vulnerabilities) and Popeye (cluster sanity). Further workflows: `lint.yml` (super-linter),
-`docs.yml` (MkDocs strict build on pull requests, `gh-deploy` on `main`), `test-yaml-schema.yml` (`kustomize build` and
-the pod security-context schema in `test/schema/`), `release.yml` (daily conventional-changelog release; `update_image_tags.py`
-pins the image tags inside the release tarball), `sync-next-branch.yml`, `renovate.yml`, `stale-issues.yml`,
-`dockerhub.yml`, `cleanup-caches.yml`.
+efficiency), Trivy (vulnerabilities) and Popeye (cluster sanity). It also builds without the buildx cache on a weekly
+`schedule` and on `workflow_dispatch` with `no-cache: true`: a fixed package does not change the pinned digest of the
+base image, so a cached `apk`/`apt` layer would keep the old versions forever. Further workflows: `lint.yml`
+(super-linter), `docs.yml` (MkDocs strict build on pull requests, `gh-deploy` on `main`), `test-yaml-schema.yml`
+(`kustomize build` and the pod security-context schema in `test/schema/`), `scan-published-images.yml` (see below),
+`release.yml` (daily conventional-changelog release; `update_image_tags.py` pins the image tags inside the release
+tarball), `sync-next-branch.yml`, `renovate.yml`, `stale-issues.yml`, `dockerhub.yml`, `cleanup-caches.yml`.
+
+## Vulnerability scanning
+
+Every scan goes through the composite action `.github/actions/trivy-scan`. It scans an image once into a JSON report
+and derives the rest from it: `trivy convert` writes the CRITICAL/HIGH findings as SARIF for the Security tab (one
+category per image), and `.github/bin/trivy_summary.sh` renders the findings that have a fix into the job log and the
+job summary. Passing `format: sarif` to `trivy-action` directly would not work, it drops the severity filter unless
+`limit-severities-for-sarif` is set. Accepted findings belong in `.trivyignore.yaml`, with a `statement` and an
+`expired_at` date.
+
+In `build.yml` the scan only reports (the image tar of the build job on pull requests, the pushed image otherwise) and
+never fails a pull request, and it skips the SARIF upload for a pull request from a fork, where `GITHUB_TOKEN` may not
+write security events. `scan-published-images.yml` is where findings gate: it scans `ghcr.io/jeboehm/<image>:latest`
+daily, fails on every finding that has a fix, and `.github/bin/report_vulnerable_images.sh` keeps one tracking issue in
+sync with the result. A rebuild refreshes `main`, `nightly` and `sha-*`; `:latest` only moves when a release is cut.
 
 ## Lint and formatting
 

@@ -1,0 +1,16 @@
+# Findings that Trivy reports but that are accepted for now.
+#
+# `.github/actions/trivy-scan` passes this file to every scan, so it has to
+# exist even when it is empty. Entries need an `id`, a `statement` that says why
+# the finding is accepted and an `expired_at` date, so that an exception expires
+# instead of being forgotten:
+#
+# vulnerabilities:
+#   - id: CVE-0000-00000
+#     statement: Not reachable, the package ships only the library.
+#     expired_at: 2026-12-31
+#
+# See https://trivy.dev/latest/docs/configuration/filtering/#by-finding-ids
+vulnerabilities: []
+secrets: []
+misconfigurations: []

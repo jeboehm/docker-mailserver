@@ -20,6 +20,17 @@ on:
       - "Makefile"
       - "target/**"
       - "test/**"
+  # The images only pick up package fixes when the buildx cache is bypassed: apk
+  # and apt layers are restored from it, and a fixed package does not change the
+  # pinned digest of the base image, so Renovate never triggers a rebuild.
+  schedule:
+    - cron: "0 3 * * 1" # Monday, after the weekend Renovate runs
+  workflow_dispatch:
+    inputs:
+      no-cache:
+        description: Rebuild without the buildx layer cache
+        type: boolean
+        default: false
 concurrency:
   group: "${{ github.workflow }}-${{ github.ref }}"
   cancel-in-progress: true
@@ -115,6 +126,9 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha,scope=${{ matrix.image }}
           cache-to: type=gha,scope=${{ matrix.image }},mode=max
+          no-cache: ${{ github.event_name == 'schedule' || inputs.no-cache == true }}
+          # Published images carry an SBOM next to the provenance attestation.
+          sbom: ${{ github.event_name != 'pull_request' && matrix.image != 'mailserver-test' }}
           outputs: ${{ github.event_name == 'pull_request' && format('type=docker,dest={0}/{1}.tar', runner.temp, matrix.image) || '' }}
       - name: Generate artifact attestation (ghcr.io)
         if: ${{ github.event_name != 'pull_request' && matrix.image != 'mailserver-test' }}
@@ -337,14 +351,6 @@ jobs:
           path: images
           pattern: docker-image-${{ matrix.image }}
           merge-multiple: true
-      - name: Run Trivy vulnerability scanner
-        if: ${{ github.event_name == 'pull_request' }}
-        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
-        with:
-          input: "images/${{ matrix.image }}.tar"
-          format: "sarif"
-          output: "trivy-results.sarif"
-          severity: "CRITICAL,HIGH"
       - name: Log in to Container Registry (ghcr.io)
         if: ${{ github.event_name != 'pull_request' }}
         uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4
@@ -352,17 +358,16 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+      # A pull request scans the artifact the build job produced, every other
+      # event the image that was just pushed. Findings are reported but never
+      # fatal here: a pull request must not turn red because a base image got a
+      # new CVE. `scan-published-images.yml` is where findings gate.
       - name: Run Trivy vulnerability scanner
-        if: ${{ github.event_name != 'pull_request' }}
-        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        uses: ./.github/actions/trivy-scan
         with:
-          image-ref: "ghcr.io/jeboehm/${{ matrix.image }}:sha-${{ github.sha }}"
-          format: "sarif"
-          output: "trivy-results.sarif"
-          severity: "CRITICAL,HIGH"
-      - name: Upload Trivy scan results to GitHub Security tab
-        if: ${{ !cancelled() }}
-        uses: github/codeql-action/upload-sarif@1c5b675653bb5c22dbe9b12b556ec555138e09fd # v4
-        with:
-          sarif_file: "trivy-results.sarif"
-          category: "${{ matrix.image }}"
+          input: ${{ github.event_name == 'pull_request' && format('images/{0}.tar', matrix.image) || '' }}
+          image-ref: ${{ github.event_name != 'pull_request' && format('ghcr.io/jeboehm/{0}:sha-{1}', matrix.image, github.sha) || '' }}
+          category: ${{ matrix.image }}
+          # GITHUB_TOKEN may not write security events for a pull request that
+          # comes from a fork.
+          upload-sarif: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}
