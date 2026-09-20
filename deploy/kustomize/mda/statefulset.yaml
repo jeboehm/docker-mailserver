@@ -95,6 +95,9 @@ spec:
             readOnlyRootFilesystem: true
             runAsGroup: 1000
             runAsUser: 1000
+            capabilities:
+              drop:
+                - ALL
           volumeMounts:
             - name: mda-data
               mountPath: /srv/vmail
