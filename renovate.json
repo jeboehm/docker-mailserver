@@ -30,6 +30,12 @@
       "matchFileNames": ["target/**"],
       "matchUpdateTypes": ["major"],
       "semanticCommitType": "feat"
+    },
+    {
+      "description": "swaks releases are dated, not semver.",
+      "matchDatasources": ["github-releases"],
+      "matchPackageNames": ["jetmore/swaks"],
+      "versioning": "loose"
     }
   ],
   "customManagers": [
