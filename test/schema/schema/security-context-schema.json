@@ -1,4 +1,5 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Kubernetes Security Context Validation Schema",
   "description": "Schema to ensure all Pods and Containers have securityContext specified",
   "type": "object",

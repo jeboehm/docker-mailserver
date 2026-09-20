@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "@sourcemeta/jsonschema": "^16.11.0"
+  }
+}

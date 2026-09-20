@@ -45,7 +45,7 @@ domains, users, aliases, DKIM and fetchmail accounts.
   addresses) and `ingress/traefik/`. The root `kustomization.yaml` generates the `config-env` ConfigMap from `.env`.
 - `bin/` — `production.sh` and `test.sh` (Compose wrappers, see below) and `create-tls-certs.sh`.
 - `test/bats/` — test runner image and BATS integration tests; `test/k8s/` — Kubernetes test overlay and test job;
-  `test/pajv/` — JSON schema check of the pod security contexts; `test/super-linter/` — lint runner.
+  `test/schema/` — JSON schema check of the pod security contexts; `test/super-linter/` — lint runner.
 - `docs/` — MkDocs documentation, configured by `.mkdocs.yaml` in the root. See `docs/AGENTS.md`.
 - `.github/` — workflows, helper scripts (`bin/`), composite actions, linter configuration (`linters/`), CI test matrix
   (`test-matrix/*.env`) and the list of third-party test images (`images.txt`).
@@ -153,7 +153,7 @@ uploads the JUnit report (`test/report/report.xml`) as artifact `bats-report-<ca
 from `.env.dist` plus `.github/test-matrix/<case>.env`. The same workflow runs dive (image
 efficiency), Trivy (vulnerabilities) and Popeye (cluster sanity). Further workflows: `lint.yml` (super-linter),
 `docs.yml` (MkDocs strict build on pull requests, `gh-deploy` on `main`), `test-yaml-schema.yml` (`kustomize build` and
-the pod security-context schema in `test/pajv/`), `release.yml` (conventional-changelog release; `update_image_tags.py`
+the pod security-context schema in `test/schema/`), `release.yml` (conventional-changelog release; `update_image_tags.py`
 pins the image tags inside the release tarball), `sync-next-branch.yml`, `renovate.yml`, `stale-issues.yml`,
 `dockerhub.yml`, `cleanup-caches.yml`.
 
