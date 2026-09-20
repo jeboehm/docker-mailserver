@@ -77,6 +77,20 @@ spec:
             readOnlyRootFilesystem: false
             runAsUser: 0
             runAsGroup: 0
+            capabilities:
+              drop:
+                - ALL
+              add:
+                # Postfix runs as root: it creates and chowns the queue
+                # directories, binds 25/587, forks children that setuid to the
+                # postfix user and signals them.
+                - CHOWN
+                - DAC_OVERRIDE
+                - FOWNER
+                - KILL
+                - NET_BIND_SERVICE
+                - SETGID
+                - SETUID
           volumeMounts:
             - name: tmp
               mountPath: /var/lib/postfix
@@ -115,6 +129,9 @@ spec:
             readOnlyRootFilesystem: true
             runAsUser: 0
             runAsGroup: 0
+            capabilities:
+              drop:
+                - ALL
           volumeMounts:
             - name: postfix-config
               mountPath: /target-postfix
@@ -151,6 +168,15 @@ spec:
             readOnlyRootFilesystem: true
             runAsUser: 0
             runAsGroup: 0
+            capabilities:
+              drop:
+                - ALL
+              add:
+                # chown/chmod of /var/lib/postfix and /var/spool/postfix, which
+                # are owned by postfix and mode 700 after the first start.
+                - CHOWN
+                - DAC_OVERRIDE
+                - FOWNER
           volumeMounts:
             - name: postfix-config
               mountPath: /etc/postfix
