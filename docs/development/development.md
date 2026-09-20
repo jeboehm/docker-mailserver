@@ -235,8 +235,9 @@ The project is organized into several key directories:
 
 The project uses two long-lived branches:
 
-- `main` is the released state. Every push is checked for conventional commits, and a new
-  version is tagged and released automatically when they warrant one. Container images are
+- `main` is the released state. Once a day the commits since the last tag are checked for
+  conventional commits, and a new version is tagged and released automatically when they
+  warrant one; maintainers can also trigger a release by hand. Container images are
   published under the resulting semantic version tags plus `latest`.
 - `next` collects work for future versions that must not ship yet, typically breaking
   changes. Its images are published under the `next` tag, so they can be tried out without

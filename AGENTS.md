@@ -153,7 +153,7 @@ uploads the JUnit report (`test/report/report.xml`) as artifact `bats-report-<ca
 from `.env.dist` plus `.github/test-matrix/<case>.env`. The same workflow runs dive (image
 efficiency), Trivy (vulnerabilities) and Popeye (cluster sanity). Further workflows: `lint.yml` (super-linter),
 `docs.yml` (MkDocs strict build on pull requests, `gh-deploy` on `main`), `test-yaml-schema.yml` (`kustomize build` and
-the pod security-context schema in `test/schema/`), `release.yml` (conventional-changelog release; `update_image_tags.py`
+the pod security-context schema in `test/schema/`), `release.yml` (daily conventional-changelog release; `update_image_tags.py`
 pins the image tags inside the release tarball), `sync-next-branch.yml`, `renovate.yml`, `stale-issues.yml`,
 `dockerhub.yml`, `cleanup-caches.yml`.
 
@@ -168,12 +168,16 @@ shell scripts.
 ## Git conventions
 
 - Conventional commits (`feat(mta): ...`, `fix(kubernetes): ...`, `test: ...`, `docs: ...`, `chore(deps): ...`);
-  `release.yml` derives the next version from them on every push to `main`.
+  `release.yml` runs daily and derives the next version from the commits since the last tag. Only `feat`, `fix`,
+  `perf` and `revert` cut a release, `chore`, `docs`, `test` and `ci` never do, and a day without releasable
+  commits is skipped. A manual `workflow_dispatch` forces a release regardless.
 - `main` is the released state; `next` collects breaking changes and is synced from `main` automatically
   (`sync-next-branch.yml`). Base pull requests on `main` unless they target the next major version.
-- Renovate (`renovate.json`): digest pinning, grouped digest updates, automerge for minor, patch and digest updates,
-  custom manager for `# renovate: depName=` comments. `deploy/**`, `docker-compose*.yml`, `docs/**` and
-  `kustomization.yaml` are ignored because the image tags there are rewritten at release time.
+- Renovate (`renovate.json`): digest pinning, ungrouped digest updates, automerge for minor, patch and digest
+  updates, custom manager for `# renovate: depName=` comments. Updates under `target/**` end up inside the published
+  images, so they use `fix(deps)` (`feat(deps)` for majors) and cut a release; CI and test tooling stays
+  `chore(deps)`. `deploy/**`, `docker-compose*.yml`, `docs/**` and `kustomization.yaml` are ignored because the
+  image tags there are rewritten at release time.
 
 ## Key flows
 
