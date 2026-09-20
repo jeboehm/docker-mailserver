@@ -23,6 +23,7 @@ ENV DB_DRIVER=mysql \
     WEB_HTTP_ADDRESS=web:8080
 
 ARG IMAPTESTER_VER=v1.3.0 # renovate: depName=jeboehm/imap-tester
+ARG SWAKS_VER=v20240103.0 # renovate: depName=jetmore/swaks
 
 RUN apk --no-cache add \
       bash \
@@ -54,9 +55,13 @@ RUN apk --no-cache add \
     && ln -sf /usr/bin/php84 /usr/bin/php \
     && wget -q -O /usr/local/bin/imap-tester https://github.com/jeboehm/imap-tester/releases/download/${IMAPTESTER_VER}/imap-tester.phar \
     && chmod +x /usr/local/bin/imap-tester \
+    && wget -q -O /tmp/swaks.tar.gz https://github.com/jetmore/swaks/releases/download/${SWAKS_VER}/swaks-${SWAKS_VER#v}.tar.gz \
+    && tar -xzf /tmp/swaks.tar.gz -C /tmp \
+    && install -m 0755 -o root -g root /tmp/swaks-${SWAKS_VER#v}/swaks /usr/local/bin/swaks \
+    && rm -rf /tmp/swaks.tar.gz /tmp/swaks-${SWAKS_VER#v} \
+    && swaks --version \
     && mkdir -p /usr/share/fixtures \
     && wget -q -O /usr/share/fixtures/gtube.txt https://spamassassin.apache.org/gtube/gtube.txt
-RUN apk add --no-cache --repository http://dl-cdn.alpinelinux.org/alpine/edge/testing/ swaks=20240103.0-r0
 
 COPY rootfs/ /
 
