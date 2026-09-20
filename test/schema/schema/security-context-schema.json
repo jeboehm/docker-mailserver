@@ -3,6 +3,61 @@
   "title": "Kubernetes Security Context Validation Schema",
   "description": "Schema to ensure all Pods and Containers have securityContext specified",
   "type": "object",
+  "$defs": {
+    "container": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "securityContext": {
+          "type": "object",
+          "description": "Container-level security context is required",
+          "properties": {
+            "capabilities": {
+              "type": "object",
+              "description": "Linux capabilities have to be set explicitly",
+              "properties": {
+                "drop": {
+                  "type": "array",
+                  "description": "Drop every capability and re-add only the ones the container needs",
+                  "contains": {
+                    "const": "ALL"
+                  }
+                }
+              },
+              "required": ["drop"]
+            }
+          },
+          "required": ["capabilities"]
+        }
+      },
+      "required": ["name", "securityContext"]
+    },
+    "podSpec": {
+      "type": "object",
+      "properties": {
+        "securityContext": {
+          "type": "object",
+          "description": "Pod-level security context is required"
+        },
+        "containers": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/container"
+          }
+        },
+        "initContainers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/container"
+          }
+        }
+      },
+      "required": ["securityContext", "containers"]
+    }
+  },
   "properties": {
     "apiVersion": {
       "type": "string"
@@ -28,47 +83,7 @@
           "type": "object",
           "properties": {
             "spec": {
-              "type": "object",
-              "properties": {
-                "securityContext": {
-                  "type": "object",
-                  "description": "Pod-level security context is required"
-                },
-                "containers": {
-                  "type": "array",
-                  "minItems": 1,
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "name": {
-                        "type": "string"
-                      },
-                      "securityContext": {
-                        "type": "object",
-                        "description": "Container-level security context is required"
-                      }
-                    },
-                    "required": ["name", "securityContext"]
-                  }
-                },
-                "initContainers": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "name": {
-                        "type": "string"
-                      },
-                      "securityContext": {
-                        "type": "object",
-                        "description": "Init container security context is required"
-                      }
-                    },
-                    "required": ["name", "securityContext"]
-                  }
-                }
-              },
-              "required": ["securityContext", "containers"]
+              "$ref": "#/$defs/podSpec"
             }
           },
           "required": ["spec"]
@@ -88,47 +103,7 @@
   "then": {
     "properties": {
       "spec": {
-        "type": "object",
-        "properties": {
-          "securityContext": {
-            "type": "object",
-            "description": "Pod-level security context is required"
-          },
-          "containers": {
-            "type": "array",
-            "minItems": 1,
-            "items": {
-              "type": "object",
-              "properties": {
-                "name": {
-                  "type": "string"
-                },
-                "securityContext": {
-                  "type": "object",
-                  "description": "Container-level security context is required"
-                }
-              },
-              "required": ["name", "securityContext"]
-            }
-          },
-          "initContainers": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "name": {
-                  "type": "string"
-                },
-                "securityContext": {
-                  "type": "object",
-                  "description": "Init container security context is required"
-                }
-              },
-              "required": ["name", "securityContext"]
-            }
-          }
-        },
-        "required": ["securityContext", "containers"]
+        "$ref": "#/$defs/podSpec"
       }
     }
   }
