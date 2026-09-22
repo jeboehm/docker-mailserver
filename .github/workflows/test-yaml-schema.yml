@@ -8,6 +8,9 @@ on:
       - "kustomization.yaml"
       - ".trivyignore.yaml"
       - "Makefile"
+      - ".env.dist"
+      - "bin/kubernetes-env.sh"
+      - ".github/workflows/test-yaml-schema.yml"
 concurrency:
   group: "${{ github.workflow }}-${{ github.ref }}"
   cancel-in-progress: true

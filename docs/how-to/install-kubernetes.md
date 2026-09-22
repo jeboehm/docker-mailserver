@@ -14,16 +14,15 @@ A full example is in [example-configs/kustomize/external-db-and-https-ingress](h
 
 ## Steps
 
-### 1. Configure environment (ConfigMap and Secrets)
+### 1. Configure environment variables
 
-Use `.env.dist` as a reference for required variables. Create a Kubernetes
-ConfigMap for non-sensitive values and Secrets for sensitive values
-(credentials, passwords, API keys). See [Environment variables reference](../reference/environment-variables.md) for the full list.
+Copy the example environment file and edit `.env`:
 
-See the
-[example-configs/kustomize/external-db-and-https-ingress](https://github.com/jeboehm/docker-mailserver/tree/main/docs/example-configs/kustomize/external-db-and-https-ingress)
-directory for a sample configuration showing how to structure these
-resources.
+```bash
+cp .env.dist .env
+```
+
+Set at least `DB_PASSWORD`, `REDIS_PASSWORD`, `CONTROLLER_PASSWORD`, and `DOVEADM_API_KEY`. See [Environment variables reference](../reference/environment-variables.md).
 
 ### 2. Create namespace
 
@@ -51,7 +50,13 @@ kubectl create -n mail secret tls tls-certs \
 
 ### 5. Apply Kustomize manifests
 
-From the project root:
+From the project root, first split `.env` into the inputs of the ConfigMap `config-env` and the Secret `secret-config-env`:
+
+```bash
+bin/kubernetes-env.sh
+```
+
+This writes `config/kubernetes/config.env` and `config/kubernetes/secret.env`. Every key whose name contains `PASSWORD`, `PASSWD` or `_KEY` goes into the Secret, everything else into the ConfigMap. Run it again after every change to `.env`, then apply:
 
 ```bash
 kubectl apply -n mail -k .
@@ -81,7 +86,6 @@ Use your configured ingress and the admin credentials from the wizard.
 ## Post-installation
 
 - Configure DNS and TLS like Docker deployment. See [How to configure DNS](configure-dns.md) and [How to configure TLS certificates](configure-tls.md).
-- Change `DOVEADM_API_KEY` from default if using observability (v7.3+).
 
 ## Troubleshooting
 

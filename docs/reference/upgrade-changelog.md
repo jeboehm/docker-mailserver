@@ -2,6 +2,18 @@
 
 Version-specific upgrade notes. When upgrading, update manifests in `deploy/compose` and `deploy/kustomize` to match the new version (volumes, configuration). Update `.env` for new or changed environment variables.
 
+## v8.0.x to later
+
+### Kubernetes: credentials move from the ConfigMap into a Secret
+
+This only affects deployments that apply the root `kustomization.yaml` (`kubectl apply -k .` from the project root); overlays that reference `deploy/kustomize/` and bring their own ConfigMap and Secret are unaffected.
+
+The root `kustomization.yaml` no longer reads `.env` directly. Run `bin/kubernetes-env.sh` before `kubectl apply -k .`, and again after every change to `.env`.
+It splits `.env` into `config/kubernetes/config.env` (ConfigMap `config-env`) and `config/kubernetes/secret.env` (Secret `secret-config-env`).
+Without the script, `kubectl apply -k .` fails because `config/kubernetes/config.env` does not exist.
+
+The workloads read both objects through `envFrom`, so they see the same variables as before. Workloads of your own that read one of these keys with `configMapKeyRef` from `config-env` must switch to `secretKeyRef` from `secret-config-env`.
+
 ## v7.x to v8.0
 
 All database environment variables were renamed from `MYSQL_*` to `DB_*`, and PostgreSQL can be used instead of MySQL.

@@ -14,26 +14,17 @@
 vulnerabilities: []
 secrets: []
 misconfigurations:
-  # `make trivy-config` scans `target/`, so Trivy reports the Dockerfiles
-  # relative to it; the second path covers a scan from the repository root.
   - id: DS-0002
     paths:
       - mta/Dockerfile
       - ssl/Dockerfile
-      - target/mta/Dockerfile
-      - target/ssl/Dockerfile
     statement: >-
-      Postfix's master process has to start as root and drops privileges for its
-      daemons; ssl is a one-shot init container that writes the certificate
-      into the shared volume.
+      Postfix's master process has to start as root and drops privileges for its daemons; ssl is a one-shot init container that writes the certificate into the shared volume.
     expired_at: 2027-09-23
   - id: DS-0031
     paths:
       - mta/Dockerfile
       - ssl/Dockerfile
-      - target/mta/Dockerfile
-      - target/ssl/Dockerfile
     statement: >-
-      False positive: MDA_AUTH_ADDRESS is a host:port, RELAY_PASSWD_FILE and
-      SSL_KEY are file paths. None of them holds a secret.
+      False positive: MDA_AUTH_ADDRESS is a host:port, RELAY_PASSWD_FILE and SSL_KEY are file paths. None of them holds a secret.
     expired_at: 2027-09-23
