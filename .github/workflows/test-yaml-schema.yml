@@ -4,6 +4,10 @@ on:
     paths:
       - "test/schema/**"
       - "deploy/**"
+      - "target/**/Dockerfile"
+      - "kustomization.yaml"
+      - ".trivyignore.yaml"
+      - "Makefile"
 concurrency:
   group: "${{ github.workflow }}-${{ github.ref }}"
   cancel-in-progress: true
@@ -16,6 +20,12 @@ jobs:
         run: |
           make .env
           kustomize build .
+  test_trivy_config:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - name: Scan manifests and Dockerfiles for misconfigurations
+        run: make trivy-config
   test_yaml_schema:
     runs-on: ubuntu-latest
     steps:

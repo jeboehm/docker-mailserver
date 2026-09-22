@@ -93,6 +93,7 @@ depName=...` so Renovate can bump them.
 | `make clean`                          | Stops everything and removes the project volumes (local data is lost).                                         |
 | `make logs`                           | Dumps the logs of all services.                                                                                |
 | `make lint`                           | Runs super-linter (see below).                                                                                 |
+| `make trivy-config`                   | Trivy misconfiguration scan of the rendered Kustomize manifests and `target/*/Dockerfile` (see below).         |
 | `make docs-build` / `make docs-serve` | MkDocs strict build / live preview.                                                                            |
 | `make kubernetes-*`, `make kind-load` | Kubernetes test flow: kind cluster, Traefik chart, Kustomize overlay under `test/k8s/`, test job.              |
 
@@ -155,7 +156,7 @@ efficiency), Trivy (vulnerabilities, pull requests only) and Popeye (cluster san
 `schedule` and on `workflow_dispatch` with `no-cache: true`: a fixed package does not change the pinned digest of the
 base image, so a cached `apk`/`apt` layer would keep the old versions forever. Further workflows: `lint.yml`
 (super-linter), `docs.yml` (MkDocs strict build on pull requests, `gh-deploy` on `main`), `test-yaml-schema.yml`
-(`kustomize build` and the pod security-context schema in `test/schema/`), `scan-published-images.yml` (see below),
+(`kustomize build`, `make trivy-config` and the pod security-context schema in `test/schema/`), `scan-published-images.yml` (see below),
 `release.yml` (daily conventional-changelog release; `update_image_tags.py` pins the image tags inside the release
 tarball), `sync-next-branch.yml`, `renovate.yml`, `stale-issues.yml`, `dockerhub.yml`, `cleanup-caches.yml`.
 
@@ -173,6 +174,12 @@ fails a pull request and uploads no SARIF. The Security tab belongs to the publi
 tool and category from `build.yml` would replace its analysis. `scan-published-images.yml` is where findings gate: it scans `ghcr.io/jeboehm/<image>:latest`
 daily, fails on every finding that has a fix, and `.github/bin/report_vulnerable_images.sh` keeps one tracking issue in
 sync with the result. A rebuild refreshes `main`, `nightly` and `sha-*`; `:latest` only moves when a release is cut.
+
+Configuration is scanned separately: `make trivy-config` renders `kustomize build .` into the git-ignored
+`config/trivy/` and runs `trivy config` (image `TRIVY_IMAGE`, pinned in the `Makefile`) on it and on `target/`, failing
+on every HIGH or CRITICAL misconfiguration. Scanning the rendered output covers the patches and generated ConfigMaps.
+Trivy does not support Compose files; they are covered through the Dockerfiles. `test-yaml-schema.yml` runs the target
+on pull requests.
 
 ## Lint and formatting
 
