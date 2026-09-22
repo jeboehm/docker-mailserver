@@ -125,6 +125,22 @@ make lint
 - To catch syntax errors and style issues early
 - To maintain consistent code formatting across the project
 
+### `make trivy-config`
+
+Scans the Kubernetes manifests and the Dockerfiles for security misconfigurations with [Trivy](https://trivy.dev/), using the `aquasec/trivy` image, so no local installation is needed:
+
+- Renders `kustomize build .` into `config/trivy/kustomize.yaml` and scans the result, including patches and generated ConfigMaps
+- Scans every `target/*/Dockerfile`
+- Fails on every finding of severity HIGH or CRITICAL
+
+**Usage:**
+
+```bash
+make trivy-config
+```
+
+Findings that are accepted belong in `.trivyignore.yaml` under `misconfigurations`, with a `statement` and an `expired_at` date. Trivy does not support Docker Compose files. The same scan runs on every pull request that touches `deploy/` or a Dockerfile.
+
 ## Development Workflow
 
 The typical development workflow is:

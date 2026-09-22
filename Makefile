@@ -125,6 +125,24 @@ kind-load: build
 popeye-score:
 	.github/bin/popeye_score.sh
 
+# Misconfiguration scan of the rendered Kustomize manifests and the
+# Dockerfiles. Scanning the kustomize output instead of deploy/kustomize/
+# covers the patches and the generated ConfigMaps. Docker Compose files are
+# not supported by Trivy.
+TRIVY_IMAGE ?= aquasec/trivy:0.74.0@sha256:62b1e65e8869bc4b4c6aa4fa2b21595256c7c2f6018a9d9ad61caf87187c1969
+
+.PHONY: trivy-config
+trivy-config: .env
+	mkdir -p config/trivy
+	kustomize build . > config/trivy/kustomize.yaml
+	@status=0; \
+	for dir in config/trivy target; do \
+		docker run --rm -v "$(CURDIR)":/src -w /src $(TRIVY_IMAGE) config --quiet \
+			--ignorefile .trivyignore.yaml --severity HIGH,CRITICAL --exit-code 1 \
+			$$dir || status=1; \
+	done; \
+	exit $$status
+
 .PHONY: docs-build
 docs-build:
 	mkdocs build --strict -f .mkdocs.yaml

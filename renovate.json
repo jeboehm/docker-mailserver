@@ -49,6 +49,14 @@
         "VER=(?<currentValue>.*?) # renovate: depName=(?<depName>.*?)\\n"
       ],
       "datasourceTemplate": "github-releases"
+    },
+    {
+      "customType": "regex",
+      "managerFilePatterns": ["/(^|/)Makefile$/"],
+      "matchStrings": [
+        "_IMAGE \\?= (?<depName>[^:\\s]+):(?<currentValue>[^@\\s]+)@(?<currentDigest>sha256:[a-f0-9]+)"
+      ],
+      "datasourceTemplate": "docker"
     }
   ]
 }
