@@ -124,7 +124,6 @@ jobs:
           cache-from: type=gha,scope=${{ matrix.image }}
           cache-to: type=gha,scope=${{ matrix.image }},mode=max
           no-cache: ${{ github.event_name == 'schedule' || inputs.no-cache == true }}
-          # Published images carry an SBOM next to the provenance attestation.
           sbom: ${{ github.event_name != 'pull_request' && matrix.image != 'mailserver-test' }}
           outputs: ${{ github.event_name == 'pull_request' && format('type=docker,dest={0}/{1}.tar', runner.temp, matrix.image) || '' }}
       - name: Generate artifact attestation (ghcr.io)
@@ -347,11 +346,8 @@ jobs:
           path: images
           pattern: docker-image-${{ matrix.image }}
           merge-multiple: true
-      # Shows in the job summary whether a pull request fixes or introduces a
-      # finding. Never fatal: a pull request must not turn red because a base
-      # image got a new CVE. `scan-published-images.yml` is where findings gate,
-      # and the Security tab belongs to it alone: an upload from here has the
-      # same tool and category and would replace its analysis.
+      # Report only: `scan-published-images.yml` gates and owns the Security
+      # tab. A SARIF upload from here would replace its analysis.
       - name: Run Trivy vulnerability scanner
         uses: ./.github/actions/trivy-scan
         with:
