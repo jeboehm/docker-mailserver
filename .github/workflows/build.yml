@@ -107,9 +107,6 @@ jobs:
             type=semver,pattern={{major}}.{{minor}}
             type=semver,pattern={{major}}
             type=sha
-            # Deterministic ref for the Trivy scan on push: metadata-action does
-            # not emit `latest` for next-branch or tag pushes.
-            type=sha,format=long
       - name: Create banner
         run: .github/bin/create_banner.sh ${{ github.sha }} ${{ github.ref_name }}
       - name: Build and push Docker image
@@ -328,10 +325,10 @@ jobs:
           kubectl get pods -o wide
   test_trivy_vulnerabilities:
     needs: build
+    if: ${{ github.event_name == 'pull_request' }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      security-events: write
     strategy:
       fail-fast: false
       matrix:
@@ -345,29 +342,19 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
       - name: Download Docker image artifacts
-        if: ${{ github.event_name == 'pull_request' }}
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
         with:
           path: images
           pattern: docker-image-${{ matrix.image }}
           merge-multiple: true
-      - name: Log in to Container Registry (ghcr.io)
-        if: ${{ github.event_name != 'pull_request' }}
-        uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-      # A pull request scans the artifact the build job produced, every other
-      # event the image that was just pushed. Findings are reported but never
-      # fatal here: a pull request must not turn red because a base image got a
-      # new CVE. `scan-published-images.yml` is where findings gate.
+      # Shows in the job summary whether a pull request fixes or introduces a
+      # finding. Never fatal: a pull request must not turn red because a base
+      # image got a new CVE. `scan-published-images.yml` is where findings gate,
+      # and the Security tab belongs to it alone: an upload from here has the
+      # same tool and category and would replace its analysis.
       - name: Run Trivy vulnerability scanner
         uses: ./.github/actions/trivy-scan
         with:
-          input: ${{ github.event_name == 'pull_request' && format('images/{0}.tar', matrix.image) || '' }}
-          image-ref: ${{ github.event_name != 'pull_request' && format('ghcr.io/jeboehm/{0}:sha-{1}', matrix.image, github.sha) || '' }}
+          input: images/${{ matrix.image }}.tar
           category: ${{ matrix.image }}
-          # GITHUB_TOKEN may not write security events for a pull request that
-          # comes from a fork.
-          upload-sarif: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}
+          upload-sarif: "false"

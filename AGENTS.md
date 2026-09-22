@@ -151,7 +151,7 @@ pass their arguments to `docker compose` (`bin/test.sh logs -f filter`, `bin/tes
 uploads the JUnit report (`test/report/report.xml`) as artifact `bats-report-<case>`; when a job fails, `make logs` /
 `make kubernetes-logs` print the service logs as collapsible groups. `.github/bin/prepare_env.sh <case>` builds `.env`
 from `.env.dist` plus `.github/test-matrix/<case>.env`. The same workflow runs dive (image
-efficiency), Trivy (vulnerabilities) and Popeye (cluster sanity). It also builds without the buildx cache on a weekly
+efficiency), Trivy (vulnerabilities, pull requests only) and Popeye (cluster sanity). It also builds without the buildx cache on a weekly
 `schedule` and on `workflow_dispatch` with `no-cache: true`: a fixed package does not change the pinned digest of the
 base image, so a cached `apk`/`apt` layer would keep the old versions forever. Further workflows: `lint.yml`
 (super-linter), `docs.yml` (MkDocs strict build on pull requests, `gh-deploy` on `main`), `test-yaml-schema.yml`
@@ -168,9 +168,9 @@ job summary. Passing `format: sarif` to `trivy-action` directly would not work, 
 `limit-severities-for-sarif` is set. Accepted findings belong in `.trivyignore.yaml`, with a `statement` and an
 `expired_at` date.
 
-In `build.yml` the scan only reports (the image tar of the build job on pull requests, the pushed image otherwise) and
-never fails a pull request, and it skips the SARIF upload for a pull request from a fork, where `GITHUB_TOKEN` may not
-write security events. `scan-published-images.yml` is where findings gate: it scans `ghcr.io/jeboehm/<image>:latest`
+`build.yml` scans the image tar of the build job on pull requests only and writes nothing but the job summary: it never
+fails a pull request and uploads no SARIF. The Security tab belongs to the published-image scan; an upload with the same
+tool and category from `build.yml` would replace its analysis. `scan-published-images.yml` is where findings gate: it scans `ghcr.io/jeboehm/<image>:latest`
 daily, fails on every finding that has a fix, and `.github/bin/report_vulnerable_images.sh` keeps one tracking issue in
 sync with the result. A rebuild refreshes `main`, `nightly` and `sha-*`; `:latest` only moves when a release is cut.
 
