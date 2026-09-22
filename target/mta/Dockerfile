@@ -20,8 +20,7 @@ ENV MAILNAME=mail.example.com \
     WAITSTART_TIMEOUT=1m \
     RECIPIENT_DELIMITER=-
 
-RUN --mount=type=cache,target=/var/cache/apk \
-    apk add \
+RUN apk add --no-cache \
       envsubst \
       postfix-mysql \
       postfix-pgsql \
