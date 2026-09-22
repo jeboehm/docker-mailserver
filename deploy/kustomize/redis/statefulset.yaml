@@ -70,7 +70,7 @@ spec:
             successThreshold: 1
           securityContext:
             allowPrivilegeEscalation: false
-            readOnlyRootFilesystem: false
+            readOnlyRootFilesystem: true
             runAsUser: 999
             runAsGroup: 1000
             capabilities:

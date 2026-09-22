@@ -7,5 +7,6 @@ services:
       - --requirepass
       - ${REDIS_PASSWORD}
     env_file: ../../.env
+    read_only: true
     volumes:
       - data-redis:/data

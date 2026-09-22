@@ -4,9 +4,8 @@ LABEL maintainer="https://github.com/jeboehm/docker-mailserver"
 LABEL vendor="https://github.com/jeboehm/docker-mailserver"
 LABEL de.ressourcenkonflikt.docker-mailserver.autoheal="true"
 
-RUN chown -R unbound:unbound /etc/unbound && \
-    apk add --no-cache bind-tools
-COPY --chown=unbound:unbound rootfs/ /
+RUN apk add --no-cache bind-tools
+COPY rootfs/ /
 USER unbound
 
 EXPOSE 5353/tcp 5353/udp

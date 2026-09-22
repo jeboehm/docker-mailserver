@@ -34,6 +34,7 @@ spec:
                 name: secret-config-env
           securityContext:
             allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
             runAsUser: 100
             runAsGroup: 101
             capabilities:
@@ -67,9 +68,15 @@ spec:
             requests:
               cpu: 50m
               memory: 32Mi
+          volumeMounts:
+            - name: run
+              mountPath: /run/unbound
       securityContext:
         fsGroup: 101
         fsGroupChangePolicy: OnRootMismatch
         runAsNonRoot: true
         seccompProfile:
           type: RuntimeDefault
+      volumes:
+        - name: run
+          emptyDir: {}

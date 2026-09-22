@@ -74,7 +74,7 @@ spec:
               memory: 64Mi
           securityContext:
             allowPrivilegeEscalation: false
-            readOnlyRootFilesystem: false
+            readOnlyRootFilesystem: true
             runAsUser: 0
             runAsGroup: 0
             capabilities:
