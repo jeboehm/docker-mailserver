@@ -4,7 +4,7 @@ kind: Kustomization
 # has to be repeated in every overlay that generates something. config-env and
 # secret-config-env must keep their exact names: test-job.yaml and the
 # workloads in deploy/kustomize/ reference them from outside this build. Both
-# are generated from the files `make kubernetes-env` splits .env into, like in
+# are generated from the files bin/kubernetes-env.sh splits .env into, like in
 # the root kustomization, so that applying either build leaves the same keys.
 generatorOptions:
   disableNameSuffixHash: true

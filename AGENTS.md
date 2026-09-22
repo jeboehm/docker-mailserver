@@ -43,8 +43,9 @@ domains, users, aliases, DKIM and fetchmail accounts.
   `docker-compose.override.yml` is picked up by `bin/production.sh` when present.
 - `deploy/kustomize/` — one directory per service plus `common/` (ConfigMap `config-service-map` with the internal
   addresses) and `ingress/traefik/`. The root `kustomization.yaml` generates the `config-env` ConfigMap and the
-  `secret-config-env` Secret from the files `make kubernetes-env` splits `.env` into (see below).
-- `bin/` — `production.sh` and `test.sh` (Compose wrappers, see below) and `create-tls-certs.sh`.
+  `secret-config-env` Secret from the files `bin/kubernetes-env.sh` splits `.env` into (see below).
+- `bin/` — `production.sh` and `test.sh` (Compose wrappers, see below), `create-tls-certs.sh` and `kubernetes-env.sh`.
+  `bin/` ships in the release tarball, the `Makefile` does not, so user-facing steps live here.
 - `test/bats/` — test runner image and BATS integration tests; `test/k8s/` — Kubernetes test overlay and test job;
   `test/schema/` — JSON schema check of the pod security contexts; `test/super-linter/` — lint runner.
 - `docs/` — MkDocs documentation, configured by `.mkdocs.yaml` in the root. See `docs/AGENTS.md`.
@@ -52,7 +53,7 @@ domains, users, aliases, DKIM and fetchmail accounts.
   (`test-matrix/*.env`) and the list of third-party test images (`images.txt`).
 - `.env.dist` — canonical list of user-facing environment variables; `make .env` copies it to the git-ignored `.env`.
 - `config/` — git-ignored; `config/tls/` holds the certificates created by `bin/create-tls-certs.sh` for Kubernetes,
-  `config/kubernetes/` the `config.env`/`secret.env` written by `make kubernetes-env`.
+  `config/kubernetes/` the `config.env`/`secret.env` written by `bin/kubernetes-env.sh` (`make kubernetes-env`).
 
 ## Deployment parity
 
@@ -60,7 +61,7 @@ Compose and Kustomize must offer the same capabilities. When changing environmen
 in `deploy/compose/`, apply the same logical change in `deploy/kustomize/` (and vice versa). Internal addresses differ on
 purpose: Compose uses the container ports directly, Kubernetes Services publish the standard ports and
 `deploy/kustomize/common/configmap.yaml` overrides the `*_ADDRESS` variables accordingly. New user-facing variables go
-into `.env.dist` and `docs/reference/environment-variables.md`. On Kubernetes, `make kubernetes-env` sends every key
+into `.env.dist` and `docs/reference/environment-variables.md`. On Kubernetes, `bin/kubernetes-env.sh` sends every key
 whose name contains `PASSWORD`, `PASSWD` or `_KEY` into the Secret `secret-config-env` and the rest into the ConfigMap
 `config-env` (Trivy's KSV-0109 fails on credentials in a ConfigMap), so name new credentials accordingly; workloads that
 read a single credential use `secretKeyRef`. Third-party images used by the tests are listed in

@@ -62,17 +62,11 @@ lint:
 frankenphplint:
 	docker run --rm -v ./target/web/rootfs/etc/frankenphp/:/etc/frankenphp jeboehm/mailserver-web:latest frankenphp fmt --overwrite /etc/frankenphp/Caddyfile
 
-# Kubernetes gets the credentials from .env through the Secret
-# secret-config-env and everything else through the ConfigMap config-env.
-# Kustomize cannot pick keys from an env file, so .env is split here by key
-# name into the inputs of both generators.
-KUBERNETES_SECRET_KEYS = ^[A-Z0-9_]*(PASSWORD|PASSWD|_KEY)[A-Z0-9_]*=
-
+# Splits .env into the inputs of the ConfigMap config-env and the Secret
+# secret-config-env, see bin/kubernetes-env.sh.
 .PHONY: kubernetes-env
 kubernetes-env: .env
-	mkdir -p config/kubernetes
-	grep -Ev '$(KUBERNETES_SECRET_KEYS)' .env >config/kubernetes/config.env
-	grep -E '$(KUBERNETES_SECRET_KEYS)' .env >config/kubernetes/secret.env || true
+	bin/kubernetes-env.sh
 
 .PHONY: kubernetes-deploy-helper
 kubernetes-deploy-helper: kubernetes-env
