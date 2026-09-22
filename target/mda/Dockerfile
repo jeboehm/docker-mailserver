@@ -17,8 +17,7 @@ ENV DB_DRIVER=mysql \
     POSTMASTER=postmaster@example.com \
     RECIPIENT_DELIMITER=-
 
-RUN --mount=type=cache,target=/var/cache/apk \
-    apk add \
+RUN apk add --no-cache \
       curl \
       dovecot \
       dovecot-fts-flatcurve \
