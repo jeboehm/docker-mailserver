@@ -18,7 +18,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
       - name: Run kustomize build
         run: |
-          make .env
+          make kubernetes-env
           kustomize build .
   test_trivy_config:
     runs-on: ubuntu-latest
