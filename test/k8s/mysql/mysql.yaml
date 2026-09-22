@@ -52,13 +52,13 @@ spec:
                   key: DB_USER
             - name: MYSQL_PASSWORD
               valueFrom:
-                configMapKeyRef:
-                  name: config-env
+                secretKeyRef:
+                  name: secret-config-env
                   key: DB_PASSWORD
             - name: MYSQL_ROOT_PASSWORD
               valueFrom:
-                configMapKeyRef:
-                  name: config-env
+                secretKeyRef:
+                  name: secret-config-env
                   key: DB_ROOT_PASSWORD
           ports:
             - containerPort: 3306

@@ -53,8 +53,8 @@ spec:
                   key: DB_USER
             - name: POSTGRES_PASSWORD
               valueFrom:
-                configMapKeyRef:
-                  name: config-env
+                secretKeyRef:
+                  name: secret-config-env
                   key: DB_PASSWORD
           ports:
             - containerPort: 5432

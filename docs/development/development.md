@@ -129,7 +129,7 @@ make lint
 
 Scans the Kubernetes manifests and the Dockerfiles for security misconfigurations with [Trivy](https://trivy.dev/), using the `aquasec/trivy` image, so no local installation is needed:
 
-- Renders `kustomize build .` into `config/trivy/kustomize.yaml` and scans the result, including patches and generated ConfigMaps
+- Renders `kustomize build .` into `config/trivy/kustomize.yaml` and scans the result, including patches and generated ConfigMaps and Secrets. `make kubernetes-env` first splits `.env` into `config/kubernetes/config.env` and `config/kubernetes/secret.env`: every key whose name contains `PASSWORD`, `PASSWD` or `_KEY` goes into the Secret, so the ConfigMap holds no credentials
 - Scans every `target/*/Dockerfile`
 - Fails on every finding of severity HIGH or CRITICAL
 

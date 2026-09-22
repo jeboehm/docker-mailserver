@@ -62,8 +62,20 @@ lint:
 frankenphplint:
 	docker run --rm -v ./target/web/rootfs/etc/frankenphp/:/etc/frankenphp jeboehm/mailserver-web:latest frankenphp fmt --overwrite /etc/frankenphp/Caddyfile
 
+# Kubernetes gets the credentials from .env through the Secret
+# secret-config-env and everything else through the ConfigMap config-env.
+# Kustomize cannot pick keys from an env file, so .env is split here by key
+# name into the inputs of both generators.
+KUBERNETES_SECRET_KEYS = ^[A-Z0-9_]*(PASSWORD|PASSWD|_KEY)[A-Z0-9_]*=
+
+.PHONY: kubernetes-env
+kubernetes-env: .env
+	mkdir -p config/kubernetes
+	grep -Ev '$(KUBERNETES_SECRET_KEYS)' .env >config/kubernetes/config.env
+	grep -E '$(KUBERNETES_SECRET_KEYS)' .env >config/kubernetes/secret.env || true
+
 .PHONY: kubernetes-deploy-helper
-kubernetes-deploy-helper:
+kubernetes-deploy-helper: kubernetes-env
 	helm repo add traefik https://traefik.github.io/charts
 	helm repo update
 	helm upgrade --install traefik traefik/traefik --version 37.1.2 --namespace default --values test/k8s/traefik-values.yaml
@@ -104,7 +116,7 @@ kubernetes-test:
 	case "$$status" in *Complete*) exit 0 ;; *) exit 1 ;; esac
 
 .PHONY: kubernetes-up
-kubernetes-up:
+kubernetes-up: kubernetes-env
 	kubectl apply -k .
 
 .PHONY: kubernetes-down
@@ -127,12 +139,12 @@ popeye-score:
 
 # Misconfiguration scan of the rendered Kustomize manifests and the
 # Dockerfiles. Scanning the kustomize output instead of deploy/kustomize/
-# covers the patches and the generated ConfigMaps. Docker Compose files are
-# not supported by Trivy.
+# covers the patches and the generated ConfigMaps and Secrets. Docker Compose
+# files are not supported by Trivy.
 TRIVY_IMAGE ?= aquasec/trivy:0.74.0@sha256:62b1e65e8869bc4b4c6aa4fa2b21595256c7c2f6018a9d9ad61caf87187c1969
 
 .PHONY: trivy-config
-trivy-config: .env
+trivy-config: kubernetes-env
 	mkdir -p config/trivy
 	kustomize build . > config/trivy/kustomize.yaml
 	@status=0; \
