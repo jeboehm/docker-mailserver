@@ -119,7 +119,7 @@ pass their arguments to `docker compose` (`bin/test.sh logs -f filter`, `bin/tes
   container names differ from the service names, see `kubernetes_container`), polling (`wait_for`, `wait_for_log`,
   `wait_for_mail`, which prints the file it found), mail inspection (`mail_needle`, `maildir`, `find_mail`,
   `mail_header` for unfolded header values), mailbox state through doveadm in `mda` (`mailbox_reset`,
-  `quota_percentage`) and clients (`send_mail` builds the message and sends it with curl, retrying when Postfix's
+  `quota_percentage`) and clients (`send_mail` builds the message and sends it with `curl`, retrying when Postfix's
   connection rate limit of 20 per minute and client answers `421`; `smtp_ehlo` prints the EHLO capabilities;
   `mail_count` and `mail_move` are the IMAP/POP3 clients; `db_query` prints rows only, `redis_cli`, `dns_query`
   against unbound, `tls_connect`, `tls_fingerprint`). Each function documents its arguments in a comment. Tests

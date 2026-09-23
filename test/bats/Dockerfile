@@ -40,9 +40,9 @@ RUN apk --no-cache add \
       redis \
     # curl is the SMTP, IMAP and POP3 client of the tests (_helper.bash); a
     # protocol-reduced build would only fail at test time otherwise.
-    && curl --version | grep -qE 'imaps.* pop3s.* smtps' \
+    && case "$(curl --version)" in *" imaps "*" pop3s "*" smtps "*) ;; *) echo "curl lacks the mail protocols" >&2 && exit 1 ;; esac \
     && mkdir -p /usr/share/fixtures \
-    && wget -q -O /usr/share/fixtures/gtube.txt https://spamassassin.apache.org/gtube/gtube.txt
+    && curl -fsSL -o /usr/share/fixtures/gtube.txt https://spamassassin.apache.org/gtube/gtube.txt
 
 COPY rootfs/ /
 
