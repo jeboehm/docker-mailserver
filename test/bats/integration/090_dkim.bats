@@ -65,7 +65,7 @@ dns_txt_record() {
 # body. The needle is used to find the stored message afterwards.
 # Usage: send_submission_mail <needle>
 send_submission_mail() {
-	send_mail --server "${MTA_SMTP_SUBMISSION_ADDRESS}" --to admin@example.com --from admin@example.com --auth --auth-user admin@example.com --auth-password changeme --tls --header "Subject: $1" --body "$1"
+	send_mail --server "${MTA_SMTP_SUBMISSION_ADDRESS}" --to admin@example.com --from admin@example.com --auth-user admin@example.com --auth-password changeme --tls --header "Subject: $1" --body "$1"
 }
 
 @test "check DKIM key for example.com exists" {

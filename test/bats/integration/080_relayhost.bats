@@ -19,7 +19,7 @@ mailpit_has_message() {
 }
 
 @test "authenticated mail to an external recipient is relayed to mailpit" {
-	run send_mail --server "${MTA_SMTP_SUBMISSION_ADDRESS}" --to nobody@example.net --from admin@example.com --auth --auth-user admin@example.com --auth-password changeme --tls --body "$(mail_needle)"
+	run send_mail --server "${MTA_SMTP_SUBMISSION_ADDRESS}" --to nobody@example.net --from admin@example.com --auth-user admin@example.com --auth-password changeme --tls --body "$(mail_needle)"
 	assert_success
 
 	run wait_for 60 mailpit_has_message "$(mail_needle)"
