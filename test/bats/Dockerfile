@@ -22,9 +22,6 @@ ENV DB_DRIVER=mysql \
     WAITSTART_TIMEOUT=1m \
     WEB_HTTP_ADDRESS=web:8080
 
-ARG IMAPTESTER_VER=v1.3.0 # renovate: depName=jeboehm/imap-tester
-ARG SWAKS_VER=v20240103.0 # renovate: depName=jetmore/swaks
-
 RUN apk --no-cache add \
       bash \
       bats \
@@ -40,26 +37,10 @@ RUN apk --no-cache add \
       postgresql17-client \
       netcat-openbsd \
       openssl \
-      perl \
-      perl-net-ssleay \
-      php84 \
-      php84-dom \
-      php84-fileinfo \
-      php84-mbstring \
-      php84-iconv \
-      php84-phar \
-      php84-iconv \
-      php84-openssl \
-      php84-tokenizer \
       redis \
-    && ln -sf /usr/bin/php84 /usr/bin/php \
-    && wget -q -O /usr/local/bin/imap-tester https://github.com/jeboehm/imap-tester/releases/download/${IMAPTESTER_VER}/imap-tester.phar \
-    && chmod +x /usr/local/bin/imap-tester \
-    && wget -q -O /tmp/swaks.tar.gz https://github.com/jetmore/swaks/releases/download/${SWAKS_VER}/swaks-${SWAKS_VER#v}.tar.gz \
-    && tar -xzf /tmp/swaks.tar.gz -C /tmp \
-    && install -m 0755 -o root -g root /tmp/swaks-${SWAKS_VER#v}/swaks /usr/local/bin/swaks \
-    && rm -rf /tmp/swaks.tar.gz /tmp/swaks-${SWAKS_VER#v} \
-    && swaks --version \
+    # curl is the SMTP, IMAP and POP3 client of the tests (_helper.bash); a
+    # protocol-reduced build would only fail at test time otherwise.
+    && curl --version | grep -qE 'imaps.* pop3s.* smtps' \
     && mkdir -p /usr/share/fixtures \
     && wget -q -O /usr/share/fixtures/gtube.txt https://spamassassin.apache.org/gtube/gtube.txt
 

@@ -102,8 +102,9 @@ pass their arguments to `docker compose` (`bin/test.sh logs -f filter`, `bin/tes
 
 ## Integration tests
 
-- Runner image `test/bats/Dockerfile` (Alpine): bats with bats-assert/bats-support, `swaks`, `dig`, `curl`, `jq`,
-  `openssl`, `redis-cli`, `mariadb` and `psql` clients, the `docker` and `kubectl` CLIs, `php` with imap-tester.
+- Runner image `test/bats/Dockerfile` (Alpine): bats with bats-assert/bats-support, `curl` (the SMTP, IMAP and
+  POP3 client of the tests), `dig`, `jq`, `openssl`, `redis-cli`, `mariadb` and `psql` clients, the `docker` and
+  `kubectl` CLIs.
   `test/bats/rootfs/entrypoint.sh` waits for the services (`wait-for-services.sh`) and then runs bats with
   `--timing`, `--print-output-on-failure` and a JUnit report in `/app/report` (bind-mounted to the git-ignored
   `test/report/`).
@@ -118,10 +119,12 @@ pass their arguments to `docker compose` (`bin/test.sh logs -f filter`, `bin/tes
   container names differ from the service names, see `kubernetes_container`), polling (`wait_for`, `wait_for_log`,
   `wait_for_mail`, which prints the file it found), mail inspection (`mail_needle`, `maildir`, `find_mail`,
   `mail_header` for unfolded header values), mailbox state through doveadm in `mda` (`mailbox_reset`,
-  `quota_percentage`) and clients (`send_mail` wraps `swaks` and retries when Postfix's connection rate limit of 20
-  per minute and client answers `421`, `db_query` prints rows only, `redis_cli`, `dns_query`
-  against unbound, `imap_tester`, `tls_connect`, `tls_fingerprint`). Each function documents its arguments in a
-  comment. `swaks --server host:port` takes the `*_ADDRESS` variables as they are.
+  `quota_percentage`) and clients (`send_mail` builds the message and sends it with curl, retrying when Postfix's
+  connection rate limit of 20 per minute and client answers `421`; `smtp_ehlo` prints the EHLO capabilities;
+  `mail_count` and `mail_move` are the IMAP/POP3 clients; `db_query` prints rows only, `redis_cli`, `dns_query`
+  against unbound, `tls_connect`, `tls_fingerprint`). Each function documents its arguments in a comment. Tests
+  assert on curl's exit codes: 55 for a rejected MAIL/RCPT/DATA command (with `RCPT failed` in the output), 8 for a
+  rejection after DATA, 67 for a rejected login. `--server host:port` takes the `*_ADDRESS` variables as they are.
 - Put new checks into the topic file, not into a platform file: `070_docker.bats` only holds what needs the Docker
   CLI, everything else runs on both platforms through the helpers.
 - Environment inside the runner: the `*_ADDRESS` variables from the Dockerfile (Compose defaults) or from

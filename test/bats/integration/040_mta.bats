@@ -37,7 +37,8 @@ setup() {
 
 @test "mail to unknown address without catchall is rejected" {
 	run send_mail --server "${MTA_SMTP_ADDRESS}" --to notexisting@example.org --body "$(mail_needle)"
-	assert_failure 24
+	assert_failure 55
+	assert_output --partial "RCPT failed"
 }
 
 @test "mail to local alias is delivered" {
@@ -68,7 +69,8 @@ setup() {
 
 @test "gtube mail is rejected" {
 	run send_mail --server "${MTA_SMTP_ADDRESS}" --to admin@example.com --data /usr/share/fixtures/gtube.txt
-	assert_failure 26
+	assert_failure 8
+	assert_output --partial "< 554"
 }
 
 @test "mail to disabled user is delivered anyway" {
@@ -81,17 +83,20 @@ setup() {
 
 @test "mail to send only mailbox is rejected" {
 	run send_mail --server "${MTA_SMTP_ADDRESS}" --to sendonly@example.com --body "$(mail_needle)"
-	assert_failure 24
+	assert_failure 55
+	assert_output --partial "RCPT failed"
 }
 
 @test "mail to disabled and send only mailbox is rejected anyway" {
 	run send_mail --server "${MTA_SMTP_ADDRESS}" --to disabledsendonly@example.com --body "$(mail_needle)"
-	assert_failure 24
+	assert_failure 55
+	assert_output --partial "RCPT failed"
 }
 
-@test "smtp authentication on port 25 is refused" {
-	run send_mail --server "${MTA_SMTP_ADDRESS}" --to admin@example.com --from admin@example.com --auth --auth-user admin@example.com --auth-password changeme --tls --body "$(mail_needle)"
-	assert_failure
+@test "smtp authentication is not offered on port 25" {
+	run smtp_ehlo "${MTA_SMTP_ADDRESS}" --tls
+	assert_success
+	refute_output --partial "250-AUTH"
 }
 
 # --- quota -------------------------------------------------------------------
@@ -109,7 +114,7 @@ setup() {
 	# 640 KiB of random data is about 890 KiB once base64 encoded: above the
 	# 80% threshold, below the 95% one.
 	dd if=/dev/urandom of="${BATS_TEST_TMPDIR}/attachment" bs=64K count=10
-	run send_mail --server "${MTA_SMTP_ADDRESS}" --to quota@example.com --body "$(mail_needle)" --attach "@${BATS_TEST_TMPDIR}/attachment"
+	run send_mail --server "${MTA_SMTP_ADDRESS}" --to quota@example.com --body "$(mail_needle)" --attach "${BATS_TEST_TMPDIR}/attachment"
 	assert_success
 
 	# Delivered into the mailbox by quota-warning.sh.
@@ -129,14 +134,14 @@ setup() {
 	# Fill the mailbox beyond its limit first. This delivery is still accepted
 	# because of the grace; everything after it has to be rejected.
 	dd if=/dev/urandom of="${BATS_TEST_TMPDIR}/filler" bs=100K count=8
-	run send_mail --server "${MTA_SMTP_ADDRESS}" --to quota@example.com --body "$(mail_needle) filler" --attach "@${BATS_TEST_TMPDIR}/filler"
+	run send_mail --server "${MTA_SMTP_ADDRESS}" --to quota@example.com --body "$(mail_needle) filler" --attach "${BATS_TEST_TMPDIR}/filler"
 	assert_success
 
 	run wait_for_mail "$(mail_needle) filler" "$(maildir quota@example.com)"
 	assert_success
 
 	dd if=/dev/urandom of="${BATS_TEST_TMPDIR}/attachment" bs=1M count=5
-	run send_mail --server "${MTA_SMTP_ADDRESS}" --to quota@example.com --body "$(mail_needle) oversized" --attach "@${BATS_TEST_TMPDIR}/attachment"
+	run send_mail --server "${MTA_SMTP_ADDRESS}" --to quota@example.com --body "$(mail_needle) oversized" --attach "${BATS_TEST_TMPDIR}/attachment"
 	assert_success
 
 	# Postfix accepts the mail and Dovecot rejects it on LMTP delivery. Follow
@@ -154,27 +159,33 @@ setup() {
 # --- submission service ------------------------------------------------------
 
 @test "authentication with disabled account is refused" {
-	run send_mail --server "${MTA_SMTP_SUBMISSION_ADDRESS}" --to admin@example.com --from disabled@example.com --auth --auth-user disabled@example.com --auth-password test1234 --tls --body "$(mail_needle)"
-	assert_failure 28
+	run send_mail --server "${MTA_SMTP_SUBMISSION_ADDRESS}" --to admin@example.com --from disabled@example.com --auth-user disabled@example.com --auth-password test1234 --tls --body "$(mail_needle)"
+	assert_failure 67
 }
 
 @test "authentication with disabled send only account is refused" {
-	run send_mail --server "${MTA_SMTP_SUBMISSION_ADDRESS}" --to admin@example.com --from disabledsendonly@example.com --auth --auth-user disabledsendonly@example.com --auth-password test1234 --tls --body "$(mail_needle)"
-	assert_failure 28
+	run send_mail --server "${MTA_SMTP_SUBMISSION_ADDRESS}" --to admin@example.com --from disabledsendonly@example.com --auth-user disabledsendonly@example.com --auth-password test1234 --tls --body "$(mail_needle)"
+	assert_failure 67
 }
 
-@test "authentication without tls is refused" {
-	run send_mail --server "${MTA_SMTP_SUBMISSION_ADDRESS}" --to admin@example.com --from admin@example.com --auth --auth-user admin@example.com --auth-password changeme --body "$(mail_needle)"
-	assert_failure 28
+@test "smtp authentication is only offered after starttls" {
+	run smtp_ehlo "${MTA_SMTP_SUBMISSION_ADDRESS}"
+	assert_success
+	refute_output --partial "250-AUTH"
+
+	run smtp_ehlo "${MTA_SMTP_SUBMISSION_ADDRESS}" --tls
+	assert_success
+	assert_output --partial "250-AUTH"
 }
 
 @test "unauthenticated mail is rejected" {
 	run send_mail --server "${MTA_SMTP_SUBMISSION_ADDRESS}" --to admin@example.com --from disabled@example.com --tls --body "$(mail_needle)"
-	assert_failure 24
+	assert_failure 55
+	assert_output --partial "RCPT failed"
 }
 
 @test "authenticated mail is delivered" {
-	run send_mail --server "${MTA_SMTP_SUBMISSION_ADDRESS}" --to admin@example.com --from admin@example.com --auth --auth-user admin@example.com --auth-password changeme --tls --body "$(mail_needle)"
+	run send_mail --server "${MTA_SMTP_SUBMISSION_ADDRESS}" --to admin@example.com --from admin@example.com --auth-user admin@example.com --auth-password changeme --tls --body "$(mail_needle)"
 	assert_success
 
 	run wait_for_mail "$(mail_needle)" "$(maildir admin@example.com)"
@@ -182,7 +193,7 @@ setup() {
 }
 
 @test "authenticated mail has the client session hidden in the Received header" {
-	run send_mail --server "${MTA_SMTP_SUBMISSION_ADDRESS}" --to admin@example.com --from admin@example.com --auth --auth-user admin@example.com --auth-password changeme --tls --body "$(mail_needle)"
+	run send_mail --server "${MTA_SMTP_SUBMISSION_ADDRESS}" --to admin@example.com --from admin@example.com --auth-user admin@example.com --auth-password changeme --tls --body "$(mail_needle)"
 	assert_success
 
 	mail_file="$(wait_for_mail "$(mail_needle)" "$(maildir admin@example.com)")"
@@ -196,7 +207,7 @@ setup() {
 }
 
 @test "authenticated mail with address extension in the sender is delivered" {
-	run send_mail --server "${MTA_SMTP_SUBMISSION_ADDRESS}" --to admin@example.com --from admin-extension@example.com --auth --auth-user admin@example.com --auth-password changeme --tls --body "$(mail_needle)"
+	run send_mail --server "${MTA_SMTP_SUBMISSION_ADDRESS}" --to admin@example.com --from admin-extension@example.com --auth-user admin@example.com --auth-password changeme --tls --body "$(mail_needle)"
 	assert_success
 
 	run wait_for_mail "$(mail_needle)" "$(maildir admin@example.com)"
@@ -204,7 +215,7 @@ setup() {
 }
 
 @test "authenticated mail from send only account is delivered" {
-	run send_mail --server "${MTA_SMTP_SUBMISSION_ADDRESS}" --to admin@example.com --from sendonly@example.com --auth --auth-user sendonly@example.com --auth-password test1234 --tls --body "$(mail_needle)"
+	run send_mail --server "${MTA_SMTP_SUBMISSION_ADDRESS}" --to admin@example.com --from sendonly@example.com --auth-user sendonly@example.com --auth-password test1234 --tls --body "$(mail_needle)"
 	assert_success
 
 	run wait_for_mail "$(mail_needle)" "$(maildir admin@example.com)"
@@ -212,7 +223,7 @@ setup() {
 }
 
 @test "authenticated mail with an alias as sender is delivered" {
-	run send_mail --server "${MTA_SMTP_SUBMISSION_ADDRESS}" --to admin@example.com --from foo@example.org --auth --auth-user admin@example.com --auth-password changeme --tls --body "$(mail_needle)"
+	run send_mail --server "${MTA_SMTP_SUBMISSION_ADDRESS}" --to admin@example.com --from foo@example.org --auth-user admin@example.com --auth-password changeme --tls --body "$(mail_needle)"
 	assert_success
 
 	run wait_for_mail "$(mail_needle)" "$(maildir admin@example.com)"
@@ -220,6 +231,7 @@ setup() {
 }
 
 @test "authenticated mail with an unknown sender is rejected" {
-	run send_mail --server "${MTA_SMTP_SUBMISSION_ADDRESS}" --to admin@example.com --from unknown@example.org --auth --auth-user admin@example.com --auth-password changeme --tls --body "$(mail_needle)"
-	assert_failure 24
+	run send_mail --server "${MTA_SMTP_SUBMISSION_ADDRESS}" --to admin@example.com --from unknown@example.org --auth-user admin@example.com --auth-password changeme --tls --body "$(mail_needle)"
+	assert_failure 55
+	assert_output --partial "RCPT failed"
 }

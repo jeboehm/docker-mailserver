@@ -11,7 +11,7 @@ setup() {
 @test "count mails in inbox via imap" {
 	[ "${INBOX_COUNT}" -gt 0 ]
 
-	run imap_tester test:count "${MDA_IMAP_ADDRESS}" admin@example.com changeme imap tls INBOX
+	run mail_count imap "${MDA_IMAP_ADDRESS}" admin@example.com changeme
 	assert_success
 	assert_output "${INBOX_COUNT}"
 }
@@ -19,7 +19,7 @@ setup() {
 @test "count mails in inbox via imaps" {
 	[ "${INBOX_COUNT}" -gt 0 ]
 
-	run imap_tester test:count "${MDA_IMAPS_ADDRESS}" admin@example.com changeme imap ssl INBOX
+	run mail_count imaps "${MDA_IMAPS_ADDRESS}" admin@example.com changeme
 	assert_success
 	assert_output "${INBOX_COUNT}"
 }
@@ -27,7 +27,7 @@ setup() {
 @test "count mails in inbox via pop3" {
 	[ "${INBOX_COUNT}" -gt 0 ]
 
-	run imap_tester test:count "${MDA_POP3_ADDRESS}" admin@example.com changeme pop3 tls INBOX
+	run mail_count pop3 "${MDA_POP3_ADDRESS}" admin@example.com changeme
 	assert_success
 	assert_output "${INBOX_COUNT}"
 }
@@ -35,7 +35,7 @@ setup() {
 @test "count mails in inbox via pop3s" {
 	[ "${INBOX_COUNT}" -gt 0 ]
 
-	run imap_tester test:count "${MDA_POP3S_ADDRESS}" admin@example.com changeme pop3 ssl INBOX
+	run mail_count pop3s "${MDA_POP3S_ADDRESS}" admin@example.com changeme
 	assert_success
 	assert_output "${INBOX_COUNT}"
 }
@@ -45,7 +45,7 @@ setup() {
 	# feeds the message to the rspamd controller (rspamc.sh).
 	learned_before="$(service_log_count filter 'learned message as spam')"
 
-	run imap_tester test:move "${MDA_IMAP_ADDRESS}" admin@example.com changeme imap tls INBOX 0 Junk
+	run mail_move imap "${MDA_IMAP_ADDRESS}" admin@example.com changeme INBOX 1 Junk
 	assert_success
 
 	run wait_for_log filter 'rspamd_controller_learn_fin_task.*learned message as spam' "$((learned_before + 1))"
@@ -53,32 +53,32 @@ setup() {
 }
 
 @test "imap login to send only mailbox is not possible" {
-	run imap_tester test:count "${MDA_IMAP_ADDRESS}" sendonly@example.com test1234 imap tls INBOX
+	run mail_count imap "${MDA_IMAP_ADDRESS}" sendonly@example.com test1234
 	assert_failure
 }
 
 @test "pop3 login to send only mailbox is not possible" {
-	run imap_tester test:count "${MDA_POP3_ADDRESS}" sendonly@example.com test1234 pop3 tls INBOX
+	run mail_count pop3 "${MDA_POP3_ADDRESS}" sendonly@example.com test1234
 	assert_failure
 }
 
 @test "pop3 login to quota mailbox is possible" {
-	run imap_tester test:count "${MDA_POP3_ADDRESS}" quota@example.com test1234 pop3 tls INBOX
+	run mail_count pop3 "${MDA_POP3_ADDRESS}" quota@example.com test1234
 	assert_success
 }
 
 @test "imap login to quota mailbox is possible" {
-	run imap_tester test:count "${MDA_IMAP_ADDRESS}" quota@example.com test1234 imap tls INBOX
+	run mail_count imap "${MDA_IMAP_ADDRESS}" quota@example.com test1234
 	assert_success
 }
 
 @test "pop3 login to disabled mailbox is not possible" {
-	run imap_tester test:count "${MDA_POP3_ADDRESS}" disabled@example.com test1234 pop3 tls INBOX
+	run mail_count pop3 "${MDA_POP3_ADDRESS}" disabled@example.com test1234
 	assert_failure
 }
 
 @test "imap login to disabled mailbox is not possible" {
-	run imap_tester test:count "${MDA_IMAP_ADDRESS}" disabled@example.com test1234 imap tls INBOX
+	run mail_count imap "${MDA_IMAP_ADDRESS}" disabled@example.com test1234
 	assert_failure
 }
 

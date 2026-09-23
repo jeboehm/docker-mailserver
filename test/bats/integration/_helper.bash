@@ -169,18 +169,20 @@ wait_for_log() {
 # Mail
 # ---------------------------------------------------------------------------
 
-# Send a mail with swaks. Postfix accepts at most 20 connections per minute
-# from one client on each of its services (smtpd_client_connection_rate_limit),
-# which test runs started back to back exceed. A 421 greeting for that reason
-# is a temporary failure: wait for the rate window to pass and try again.
-# Usage: send_mail <swaks options...>
-send_mail() {
+# Run curl against an SMTP service with the transcript (--verbose) on stdout,
+# so that tests can assert on the server's replies. Postfix accepts at most 20
+# connections per minute from one client on each of its services
+# (smtpd_client_connection_rate_limit), which test runs started back to back
+# exceed. A 421 greeting for that reason is a temporary failure: wait for the
+# rate window to pass and try again.
+# Usage: smtp_curl <curl options...>
+smtp_curl() {
 	local attempt=0
 	local output
 	local status
 
 	while :; do
-		output="$(swaks "$@" 2>&1)"
+		output="$(curl --no-progress-meter --show-error --verbose --insecure "$@" 2>&1)"
 		status=$?
 
 		case "${output}" in
@@ -197,6 +199,135 @@ send_mail() {
 		printf '%s\n' "${output}"
 		return "${status}"
 	done
+}
+
+# Print an RFC 5322 message with CRLF line endings (Postfix rejects bare
+# newlines). A "Subject: ..." header line replaces the default subject, every
+# other header line is added as it is. With an attachment the message becomes
+# multipart/mixed with the file base64 encoded, which grows it by about a third.
+# Usage: mail_message <from> <to> <body> <attachment file or empty> [header line...]
+mail_message() {
+	local from="$1"
+	local to="$2"
+	local body="$3"
+	local attach="$4"
+	shift 4
+
+	local subject="test mail"
+	local header
+	local headers=()
+	for header in "$@"; do
+		case "${header}" in
+		Subject:*) subject="${header#Subject:}" && subject="${subject# }" ;;
+		*) headers+=("${header}") ;;
+		esac
+	done
+
+	printf 'Date: %s\r\n' "$(date -R)"
+	printf 'From: %s\r\n' "${from}"
+	printf 'To: %s\r\n' "${to}"
+	printf 'Subject: %s\r\n' "${subject}"
+	printf 'Message-ID: <%s%s.%s@%s>\r\n' "${RANDOM}" "${RANDOM}" "$(date +%s)" "$(hostname)"
+	for header in "${headers[@]}"; do
+		printf '%s\r\n' "${header}"
+	done
+
+	if [ -z "${attach}" ]; then
+		printf '\r\n%s\r\n' "${body}"
+		return
+	fi
+
+	local boundary="boundary${RANDOM}${RANDOM}${RANDOM}"
+	local name
+	name="$(basename "${attach}")"
+	printf 'MIME-Version: 1.0\r\n'
+	printf 'Content-Type: multipart/mixed; boundary="%s"\r\n' "${boundary}"
+	printf '\r\n--%s\r\n' "${boundary}"
+	printf 'Content-Type: text/plain; charset=us-ascii\r\n'
+	printf '\r\n%s\r\n' "${body}"
+	printf '\r\n--%s\r\n' "${boundary}"
+	printf 'Content-Type: application/octet-stream; name="%s"\r\n' "${name}"
+	printf 'Content-Transfer-Encoding: base64\r\n'
+	printf 'Content-Disposition: attachment; filename="%s"\r\n\r\n' "${name}"
+	base64 "${attach}" | sed 's/$/\r/'
+	printf '\r\n--%s--\r\n' "${boundary}"
+}
+
+# Send a mail with curl. --tls requires STARTTLS; credentials are used whenever
+# the server offers AUTH (curl skips authentication silently when it does not,
+# check smtp_ehlo for that). --data sends the file as the complete message,
+# otherwise mail_message builds one. The output is the SMTP transcript. Exit
+# codes that tests rely on:
+#   55  MAIL, RCPT or DATA rejected ("RCPT failed: 554" in the output)
+#    8  message rejected after DATA, or a non-2xx greeting
+#   67  authentication rejected
+#   64  STARTTLS refused
+# Usage: send_mail --server <host:port> --to <address> [--from <address>] [--tls]
+#        [--auth-user <user> --auth-password <password>] [--header <line>]...
+#        [--body <text>] [--attach <file>] [--data <file>]
+send_mail() {
+	local server=""
+	local to=""
+	local from
+	from="$(id -un)@$(hostname)"
+	local tls=0
+	local user=""
+	local password=""
+	local body=""
+	local attach=""
+	local data=""
+	local headers=()
+
+	while [ "$#" -gt 0 ]; do
+		case "$1" in
+		--server) server="$2" && shift 2 ;;
+		--to) to="$2" && shift 2 ;;
+		--from) from="$2" && shift 2 ;;
+		--tls) tls=1 && shift ;;
+		--auth-user) user="$2" && shift 2 ;;
+		--auth-password) password="$2" && shift 2 ;;
+		--header) headers+=("$2") && shift 2 ;;
+		--body) body="$2" && shift 2 ;;
+		--attach) attach="$2" && shift 2 ;;
+		--data) data="$2" && shift 2 ;;
+		*)
+			echo "send_mail: unknown option $1" >&2
+			return 1
+			;;
+		esac
+	done
+	if [ -z "${server}" ] || [ -z "${to}" ]; then
+		echo "send_mail: --server and --to are required" >&2
+		return 1
+	fi
+
+	local message
+	message="$(mktemp -p "${BATS_TEST_TMPDIR:-/tmp}" mail.XXXXXX)"
+	if [ -n "${data}" ]; then
+		sed 's/\r$//; s/$/\r/' "${data}" >"${message}"
+	else
+		mail_message "${from}" "${to}" "${body}" "${attach}" "${headers[@]}" >"${message}"
+	fi
+
+	local options=(--url "smtp://${server}" --mail-from "${from}" --mail-rcpt "${to}" --upload-file "${message}")
+	[ "${tls}" -eq 1 ] && options+=(--ssl-reqd)
+	[ -n "${user}" ] && options+=(--user "${user}:${password}")
+
+	smtp_curl "${options[@]}"
+}
+
+# Print the transcript of an SMTP session that only sends EHLO (and STARTTLS
+# with --tls) followed by NOOP: shows which capabilities a service advertises,
+# e.g. whether "250-AUTH" is offered.
+# Usage: smtp_ehlo <host:port> [--tls]
+smtp_ehlo() {
+	local address="$1"
+	shift
+
+	local options=(--request NOOP --url "smtp://${address}")
+	[ "${1:-}" = "--tls" ] && options+=(--ssl-reqd)
+
+	smtp_curl "${options[@]}"
 }
 
 # Print a string that identifies a mail sent by the current test in the
@@ -309,14 +440,58 @@ dns_query() {
 	dig "@${UNBOUND_DNS_ADDRESS%%:*}" -p "${UNBOUND_DNS_ADDRESS##*:}" "$@"
 }
 
-# Run imap-tester against a host:port address.
-# Usage: imap_tester <command> <address> <user> <password> <imap|pop3> <tls|ssl> [args...]
-imap_tester() {
-	local command="$1"
+# Run curl against an IMAP or POP3 service. imap and pop3 require STARTTLS,
+# imaps and pop3s use implicit TLS.
+# Usage: mail_curl <imap|imaps|pop3|pop3s> <host:port> <user> <password> <path> [curl options...]
+mail_curl() {
+	local scheme="$1"
 	local address="$2"
-	shift 2
+	local user="$3"
+	local password="$4"
+	local path="$5"
+	shift 5
 
-	imap-tester "${command}" "${address%%:*}" "${address##*:}" "$@"
+	local options=(--no-progress-meter --show-error --insecure --user "${user}:${password}")
+	case "${scheme}" in
+	imap | pop3) options+=(--ssl-reqd) ;;
+	esac
+
+	curl "${options[@]}" "$@" "${scheme}://${address}/${path}"
+}
+
+# Count the messages in the INBOX of a mailbox as an IMAP or POP3 client sees
+# them. Fails when the login is rejected (curl exits with 67).
+# Usage: mail_count <imap|imaps|pop3|pop3s> <host:port> <user> <password>
+mail_count() {
+	local scheme="$1"
+	local output
+
+	case "${scheme}" in
+	imap | imaps)
+		output="$(mail_curl "$@" "" --request "STATUS INBOX (MESSAGES)")" || return $?
+		sed -nE 's/.*MESSAGES ([0-9]+).*/\1/p' <<<"${output}"
+		;;
+	pop3 | pop3s)
+		# The default POP3 command is LIST: one line per message.
+		output="$(mail_curl "$@" "")" || return $?
+		grep -c . <<<"${output}" || true
+		;;
+	*)
+		echo "mail_count: unknown scheme ${scheme}" >&2
+		return 1
+		;;
+	esac
+}
+
+# Move one message, addressed by its IMAP sequence number (1 = first), into
+# another folder. A rejected MOVE makes curl exit with 21.
+# Usage: mail_move <imap|imaps> <host:port> <user> <password> <from folder> <sequence> <to folder>
+mail_move() {
+	local from="$5"
+	local sequence="$6"
+	local to="$7"
+
+	mail_curl "$1" "$2" "$3" "$4" "${from}" --request "MOVE ${sequence} ${to}"
 }
 
 # Open a TLS connection with openssl s_client, send one line and wait for the
