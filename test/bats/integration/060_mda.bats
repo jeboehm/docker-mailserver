@@ -42,10 +42,22 @@ setup() {
 
 @test "mail moved to the Junk folder is learned as spam by rspamd" {
 	# Moving mail into Junk runs Dovecot's learn-spam sieve script, which
-	# feeds the message to the rspamd controller (rspamc.sh).
+	# feeds the message to the rspamd controller (rspamc.sh). The test moves
+	# the mail it sends itself, the newest message in the INBOX, so that the
+	# outcome does not depend on what earlier runs left behind.
 	learned_before="$(service_log_count filter 'learned message as spam')"
 
-	run mail_move imap "${MDA_IMAP_ADDRESS}" admin@example.com changeme INBOX 1 Junk
+	run send_mail --server "${MTA_SMTP_ADDRESS}" --to admin@example.com --body "$(mail_needle)"
+	assert_success
+
+	run wait_for_mail "$(mail_needle)" "$(maildir admin@example.com)"
+	assert_success
+
+	run mail_count imap "${MDA_IMAP_ADDRESS}" admin@example.com changeme
+	assert_success
+	[ "${output}" -gt 0 ]
+
+	run mail_move imap "${MDA_IMAP_ADDRESS}" admin@example.com changeme INBOX "${output}" Junk
 	assert_success
 
 	run wait_for_log filter 'rspamd_controller_learn_fin_task.*learned message as spam' "$((learned_before + 1))"

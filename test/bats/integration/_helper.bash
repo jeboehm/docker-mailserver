@@ -205,6 +205,8 @@ smtp_curl() {
 # newlines). A "Subject: ..." header line replaces the default subject, every
 # other header line is added as it is. With an attachment the message becomes
 # multipart/mixed with the file base64 encoded, which grows it by about a third.
+# A fixed sentence precedes the body: rspamd's Bayes classifier refuses to
+# learn a message with fewer than 11 tokens, which a bare mail_needle is.
 # Usage: mail_message <from> <to> <body> <attachment file or empty> [header line...]
 mail_message() {
 	local from="$1"
@@ -228,10 +230,12 @@ mail_message() {
 	printf 'To: %s\r\n' "${to}"
 	printf 'Subject: %s\r\n' "${subject}"
 	printf 'Message-ID: <%s%s.%s@%s>\r\n' "${RANDOM}" "${RANDOM}" "$(date +%s)" "$(hostname)"
+	printf 'X-Mailer: send_mail (docker-mailserver integration tests)\r\n'
 	for header in "${headers[@]}"; do
 		printf '%s\r\n' "${header}"
 	done
 
+	body="This message was sent by the docker-mailserver integration tests.\r\n\r\n${body}"
 	if [ -z "${attach}" ]; then
 		printf '\r\n%s\r\n' "${body}"
 		return
