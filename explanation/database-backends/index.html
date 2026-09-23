@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><link rel="canonical" href="https://jeboehm.github.io/docker-mailserver/explanation/database-backends/" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>Database backends - docker-mailserver</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Database backends";
+        var mkdocs_page_input_path = "explanation/database-backends.md";
+        var mkdocs_page_url = "/docker-mailserver/explanation/database-backends/";
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../.." class="icon icon-home"> docker-mailserver
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../..">Welcome</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Tutorial</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../tutorials/getting-started/">Getting Started</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">How-to guides</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/install-docker/">Install with Docker</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/install-kubernetes/">Install on Kubernetes</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/upgrade/">Upgrade</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/configure-dns/">Configure DNS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/configure-dkim/">Configure DKIM</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/validate-dns/">Validate DNS (wizard)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/configure-relayhost/">Configure relay host</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/configure-reverse-proxy/">Configure reverse proxy</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/configure-tls/">Configure TLS certificates</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/configure-oauth2/">Configure OAuth2</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/configure-external-database/">Configure external database</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/configure-roundcube-plugins/">Configure Roundcube plugins</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/configure-php-sessions/">Configure PHP sessions</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/manage-domains/">Manage domains</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/manage-users/">Manage users</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/manage-aliases/">Manage aliases</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/manage-fetchmail/">Manage fetchmail</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/ios-macos-profile/">iOS / macOS profile</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Reference</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../reference/environment-variables/">Environment variables</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../reference/ports/">Ports</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../reference/dns-records/">DNS records</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../reference/service-architecture/">Service architecture</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../reference/user-roles/">User roles</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../reference/mailserver-admin-config/">mailserver-admin config</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../reference/local-address-extension/">Local address extension</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../reference/upgrade-changelog/">Upgrade changelog</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Administration (web UI)</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../administration/login/">Login</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../administration/dashboard/">Dashboard</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Explanation</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../architecture/">Service architecture</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Database backends</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#why-two-backends">Why Two Backends</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#what-talks-to-the-database">What Talks to the Database</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#how-the-engine-is-selected">How the Engine Is Selected</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#case-sensitivity">Case Sensitivity</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#schema-differences">Schema Differences</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#server-version">Server Version</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#switching-engines">Switching Engines</a>
+    </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../dns-and-email/">DNS and email delivery</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../observability/">Observability</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Recipes</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Docker</a>
+    <ul>
+                <li class="toctree-l2"><a class="" href="https://github.com/jeboehm/docker-mailserver/tree/main/docs/example-configs/compose/traefik-reverse-proxy">Traefik Reverse Proxy</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Kubernetes</a>
+    <ul>
+                <li class="toctree-l2"><a class="" href="https://github.com/jeboehm/docker-mailserver/tree/main/docs/example-configs/kustomize/external-db-and-https-ingress">External Database and HTTPS Ingress</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Development</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../development/development/">Development guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../development/mailserver-admin/">mailserver-admin development</a>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="" href="https://github.com/jeboehm/docker-mailserver/issues">Issues</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">docker-mailserver</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Explanation</li>
+      <li class="breadcrumb-item active">Database backends</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/jeboehm/docker-mailserver/blob/main/docs/explanation/database-backends.md">Edit on jeboehm/docker-mailserver</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="database-backends">Database Backends</h1>
+<p>docker-mailserver stores domains, users, aliases and DKIM configuration in a relational database.
+Both MySQL/MariaDB and PostgreSQL are supported, selected with <code>DB_DRIVER</code>. MySQL is the default.</p>
+<h2 id="why-two-backends">Why Two Backends</h2>
+<p>The mailserver never needed more than one engine, but the environment it runs in often already has
+one. Requiring MySQL next to an existing PostgreSQL cluster means operating a second database for
+no functional gain: another backup schedule, another upgrade path, another set of credentials.</p>
+<p>Neither engine is better here. The data is small, the queries are simple lookups, and both handle
+the load without tuning. Pick whichever one is already operated.</p>
+<h2 id="what-talks-to-the-database">What Talks to the Database</h2>
+<p>Three services connect to it:</p>
+<ul>
+<li><strong>mta</strong> (Postfix) resolves domains, mailboxes and aliases through SQL lookup tables</li>
+<li><strong>mda</strong> (Dovecot) authenticates users and reads quotas through <code>passdb</code> and <code>userdb</code></li>
+<li><strong>web</strong> (mailserver-admin and Roundcube) owns the schema and writes it through Doctrine</li>
+</ul>
+<p><code>filter</code> (Rspamd), <code>redis</code>, <code>unbound</code>, <code>ssl</code> and <code>fetchmail</code> never touch it. Rspamd keeps
+everything including DKIM keys in Redis.</p>
+<p>Postfix and Dovecot query the database directly rather than going through the admin application.
+Their queries are therefore part of this repository, while the schema belongs to
+<a href="https://github.com/jeboehm/mailserver-admin">mailserver-admin</a>.</p>
+<h2 id="how-the-engine-is-selected">How the Engine Is Selected</h2>
+<p><code>DB_DRIVER</code> is the only switch, and its value is used verbatim by all four consumers: it is the
+Postfix lookup table type, Dovecot's <code>sql_driver</code>, Roundcube's DSN scheme and Doctrine's DSN
+scheme. No translation table is involved.</p>
+<p>The images ship both client libraries, so switching engines needs no rebuild:</p>
+<ul>
+<li><code>mta</code> contains <code>postfix-mysql</code> and <code>postfix-pgsql</code></li>
+<li><code>mda</code> contains <code>dovecot-mysql</code> and <code>dovecot-pgsql</code></li>
+<li><code>web</code> uses FrankenPHP, which bundles <code>pdo_mysql</code> and <code>pdo_pgsql</code></li>
+</ul>
+<p>The lookup queries themselves are written to run unchanged on both engines. Only the connection
+block differs, so <code>mta</code> keeps one set of <code>.query</code> files and two <code>connection-*.templ</code> files that
+its entrypoint combines. Dovecot cannot do the same, because its driver settings block is named
+after the engine and cannot be selected through a variable; its entrypoint writes the matching
+block to <code>/run/dovecot/auth-driver.conf</code> instead, which is the writable location available on a
+read-only root filesystem.</p>
+<h2 id="case-sensitivity">Case Sensitivity</h2>
+<p>This is the one behavioural difference that matters.</p>
+<p>The MySQL collation used so far compares case insensitively, so <code>Bob@Example.COM</code> matched the
+stored <code>bob@example.com</code>. PostgreSQL's default collation compares case sensitively, and the same
+delivery or login attempt would return no rows: mail bounces, IMAP authentication fails.</p>
+<p>Rather than reproduce the MySQL behaviour in the schema, addresses are normalised on the way in
+and on the way out. The admin application validates and stores them lowercase, and every lookup
+wraps its input in <code>lower()</code>. The comparison stays index friendly, because the column is not
+wrapped, only the value being searched for.</p>
+<p>Two alternatives were rejected. A nondeterministic ICU collation breaks the admin interface, since
+PostgreSQL refuses <code>LIKE</code> on nondeterministic collations and the search in the user lists relies on
+it. The <code>citext</code> type needs <code>CREATE EXTENSION</code> privileges during bootstrap and a custom Doctrine
+type.</p>
+<p>If you migrate data from an older installation that predates the address validation, check for
+mixed case rows before switching engines. They resolve on MySQL and stop resolving on PostgreSQL:</p>
+<div class="highlight"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="n">name</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">mail_users</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">name</span><span class="w"> </span><span class="o">&lt;&gt;</span><span class="w"> </span><span class="k">lower</span><span class="p">(</span><span class="n">name</span><span class="p">);</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="n">name</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">mail_domains</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">name</span><span class="w"> </span><span class="o">&lt;&gt;</span><span class="w"> </span><span class="k">lower</span><span class="p">(</span><span class="n">name</span><span class="p">);</span>
+</code></pre></div>
+<h2 id="schema-differences">Schema Differences</h2>
+<p>Neither engine needs bootstrap SQL. The web service creates the schema on start: Doctrine creates its
+own bookkeeping table, a baseline migration issues the DDL for whichever platform it finds, and
+Roundcube runs its installer against the schema its DSN selects.</p>
+<p>Fresh installations therefore get the same schema on both engines, down to the index and foreign key
+names. The migrations that predate the baseline describe the history of a MySQL schema that began as
+a pre-2018 <code>virtual_*</code> layout; each one checks for that history and does nothing on an empty
+database.</p>
+<p>The differences that remain are between installations, not between engines. A MySQL database that
+grew through the full migration history keeps the foreign key names from the 2018 table rename, and
+its <code>mail_users.domain_admin</code> carries the default of <code>0</code> that the migration adding the column set.
+Fresh databases get the canonical names and no default, because the mapping declares none. Nothing
+writes to these tables outside the ORM, so neither difference is observable at runtime.</p>
+<h2 id="server-version">Server Version</h2>
+<p><code>DB_SERVER_VERSION</code> has to be set to match the server. Doctrine detects the MySQL version by
+itself, but not the PostgreSQL one in this image, and an undetected version aborts the connection
+with <code>Invalid platform version ""</code>.</p>
+<h2 id="switching-engines">Switching Engines</h2>
+<p>There is no migration path between the two. <code>DB_DRIVER</code> selects which engine to talk to; it does
+not move data. Switching an existing installation means exporting the domains, users and aliases
+and recreating them against the new database.</p>
+<p>When using the bundled database container, run <code>make clean</code> before switching. PostgreSQL refuses
+to initialise into a data directory that already holds MySQL files, and reports it as a permission
+error rather than an obvious one.</p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../architecture/" class="btn btn-neutral float-left" title="Service architecture"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../dns-and-email/" class="btn btn-neutral float-right" title="DNS and email delivery">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/jeboehm/docker-mailserver" class="fa fa-code-fork" style="color: #fcfcfc"> jeboehm/docker-mailserver</a>
+        </span>
+    
+    
+      <span><a href="../architecture/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../dns-and-email/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../..";</script>
+    <script src="../../js/theme_extra.js"></script>
+    <script src="../../js/theme.js"></script>
+      <script src="../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>
