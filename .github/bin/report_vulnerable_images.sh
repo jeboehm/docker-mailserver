@@ -58,9 +58,10 @@ fi
 	cat "${findings}"
 	echo "### How to fix this"
 	echo
-	echo "1. \`gh workflow run build.yml -f no-cache=true\` rebuilds without the layer cache, which is what"
-	echo "   re-resolves the \`apk\` and \`apt\` packages. It refreshes \`main\`, \`nightly\` and \`sha-*\`."
-	echo "2. \`:latest\` only moves with a release: \`gh workflow run release.yml\` forces one."
+	echo "1. \`gh workflow run release.yml\` forces a release. Its build bypasses the layer cache, which is what"
+	echo "   re-resolves the \`apk\` and \`apt\` packages, and moves \`:latest\`."
+	echo "2. A finding that survives a release is pinned upstream (base image digest, bundled \`composer.lock\`)"
+	echo "   and needs a version bump or an entry in \`.trivyignore.yaml\`."
 	echo
 	echo "Findings without a fix are left out here, the Security tab has the full report."
 	echo

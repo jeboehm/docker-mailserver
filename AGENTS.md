@@ -162,8 +162,8 @@ uploads the JUnit report (`test/report/report.xml`) as artifact `bats-report-<ca
 `make kubernetes-logs` print the service logs as collapsible groups. `.github/bin/prepare_env.sh <case>` builds `.env`
 from `.env.dist` plus `.github/test-matrix/<case>.env`. The same workflow runs dive (image
 efficiency), Trivy (vulnerabilities, pull requests only) and Popeye (cluster sanity). It also builds without the buildx cache on a weekly
-`schedule` and on `workflow_dispatch` with `no-cache: true`: a fixed package does not change the pinned digest of the
-base image, so a cached `apk`/`apt` layer would keep the old versions forever. Further workflows: `lint.yml`
+`schedule`, on release tags and on `workflow_dispatch` with `no-cache: true`: a fixed package does not change the pinned digest of the
+base image, so a cached `apk`/`apt` layer would keep the old versions forever. Tag builds do not export a cache either, no other ref could restore it. Further workflows: `lint.yml`
 (super-linter), `docs.yml` (MkDocs strict build on pull requests, `gh-deploy` on `main`), `test-yaml-schema.yml`
 (`kustomize build`, `make trivy-config` and the pod security-context schema in `test/schema/`), `scan-published-images.yml` (see below),
 `release.yml` (daily conventional-changelog release; `update_image_tags.py` pins the image tags inside the release
@@ -182,7 +182,8 @@ job summary. Passing `format: sarif` to `trivy-action` directly would not work, 
 fails a pull request and uploads no SARIF. The Security tab belongs to the published-image scan; an upload with the same
 tool and category from `build.yml` would replace its analysis. `scan-published-images.yml` is where findings gate: it scans `ghcr.io/jeboehm/<image>:latest`
 daily, fails on every finding that has a fix, and `.github/bin/report_vulnerable_images.sh` keeps one tracking issue in
-sync with the result. A rebuild refreshes `main`, `nightly` and `sha-*`; `:latest` only moves when a release is cut.
+sync with the result. A rebuild refreshes `main`, `nightly` and `sha-*`; `:latest` only moves when a release is cut, and that build bypasses the
+buildx cache, so a release is enough to pick up fixed packages.
 
 Configuration is scanned separately: `make trivy-config` renders `kustomize build .` into the git-ignored
 `config/trivy/` and runs `trivy config` (image `TRIVY_IMAGE`, pinned in the `Makefile`) on it and on `target/`, failing
