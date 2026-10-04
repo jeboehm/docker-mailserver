@@ -122,8 +122,10 @@ jobs:
           tags: ${{ github.event_name == 'pull_request' && format('jeboehm/{0}', matrix.image) || steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha,scope=${{ matrix.image }}
-          cache-to: type=gha,scope=${{ matrix.image }},mode=max
-          no-cache: ${{ github.event_name == 'schedule' || github.event_name == 'tag' || inputs.no-cache == true }}
+          # A cache written from a tag ref can only be restored by that same tag.
+          cache-to: ${{ github.ref_type != 'tag' && format('type=gha,scope={0},mode=max', matrix.image) || '' }}
+          # Releases bypass the cache as well, they are what moves `:latest`.
+          no-cache: ${{ github.event_name == 'schedule' || github.ref_type == 'tag' || inputs.no-cache == true }}
           sbom: ${{ github.event_name != 'pull_request' && matrix.image != 'mailserver-test' }}
           outputs: ${{ github.event_name == 'pull_request' && format('type=docker,dest={0}/{1}.tar', runner.temp, matrix.image) || '' }}
       - name: Generate artifact attestation (ghcr.io)
