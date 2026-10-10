@@ -144,7 +144,7 @@ jobs:
           push-to-registry: true
       - name: Upload Docker image to artifacts
         if: ${{ github.event_name == 'pull_request' }}
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         with:
           name: docker-image-${{ matrix.image }}
           path: ${{ runner.temp }}/${{ matrix.image }}.tar
@@ -232,7 +232,7 @@ jobs:
         run: bin/test.sh run --rm test
       - name: Upload test report
         if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         with:
           name: bats-report-${{ matrix.TEST_CASE }}
           path: test/report/report.xml
