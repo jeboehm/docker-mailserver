@@ -27,7 +27,7 @@ ENV DB_DRIVER=mysql \
     SUPPORT_URL=https://github.com/jeboehm/docker-mailserver \
     WAITSTART_TIMEOUT=1m
 
-ARG FRANKENPHP_VER=v1.12.7 # renovate: depName=php/frankenphp
+ARG FRANKENPHP_VER=v1.13.0 # renovate: depName=php/frankenphp
 RUN apk add --no-cache \
         curl && \
     ln -sf /tmp /home/app && \
