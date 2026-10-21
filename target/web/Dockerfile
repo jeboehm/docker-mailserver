@@ -27,7 +27,7 @@ ENV DB_DRIVER=mysql \
     SUPPORT_URL=https://github.com/jeboehm/docker-mailserver \
     WAITSTART_TIMEOUT=1m
 
-ARG FRANKENPHP_VER=v1.13.1 # renovate: depName=php/frankenphp
+ARG FRANKENPHP_VER=v1.13.2 # renovate: depName=php/frankenphp
 RUN apk add --no-cache \
         curl && \
     ln -sf /tmp /home/app && \
@@ -47,7 +47,7 @@ COPY --from=composer/composer:2.10.3@sha256:0bf5cb25e3e14b4c39b73c1533cba7d8844e
 FROM composer AS roundcube-builder
 
 ARG RC_PLUGINS=""
-ARG RC_VER=1.7.4 # renovate: depName=roundcube/roundcubemail
+ARG RC_VER=1.7.5 # renovate: depName=roundcube/roundcubemail
 WORKDIR /opt/roundcube
 RUN --mount=type=cache,target=/root/.composer \
     curl -sSLf \
