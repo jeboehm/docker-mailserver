@@ -135,7 +135,7 @@ popeye-score:
 # Dockerfiles. Scanning the kustomize output instead of deploy/kustomize/
 # covers the patches and the generated ConfigMaps and Secrets. Docker Compose
 # files are not supported by Trivy.
-TRIVY_IMAGE ?= aquasec/trivy:0.76.0@sha256:2416d1f74045b57274df1a340eee6b510cacd73c66a6ccb8da092b117eb7d222
+TRIVY_IMAGE ?= aquasec/trivy:0.76.1@sha256:790fd66d1697395d8693d1acaa1ea702406a20f109b6fc7bac8db623eca6c06c
 
 .PHONY: trivy-config
 trivy-config: kubernetes-env
