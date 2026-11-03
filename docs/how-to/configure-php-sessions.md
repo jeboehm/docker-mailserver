@@ -1,6 +1,10 @@
 # How to Configure PHP Sessions
 
-The web service stores PHP sessions in Redis by default. You can switch to file-based or another handler via environment variables.
+`PHP_SESSION_SAVE_HANDLER` and `PHP_SESSION_SAVE_PATH` set PHP's session handler for Roundcube's PHP side. You can switch from Redis to file-based or another handler.
+
+These variables do not affect mailserver-admin. Since the release that adds the MCP server, it keeps admin logins and MCP sessions in Redis through its own handler, so you cannot move them with these variables and changing them does not log anyone out of the management interface.
+
+They set PHP's default handler only. Roundcube keeps its own login sessions as its `session_storage` setting says, which this image leaves at Roundcube's default of `db`.
 
 ## Redis (default)
 
@@ -31,4 +35,8 @@ volumes:
 
 3. Restart the web service.
 
-For variable reference, see [Environment variables reference](../reference/environment-variables.md) (PHP Sessions).
+## After upgrading with custom values
+
+If you had set custom values, users should have to log in to the management interface once after upgrading, because admin logins are now looked up in Redis. This is inferred from how the session store changed and has not been tried on a real upgrade. See [Upgrade changelog](../reference/upgrade-changelog.md).
+
+For variable reference, see [Environment variables reference](../reference/environment-variables.md#php-sessions).

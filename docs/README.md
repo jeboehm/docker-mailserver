@@ -13,10 +13,10 @@ This project enables you to operate your own email services, providing independe
 The documentation is organised by purpose:
 
 - **[Tutorial: Getting Started](tutorials/getting-started.md)** — A step-by-step lesson to install docker-mailserver with Docker Compose and create your first mailbox.
-- **How-to guides** — Task-oriented guides for specific goals: [install with Docker](how-to/install-docker.md), [install on Kubernetes](how-to/install-kubernetes.md), [configure DNS](how-to/configure-dns.md), [configure TLS](how-to/configure-tls.md), [manage users](how-to/manage-users.md), and more.
-- **Reference** — Technical descriptions: [environment variables](reference/environment-variables.md), [DNS records](reference/dns-records.md), [ports](reference/ports.md), [service architecture](reference/service-architecture.md), [user roles](reference/user-roles.md), and related topics.
+- **How-to guides** — Task-oriented guides for specific goals: [install with Docker](how-to/install-docker.md), [install on Kubernetes](how-to/install-kubernetes.md), [configure DNS](how-to/configure-dns.md), [configure TLS](how-to/configure-tls.md), [manage users](how-to/manage-users.md), [configure the MCP server](how-to/configure-mcp-server.md), and more.
+- **Reference** — Technical descriptions: [environment variables](reference/environment-variables.md), [DNS records](reference/dns-records.md), [ports](reference/ports.md), [service architecture](reference/service-architecture.md), [user roles](reference/user-roles.md), [MCP server](reference/mcp-server.md), and related topics.
 - **Administration (web UI)** — Working with the management interface: [login](administration/login.md), [dashboard](administration/dashboard.md).
-- **Explanation** — Background and context: [architecture](explanation/architecture.md), [database backends](explanation/database-backends.md), [DNS and email delivery](explanation/dns-and-email.md), [observability](explanation/observability.md).
+- **Explanation** — Background and context: [architecture](explanation/architecture.md), [database backends](explanation/database-backends.md), [DNS and email delivery](explanation/dns-and-email.md), [observability](explanation/observability.md), [MCP server risks and limitations](explanation/mcp-server.md).
 - **Recipes** — Ready-made deployment examples: [Traefik reverse proxy](https://github.com/jeboehm/docker-mailserver/tree/main/docs/example-configs/compose/traefik-reverse-proxy) for Docker, [external database and HTTPS ingress](https://github.com/jeboehm/docker-mailserver/tree/main/docs/example-configs/kustomize/external-db-and-https-ingress) for Kubernetes.
 - **Development** — Building and contributing: [development guide](development/development.md), [mailserver-admin development](development/mailserver-admin.md).
 
@@ -28,6 +28,7 @@ The documentation is organised by purpose:
 - **Client provisioning:** Configuration profiles for iOS and macOS, plus assisted client configuration in Outlook and Thunderbird
 - **DNS Validation Wizard:** Checks all mail-related DNS records for your domains
 - **External mail retrieval:** Fetchmail integration for retrieving emails from external providers
+- **MCP server:** Optional endpoint for agents to manage the server and read and send the user's own mail
 - **Email authentication:** DKIM message signing for email authenticity
 - **Spam filtering:** Server-side mail filtering with configurable rules via web frontend
 - **Spam training:** Train spam filters by moving emails to or from the junk folder

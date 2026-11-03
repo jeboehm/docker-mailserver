@@ -182,16 +182,55 @@ different ports than the containers listen on: `MDA_IMAP_ADDRESS` becomes `mda:1
 `WEB_HTTP_ADDRESS` becomes `web:80`, and `RSPAMD_DNS_SERVERS` becomes `round-robin:unbound:53`. See
 [Ports reference](ports.md).
 
+The MCP mail tools connect to `MDA_IMAPS_ADDRESS` and `MTA_SMTP_SUBMISSION_ADDRESS`. Kubernetes sets the former to `mda:993`.
+
 ### mailserver-admin
 
 See [mailserver-admin configuration reference](mailserver-admin-config.md).
 
+### MCP Server
+
+Read by mailserver-admin. See [How to configure the MCP server](../how-to/configure-mcp-server.md) and the [MCP server reference](mcp-server.md).
+
+| Variable                      | Default                     | Description                                                                                                                                      |
+| ----------------------------- | --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `MCP_ENABLED`                 | `false`                     | Enables the endpoint `/mcp` and the API token pages. Otherwise both answer `404`                                                                 |
+| `MCP_ALLOWED_HOSTS`           | `localhost,127.0.0.1,[::1]` | Comma-separated hostnames the endpoint answers for, without a port. Matched against the raw `Host` header, so a reverse proxy has to preserve it |
+| `MCP_TOKEN_MAX_LIFETIME_DAYS` | `90`                        | Default and maximum lifetime of an API token, in days. Applies when a token is created                                                           |
+
+`.env.dist` and `deploy/kustomize/common/configmap.yaml` ship `MCP_ENABLED=false` and `MCP_ALLOWED_HOSTS=mail.example.com`. Set the latter to your public hostname.
+
+Reading mail:
+
+| Variable                     | Default | Description                                                                                                          |
+| ---------------------------- | ------- | -------------------------------------------------------------------------------------------------------------------- |
+| `MCP_MAIL_READ_ENABLED`      | `false` | Enables `mailbox_list`, `message_search` and `message_get`                                                           |
+| `MCP_MAIL_MAX_IMAP_SESSIONS` | `5`     | Parallel IMAP sessions per user. Keep it below Dovecot's `mail_max_userip_connections` of 10, which Roundcube shares |
+| `MCP_MAIL_MESSAGE_MAX_BYTES` | `65536` | Size limit of the body `message_get` returns                                                                         |
+| `MDA_IMAP_TIMEOUT_SECONDS`   | `25`    | IMAP client timeout. Keep it well above 15 seconds, the longest auth penalty                                         |
+
+Sending mail:
+
+| Variable                                | Default   | Description                                                                                                                                                                                         |
+| --------------------------------------- | --------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `MCP_MAIL_SEND_ENABLED`                 | `false`   | Enables `message_send`                                                                                                                                                                              |
+| `MCP_MAIL_SEND_MAX_RECIPIENTS`          | `20`      | Recipients per mail, across `to`, `cc` and `bcc`                                                                                                                                                    |
+| `MCP_MAIL_SEND_MAX_BYTES`               | `1048576` | Size limit of a sent message as it goes over the wire                                                                                                                                               |
+| `MCP_MAIL_SEND_TOKEN_LIMIT_PER_HOUR`    | `30`      | Sends per API token                                                                                                                                                                                 |
+| `MCP_MAIL_SEND_USER_LIMIT_PER_HOUR`     | `60`      | Sends per user, across their tokens                                                                                                                                                                 |
+| `MCP_MAIL_SEND_GLOBAL_LIMIT_PER_MINUTE` | `15`      | Sends per rolling minute across everyone. Keep it below Postfix's 20 connections per minute per client address, which Roundcube shares. A third of it is available at once, the rest refills evenly |
+| `MTA_SMTP_TIMEOUT_SECONDS`              | `25`      | SMTP client timeout. Keep it well above 15 seconds, the longest auth penalty                                                                                                                        |
+
+`MCP_MAIL_READ_ENABLED` and `MCP_MAIL_SEND_ENABLED` both require the first docker-mailserver release that contains the `mailbox_credentials` passdb.
+
 ### PHP Sessions
 
-| Variable                   | Default                                                    | Description          |
-| -------------------------- | ---------------------------------------------------------- | -------------------- |
-| `PHP_SESSION_SAVE_HANDLER` | `redis`                                                    | Session save handler |
-| `PHP_SESSION_SAVE_PATH`    | `tcp://${REDIS_HOST}:${REDIS_PORT}?auth=${REDIS_PASSWORD}` | Session save path    |
+| Variable                   | Default                                                    | Description                                     |
+| -------------------------- | ---------------------------------------------------------- | ----------------------------------------------- |
+| `PHP_SESSION_SAVE_HANDLER` | `redis`                                                    | `session.save_handler` for Roundcube's PHP side |
+| `PHP_SESSION_SAVE_PATH`    | `tcp://${REDIS_HOST}:${REDIS_PORT}?auth=${REDIS_PASSWORD}` | `session.save_path` for Roundcube's PHP side    |
+
+These variables no longer affect mailserver-admin, only Roundcube's PHP side. Since the mailserver-admin release that adds the MCP server, it defines its own session handler and keeps admin logins and MCP sessions in Redis (`REDIS_HOST`, `REDIS_PORT`, `REDIS_PASSWORD`), whatever these variables say. See [How to configure PHP sessions](../how-to/configure-php-sessions.md).
 
 ### Proxy Protocol
 
