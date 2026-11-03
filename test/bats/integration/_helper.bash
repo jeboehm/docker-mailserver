@@ -30,14 +30,6 @@ skip_without_relayhost() {
 	fi
 }
 
-# The credentials table belongs to mailserver-admin, so these checks can only
-# run once the release in the web image ships it.
-skip_without_mailbox_credentials() {
-	if ! db_query "SELECT 1 FROM mail_mailbox_credentials LIMIT 1;" >/dev/null 2>&1; then
-		skip "mailserver-admin does not ship mail_mailbox_credentials yet"
-	fi
-}
-
 # ---------------------------------------------------------------------------
 # Services
 # ---------------------------------------------------------------------------
@@ -461,6 +453,99 @@ mailbox_credential() {
 # Usage: mailbox_credentials_clear
 mailbox_credentials_clear() {
 	db_query "DELETE FROM mail_mailbox_credentials WHERE kind = 'short_lived';"
+}
+
+# Store an API token for the MCP endpoint the way mailserver-admin does and print it.
+# Usage: mcp_token <user> <domain> <comma-separated scopes> [seconds until expiry]
+mcp_token() {
+	local token hash
+
+	token="msa_$(openssl rand -hex 32)"
+	hash="$(printf '%s' "${token}" | sha256sum | cut -d' ' -f1)"
+
+	db_query "INSERT INTO api_tokens (owner_id, name, secret_hash, scopes, created_at, expires_at)
+		SELECT mail_users.id, 'bats', '${hash}', '$3', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP + INTERVAL '${4:-3600}' SECOND
+		FROM mail_users JOIN mail_domains ON mail_users.domain_id = mail_domains.id
+		WHERE mail_users.name = '$1' AND mail_domains.name = '$2';" >/dev/null || return $?
+
+	echo "${token}"
+}
+
+# Remove the API tokens the tests stored.
+# Usage: mcp_tokens_clear
+mcp_tokens_clear() {
+	db_query "DELETE FROM api_tokens WHERE name = 'bats';"
+}
+
+# POST to the MCP endpoint with an allowed Host header and print the raw response
+# including its headers. The Host is the first of MCP_ALLOWED_HOSTS.
+# Usage: mcp_post <token> <json> [curl args...]
+mcp_post() {
+	local token="$1"
+	local body="$2"
+	shift 2
+
+	curl -si "http://${WEB_HTTP_ADDRESS}/mcp" \
+		-H "Host: ${MCP_ALLOWED_HOSTS%%,*}" \
+		-H "Authorization: Bearer ${token}" \
+		-H 'Content-Type: application/json' \
+		-H 'Accept: application/json, text/event-stream' \
+		-d "${body}" \
+		"$@"
+}
+
+# Open an MCP session and send one request in it. Prints the JSON-RPC result, or
+# the JSON-RPC error and returns 1.
+# Usage: mcp_request <token> <method> [params-json]
+mcp_request() {
+	local token="$1"
+	local method="$2"
+	local params="${3:-}"
+	local session response
+
+	[ -n "${params}" ] || params='{}'
+
+	session="$(mcp_post "${token}" '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-11-25","capabilities":{},"clientInfo":{"name":"bats","version":"1.0"}}}' |
+		tr -d '\r' | awk 'tolower($1) == "mcp-session-id:" { print $2 }')"
+	[ -n "${session}" ] || {
+		echo "The MCP endpoint did not open a session" >&2
+		return 1
+	}
+
+	mcp_post "${token}" '{"jsonrpc":"2.0","method":"notifications/initialized"}' -H "Mcp-Session-Id: ${session}" >/dev/null || return $?
+
+	# mcp_post prints the headers, which end at the first empty line.
+	response="$(mcp_post "${token}" "$(jq -nc --arg method "${method}" --argjson params "${params}" '{jsonrpc: "2.0", id: 2, method: $method, params: $params}')" \
+		-H "Mcp-Session-Id: ${session}" | tr -d '\r' | sed '1,/^$/d')" || return $?
+
+	if ! jq -e 'has("result")' <<<"${response}" >/dev/null; then
+		echo "${response}"
+		return 1
+	fi
+
+	jq -c '.result' <<<"${response}"
+}
+
+# Call an MCP tool. Prints its structured result, or the text of its error and
+# returns 1.
+# Usage: mcp_tool <token> <tool> [arguments-json]
+mcp_tool() {
+	local arguments="${3:-}"
+	local result
+
+	[ -n "${arguments}" ] || arguments='{}'
+
+	result="$(mcp_request "$1" tools/call "$(jq -nc --arg name "$2" --argjson arguments "${arguments}" '{name: $name, arguments: $arguments}')")" || {
+		echo "${result}"
+		return 1
+	}
+
+	if jq -e '.isError == true' <<<"${result}" >/dev/null; then
+		jq -r '.content[0].text' <<<"${result}"
+		return 1
+	fi
+
+	jq -c '.structuredContent' <<<"${result}"
 }
 
 # Run a redis command.
