@@ -51,6 +51,23 @@ resources:
 
 This adds IngressRoutes for SMTP (25), submission (587), IMAP (143), IMAPS (993), POP3 (110), POP3S (995). Configure entry points and PROXY protocol (v2) on the Traefik side to match.
 
+### 5. Preserve the Host header
+
+The [MCP server](configure-mcp-server.md) matches `MCP_ALLOWED_HOSTS` against the raw `Host` header of the request, so any reverse proxy in front of the `web` service must pass it on unchanged. `X-Forwarded-Host` does not count. A request with a changed `Host` gets `403 Forbidden: Invalid Host header.`
+
+Traefik preserves the header by default, as long as `passHostHeader` stays on. nginx does not:
+
+```nginx
+location / {
+    proxy_pass http://web:8080;
+    proxy_set_header Host $host;
+}
+```
+
+With Apache, set `ProxyPreserveHost On`.
+
+Also set `TRUSTED_PROXIES` as in step 2, or the audit log records the address of the proxy instead of the client.
+
 ## Verification
 
 - Check Traefik logs and IngressRoutes.

@@ -40,3 +40,7 @@ Environment variables for the mailserver-admin (web) application. Set in `.env` 
 | `OAUTH_CREATE_USER`       | `false`                         | Create user if no match                       |
 
 For setting up OAuth2, see [How to configure OAuth2](../how-to/configure-oauth2.md).
+
+## MCP server
+
+The `MCP_*` variables and their defaults are listed in the [environment variables reference](environment-variables.md#mcp-server).

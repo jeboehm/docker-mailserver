@@ -41,6 +41,7 @@ nav:
       - Configure external database: how-to/configure-external-database.md
       - Configure Roundcube plugins: how-to/configure-roundcube-plugins.md
       - Configure PHP sessions: how-to/configure-php-sessions.md
+      - Configure the MCP server: how-to/configure-mcp-server.md
       - Manage domains: how-to/manage-domains.md
       - Manage users: how-to/manage-users.md
       - Manage aliases: how-to/manage-aliases.md
@@ -53,6 +54,7 @@ nav:
       - Service architecture: reference/service-architecture.md
       - User roles: reference/user-roles.md
       - mailserver-admin config: reference/mailserver-admin-config.md
+      - MCP server: reference/mcp-server.md
       - Local address extension: reference/local-address-extension.md
       - Upgrade changelog: reference/upgrade-changelog.md
   - Administration (web UI):
@@ -63,6 +65,7 @@ nav:
       - Database backends: explanation/database-backends.md
       - DNS and email delivery: explanation/dns-and-email.md
       - Observability: explanation/observability.md
+      - "MCP server: risks and limitations": explanation/mcp-server.md
   - Recipes:
       - Docker:
           - Traefik Reverse Proxy: https://github.com/jeboehm/docker-mailserver/tree/main/docs/example-configs/compose/traefik-reverse-proxy

@@ -14,6 +14,21 @@ Without the script, `kubectl apply -k .` fails because `config/kubernetes/config
 
 The workloads read both objects through `envFrom`, so they see the same variables as before. Workloads of your own that read one of these keys with `configMapKeyRef` from `config-env` must switch to `secretKeyRef` from `secret-config-env`.
 
+### MCP server
+
+The MCP server is new and off by default, see [How to configure the MCP server](../how-to/configure-mcp-server.md). Nothing changes unless you enable it. New variables are listed in the [environment variables reference](environment-variables.md#mcp-server); copy the `MCP_*` block from `.env.dist` to `.env`.
+
+Reading and sending mail through it (`MCP_MAIL_READ_ENABLED`, `MCP_MAIL_SEND_ENABLED`) requires the first docker-mailserver release that contains the `mailbox_credentials` passdb. Upgrade `mda` and `web` together before you set either flag.
+
+### mailserver-admin: PHP_SESSION\_\* no longer apply
+
+From the mailserver-admin release that adds the MCP server, `PHP_SESSION_SAVE_HANDLER` and `PHP_SESSION_SAVE_PATH` no longer affect it, only Roundcube's PHP side. Admin logins are always kept in the Redis of `REDIS_HOST`, `REDIS_PORT` and `REDIS_PASSWORD`, under the same key prefix as PHP's default handler.
+
+- **Default values:** existing logins should stay valid.
+- **Custom `PHP_SESSION_*` values:** admin logins kept elsewhere are no longer found, so users should have to log in once after upgrading. Old session data stays where it was and is not migrated.
+
+Both follow from how the session store changed and have not been tried on a real upgrade.
+
 ## v7.x to v8.0
 
 All database environment variables were renamed from `MYSQL_*` to `DB_*`, and PostgreSQL can be used instead of MySQL.
