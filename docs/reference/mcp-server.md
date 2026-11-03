@@ -15,11 +15,11 @@ The MCP endpoint of mailserver-admin. For setup, see [How to configure the MCP s
 
 ### HTTP responses
 
-| Status | Cause                                                                                                           |
-| ------ | --------------------------------------------------------------------------------------------------------------- |
-| `401`  | Missing, unknown, expired or revoked token, or a disabled owner. Carries `WWW-Authenticate: Bearer`             |
-| `403`  | With a valid token: the `Host` header is not in `MCP_ALLOWED_HOSTS`, or an `Origin` header names another origin |
-| `404`  | `MCP_ENABLED` is not `true`. The API token pages answer the same way, and their menu entry is hidden            |
+| Status | Cause                                                                                                                       |
+| ------ | --------------------------------------------------------------------------------------------------------------------------- |
+| `401`  | Missing, unknown, expired or revoked token, or a disabled owner. Carries `WWW-Authenticate: Bearer`                         |
+| `403`  | With a valid token: the `Host` header is not in `MCP_ALLOWED_HOSTS`, or an `Origin` header names another origin             |
+| `404`  | `MCP_ENABLED` is not `true`, for every HTTP method. The API token pages answer the same way, and their menu entry is hidden |
 
 The `Host` match ignores case and port. `X-Forwarded-Host` is not considered.
 
@@ -41,38 +41,39 @@ A call succeeds only if the token carries the scope and the owner's current role
 | Scope          | Allows                                                                                 | Preselected |
 | -------------- | -------------------------------------------------------------------------------------- | ----------- |
 | `manage:read`  | List and read domains, users, aliases, fetchmail accounts, DKIM status; DNS validation | yes         |
-| `manage:write` | Create, update and delete the same                                                     | yes         |
+| `manage:write` | Create, update and delete the same                                                     | no          |
 | `mail:read`    | Read the owner's own mailbox                                                           | yes         |
 | `mail:send`    | Send from the owner's own address                                                      | no          |
 
 ## Tools
 
-"Own domain" means the domain of a domain admin. "None" means the tool is not listed and a call is refused. For the same rules in the web interface, see [User roles](user-roles.md).
+Which role reaches which tools and objects is listed in [User roles](user-roles.md#mcp-server-and-api-tokens). A tool the role does not reach is not listed, and a call is refused.
 
-| Tool                                                       | Scope          | Admin       | Domain Admin | User         |
-| ---------------------------------------------------------- | -------------- | ----------- | ------------ | ------------ |
-| `whoami`                                                   | _(none)_       | yes         | yes          | yes          |
-| `domain_list`                                              | `manage:read`  | all         | none         | none         |
-| `domain_create`, `domain_delete`                           | `manage:write` | all         | none         | none         |
-| `user_list`, `user_get`                                    | `manage:read`  | all         | own domain   | none         |
-| `user_create`, `user_update`, `user_delete`                | `manage:write` | all         | own domain   | none         |
-| `alias_list`, `alias_get`                                  | `manage:read`  | all         | own domain   | none         |
-| `alias_create`, `alias_update`, `alias_delete`             | `manage:write` | all         | own domain   | none         |
-| `fetchmail_list`, `fetchmail_get`                          | `manage:read`  | all         | own domain   | own accounts |
-| `fetchmail_create`, `fetchmail_update`, `fetchmail_delete` | `manage:write` | all         | own domain   | own accounts |
-| `dkim_status`                                              | `manage:read`  | all         | none         | none         |
-| `dkim_enable`, `dkim_disable`, `dkim_recreate_key`         | `manage:write` | all         | none         | none         |
-| `dns_validate`                                             | `manage:read`  | all domains | own domain   | none         |
-| `mailbox_list`, `message_search`, `message_get`            | `mail:read`    | own mailbox | own mailbox  | own mailbox  |
-| `message_send`                                             | `mail:send`    | own address | own address  | own address  |
+| Tool                                                       | Scope          |
+| ---------------------------------------------------------- | -------------- |
+| `whoami`                                                   | _(none)_       |
+| `domain_list`                                              | `manage:read`  |
+| `domain_create`, `domain_delete`                           | `manage:write` |
+| `user_list`, `user_get`                                    | `manage:read`  |
+| `user_create`, `user_update`, `user_delete`                | `manage:write` |
+| `alias_list`, `alias_get`                                  | `manage:read`  |
+| `alias_create`, `alias_update`, `alias_delete`             | `manage:write` |
+| `fetchmail_list`, `fetchmail_get`                          | `manage:read`  |
+| `fetchmail_create`, `fetchmail_update`, `fetchmail_delete` | `manage:write` |
+| `dkim_status`                                              | `manage:read`  |
+| `dkim_enable`, `dkim_disable`, `dkim_recreate_key`         | `manage:write` |
+| `dns_validate`                                             | `manage:read`  |
+| `mailbox_list`, `message_search`, `message_get`            | `mail:read`    |
+| `message_send`                                             | `mail:send`    |
 
-The mail tools also need `MCP_MAIL_READ_ENABLED` or `MCP_MAIL_SEND_ENABLED`, and no mail tool takes a mailbox user as an argument.
+`whoami` is available to every role. The mail tools also need `MCP_MAIL_READ_ENABLED` or `MCP_MAIL_SEND_ENABLED`, and no mail tool takes a mailbox user as an argument.
 
 ### Rules for all tools
 
 - `tools/list` only shows the tools a token can use, given its scopes, its owner's role and the feature flags. Calls are checked the same way.
 - Missing scopes, denied objects and objects that do not exist all answer `Not found or not allowed.`, so other domains cannot be probed.
 - Password hashes, passwords, fetchmail passwords and DKIM private keys never appear in tool output.
+- Arguments and result fields are named in snake_case.
 
 ### Pagination
 
@@ -90,7 +91,7 @@ The mail tools also need `MCP_MAIL_READ_ENABLED` or `MCP_MAIL_SEND_ENABLED`, and
 - `user_update` keeps the role and `enabled` state of the owner's own user. A changed password revokes that user's tokens, including the calling token if the user is its owner. Disabling a user revokes their tokens.
 - `user_delete` refuses the owner's own user.
 - `fetchmail_create` and `fetchmail_update` accept a password that can never be read back.
-- `dkim_enable` creates a key if the domain has none. `dkim_disable` keeps the key. `dkim_recreate_key` only runs with `confirm` set to `true`, because the published DNS record stops matching.
+- `dkim_enable` creates a key if the domain has none. `dkim_disable` keeps the key. `dkim_recreate_key` only runs with `confirm` set to `true`, because the published DNS record stops matching. All DKIM tools report the published record under a DNS budget of 10 seconds: with `timed_out` set to `true`, `record_found` and `record_valid` are `null` and nothing is known about the record.
 - `dns_validate` works through the domains in pages, with a budget of 20 seconds per call. Domains listed in `timed_out` were not checked, so nothing is known about their records.
 
 ### Mail read tools
@@ -109,7 +110,7 @@ Recipients must be plain addresses such as `name@example.com`. A non-ASCII chara
 
 | Result field       | Meaning                                                                                    |
 | ------------------ | ------------------------------------------------------------------------------------------ |
-| `sent`             | `true`: the mail has gone out, whatever the rest says. Do not send it again                |
+| `sent`             | `true`: the mail has gone out, whatever the rest says                                      |
 | `message_id`       | The Message-ID of the mail                                                                 |
 | `recipients`       | All recipients, including `bcc`                                                            |
 | `sent_copy.status` | `saved`, `skipped` (send-only user, no copy is kept) or `failed` (the mail still went out) |
@@ -134,13 +135,13 @@ All connections to Dovecot and Postfix come from the address of the `web` contai
 
 Every tool call writes one JSON record with the message `MCP tool call` on the channel `mcp_audit`, to the standard error of the `web` container.
 
-| Field                                   | Content                                                          |
-| --------------------------------------- | ---------------------------------------------------------------- |
-| `token_id`, `user_id`, `user`           | The token and its owner                                          |
-| `tool`                                  | The tool name                                                    |
-| `target`                                | The object, for example `domain:example.com`                     |
-| `result`                                | `ok`, `denied`, `failed` or `error`                              |
-| `client_ip`                             | The client address, which needs `TRUSTED_PROXIES` behind a proxy |
-| `recipients`, `message_id`, `sent_copy` | `message_send` only                                              |
+| Field                                   | Content                                                                                                    |
+| --------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| `token_id`, `user_id`, `user`           | The token and its owner                                                                                    |
+| `tool`                                  | The tool name                                                                                              |
+| `target`                                | The object the call names, for example `domain:example.com`, also on a denied call. Empty if it names none |
+| `result`                                | `ok`, `denied`, `failed` or `error`                                                                        |
+| `client_ip`                             | The client address, which needs `TRUSTED_PROXIES` behind a proxy                                           |
+| `recipients`, `message_id`, `sent_copy` | `message_send` only                                                                                        |
 
 The audit log never contains mail bodies, passwords or tokens. The error log is a separate matter, see [failing calls](../explanation/mcp-server.md#failing-calls-can-write-secrets-to-the-error-log).

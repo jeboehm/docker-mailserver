@@ -42,6 +42,7 @@ nav:
       - Configure Roundcube plugins: how-to/configure-roundcube-plugins.md
       - Configure PHP sessions: how-to/configure-php-sessions.md
       - Configure the MCP server: how-to/configure-mcp-server.md
+      - Revoke an MCP API token: how-to/revoke-mcp-api-token.md
       - Manage domains: how-to/manage-domains.md
       - Manage users: how-to/manage-users.md
       - Manage aliases: how-to/manage-aliases.md

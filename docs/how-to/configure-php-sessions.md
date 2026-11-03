@@ -37,6 +37,6 @@ volumes:
 
 ## After upgrading with custom values
 
-If you had set custom values, users should have to log in to the management interface once after upgrading, because admin logins are now looked up in Redis. This is inferred from how the session store changed and has not been tried on a real upgrade. See [Upgrade changelog](../reference/upgrade-changelog.md).
+If you had set custom values, users are expected to have to log in to the management interface once after upgrading, because admin logins are now looked up in Redis. This follows from how the session store changed; no upgrade of a running installation has been tested. See [Upgrade changelog](../reference/upgrade-changelog.md).
 
 For variable reference, see [Environment variables reference](../reference/environment-variables.md#php-sessions).

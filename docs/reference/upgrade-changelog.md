@@ -18,7 +18,7 @@ The workloads read both objects through `envFrom`, so they see the same variable
 
 The MCP server is new and off by default, see [How to configure the MCP server](../how-to/configure-mcp-server.md). Nothing changes unless you enable it. New variables are listed in the [environment variables reference](environment-variables.md#mcp-server); copy the `MCP_*` block from `.env.dist` to `.env`.
 
-Reading and sending mail through it (`MCP_MAIL_READ_ENABLED`, `MCP_MAIL_SEND_ENABLED`) requires the first docker-mailserver release that contains the `mailbox_credentials` passdb. Upgrade `mda` and `web` together before you set either flag.
+Reading and sending mail through it (`MCP_MAIL_READ_ENABLED`, `MCP_MAIL_SEND_ENABLED`) requires the first docker-mailserver release that contains the `mailbox_credentials` passdb. The `mda` service has to be upgraded before either flag is set.
 
 ### mailserver-admin: PHP_SESSION\_\* no longer apply
 
@@ -27,7 +27,7 @@ From the mailserver-admin release that adds the MCP server, `PHP_SESSION_SAVE_HA
 - **Default values:** existing logins should stay valid.
 - **Custom `PHP_SESSION_*` values:** admin logins kept elsewhere are no longer found, so users should have to log in once after upgrading. Old session data stays where it was and is not migrated.
 
-Both follow from how the session store changed and have not been tried on a real upgrade.
+Both are expected from how the session store changed. No upgrade of a running installation has been tested.
 
 ## v7.x to v8.0
 
