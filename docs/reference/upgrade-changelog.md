@@ -20,7 +20,7 @@ The MCP server is new and on by default, including reading and sending mail, see
 
 ### mailserver-admin: PHP_SESSION\_\* no longer apply
 
-From the mailserver-admin release that adds the MCP server, `PHP_SESSION_SAVE_HANDLER` and `PHP_SESSION_SAVE_PATH` no longer affect it, only Roundcube's PHP side. Admin logins are always kept in the Redis of `REDIS_HOST`, `REDIS_PORT` and `REDIS_PASSWORD`, under the same key prefix as PHP's default handler.
+From mailserver-admin 5.20.0, `PHP_SESSION_SAVE_HANDLER` and `PHP_SESSION_SAVE_PATH` no longer affect it, only Roundcube's PHP side. Admin logins are always kept in the Redis of `REDIS_HOST`, `REDIS_PORT` and `REDIS_PASSWORD`, under the same key prefix as PHP's default handler.
 
 - **Default values:** existing logins should stay valid.
 - **Custom `PHP_SESSION_*` values:** admin logins kept elsewhere are no longer found, so users should have to log in once after upgrading. Old session data stays where it was and is not migrated.
