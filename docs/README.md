@@ -28,7 +28,7 @@ The documentation is organised by purpose:
 - **Client provisioning:** Configuration profiles for iOS and macOS, plus assisted client configuration in Outlook and Thunderbird
 - **DNS Validation Wizard:** Checks all mail-related DNS records for your domains
 - **External mail retrieval:** Fetchmail integration for retrieving emails from external providers
-- **MCP server:** Optional endpoint for agents to manage the server and read and send the user's own mail
+- **MCP server:** Endpoint for agents to manage the server and read and send the user's own mail
 - **Email authentication:** DKIM message signing for email authenticity
 - **Spam filtering:** Server-side mail filtering with configurable rules via web frontend
 - **Spam training:** Train spam filters by moving emails to or from the junk folder

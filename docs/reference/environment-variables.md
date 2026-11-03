@@ -194,17 +194,17 @@ Read by mailserver-admin. See [How to configure the MCP server](../how-to/config
 
 | Variable                      | Default                     | Description                                                                                                                                      |
 | ----------------------------- | --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `MCP_ENABLED`                 | `false`                     | Enables the endpoint `/mcp` and the API token pages. Otherwise both answer `404`                                                                 |
+| `MCP_ENABLED`                 | `true`                      | Enables the endpoint `/mcp` and the API token pages. Otherwise both answer `404`                                                                 |
 | `MCP_ALLOWED_HOSTS`           | `localhost,127.0.0.1,[::1]` | Comma-separated hostnames the endpoint answers for, without a port. Matched against the raw `Host` header, so a reverse proxy has to preserve it |
 | `MCP_TOKEN_MAX_LIFETIME_DAYS` | `90`                        | Default and maximum lifetime of an API token, in days. Applies when a token is created                                                           |
 
-The defaults are those of mailserver-admin. `.env.dist` ships the same values, except for `MCP_ALLOWED_HOSTS=mail.example.com`.
+`.env.dist` ships the same values, except for `MCP_ALLOWED_HOSTS=mail.example.com`.
 
 Reading mail:
 
 | Variable                     | Default | Description                                                                                                                |
 | ---------------------------- | ------- | -------------------------------------------------------------------------------------------------------------------------- |
-| `MCP_MAIL_READ_ENABLED`      | `false` | Enables `mailbox_list`, `message_search` and `message_get`                                                                 |
+| `MCP_MAIL_READ_ENABLED`      | `true`  | Enables `mailbox_list`, `message_search` and `message_get`                                                                 |
 | `MCP_MAIL_MAX_IMAP_SESSIONS` | `5`     | Parallel IMAP sessions per user. Dovecot's `mail_max_userip_connections` of 10, which Roundcube shares, is the upper bound |
 | `MCP_MAIL_MESSAGE_MAX_BYTES` | `65536` | Size limit of the body `message_get` returns                                                                               |
 | `MDA_IMAP_TIMEOUT_SECONDS`   | `25`    | IMAP client timeout. The longest auth penalty is 15 seconds                                                                |
@@ -213,15 +213,13 @@ Sending mail:
 
 | Variable                                | Default   | Description                                                                                                                                                                                                |
 | --------------------------------------- | --------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `MCP_MAIL_SEND_ENABLED`                 | `false`   | Enables `message_send`                                                                                                                                                                                     |
+| `MCP_MAIL_SEND_ENABLED`                 | `true`    | Enables `message_send`                                                                                                                                                                                     |
 | `MCP_MAIL_SEND_MAX_RECIPIENTS`          | `20`      | Recipients per mail, across `to`, `cc` and `bcc`                                                                                                                                                           |
 | `MCP_MAIL_SEND_MAX_BYTES`               | `1048576` | Size limit of a sent message as it goes over the wire                                                                                                                                                      |
 | `MCP_MAIL_SEND_TOKEN_LIMIT_PER_HOUR`    | `30`      | Sends per API token                                                                                                                                                                                        |
 | `MCP_MAIL_SEND_USER_LIMIT_PER_HOUR`     | `60`      | Sends per user, across their tokens                                                                                                                                                                        |
 | `MCP_MAIL_SEND_GLOBAL_LIMIT_PER_MINUTE` | `15`      | Sends per rolling minute across everyone. Postfix's 20 connections per minute per client address, which Roundcube shares, are the upper bound. A third of it is available at once, the rest refills evenly |
 | `MTA_SMTP_TIMEOUT_SECONDS`              | `25`      | SMTP client timeout. The longest auth penalty is 15 seconds                                                                                                                                                |
-
-`MCP_MAIL_READ_ENABLED` and `MCP_MAIL_SEND_ENABLED` both require the first docker-mailserver release that contains the `mailbox_credentials` passdb.
 
 ### PHP Sessions
 

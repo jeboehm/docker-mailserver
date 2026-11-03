@@ -1,6 +1,6 @@
 # MCP Server: Risks and Limitations
 
-The MCP server lets an agent act with the role of a user and, if enabled, read and send that user's mail. The tool layer enforces the same role rules as the web interface, but it cannot make the agent trustworthy. This page describes what remains. To set it up, see [How to configure the MCP server](../how-to/configure-mcp-server.md).
+The MCP server lets an agent act with the role of a user and read and send that user's mail. The tool layer enforces the same role rules as the web interface, but it cannot make the agent trustworthy. This page describes what remains. To set it up, see [How to configure the MCP server](../how-to/configure-mcp-server.md).
 
 ## Risks
 
