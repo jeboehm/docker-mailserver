@@ -228,7 +228,7 @@ Sending mail:
 | `PHP_SESSION_SAVE_HANDLER` | `redis`                                                    | `session.save_handler` for Roundcube's PHP side |
 | `PHP_SESSION_SAVE_PATH`    | `tcp://${REDIS_HOST}:${REDIS_PORT}?auth=${REDIS_PASSWORD}` | `session.save_path` for Roundcube's PHP side    |
 
-These variables no longer affect mailserver-admin, only Roundcube's PHP side. Since the mailserver-admin release that adds the MCP server, it defines its own session handler and keeps admin logins and MCP sessions in Redis (`REDIS_HOST`, `REDIS_PORT`, `REDIS_PASSWORD`), whatever these variables say. See [How to configure PHP sessions](../how-to/configure-php-sessions.md).
+These variables no longer affect mailserver-admin, only Roundcube's PHP side. Since mailserver-admin 5.20.0, it defines its own session handler and keeps admin logins and MCP sessions in Redis (`REDIS_HOST`, `REDIS_PORT`, `REDIS_PASSWORD`), whatever these variables say. See [How to configure PHP sessions](../how-to/configure-php-sessions.md).
 
 ### Proxy Protocol
 

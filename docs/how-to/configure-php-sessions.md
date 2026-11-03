@@ -2,7 +2,7 @@
 
 `PHP_SESSION_SAVE_HANDLER` and `PHP_SESSION_SAVE_PATH` set PHP's session handler for Roundcube's PHP side. You can switch from Redis to file-based or another handler.
 
-These variables do not affect mailserver-admin. Since the release that adds the MCP server, it keeps admin logins and MCP sessions in Redis through its own handler, so you cannot move them with these variables and changing them does not log anyone out of the management interface.
+These variables do not affect mailserver-admin. Since mailserver-admin 5.20.0, it keeps admin logins and MCP sessions in Redis through its own handler, so you cannot move them with these variables and changing them does not log anyone out of the management interface.
 
 They set PHP's default handler only. Roundcube keeps its own login sessions as its `session_storage` setting says, which this image leaves at Roundcube's default of `db`.
 
