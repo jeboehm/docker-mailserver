@@ -163,7 +163,7 @@ These configure the `ssl` container, which generates a self-signed certificate w
 | `FILTER_WEB_ADDRESS`          | `filter:11334`             | RSpamd web interface address            |
 | `MDA_AUTH_ADDRESS`            | `mda:2004`                 | Dovecot authentication service address  |
 | `MDA_IMAP_ADDRESS`            | `mda:31143`                | Dovecot IMAP service address            |
-| `MDA_IMAPS_ADDRESS`           | _(unset)_                  | Dovecot IMAPS service address           |
+| `MDA_IMAPS_ADDRESS`           | `mda:31993`                | Dovecot IMAPS service address           |
 | `MDA_POP3_ADDRESS`            | _(unset)_                  | Dovecot POP3 service address            |
 | `MDA_POP3S_ADDRESS`           | _(unset)_                  | Dovecot POP3S service address           |
 | `MDA_LMTP_ADDRESS`            | `mda:2003`                 | Dovecot LMTP service address            |

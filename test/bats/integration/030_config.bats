@@ -24,6 +24,29 @@ setup() {
 	assert_success
 }
 
+@test "Check dovecot allows # in logins" {
+	run exec_in_service mda doveconf -n
+	assert_success
+	assert_output --partial 'auth_username_chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890.-_@#"'
+}
+
+@test "Check dovecot asks the filtered, uncached credential passdb before the password passdb" {
+	run exec_in_service mda doveconf -n
+	assert_success
+	local config="${output}"
+
+	run grep -E '^passdb ' <<<"${config}"
+	assert_success
+	assert_line --index 0 'passdb mailbox_credentials {'
+	assert_line --index 1 'passdb sql {'
+
+	run sed -n '/^passdb mailbox_credentials {/,/^}/p' <<<"${config}"
+	assert_success
+	assert_output --partial 'username_filter = "cred#*"'
+	assert_output --partial 'use_cache = no'
+	assert_output --partial 'driver = sql'
+}
+
 @test "Check rspamd configuration" {
 	run exec_in_service filter rspamadm configtest
 	assert_success

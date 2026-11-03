@@ -4,6 +4,12 @@ setup() {
 	load '_helper'
 }
 
+@test "web knows the implicit TLS address of the mda" {
+	run exec_in_service web printenv MDA_IMAPS_ADDRESS
+	assert_success
+	assert_output "${MDA_IMAPS_ADDRESS}"
+}
+
 @test "http connection to manager web interface" {
 	run curl -fsSL "http://${WEB_HTTP_ADDRESS}/"
 	assert_success

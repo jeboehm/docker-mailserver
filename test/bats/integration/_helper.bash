@@ -30,6 +30,14 @@ skip_without_relayhost() {
 	fi
 }
 
+# The credentials table belongs to mailserver-admin, so these checks can only
+# run once the release in the web image ships it.
+skip_without_mailbox_credentials() {
+	if ! db_query "SELECT 1 FROM mail_mailbox_credentials LIMIT 1;" >/dev/null 2>&1; then
+		skip "mailserver-admin does not ship mail_mailbox_credentials yet"
+	fi
+}
+
 # ---------------------------------------------------------------------------
 # Services
 # ---------------------------------------------------------------------------
@@ -430,6 +438,29 @@ db_query() {
 			--password="${DB_PASSWORD}" -h "${DB_HOST}" -P "${DB_PORT}" \
 			"${DB_NAME}" -e "$1"
 	fi
+}
+
+# Store a short-lived mailbox credential the way mailserver-admin does and print
+# its secret. The expiry comes from the database clock, which Dovecot compares with.
+# Usage: mailbox_credential <user> <domain> <allow_imap> <allow_smtp> [seconds until expiry]
+mailbox_credential() {
+	local secret hash
+
+	secret="$(mail_needle | sha256sum | cut -d' ' -f1)"
+	hash="$(printf '%s' "${secret}" | sha256sum | cut -d' ' -f1)"
+
+	db_query "INSERT INTO mail_mailbox_credentials (user_id, secret_hash, kind, allow_imap, allow_smtp, expires_at, created_at)
+		SELECT mail_users.id, '${hash}', 'short_lived', $3, $4, CURRENT_TIMESTAMP + INTERVAL '${5:-60}' SECOND, CURRENT_TIMESTAMP
+		FROM mail_users JOIN mail_domains ON mail_users.domain_id = mail_domains.id
+		WHERE mail_users.name = '$1' AND mail_domains.name = '$2';" >/dev/null || return $?
+
+	echo "${secret}"
+}
+
+# Remove the short-lived mailbox credentials the tests stored.
+# Usage: mailbox_credentials_clear
+mailbox_credentials_clear() {
+	db_query "DELETE FROM mail_mailbox_credentials WHERE kind = 'short_lived';"
 }
 
 # Run a redis command.
