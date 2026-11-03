@@ -13,8 +13,6 @@ teardown() {
 }
 
 @test "a mailbox credential for smtp submits mail and does not log in on imap" {
-	skip_without_mailbox_credentials
-
 	secret="$(mailbox_credential admin example.com false true)"
 
 	run send_mail --server "${MTA_SMTP_SUBMISSION_ADDRESS}" --tls --auth-user 'cred#admin@example.com' --auth-password "${secret}" --from admin@example.com --to admin@example.com
@@ -25,8 +23,6 @@ teardown() {
 }
 
 @test "a mailbox credential logs in as its user on imap and nowhere else" {
-	skip_without_mailbox_credentials
-
 	secret="$(mailbox_credential admin example.com true false)"
 
 	run mail_count imap "${MDA_IMAP_ADDRESS}" 'cred#admin@example.com' "${secret}"
@@ -40,8 +36,6 @@ teardown() {
 }
 
 @test "an expired mailbox credential does not log in" {
-	skip_without_mailbox_credentials
-
 	secret="$(mailbox_credential admin example.com true false -1)"
 
 	run mail_count imap "${MDA_IMAP_ADDRESS}" 'cred#admin@example.com' "${secret}"
@@ -49,8 +43,6 @@ teardown() {
 }
 
 @test "a mailbox credential does not read the mailbox of a send-only user" {
-	skip_without_mailbox_credentials
-
 	secret="$(mailbox_credential sendonly example.com true false)"
 
 	run mail_count imap "${MDA_IMAP_ADDRESS}" 'cred#sendonly@example.com' "${secret}"
