@@ -10,16 +10,16 @@ The MCP endpoint of mailserver-admin. For setup, see [How to configure the MCP s
 | Transport       | MCP Streamable HTTP                                    |
 | Authentication  | `Authorization: Bearer <token>`                        |
 | Session storage | Redis, so requests can reach any replica of `web`      |
-| Enabled by      | `MCP_ENABLED=true`                                     |
+| Enabled by      | `MCP_ENABLED`, on by default                           |
 | Hostnames       | `MCP_ALLOWED_HOSTS`, matched against the `Host` header |
 
 ### HTTP responses
 
-| Status | Cause                                                                                                                       |
-| ------ | --------------------------------------------------------------------------------------------------------------------------- |
-| `401`  | Missing, unknown, expired or revoked token, or a disabled owner. Carries `WWW-Authenticate: Bearer`                         |
-| `403`  | With a valid token: the `Host` header is not in `MCP_ALLOWED_HOSTS`, or an `Origin` header names another origin             |
-| `404`  | `MCP_ENABLED` is not `true`, for every HTTP method. The API token pages answer the same way, and their menu entry is hidden |
+| Status | Cause                                                                                                                    |
+| ------ | ------------------------------------------------------------------------------------------------------------------------ |
+| `401`  | Missing, unknown, expired or revoked token, or a disabled owner. Carries `WWW-Authenticate: Bearer`                      |
+| `403`  | With a valid token: the `Host` header is not in `MCP_ALLOWED_HOSTS`, or an `Origin` header names another origin          |
+| `404`  | `MCP_ENABLED` is `false`, for every HTTP method. The API token pages answer the same way, and their menu entry is hidden |
 
 The `Host` match ignores case and port. `X-Forwarded-Host` is not considered.
 
@@ -66,7 +66,7 @@ Which role reaches which tools and objects is listed in [User roles](user-roles.
 | `mailbox_list`, `message_search`, `message_get`            | `mail:read`    |
 | `message_send`                                             | `mail:send`    |
 
-`whoami` is available to every role. The mail tools also need `MCP_MAIL_READ_ENABLED` or `MCP_MAIL_SEND_ENABLED`, and no mail tool takes a mailbox user as an argument.
+`whoami` is available to every role. `MCP_MAIL_READ_ENABLED` and `MCP_MAIL_SEND_ENABLED` switch off the mail tools, and no mail tool takes a mailbox user as an argument.
 
 ### Rules for all tools
 
