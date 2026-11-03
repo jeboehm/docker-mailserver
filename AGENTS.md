@@ -117,16 +117,19 @@ pass their arguments to `docker compose` (`bin/test.sh logs -f filter`, `bin/tes
   `test/report/`).
 - Tests live in `test/bats/integration/NNN_<topic>.bats` and run in numeric order. Every test is self-contained: it
   sends its own mail with a body from `mail_needle` (unique per test and bats run, so mails left in the persistent
-  Maildir by earlier runs never match) and polls for the outcome instead of sleeping. Only loose ordering remains
-  (`060_mda.bats` counts the mails that `040_mta.bats` delivered).
+  Maildir by earlier runs never match) and polls for the outcome instead of sleeping. Only loose ordering remains:
+  `060_mda.bats` counts the mails that `040_mta.bats` delivered, and `120_mailbox_credentials.bats` comes last because
+  its refused logins delay later ones from the same address (Dovecot's auth penalty).
 - `_helper.bash` is loaded with `load '_helper'` in `setup()`; it loads bats-support and bats-assert itself, so use
   `assert_success`, `assert_failure [status]` and `assert_output` rather than `[ "$status" -eq 0 ]`. It provides
-  skips (`skip_in_kubernetes`, `skip_in_non_kubernetes`, `skip_without_relayhost`), service access that works on
+  skips (`skip_in_kubernetes`, `skip_in_non_kubernetes`, `skip_without_relayhost`,
+  `skip_without_mailbox_credentials`), service access that works on
   both platforms (`exec_in_service`, `service_logs`, `service_log_count`, `service_logs_contain`; Kubernetes
   container names differ from the service names, see `kubernetes_container`), polling (`wait_for`, `wait_for_log`,
   `wait_for_mail`, which prints the file it found), mail inspection (`mail_needle`, `maildir`, `find_mail`,
   `mail_header` for unfolded header values), mailbox state through doveadm in `mda` (`mailbox_reset`,
-  `quota_percentage`) and clients (`send_mail` builds the message and sends it with `curl`, retrying when Postfix's
+  `quota_percentage`), short-lived login credentials stored in the database (`mailbox_credential`,
+  `mailbox_credentials_clear`) and clients (`send_mail` builds the message and sends it with `curl`, retrying when Postfix's
   connection rate limit of 20 per minute and client answers `421`; `smtp_ehlo` prints the EHLO capabilities;
   `mail_count` and `mail_move` are the IMAP/POP3 clients; `db_query` prints rows only, `redis_cli`, `dns_query`
   against unbound, `tls_connect`, `tls_fingerprint`). Each function documents its arguments in a comment. Tests

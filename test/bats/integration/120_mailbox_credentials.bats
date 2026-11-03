@@ -1,8 +1,8 @@
 #!/usr/bin/env bats
 
-# Runs last on purpose. Every refused login delays the next logins from this address
-# (Dovecot's auth penalty), and under that penalty submission can answer with a
-# temporary failure, which would break whatever test sends mail next.
+# Numbered last, see the ordering note in AGENTS.md: every refused login delays the
+# next logins from this address (Dovecot's auth penalty), and under that penalty
+# submission can answer with a temporary failure, which would break a test sending mail.
 
 setup() {
 	load '_helper'
@@ -59,5 +59,5 @@ teardown() {
 
 @test "the password of a user does not log in with the credential prefix" {
 	run mail_count imap "${MDA_IMAP_ADDRESS}" 'cred#admin@example.com' changeme
-	assert_failure
+	assert_failure 67
 }
