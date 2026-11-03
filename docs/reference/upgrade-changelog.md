@@ -16,7 +16,9 @@ The workloads read both objects through `envFrom`, so they see the same variable
 
 ### MCP server
 
-The MCP server is new and on by default, including reading and sending mail, see [How to configure the MCP server](../how-to/configure-mcp-server.md). It only acts for API tokens, which users have to create first, and it answers only for the hostnames in `MCP_ALLOWED_HOSTS`. Copy the `MCP_*` block from `.env.dist` to `.env` and set `MCP_ALLOWED_HOSTS` to your hostname. To turn it off, set `MCP_ENABLED=false`. New variables are listed in the [environment variables reference](environment-variables.md#mcp-server).
+The MCP server is new and on by default, including reading and sending mail, see [How to configure the MCP server](../how-to/configure-mcp-server.md). It only acts for API tokens, which users have to create first, and it answers only for the hostnames in `MCP_ALLOWED_HOSTS`.
+
+Copy the `MCP_*` block from `.env.dist` to `.env` and set `MCP_ALLOWED_HOSTS` to your hostname. To turn it off, set `MCP_ENABLED=false`. New variables are listed in the [environment variables reference](environment-variables.md#mcp-server).
 
 ### mailserver-admin: PHP_SESSION\_\* no longer apply
 
