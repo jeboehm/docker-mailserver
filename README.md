@@ -28,6 +28,7 @@ The documentation includes:
 - Secure email protocols: POP3, IMAP, and SMTP with user authentication
 - Web-based management interface for account, domain, and alias administration
 - Integrated webmail interface
+- MCP server that lets agents manage the server and read and send the user's own mail
 - DKIM message signing and spam filtering with Rspamd
 - Real-time spam prevention using RBLs (Real-Time Blackhole Lists)
 - Spam training by moving messages into and out of the Junk folder
