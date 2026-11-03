@@ -48,7 +48,8 @@ domains, users, aliases, DKIM and fetchmail accounts.
   `bin/` ships in the release tarball, the `Makefile` does not, so user-facing steps live here.
 - `test/bats/` — test runner image and BATS integration tests; `test/k8s/` — Kubernetes test overlay and test job;
   `test/schema/` — JSON schema check of the pod security contexts; `test/super-linter/` — lint runner.
-- `docs/` — MkDocs documentation, configured by `.mkdocs.yaml` in the root. See `docs/AGENTS.md`.
+- `docs/` — MkDocs documentation, configured by `.mkdocs.yaml` in the root. See `docs/AGENTS.md`. `docs/agents/` and
+  `docs/adr/` hold agent and decision records and are excluded from the published site.
 - `.github/` — workflows, helper scripts (`bin/`), composite actions, linter configuration (`linters/`), CI test matrix
   (`test-matrix/*.env`) and the list of third-party test images (`images.txt`).
 - `.env.dist` — canonical list of user-facing environment variables; `make .env` copies it to the git-ignored `.env`.
@@ -232,3 +233,17 @@ shell scripts.
   `target/mda/rootfs/usr/local/lib/rspamc.sh` to the Rspamd controller (`FILTER_WEB_ADDRESS`, `CONTROLLER_PASSWORD`).
 - **TLS:** `ssl` writes a self-signed certificate for `MAILNAME` into `data-tls`, which `mta`, `mda`, `web` (and mailpit
   in tests) mount read-only. See `docs/how-to/configure-tls.md` for real certificates.
+
+## Agent skills
+
+### Issue tracker
+
+Issues live in GitHub Issues on `jeboehm/docker-mailserver`, accessed with the `gh` CLI. See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+The five default labels, each named after its role: `needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix`. See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Single-context: one `GLOSSARY.md` and `docs/adr/` at the repository root, created when first needed. See `docs/agents/domain.md`.
