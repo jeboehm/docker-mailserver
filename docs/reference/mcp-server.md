@@ -77,12 +77,14 @@ Which role reaches which tools and objects is listed in [User roles](user-roles.
 
 ### Pagination
 
-| Tools                                                      | Default limit | Maximum | Out of range                    |
-| ---------------------------------------------------------- | ------------- | ------- | ------------------------------- |
-| `domain_list`, `user_list`, `alias_list`, `fetchmail_list` | 50            | 100     | Corrected; the answer states it |
-| `mailbox_list`                                             | 50            | 100     | Refused                         |
-| `message_search`                                           | 20            | 100     | Refused                         |
-| `dns_validate`, by `next_cursor` instead of an offset      | 10            | 50      | Refused                         |
+A limit or offset out of range is refused rather than corrected.
+
+| Tools                                                      | Default limit | Maximum |
+| ---------------------------------------------------------- | ------------- | ------- |
+| `domain_list`, `user_list`, `alias_list`, `fetchmail_list` | 50            | 100     |
+| `mailbox_list`                                             | 50            | 100     |
+| `message_search`                                           | 20            | 100     |
+| `dns_validate`, by `next_cursor` instead of an offset      | 10            | 50      |
 
 ### Management tools
 

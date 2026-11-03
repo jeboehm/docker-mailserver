@@ -10,6 +10,7 @@ mailserver-admin defines three roles with different permissions.
 ## Domain Admin
 
 - Manage users, aliases, and fetchmail within their assigned domain only
+- Can read users with the admin flag in their own domain, but cannot change or delete them, including resetting their password or disabling them. Only admins can change or delete an admin.
 - Cannot add, edit, or delete domains
 - Cannot manage DKIM
 
@@ -39,7 +40,7 @@ A call to the [MCP server](mcp-server.md) succeeds only if the API token carries
 | DNS validation                               | all domains | own domain   | no           |
 | Mail: read, send                             | own mailbox | own mailbox  | own mailbox  |
 
-The same rules as in the web interface apply: only admins can set `admin` or choose a domain, users cannot change their own role or `enabled` state or delete themselves, and only empty domains can be deleted. Mail tools refuse disabled users, and the read tools also refuse send-only users.
+The same rules as in the web interface apply: only admins can set `admin`, choose a domain, or change or delete a user with the admin flag, users cannot change their own role or `enabled` state or delete themselves, and only empty domains can be deleted. Mail tools refuse disabled users, and the read tools also refuse send-only users.
 
 | API tokens           | Admin | Domain Admin | User |
 | -------------------- | ----- | ------------ | ---- |
