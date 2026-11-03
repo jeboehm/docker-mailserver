@@ -2,13 +2,7 @@
 
 mailserver-admin can offer an [MCP](https://modelcontextprotocol.io) endpoint, so that an agent can manage domains, users, aliases, fetchmail accounts and DKIM, run DNS validation, and read and send mail in the mailbox of the token's owner. It is off by default.
 
-## Risks: read this first
-
-- **Prompt injection.** Anyone who can send you mail can put instructions in front of an agent that reads it. A client holding `mail:read` and `mail:send` can be made to send your mail to someone else. Do not give one token both scopes unless a person approves every send.
-- **Passwords pass through the agent.** `user_create`, `user_update`, `fetchmail_create` and `fetchmail_update` take a password as an argument. It ends up in the agent's context, and with whoever hosts the model and keeps the client's history.
-- **Failing calls can write secrets to the error log.** A failing call can write all its tool arguments to the log in clear text, including passwords and mail bodies. Treat the logs of the `web` container as sensitive.
-
-See [MCP server: risks and limitations](../explanation/mcp-server.md).
+**Read [MCP server: risks and limitations](../explanation/mcp-server.md) first.** Mail can put instructions in front of an agent that reads it, passwords given to a tool pass through the agent, and a failing call can write its arguments to the error log.
 
 ## Prerequisites
 
@@ -45,7 +39,7 @@ kubectl apply -k .
 kubectl rollout restart deployment/web
 ```
 
-`deploy/kustomize/common/configmap.yaml` holds the defaults. The web Deployment reads `config-env` after it, so values from `.env` win. An overlay with its own ConfigMap has to set both variables in `config-env` as well.
+An overlay with its own ConfigMap sets both variables in `config-env`.
 
 ### 3. Preserve the `Host` header
 
@@ -56,10 +50,13 @@ The endpoint matches the raw `Host` header, so a reverse proxy must pass it on u
 1. Log in to the management interface. This works with a local password and with OAuth2.
 2. Open **API tokens** in the menu, under **Security**.
 3. Click **Create API token**.
-4. Enter a name, choose the [scopes](../reference/mcp-server.md#scopes) and set the validity in days. `mail:send` is not preselected. Remove the scopes the agent does not need.
+4. Enter a name, choose the [scopes](../reference/mcp-server.md#scopes) and set the validity in days. Only `manage:read` and `mail:read` are preselected. Tick `manage:write` and `mail:send` if the agent needs them, and remove the scopes it does not need:
+   - Give an agent that reads mail no other scope.
+   - Use separate tokens, and separate agents, for reading, sending and managing.
+   - Do not use an admin's token for an agent that reads mail.
 5. Copy the token, which starts with `msa_`. It is only shown once.
 
-A token can do what its owner's current role allows, and only within its scopes. Use one token per agent, so that you can revoke them separately.
+Use one token per agent, so that you can [revoke them](revoke-mcp-api-token.md) separately.
 
 ### 5. Configure the client
 
@@ -81,7 +78,7 @@ For example, Claude Code reads this from `.mcp.json`:
 }
 ```
 
-Keep the token in the environment variable, not in a file you commit. If the client can ask for approval before a tool runs, require it for `message_send` and for the tools that write.
+Keep the token in the environment variable, not in a file you commit. If the client can ask for approval before a tool runs, require it for `message_send` and for the tools that write. If one client holds both `mail:read` and `mail:send`, have a person approve every send.
 
 ### 6. Optional: enable reading and sending mail
 
@@ -105,6 +102,11 @@ MCP_MAIL_SEND_ENABLED=true
 
 The two are independent. `message_send` also logs in over IMAP to keep a copy in the Sent mailbox, whether or not reading is enabled.
 
+### 7. Protect what passes through
+
+1. Restrict who can read the logs of the `web` container (`docker logs`, `kubectl logs`, log collectors) and how long they are kept.
+2. Set passwords in the web interface wherever the agent's context and its history must not hold them, or change them there afterwards.
+
 ## Verification
 
 Without a token, the endpoint answers `401` with `WWW-Authenticate: Bearer`. A `404` means `MCP_ENABLED` is not `true`:
@@ -124,9 +126,5 @@ curl -i https://mail.example.com/mcp \
 ```
 
 In the client, call the `whoami` tool. It returns the user, role, domain and the scopes of the token.
-
-## Revoke a token
-
-Open **API tokens** and click **Revoke**. Users revoke their own tokens, domain admins also those of users in their domain, and admins any token. A revoked or expired token gets `401` on its next request.
 
 For every tool, scope and limit, see [MCP server reference](../reference/mcp-server.md). For variables, see [Environment variables reference](../reference/environment-variables.md#mcp-server).
