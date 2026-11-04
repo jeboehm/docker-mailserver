@@ -2,6 +2,16 @@
 
 Version-specific upgrade notes. When upgrading, update manifests in `deploy/compose` and `deploy/kustomize` to match the new version (volumes, configuration). Update `.env` for new or changed environment variables.
 
+## v8.1.0
+
+### MCP server
+
+The MCP server is new and on by default, including reading and sending mail, see [How to configure the MCP server](../how-to/configure-mcp-server.md). It only acts for API tokens, which users have to create first, and it answers only for the hostnames in `MCP_ALLOWED_HOSTS`.
+
+Copy the `MCP_*` block from `.env.dist` to `.env` and set `MCP_ALLOWED_HOSTS` to your hostname. To turn it off, set `MCP_ENABLED=false`. New variables are listed in the [environment variables reference](environment-variables.md#mcp-server).
+
+With `MDA_UPSTREAM_PROXY=true`, also point `MDA_IMAPS_ADDRESS` at the proxy. The mail tools are the only user of this address, so existing setups may not set it. Without it, they report that the mailbox is busy.
+
 ## v8.0.x to later
 
 ### Kubernetes: credentials move from the ConfigMap into a Secret
@@ -13,12 +23,6 @@ It splits `.env` into `config/kubernetes/config.env` (ConfigMap `config-env`) an
 Without the script, `kubectl apply -k .` fails because `config/kubernetes/config.env` does not exist.
 
 The workloads read both objects through `envFrom`, so they see the same variables as before. Workloads of your own that read one of these keys with `configMapKeyRef` from `config-env` must switch to `secretKeyRef` from `secret-config-env`.
-
-### MCP server
-
-The MCP server is new and on by default, including reading and sending mail, see [How to configure the MCP server](../how-to/configure-mcp-server.md). It only acts for API tokens, which users have to create first, and it answers only for the hostnames in `MCP_ALLOWED_HOSTS`.
-
-Copy the `MCP_*` block from `.env.dist` to `.env` and set `MCP_ALLOWED_HOSTS` to your hostname. To turn it off, set `MCP_ENABLED=false`. New variables are listed in the [environment variables reference](environment-variables.md#mcp-server).
 
 ### mailserver-admin: PHP_SESSION\_\* no longer apply
 

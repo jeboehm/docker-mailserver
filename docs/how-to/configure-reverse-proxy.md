@@ -15,19 +15,17 @@ MTA_UPSTREAM_PROXY=true
 
 `MDA_UPSTREAM_PROXY` applies to IMAP, IMAPS, POP3, POP3S. `MTA_UPSTREAM_PROXY` applies to SMTP and submission (587).
 
-### 2. Set trusted proxies (if needed)
+### 2. Set trusted proxies
 
-If the web interface is behind a proxy, set trusted proxy IPs:
+Dovecot only accepts PROXY protocol connections from these networks, and the web interface uses the same variable. Use your proxy’s CIDR range(s):
 
 ```bash
 TRUSTED_PROXIES=10.0.0.0/8
 ```
 
-Use your proxy’s CIDR range(s).
-
 ### 3. Point internal addresses at the proxy
 
-When traffic goes through the proxy, configure internal service addresses to point at the proxy’s internal host/ports, not directly at MTA/MDA. Example for a Traefik internal service:
+With PROXY protocol enabled, connections without a PROXY header fail, including those from other services. Point the internal service addresses at the proxy, not directly at MTA/MDA. Example for a Traefik internal service:
 
 ```bash
 MDA_IMAP_ADDRESS=traefik-internal:33143
