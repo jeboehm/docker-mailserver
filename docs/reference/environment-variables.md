@@ -238,6 +238,6 @@ These variables no longer affect mailserver-admin, only Roundcube's PHP side. Si
 | `MTA_UPSTREAM_PROXY` | _(unset)_ | Enable Traefik / HAProxy PROXY protocol for MTA (Postfix) SMTP services      |
 | `TRUSTED_PROXIES`    | _(unset)_ | Networks allowed to send PROXY protocol headers                              |
 
-When set to `true`, the mail server accepts the HAProxy PROXY protocol to receive the original client IP when behind a load balancer or reverse proxy.
+When set to `true`, the mail server requires the HAProxy PROXY protocol on these ports, to receive the original client IP behind a load balancer or reverse proxy. Connections without it fail.
 
 `TRUSTED_PROXIES` sets Dovecot's `haproxy_trusted_networks`. Without it, Dovecot rejects PROXY protocol connections even when `MDA_UPSTREAM_PROXY` is enabled. The same variable configures trusted proxies in mailserver-admin, see [mailserver-admin configuration reference](mailserver-admin-config.md).
