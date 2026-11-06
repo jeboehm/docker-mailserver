@@ -68,7 +68,7 @@ RUN apk add --no-cache \
     postconf disable_vrfy_command=yes && \
     postconf smtpd_helo_required=yes && \
     postconf smtpd_forbid_bare_newline=yes && \
-    postconf 'smtpd_forbid_bare_newline_exclusions=$mynetworks' && \
+    postconf "smtpd_forbid_bare_newline_exclusions=\$mynetworks" && \
     postconf smtpd_helo_restrictions="permit_mynetworks, permit_sasl_authenticated, reject_invalid_helo_hostname" && \
     postconf smtpd_data_restrictions="permit_mynetworks, permit_sasl_authenticated, reject_unauth_pipelining" && \
     postconf local_recipient_maps = && \
@@ -80,6 +80,6 @@ COPY rootfs/ /
 EXPOSE 25 587
 VOLUME ["/var/spool/postfix"]
 
-HEALTHCHECK CMD /usr/local/bin/healthcheck.sh
+HEALTHCHECK CMD ["/usr/local/bin/healthcheck.sh"]
 ENTRYPOINT ["/entrypoint.sh"]
 CMD []

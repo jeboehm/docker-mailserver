@@ -8,7 +8,7 @@ ENV REDIS_HOST=redis \
     REDIS_PORT=6379 \
     RSPAMD_DNS_SERVERS="round-robin:unbound:5353"
 
-USER root
+USER 0:0
 
 RUN apt-get update && \
     apt-get install --no-install-recommends -y netcat-openbsd && \
@@ -16,8 +16,8 @@ RUN apt-get update && \
 
 COPY --chown=root:root rootfs/ /
 
-USER _rspamd
+USER 11333:11333
 
-HEALTHCHECK CMD /usr/local/bin/healthcheck.sh
+HEALTHCHECK CMD ["/usr/local/bin/healthcheck.sh"]
 ENTRYPOINT ["/entrypoint.sh"]
 CMD []
