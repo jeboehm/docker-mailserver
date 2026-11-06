@@ -4,6 +4,9 @@ LABEL maintainer="https://github.com/jeboehm/docker-mailserver"
 LABEL vendor="https://github.com/jeboehm/docker-mailserver"
 LABEL de.ressourcenkonflikt.docker-mailserver.autoheal="true"
 
+# RSPAMD_PASSWORD and DATABASE_URL only hold %env()% references that Symfony
+# resolves at runtime; the credentials themselves are never part of the image.
+# hadolint ignore=DL3064
 ENV DB_DRIVER=mysql \
     DB_HOST=db \
     DB_PORT=3306 \
@@ -36,9 +39,9 @@ RUN apk add --no-cache \
         curl && \
     ln -sf /tmp /home/app && \
     ARCH=$(uname -m) && \
-    curl -sfOL https://github.com/php/frankenphp/releases/download/${FRANKENPHP_VER}/frankenphp-linux-${ARCH} && \
-    chmod +x frankenphp-linux-${ARCH} && \
-    mv frankenphp-linux-${ARCH} /usr/bin/frankenphp
+    curl -sfOL "https://github.com/php/frankenphp/releases/download/${FRANKENPHP_VER}/frankenphp-linux-${ARCH}" && \
+    chmod +x "frankenphp-linux-${ARCH}" && \
+    mv "frankenphp-linux-${ARCH}" /usr/bin/frankenphp
 
 RUN printf '#!/bin/sh\nexec frankenphp php-cli "$@"\n' > /usr/bin/php && \
     chmod +x /usr/bin/php
@@ -103,15 +106,14 @@ COPY --chown=root:root --from=roundcube-builder --link /opt/roundcube/ /opt/roun
 COPY --chown=root:root --from=admin-builder --link /opt/admin/ /opt/admin/
 COPY --chown=root:root rootfs/ /
 
-RUN mkdir -p ${SERVER_ROOT} && \
-    ln -s /opt/roundcube/public_html ${SERVER_ROOT}/webmail && \
-    ln -s /opt/admin/public ${SERVER_ROOT}/manager
+RUN mkdir -p "${SERVER_ROOT}" && \
+    ln -s /opt/roundcube/public_html "${SERVER_ROOT}/webmail" && \
+    ln -s /opt/admin/public "${SERVER_ROOT}/manager"
 
-ARG USER=app
-RUN adduser -DH ${USER}
-USER ${USER}
+RUN adduser -DH -u 1000 app
+USER 1000:1000
 
-HEALTHCHECK CMD /usr/local/bin/healthcheck.sh
+HEALTHCHECK CMD ["/usr/local/bin/healthcheck.sh"]
 EXPOSE 8080
 
 ENTRYPOINT ["/entrypoint.sh"]

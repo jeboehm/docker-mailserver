@@ -6,10 +6,10 @@ LABEL de.ressourcenkonflikt.docker-mailserver.autoheal="true"
 
 RUN apk add --no-cache bind-tools
 COPY rootfs/ /
-USER unbound
+USER 100:101
 
 EXPOSE 5353/tcp 5353/udp
-HEALTHCHECK CMD /usr/local/bin/healthcheck.sh
+HEALTHCHECK CMD ["/usr/local/bin/healthcheck.sh"]
 
 ENTRYPOINT ["/entrypoint.sh"]
 CMD []

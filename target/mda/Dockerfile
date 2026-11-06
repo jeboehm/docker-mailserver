@@ -26,7 +26,7 @@ RUN apk add --no-cache \
       dovecot-pgsql \
       dovecot-pigeonhole-plugin \
       dovecot-pop3d && \
-    adduser -DH vmail && \
+    adduser -DH -u 1000 vmail && \
     mkdir -p /srv/vmail && \
     chown -R vmail:vmail /srv/vmail
 
@@ -37,7 +37,7 @@ RUN mv /etc/dovecot/conf.d/10-ssl.conf /tmp/10-ssl.conf && \
     sievec . && \
     mv /tmp/10-ssl.conf /etc/dovecot/conf.d/10-ssl.conf
 
-USER vmail
+USER 1000:1000
 WORKDIR /
 
 # LMTP
@@ -56,7 +56,7 @@ EXPOSE 4190
 EXPOSE 8080
 
 VOLUME ["/srv/vmail"]
-HEALTHCHECK CMD /usr/local/bin/healthcheck.sh
+HEALTHCHECK CMD ["/usr/local/bin/healthcheck.sh"]
 
 ENTRYPOINT ["/entrypoint.sh"]
 CMD []
