@@ -1,6 +1,6 @@
 # How to Configure the MCP Server
 
-mailserver-admin can offer an [MCP](https://modelcontextprotocol.io) endpoint, so that an agent can manage domains, users, aliases, fetchmail accounts and DKIM, run DNS validation, and read and send mail in the mailbox of the token's owner. It is on by default, and only acts for API tokens that users create themselves.
+mailserver-admin can offer an [MCP](https://modelcontextprotocol.io) endpoint, so that an agent can manage domains, users, aliases, fetchmail accounts and DKIM, run DNS validation, and read, draft and send mail in the mailbox of the token's owner. It is on by default, and only acts for API tokens that users create themselves.
 
 **Read [MCP server: risks and limitations](../explanation/mcp-server.md) first.** Mail can put instructions in front of an agent that reads it, passwords given to a tool pass through the agent, and a failing call can write its arguments to the error log.
 
@@ -20,7 +20,7 @@ MCP_ALLOWED_HOSTS=mail.example.com
 
 `MCP_ALLOWED_HOSTS` is the comma-separated list of hostnames clients use to reach the server, without a port. Requests for any other hostname get `403 Forbidden: Invalid Host header.`
 
-`MCP_ENABLED=false` turns the endpoint and the API token pages off. `MCP_MAIL_READ_ENABLED=false` and `MCP_MAIL_SEND_ENABLED=false` switch off only the mail tools. The two are independent, and `message_send` also logs in over IMAP to keep a copy in the Sent mailbox, whether or not reading is enabled.
+`MCP_ENABLED=false` turns the endpoint and the API token pages off. `MCP_MAIL_READ_ENABLED=false` and `MCP_MAIL_SEND_ENABLED=false` switch off only the mail tools. The two are independent. `message_send` also logs in over IMAP to keep a copy in the Sent mailbox, and `message_draft` logs in to save the draft in the Drafts mailbox, whether or not reading is enabled. `message_draft` has no flag of its own: leave out the scope `mail:draft` to prevent drafting.
 
 ### 2. Apply the configuration
 
@@ -49,9 +49,10 @@ The endpoint matches the raw `Host` header, so a reverse proxy must pass it on u
 1. Log in to the management interface. This works with a local password and with OAuth2.
 2. Open **API tokens** in the menu, under **Security**.
 3. Click **Create API token**.
-4. Enter a name, choose the [scopes](../reference/mcp-server.md#scopes) and set the validity in days. Only `manage:read` and `mail:read` are preselected. Tick `manage:write` and `mail:send` if the agent needs them, and remove the scopes it does not need:
+4. Enter a name, choose the [scopes](../reference/mcp-server.md#scopes) and set the validity in days. Only `manage:read` and `mail:read` are preselected. Tick `manage:write`, `mail:draft` and `mail:send` if the agent needs them, and remove the scopes it does not need:
    - Give an agent that reads mail no other scope.
    - Use separate tokens, and separate agents, for reading, sending and managing.
+   - For an agent that drafts mail, use `mail:read` and `mail:draft` and have the person send the drafts.
    - Do not use an admin's token for an agent that reads mail.
 5. Copy the token, which starts with `msa_`. It is only shown once.
 

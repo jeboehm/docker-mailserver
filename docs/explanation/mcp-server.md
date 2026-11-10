@@ -14,9 +14,9 @@ The output of the read tools marks mail content as untrusted, and asks the agent
 
 The same applies to `mail:read` together with `manage:write`. An injected instruction can create an alias that forwards mail elsewhere, or on an admin's token, change a user's password or create a new admin. A regular user's token can only reach their own fetchmail accounts this way.
 
-This is why the token form only preselects `manage:read` and `mail:read`. Either of the other two scopes turns a token into one that a mail can act through, so adding them is a deliberate choice.
+This is why the token form only preselects `manage:read` and `mail:read`. Each of the other scopes, `manage:write`, `mail:send` and `mail:draft`, gives a mail something to act through, so adding them is a deliberate choice.
 
-The boundary that holds is the scope itself: a token without `mail:send` cannot send, whatever a mail says. Approval by a person in the client and separate tokens for reading, sending and managing keep a mail from reaching what the combination allows. The steps are in [How to configure the MCP server](../how-to/configure-mcp-server.md#4-create-a-token).
+The boundary that holds is the scope itself: a token without `mail:send` cannot send, whatever a mail says. `mail:draft` lets an agent prepare a mail that a person checks before anything leaves: the draft waits in the Drafts mailbox until someone sends it. That only helps if the person reads the draft, since an injected instruction can put its content into a draft as well. Approval by a person in the client and separate tokens for reading, sending and managing keep a mail from reaching what the combination allows. The steps are in [How to configure the MCP server](../how-to/configure-mcp-server.md#4-create-a-token).
 
 ### Passwords pass through the agent's context
 
@@ -26,7 +26,7 @@ A password set this way is known to those systems. One set in the web interface 
 
 ### Failing calls can write secrets to the error log
 
-**A failing call can write all its tool arguments to the error log in clear text, including passwords, fetchmail passwords, and the recipients and bodies of `message_send`.** This is accepted behaviour: the logging of the MCP bundle stays unfiltered.
+**A failing call can write all its tool arguments to the error log in clear text, including passwords, fetchmail passwords, and the recipients and bodies of `message_send` and `message_draft`.** This is accepted behaviour: the logging of the MCP bundle stays unfiltered.
 
 The production log holds back its debug records, which include the raw request and the tool arguments, and writes them all as soon as anything in the same request logs an error. That is typically an unexpected failure such as a database or Redis outage.
 
