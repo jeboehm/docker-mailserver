@@ -20,7 +20,8 @@ MCP_ALLOWED_HOSTS=mail.example.com
 
 `MCP_ALLOWED_HOSTS` is the comma-separated list of hostnames clients use to reach the server, without a port. Requests for any other hostname get `403 Forbidden: Invalid Host header.`
 
-`MCP_ENABLED=false` turns the endpoint and the API token pages off. `MCP_MAIL_READ_ENABLED=false` and `MCP_MAIL_SEND_ENABLED=false` switch off only the mail tools. The two are independent. `message_send` also logs in over IMAP to keep a copy in the Sent mailbox, and `message_draft` logs in to save the draft in the Drafts mailbox, whether or not reading is enabled. `message_draft` has no flag of its own: leave out the scope `mail:draft` to prevent drafting.
+`MCP_ENABLED=false` turns the endpoint and the API token pages off. `MCP_MAIL_READ_ENABLED=false` and `MCP_MAIL_SEND_ENABLED=false` switch off only the mail tools. The two are independent.
+`message_send` also logs in over IMAP to keep a copy in the Sent mailbox, and `message_draft` logs in to save the draft in the Drafts mailbox, whether or not reading is enabled. `message_draft` has no flag of its own: leave out the scope `mail:draft` to prevent drafting.
 
 ### 2. Apply the configuration
 

@@ -16,7 +16,9 @@ The same applies to `mail:read` together with `manage:write`. An injected instru
 
 This is why the token form only preselects `manage:read` and `mail:read`. Each of the other scopes, `manage:write`, `mail:send` and `mail:draft`, gives a mail something to act through, so adding them is a deliberate choice.
 
-The boundary that holds is the scope itself: a token without `mail:send` cannot send, whatever a mail says. `mail:draft` lets an agent prepare a mail that a person checks before anything leaves: the draft waits in the Drafts mailbox until someone sends it. That only helps if the person reads the draft, since an injected instruction can put its content into a draft as well. Approval by a person in the client and separate tokens for reading, sending and managing keep a mail from reaching what the combination allows. The steps are in [How to configure the MCP server](../how-to/configure-mcp-server.md#4-create-a-token).
+The boundary that holds is the scope itself: a token without `mail:send` cannot send, whatever a mail says.
+`mail:draft` lets an agent prepare a mail that a person checks before anything leaves: the draft waits in the Drafts mailbox until someone sends it. That only helps if the person reads the draft, since an injected instruction can put its content into a draft as well.
+Approval by a person in the client and separate tokens for reading, sending and managing keep a mail from reaching what the combination allows. The steps are in [How to configure the MCP server](../how-to/configure-mcp-server.md#4-create-a-token).
 
 ### Passwords pass through the agent's context
 
