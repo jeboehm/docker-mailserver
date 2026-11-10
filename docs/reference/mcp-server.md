@@ -43,6 +43,7 @@ A call succeeds only if the token carries the scope and the owner's current role
 | `manage:read`  | List and read domains, users, aliases, fetchmail accounts, DKIM status; DNS validation | yes         |
 | `manage:write` | Create, update and delete the same                                                     | no          |
 | `mail:read`    | Read the owner's own mailbox                                                           | yes         |
+| `mail:draft`   | Save a draft in the owner's Drafts mailbox, never sends                                | no          |
 | `mail:send`    | Send from the owner's own address                                                      | no          |
 
 ## Tools
@@ -64,9 +65,10 @@ Which role reaches which tools and objects is listed in [User roles](user-roles.
 | `dkim_enable`, `dkim_disable`, `dkim_recreate_key`         | `manage:write` |
 | `dns_validate`                                             | `manage:read`  |
 | `mailbox_list`, `message_search`, `message_get`            | `mail:read`    |
+| `message_draft`                                            | `mail:draft`   |
 | `message_send`                                             | `mail:send`    |
 
-`whoami` is available to every role. `MCP_MAIL_READ_ENABLED` and `MCP_MAIL_SEND_ENABLED` switch off the mail tools, and no mail tool takes a mailbox user as an argument.
+`whoami` is available to every role. `MCP_MAIL_READ_ENABLED` and `MCP_MAIL_SEND_ENABLED` switch off the mail tools, and no mail tool takes a mailbox user as an argument. There is no `MCP_MAIL_DRAFT_ENABLED`: the scope `mail:draft` is the only gate of `message_draft`.
 
 ### Rules for all tools
 
@@ -74,6 +76,7 @@ Which role reaches which tools and objects is listed in [User roles](user-roles.
 - Missing scopes, denied objects and objects that do not exist all answer `Not found or not allowed.`, so other domains cannot be probed.
 - Password hashes, passwords, fetchmail passwords and DKIM private keys never appear in tool output.
 - Arguments and result fields are named in snake_case.
+- Every mail from `message_send` and `message_draft` carries the header `X-Mailer: mailserver-admin (https://github.com/jeboehm/mailserver-admin)`.
 
 ### Pagination
 
@@ -119,6 +122,22 @@ Recipients must be plain addresses such as `name@example.com`. A non-ASCII chara
 
 A refused or failed send answers with an error message that says whether to retry. After a lost connection the mail may have gone out, and the message says so.
 
+### Mail draft tool
+
+`message_draft` saves a plain text mail from the owner's own address as a draft, and sends nothing. The mail is saved with the flag `\Draft` in the owner's Drafts mailbox. A person opens it in their mail client, checks it and sends it from there.
+
+- It takes the same arguments as `message_send`, and the same rules for recipients apply.
+- Every call creates a new draft. There is no tool to update or delete a draft, and no reply threading: a draft is a new mail, not an answer within a conversation.
+- `mail:draft` is independent of `mail:send`. A token with `mail:draft` alone cannot send.
+
+| Result field | Meaning                                                 |
+| ------------ | ------------------------------------------------------- |
+| `drafted`    | `true`: the draft exists, so do not call the tool again |
+| `message_id` | The Message-ID of the draft                             |
+| `recipients` | All recipients, including `bcc`                         |
+
+A failed call answers with an error message that says whether to retry, and no draft has been saved.
+
 ## Limits
 
 | Limit                             | Variable                                | Default   |
@@ -130,20 +149,22 @@ A refused or failed send answers with an error message that says whether to retr
 | Sends per hour, per token         | `MCP_MAIL_SEND_TOKEN_LIMIT_PER_HOUR`    | `30`      |
 | Sends per hour, per user          | `MCP_MAIL_SEND_USER_LIMIT_PER_HOUR`     | `60`      |
 | Sends per rolling minute, overall | `MCP_MAIL_SEND_GLOBAL_LIMIT_PER_MINUTE` | `15`      |
+| Drafts per hour, per token        | `MCP_MAIL_DRAFT_TOKEN_LIMIT_PER_HOUR`   | `60`      |
 
-All connections to Dovecot and Postfix come from the address of the `web` container, which Roundcube shares. Dovecot allows 10 connections per user and address, and Postfix 20 connections per minute and client address. A send over a limit is refused before anything is tried, and the message says when to retry.
+All connections to Dovecot and Postfix come from the address of the `web` container, which Roundcube shares. Dovecot allows 10 connections per user and address, and Postfix 20 connections per minute and client address. A send or draft over a limit is refused before anything is tried, and the message says when to retry.
 
 ## Audit log
 
 Every tool call writes one JSON record with the message `MCP tool call` on the channel `mcp_audit`, to the standard error of the `web` container.
 
-| Field                                   | Content                                                                                                    |
-| --------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
-| `token_id`, `user_id`, `user`           | The token and its owner                                                                                    |
-| `tool`                                  | The tool name                                                                                              |
-| `target`                                | The object the call names, for example `domain:example.com`, also on a denied call. Empty if it names none |
-| `result`                                | `ok`, `denied`, `failed` or `error`                                                                        |
-| `client_ip`                             | The client address, which needs `TRUSTED_PROXIES` behind a proxy                                           |
-| `recipients`, `message_id`, `sent_copy` | `message_send` only                                                                                        |
+| Field                                      | Content                                                                                                    |
+| ------------------------------------------ | ---------------------------------------------------------------------------------------------------------- |
+| `token_id`, `user_id`, `user`              | The token and its owner                                                                                    |
+| `tool`                                     | The tool name                                                                                              |
+| `target`                                   | The object the call names, for example `domain:example.com`, also on a denied call. Empty if it names none |
+| `result`                                   | `ok`, `denied`, `failed` or `error`                                                                        |
+| `client_ip`                                | The client address, which needs `TRUSTED_PROXIES` behind a proxy                                           |
+| `recipients`, `message_id`, `sent_copy`    | `message_send` only                                                                                        |
+| `recipients`, `message_id`, `draft_folder` | `message_draft` only                                                                                       |
 
 The audit log never contains mail bodies, passwords or tokens. The error log is a separate matter, see [failing calls](../explanation/mcp-server.md#failing-calls-can-write-secrets-to-the-error-log).

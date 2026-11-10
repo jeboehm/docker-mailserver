@@ -221,6 +221,12 @@ Sending mail:
 | `MCP_MAIL_SEND_GLOBAL_LIMIT_PER_MINUTE` | `15`      | Sends per rolling minute across everyone. Postfix's 20 connections per minute per client address, which Roundcube shares, are the upper bound. A third of it is available at once, the rest refills evenly |
 | `MTA_SMTP_TIMEOUT_SECONDS`              | `25`      | SMTP client timeout. The longest auth penalty is 15 seconds                                                                                                                                                |
 
+Drafting mail:
+
+| Variable                              | Default | Description          |
+| ------------------------------------- | ------- | -------------------- |
+| `MCP_MAIL_DRAFT_TOKEN_LIMIT_PER_HOUR` | `60`    | Drafts per API token |
+
 ### PHP Sessions
 
 | Variable                   | Default                                                    | Description                                     |
