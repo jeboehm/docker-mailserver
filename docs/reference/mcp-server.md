@@ -33,6 +33,7 @@ The `Host` match ignores case and port. `X-Forwarded-Host` is not considered.
 | Role     | The owner's role and `enabled` flag, read from the database on every request                                                                |
 | Revoked  | By hand; automatically when the owner's password changes or the owner is disabled. A revoked token stays revoked if the owner is re-enabled |
 | Listed   | Users see their own tokens, domain admins those of their domain, admins all. Revoked tokens stay listed until their owner is deleted        |
+| Sender   | Chosen at creation for tokens with `mail:send` or `mail:draft`, see [Sender](#sender). Cannot be changed                                    |
 
 ## Scopes
 
@@ -44,7 +45,30 @@ A call succeeds only if the token carries the scope and the owner's current role
 | `manage:write` | Create, update and delete the same                                                     | no          |
 | `mail:read`    | Read the owner's own mailbox                                                           | yes         |
 | `mail:draft`   | Save a draft in the owner's Drafts mailbox, never sends                                | no          |
-| `mail:send`    | Send from the owner's own address                                                      | no          |
+| `mail:send`    | Send from an address of the owner, see [Sender](#sender)                               | no          |
+
+## Sender
+
+A token with `mail:send` or `mail:draft` has a sender mode, chosen when the token is created. It applies to `message_send` and `message_draft` alike, and cannot be changed afterwards. Tokens without either scope always use `primary`.
+
+| Sender mode         | Label in the token form | `From` and envelope sender                        | `from_address` argument       |
+| ------------------- | ----------------------- | ------------------------------------------------- | ----------------------------- |
+| `primary` (default) | Primary address only    | The owner's address                               | Refused                       |
+| `fixed`             | A fixed address         | The owned address chosen at creation              | Refused, even when it matches |
+| `any`               | Any of my addresses     | `from_address`, or the owner's address without it | Must be an owned address      |
+
+The sender is also used for the domain of the `Message-ID` and for the Sent copy or the draft.
+
+Owned addresses, as mailserver-admin counts them:
+
+- The owner's address, and every alias with exactly that address as a destination. An alias with several destinations counts if one of them is the owner's.
+- Only addresses stored in lower case. `from_address` itself is compared without regard to case.
+- Not catch-alls, address extensions, chains of aliases or aliases with an external destination, although Postfix accepts some of them on submission.
+- The same for every role: admins and domain admins only send from their own addresses, not from others in their domain.
+
+The sender is checked on every call, before any limit is counted and before anything is sent or saved. When the address of a `fixed` token is no longer owned, for example because its alias was deleted or changed, the call is refused. The token is not revoked, and works again once the alias is restored. The token list marks it with **No longer owned**.
+
+`whoami` returns `send_as` for tokens with `mail:send` or `mail:draft`: `mode`, `address` for `fixed`, and `addresses`, the owned addresses, for `any`.
 
 ## Tools
 
@@ -109,7 +133,7 @@ A limit or offset out of range is refused rather than corrected.
 
 ### Mail send tool
 
-`message_send` sends a plain text mail from the owner's own address, with Postfix submission as the owner. Sending from aliases and attachments are not supported.
+`message_send` sends a plain text mail from the [sender](#sender) of the token, with Postfix submission as the owner. Attachments are not supported.
 
 Recipients must be plain addresses such as `name@example.com`. A non-ASCII character before the `@` is refused.
 
@@ -124,9 +148,9 @@ A refused or failed send answers with an error message that says whether to retr
 
 ### Mail draft tool
 
-`message_draft` saves a plain text mail from the owner's own address as a draft, and sends nothing. The mail is saved with the flag `\Draft` in the owner's Drafts mailbox. A person opens it in their mail client, checks it and sends it from there.
+`message_draft` saves a plain text mail from the [sender](#sender) of the token as a draft, and sends nothing. The mail is saved with the flag `\Draft` in the owner's Drafts mailbox. A person opens it in their mail client, checks it and sends it from there.
 
-- It takes the same arguments as `message_send`, and the same rules for recipients apply.
+- It takes the same arguments as `message_send`, including `from_address`, and the same rules for recipients and the sender apply.
 - Every call creates a new draft. There is no tool to update or delete a draft, and no reply threading: a draft is a new mail, not an answer within a conversation.
 - `mail:draft` is independent of `mail:send`. A token with `mail:draft` alone cannot send.
 
@@ -157,14 +181,14 @@ All connections to Dovecot and Postfix come from the address of the `web` contai
 
 Every tool call writes one JSON record with the message `MCP tool call` on the channel `mcp_audit`, to the standard error of the `web` container.
 
-| Field                                      | Content                                                                                                    |
-| ------------------------------------------ | ---------------------------------------------------------------------------------------------------------- |
-| `token_id`, `user_id`, `user`              | The token and its owner                                                                                    |
-| `tool`                                     | The tool name                                                                                              |
-| `target`                                   | The object the call names, for example `domain:example.com`, also on a denied call. Empty if it names none |
-| `result`                                   | `ok`, `denied`, `failed` or `error`                                                                        |
-| `client_ip`                                | The client address, which needs `TRUSTED_PROXIES` behind a proxy                                           |
-| `recipients`, `message_id`, `sent_copy`    | `message_send` only                                                                                        |
-| `recipients`, `message_id`, `draft_folder` | `message_draft` only                                                                                       |
+| Field                                              | Content                                                                                                    |
+| -------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| `token_id`, `user_id`, `user`                      | The token and its owner                                                                                    |
+| `tool`                                             | The tool name                                                                                              |
+| `target`                                           | The object the call names, for example `domain:example.com`, also on a denied call. Empty if it names none |
+| `result`                                           | `ok`, `denied`, `failed` or `error`                                                                        |
+| `client_ip`                                        | The client address, which needs `TRUSTED_PROXIES` behind a proxy                                           |
+| `from`, `recipients`, `message_id`, `sent_copy`    | `message_send` only                                                                                        |
+| `from`, `recipients`, `message_id`, `draft_folder` | `message_draft` only                                                                                       |
 
 The audit log never contains mail bodies, passwords or tokens. The error log is a separate matter, see [failing calls](../explanation/mcp-server.md#failing-calls-can-write-secrets-to-the-error-log).

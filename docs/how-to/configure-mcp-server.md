@@ -55,7 +55,8 @@ The endpoint matches the raw `Host` header, so a reverse proxy must pass it on u
    - Use separate tokens, and separate agents, for reading, sending and managing.
    - For an agent that drafts mail, use `mail:read` and `mail:draft` and have the person send the drafts.
    - Do not use an admin's token for an agent that reads mail.
-5. Copy the token, which starts with `msa_`. It is only shown once.
+5. If you ticked `mail:send` or `mail:draft`, choose the [sender](../reference/mcp-server.md#sender): **Primary address only**, **A fixed address** and the address, or **Any of my addresses**. Bind an agent to one address unless it has to choose. The sender cannot be changed later.
+6. Copy the token, which starts with `msa_`. It is only shown once.
 
 Use one token per agent, so that you can [revoke them](revoke-mcp-api-token.md) separately.
 
@@ -104,6 +105,6 @@ curl -i https://mail.example.com/mcp \
   -d '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-11-25","capabilities":{},"clientInfo":{"name":"curl","version":"1.0"}}}'
 ```
 
-In the client, call the `whoami` tool. It returns the user, role, domain and the scopes of the token.
+In the client, call the `whoami` tool. It returns the user, role, domain and the scopes of the token, and for a token that sends or drafts mail, its sender in `send_as`.
 
 For every tool, scope and limit, see [MCP server reference](../reference/mcp-server.md). For variables, see [Environment variables reference](../reference/environment-variables.md#mcp-server).

@@ -17,6 +17,7 @@ The same applies to `mail:read` together with `manage:write`. An injected instru
 This is why the token form only preselects `manage:read` and `mail:read`. Each of the other scopes, `manage:write`, `mail:send` and `mail:draft`, gives a mail something to act through, so adding them is a deliberate choice.
 
 The boundary that holds is the scope itself: a token without `mail:send` cannot send, whatever a mail says.
+The sender mode bounds the identity in the same way. A token with the mode `any` lets an injected instruction choose which of your addresses a mail comes from. A `fixed` token always sends from one address, whatever a mail says.
 `mail:draft` lets an agent prepare a mail that a person checks before anything leaves: the draft waits in the Drafts mailbox until someone sends it. That only helps if the person reads the draft, since an injected instruction can put its content into a draft as well.
 Approval by a person in the client and separate tokens for reading, sending and managing keep a mail from reaching what the combination allows. The steps are in [How to configure the MCP server](../how-to/configure-mcp-server.md#4-create-a-token).
 
@@ -59,7 +60,7 @@ A local disable is therefore the only thing that ends the tokens of someone who 
 ### Mail
 
 - Agents only reach the mailbox of the token's owner, for every role. Admins and domain admins get no access to other people's mail.
-- Sending uses the owner's own address. Aliases and attachments are not supported.
+- Sending uses the owner's address or an alias that points to it, as set on the token. Attachments are not supported.
 - Agents cannot move, delete or flag mail, or download attachments.
 
 ### Connection limits are shared
