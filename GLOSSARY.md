@@ -44,6 +44,10 @@ _Avoid_: Sender owner (as a role), from user
 An address a login may use as envelope sender: its own address, every alias it is a destination of, and, for a catch-all destination, the other addresses of that domain ([ADR-0002](docs/adr/0002-sender-ownership-is-defined-by-the-login-map-query.md)).
 _Avoid_: Allowed sender, identity
 
+**Sender mode**:
+The setting of an MCP API token that decides which owned address `message_send` and `message_draft` use: the user's own address, one fixed address, or any owned address chosen per call. mailserver-admin counts fewer addresses as owned than Postfix accepts: no catch-all domains and no address extensions. See the [MCP server reference](docs/reference/mcp-server.md#sender).
+_Avoid_: Sender binding, identity
+
 **DKIM selector**:
 The name that identifies one DKIM key of a domain. See [Configure DKIM](docs/how-to/configure-dkim.md).
 _Avoid_: DKIM key name
