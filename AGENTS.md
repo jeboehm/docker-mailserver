@@ -48,6 +48,7 @@ domains, users, aliases, DKIM and fetchmail accounts.
   `bin/` ships in the release tarball, the `Makefile` does not, so user-facing steps live here.
 - `test/bats/` — test runner image and BATS integration tests; `test/k8s/` — Kubernetes test overlay and test job;
   `test/schema/` — JSON schema check of the pod security contexts; `test/super-linter/` — lint runner.
+- `GLOSSARY.md` — project vocabulary (mail objects and services); decisions are recorded in `docs/adr/`.
 - `docs/` — MkDocs documentation, configured by `.mkdocs.yaml` in the root. See `docs/AGENTS.md`. `docs/agents/` and
   `docs/adr/` hold agent and decision records and are excluded from the published site.
 - `.github/` — workflows, helper scripts (`bin/`), composite actions, linter configuration (`linters/`), CI test matrix
@@ -150,7 +151,7 @@ pass their arguments to `docker compose` (`bin/test.sh logs -f filter`, `bin/tes
   the fetchmail source address from `FIXTURES_MDA_IMAP_ADDRESS`. It creates domains `example.com` and `example.org`;
   `admin@example.com`/`changeme` (admin), `sendonly@example.com` (send-only), `quota@example.com` (1 MB quota),
   `disabled@example.com`, `disabledsendonly@example.com`, `fetchmailsource@example.org`, `fetchmailreceiver@example.org`
-  (all `test1234`); aliases `foo@example.com`, `foo@example.org` and a catch-all for `example.com` pointing to admin;
+  (all `test1234`); aliases `foo@example.com`, `foo@example.org` and a catch-all for `example.com` pointing to admin, plus `team@example.org` with two destinations (`fetchmailsource@example.org` and `fetchmailreceiver@example.org`);
   DKIM enabled for `example.com` with selector `dkim`.
 - `./test/bats/integration` is bind-mounted into the runner, so test changes need no image rebuild. Run a single file
   with `bin/test.sh run --rm test bats 090_dkim.bats`.

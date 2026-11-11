@@ -235,3 +235,66 @@ setup() {
 	assert_failure 55
 	assert_output --partial "RCPT failed"
 }
+
+# The sender checks below follow docs/adr/0002-sender-ownership-is-defined-by-the-login-map-query.md.
+# example.org has no catch-all, so a sender there is only accepted when the
+# login map query (or the address extension handling of Postfix) finds an owner.
+
+@test "authenticated mail with address extension in the sender of a domain without catch-all is delivered" {
+	run send_mail --server "${MTA_SMTP_SUBMISSION_ADDRESS}" --to admin@example.com --from fetchmailsource-extension@example.org --auth-user fetchmailsource@example.org --auth-password test1234 --tls --body "$(mail_needle)"
+	assert_success
+
+	run wait_for_mail "$(mail_needle)" "$(maildir admin@example.com)"
+	assert_success
+}
+
+@test "authenticated mail with a mixed case sender is delivered" {
+	run send_mail --server "${MTA_SMTP_SUBMISSION_ADDRESS}" --to admin@example.com --from Fetchmailsource@Example.ORG --auth-user fetchmailsource@example.org --auth-password test1234 --tls --body "$(mail_needle)"
+	assert_success
+
+	run wait_for_mail "$(mail_needle)" "$(maildir admin@example.com)"
+	assert_success
+}
+
+@test "authenticated mail with the address of another mailbox as sender is rejected" {
+	run send_mail --server "${MTA_SMTP_SUBMISSION_ADDRESS}" --to admin@example.com --from admin@example.com --auth-user sendonly@example.com --auth-password test1234 --tls --body "$(mail_needle)"
+	assert_failure 55
+	assert_output --partial "RCPT failed"
+}
+
+@test "authenticated mail with an alias of another login as sender is rejected" {
+	run send_mail --server "${MTA_SMTP_SUBMISSION_ADDRESS}" --to admin@example.com --from foo@example.com --auth-user sendonly@example.com --auth-password test1234 --tls --body "$(mail_needle)"
+	assert_failure 55
+	assert_output --partial "RCPT failed"
+}
+
+@test "authenticated mail with an alias with several destinations as sender is delivered for each destination" {
+	run send_mail --server "${MTA_SMTP_SUBMISSION_ADDRESS}" --to admin@example.com --from team@example.org --auth-user fetchmailsource@example.org --auth-password test1234 --tls --body "$(mail_needle)-source"
+	assert_success
+
+	run send_mail --server "${MTA_SMTP_SUBMISSION_ADDRESS}" --to admin@example.com --from team@example.org --auth-user fetchmailreceiver@example.org --auth-password test1234 --tls --body "$(mail_needle)-receiver"
+	assert_success
+
+	run wait_for_mail "$(mail_needle)-source" "$(maildir admin@example.com)"
+	assert_success
+	run wait_for_mail "$(mail_needle)-receiver" "$(maildir admin@example.com)"
+	assert_success
+}
+
+@test "authenticated mail with an alias with several destinations as sender is rejected for other logins" {
+	run send_mail --server "${MTA_SMTP_SUBMISSION_ADDRESS}" --to admin@example.com --from team@example.org --auth-user admin@example.com --auth-password changeme --tls --body "$(mail_needle)"
+	assert_failure 55
+	assert_output --partial "RCPT failed"
+}
+
+@test "authenticated mail with any sender of a domain with a catch-all is delivered for the catch-all destination only" {
+	run send_mail --server "${MTA_SMTP_SUBMISSION_ADDRESS}" --to admin@example.com --from anybody@example.com --auth-user admin@example.com --auth-password changeme --tls --body "$(mail_needle)"
+	assert_success
+
+	run wait_for_mail "$(mail_needle)" "$(maildir admin@example.com)"
+	assert_success
+
+	run send_mail --server "${MTA_SMTP_SUBMISSION_ADDRESS}" --to admin@example.com --from anybody@example.com --auth-user sendonly@example.com --auth-password test1234 --tls --body "$(mail_needle)"
+	assert_failure 55
+	assert_output --partial "RCPT failed"
+}

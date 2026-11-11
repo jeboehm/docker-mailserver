@@ -51,6 +51,8 @@ console user:add --password=test1234 --enable fetchmailreceiver example.org
 console alias:add foo@example.com admin@example.com
 console alias:add foo@example.org admin@example.com
 console alias:add --catchall @example.com admin@example.com
+console alias:add team@example.org fetchmailsource@example.org
+console alias:add team@example.org fetchmailreceiver@example.org
 console dkim:setup example.com --enable --selector dkim
 console fetchmail:account:add --force fetchmailreceiver@example.org \
 	"${FIXTURES_MDA_IMAP_ADDRESS%%:*}" imap "${FIXTURES_MDA_IMAP_ADDRESS##*:}" \
