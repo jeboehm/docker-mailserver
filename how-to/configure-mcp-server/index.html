@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><link rel="canonical" href="https://jeboehm.github.io/docker-mailserver/how-to/configure-mcp-server/" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>Configure the MCP server - docker-mailserver</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Configure the MCP server";
+        var mkdocs_page_input_path = "how-to/configure-mcp-server.md";
+        var mkdocs_page_url = "/docker-mailserver/how-to/configure-mcp-server/";
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../.." class="icon icon-home"> docker-mailserver
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../..">Welcome</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Tutorial</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../tutorials/getting-started/">Getting Started</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">How-to guides</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../install-docker/">Install with Docker</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../install-kubernetes/">Install on Kubernetes</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../upgrade/">Upgrade</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../configure-dns/">Configure DNS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../configure-dkim/">Configure DKIM</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../validate-dns/">Validate DNS (wizard)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../configure-relayhost/">Configure relay host</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../configure-reverse-proxy/">Configure reverse proxy</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../configure-tls/">Configure TLS certificates</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../configure-oauth2/">Configure OAuth2</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../configure-external-database/">Configure external database</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../configure-roundcube-plugins/">Configure Roundcube plugins</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../configure-php-sessions/">Configure PHP sessions</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Configure the MCP server</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#prerequisites">Prerequisites</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#steps">Steps</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#1-set-the-allowed-hostnames">1. Set the allowed hostnames</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#2-apply-the-configuration">2. Apply the configuration</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#3-preserve-the-host-header">3. Preserve the Host header</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#4-create-a-token">4. Create a token</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#5-configure-the-client">5. Configure the client</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#6-protect-what-passes-through">6. Protect what passes through</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#verification">Verification</a>
+    </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../revoke-mcp-api-token/">Revoke an MCP API token</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../manage-domains/">Manage domains</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../manage-users/">Manage users</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../manage-aliases/">Manage aliases</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../manage-fetchmail/">Manage fetchmail</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ios-macos-profile/">iOS / macOS profile</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Reference</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../reference/environment-variables/">Environment variables</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../reference/ports/">Ports</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../reference/dns-records/">DNS records</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../reference/service-architecture/">Service architecture</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../reference/user-roles/">User roles</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../reference/mailserver-admin-config/">mailserver-admin config</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../reference/mcp-server/">MCP server</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../reference/local-address-extension/">Local address extension</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../reference/upgrade-changelog/">Upgrade changelog</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Administration (web UI)</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../administration/login/">Login</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../administration/dashboard/">Dashboard</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Explanation</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../explanation/architecture/">Service architecture</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../explanation/database-backends/">Database backends</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../explanation/dns-and-email/">DNS and email delivery</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../explanation/observability/">Observability</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../explanation/mcp-server/">MCP server: risks and limitations</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Recipes</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Docker</a>
+    <ul>
+                <li class="toctree-l2"><a class="" href="https://github.com/jeboehm/docker-mailserver/tree/main/docs/example-configs/compose/traefik-reverse-proxy">Traefik Reverse Proxy</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Kubernetes</a>
+    <ul>
+                <li class="toctree-l2"><a class="" href="https://github.com/jeboehm/docker-mailserver/tree/main/docs/example-configs/kustomize/external-db-and-https-ingress">External Database and HTTPS Ingress</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Development</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../development/development/">Development guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../development/mailserver-admin/">mailserver-admin development</a>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="" href="https://github.com/jeboehm/docker-mailserver/issues">Issues</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">docker-mailserver</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">How-to guides</li>
+      <li class="breadcrumb-item active">Configure the MCP server</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/jeboehm/docker-mailserver/blob/main/docs/how-to/configure-mcp-server.md">Edit on jeboehm/docker-mailserver</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="how-to-configure-the-mcp-server">How to Configure the MCP Server</h1>
+<p>mailserver-admin can offer an <a href="https://modelcontextprotocol.io">MCP</a> endpoint, so that an agent can manage domains, users, aliases, fetchmail accounts and DKIM, run DNS validation, and read, draft and send mail in the mailbox of the token's owner. It is on by default, and only acts for API tokens that users create themselves.</p>
+<p><strong>Read <a href="../../explanation/mcp-server/">MCP server: risks and limitations</a> first.</strong> Mail can put instructions in front of an agent that reads it, passwords given to a tool pass through the agent, and a failing call can write its arguments to the error log.</p>
+<h2 id="prerequisites">Prerequisites</h2>
+<ul>
+<li>HTTPS in front of the <code>web</code> service. The token travels in a request header, and the <code>web</code> service itself only speaks HTTP. See <a href="../configure-reverse-proxy/">How to configure a reverse proxy</a>.</li>
+</ul>
+<h2 id="steps">Steps</h2>
+<h3 id="1-set-the-allowed-hostnames">1. Set the allowed hostnames</h3>
+<p>In <code>.env</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="nv">MCP_ALLOWED_HOSTS</span><span class="o">=</span>mail.example.com
+</code></pre></div>
+<p><code>MCP_ALLOWED_HOSTS</code> is the comma-separated list of hostnames clients use to reach the server, without a port. Requests for any other hostname get <code>403 Forbidden: Invalid Host header.</code></p>
+<p><code>MCP_ENABLED=false</code> turns the endpoint and the API token pages off. <code>MCP_MAIL_READ_ENABLED=false</code> and <code>MCP_MAIL_SEND_ENABLED=false</code> switch off only the mail tools. The two are independent.
+<code>message_send</code> also logs in over IMAP to keep a copy in the Sent mailbox, and <code>message_draft</code> logs in to save the draft in the Drafts mailbox, whether or not reading is enabled. <code>message_draft</code> has no flag of its own: leave out the scope <code>mail:draft</code> to prevent drafting.</p>
+<h3 id="2-apply-the-configuration">2. Apply the configuration</h3>
+<p>Docker Compose:</p>
+<div class="highlight"><pre><span></span><code>bin/production.sh<span class="w"> </span>up<span class="w"> </span>-d<span class="w"> </span>web
+</code></pre></div>
+<p>Kubernetes, when you apply the root <code>kustomization.yaml</code>:</p>
+<div class="highlight"><pre><span></span><code>bin/kubernetes-env.sh
+kubectl<span class="w"> </span>apply<span class="w"> </span>-k<span class="w"> </span>.
+kubectl<span class="w"> </span>rollout<span class="w"> </span>restart<span class="w"> </span>deployment/web
+</code></pre></div>
+<p>An overlay with its own ConfigMap sets the variable in <code>config-env</code>.</p>
+<h3 id="3-preserve-the-host-header">3. Preserve the <code>Host</code> header</h3>
+<p>The endpoint matches the raw <code>Host</code> header, so a reverse proxy must pass it on unchanged. See <a href="../configure-reverse-proxy/#5-preserve-the-host-header">Preserve the Host header</a>.</p>
+<h3 id="4-create-a-token">4. Create a token</h3>
+<ol type="1">
+<li>Log in to the management interface. This works with a local password and with OAuth2.</li>
+<li>Open <strong>API tokens</strong> in the menu, under <strong>Security</strong>.</li>
+<li>Click <strong>Create API token</strong>.</li>
+<li>Enter a name, choose the <a href="../../reference/mcp-server/#scopes">scopes</a> and set the validity in days. Only <code>manage:read</code> and <code>mail:read</code> are preselected. Tick <code>manage:write</code>, <code>mail:draft</code> and <code>mail:send</code> if the agent needs them, and remove the scopes it does not need:</li>
+</ol>
+<ul>
+<li>Give an agent that reads mail no other scope.</li>
+<li>Use separate tokens, and separate agents, for reading, sending and managing.</li>
+<li>For an agent that drafts mail, use <code>mail:read</code> and <code>mail:draft</code> and have the person send the drafts.</li>
+<li>Do not use an admin's token for an agent that reads mail.</li>
+</ul>
+<ol start="5" type="1">
+<li>If you ticked <code>mail:send</code> or <code>mail:draft</code>, choose the <a href="../../reference/mcp-server/#sender">sender</a>: <strong>Primary address only</strong>, <strong>A fixed address</strong> and the address, or <strong>Any of my addresses</strong>. Bind an agent to one address unless it has to choose. The sender cannot be changed later.</li>
+<li>Copy the token, which starts with <code>msa_</code>. It is only shown once.</li>
+</ol>
+<p>Use one token per agent, so that you can <a href="../revoke-mcp-api-token/">revoke them</a> separately.</p>
+<h3 id="5-configure-the-client">5. Configure the client</h3>
+<p>The endpoint is <code>https://&lt;hostname&gt;/mcp</code>. It uses the MCP Streamable HTTP transport and expects the token as <code>Authorization: Bearer &lt;token&gt;</code>. Any client that can send this header can connect. Clients that only support the OAuth flow cannot.</p>
+<p>The <strong>MCP</strong> page in the menu of the management interface shows the address and the configuration for common clients. For example, Claude Code reads this from <code>.mcp.json</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;mcpServers&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;mailserver&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;http&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;https://mail.example.com/mcp&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;headers&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;Authorization&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Bearer ${MAILSERVER_MCP_TOKEN}&quot;</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>Keep the token in the environment variable, not in a file you commit. If the client can ask for approval before a tool runs, require it for <code>message_send</code> and for the tools that write. If one client holds both <code>mail:read</code> and <code>mail:send</code>, have a person approve every send.</p>
+<h3 id="6-protect-what-passes-through">6. Protect what passes through</h3>
+<ol type="1">
+<li>Restrict who can read the logs of the <code>web</code> container (<code>docker logs</code>, <code>kubectl logs</code>, log collectors) and how long they are kept.</li>
+<li>Set passwords in the web interface wherever the agent's context and its history must not hold them, or change them there afterwards.</li>
+</ol>
+<h2 id="verification">Verification</h2>
+<p>Without a token, the endpoint answers <code>401</code> with <code>WWW-Authenticate: Bearer</code>. A <code>404</code> means <code>MCP_ENABLED</code> is <code>false</code>:</p>
+<div class="highlight"><pre><span></span><code>curl<span class="w"> </span>-i<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>https://mail.example.com/mcp
+</code></pre></div>
+<p>With a token, this answers <code>200</code> with an <code>Mcp-Session-Id</code> header. A <code>403</code> means the hostname is not in <code>MCP_ALLOWED_HOSTS</code>, or a proxy changed the <code>Host</code> header:</p>
+<div class="highlight"><pre><span></span><code>curl<span class="w"> </span>-i<span class="w"> </span>https://mail.example.com/mcp<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Authorization: Bearer </span><span class="si">${</span><span class="nv">MAILSERVER_MCP_TOKEN</span><span class="si">}</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-H<span class="w"> </span><span class="s1">&#39;Content-Type: application/json&#39;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-H<span class="w"> </span><span class="s1">&#39;Accept: application/json, text/event-stream&#39;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{&quot;jsonrpc&quot;:&quot;2.0&quot;,&quot;id&quot;:1,&quot;method&quot;:&quot;initialize&quot;,&quot;params&quot;:{&quot;protocolVersion&quot;:&quot;2025-11-25&quot;,&quot;capabilities&quot;:{},&quot;clientInfo&quot;:{&quot;name&quot;:&quot;curl&quot;,&quot;version&quot;:&quot;1.0&quot;}}}&#39;</span>
+</code></pre></div>
+<p>In the client, call the <code>whoami</code> tool. It returns the user, role, domain and the scopes of the token, and for a token that sends or drafts mail, its sender in <code>send_as</code>.</p>
+<p>For every tool, scope and limit, see <a href="../../reference/mcp-server/">MCP server reference</a>. For variables, see <a href="../../reference/environment-variables/#mcp-server">Environment variables reference</a>.</p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../configure-php-sessions/" class="btn btn-neutral float-left" title="Configure PHP sessions"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../revoke-mcp-api-token/" class="btn btn-neutral float-right" title="Revoke an MCP API token">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/jeboehm/docker-mailserver" class="fa fa-code-fork" style="color: #fcfcfc"> jeboehm/docker-mailserver</a>
+        </span>
+    
+    
+      <span><a href="../configure-php-sessions/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../revoke-mcp-api-token/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../..";</script>
+    <script src="../../js/theme_extra.js"></script>
+    <script src="../../js/theme.js"></script>
+      <script src="../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

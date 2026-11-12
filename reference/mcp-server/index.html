@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><link rel="canonical" href="https://jeboehm.github.io/docker-mailserver/reference/mcp-server/" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>MCP server - docker-mailserver</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "MCP server";
+        var mkdocs_page_input_path = "reference/mcp-server.md";
+        var mkdocs_page_url = "/docker-mailserver/reference/mcp-server/";
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../.." class="icon icon-home"> docker-mailserver
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../..">Welcome</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Tutorial</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../tutorials/getting-started/">Getting Started</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">How-to guides</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/install-docker/">Install with Docker</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/install-kubernetes/">Install on Kubernetes</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/upgrade/">Upgrade</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/configure-dns/">Configure DNS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/configure-dkim/">Configure DKIM</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/validate-dns/">Validate DNS (wizard)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/configure-relayhost/">Configure relay host</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/configure-reverse-proxy/">Configure reverse proxy</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/configure-tls/">Configure TLS certificates</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/configure-oauth2/">Configure OAuth2</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/configure-external-database/">Configure external database</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/configure-roundcube-plugins/">Configure Roundcube plugins</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/configure-php-sessions/">Configure PHP sessions</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/configure-mcp-server/">Configure the MCP server</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/revoke-mcp-api-token/">Revoke an MCP API token</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/manage-domains/">Manage domains</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/manage-users/">Manage users</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/manage-aliases/">Manage aliases</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/manage-fetchmail/">Manage fetchmail</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/ios-macos-profile/">iOS / macOS profile</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Reference</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../environment-variables/">Environment variables</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ports/">Ports</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../dns-records/">DNS records</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../service-architecture/">Service architecture</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../user-roles/">User roles</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../mailserver-admin-config/">mailserver-admin config</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">MCP server</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#endpoint">Endpoint</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#http-responses">HTTP responses</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#api-tokens">API tokens</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#scopes">Scopes</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#sender">Sender</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#tools">Tools</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#rules-for-all-tools">Rules for all tools</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#pagination">Pagination</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#management-tools">Management tools</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#mail-read-tools">Mail read tools</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#mail-send-tool">Mail send tool</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#mail-draft-tool">Mail draft tool</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#limits">Limits</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#audit-log">Audit log</a>
+    </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../local-address-extension/">Local address extension</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../upgrade-changelog/">Upgrade changelog</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Administration (web UI)</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../administration/login/">Login</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../administration/dashboard/">Dashboard</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Explanation</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../explanation/architecture/">Service architecture</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../explanation/database-backends/">Database backends</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../explanation/dns-and-email/">DNS and email delivery</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../explanation/observability/">Observability</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../explanation/mcp-server/">MCP server: risks and limitations</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Recipes</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Docker</a>
+    <ul>
+                <li class="toctree-l2"><a class="" href="https://github.com/jeboehm/docker-mailserver/tree/main/docs/example-configs/compose/traefik-reverse-proxy">Traefik Reverse Proxy</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Kubernetes</a>
+    <ul>
+                <li class="toctree-l2"><a class="" href="https://github.com/jeboehm/docker-mailserver/tree/main/docs/example-configs/kustomize/external-db-and-https-ingress">External Database and HTTPS Ingress</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Development</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../development/development/">Development guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../development/mailserver-admin/">mailserver-admin development</a>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="" href="https://github.com/jeboehm/docker-mailserver/issues">Issues</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">docker-mailserver</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Reference</li>
+      <li class="breadcrumb-item active">MCP server</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/jeboehm/docker-mailserver/blob/main/docs/reference/mcp-server.md">Edit on jeboehm/docker-mailserver</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="mcp-server-reference">MCP Server Reference</h1>
+<p>The MCP endpoint of mailserver-admin. For setup, see <a href="../../how-to/configure-mcp-server/">How to configure the MCP server</a>. For the risks, see <a href="../../explanation/mcp-server/">MCP server: risks and limitations</a>.</p>
+<h2 id="endpoint">Endpoint</h2>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Path</td>
+<td><code>/mcp</code></td>
+</tr>
+<tr>
+<td>Transport</td>
+<td>MCP Streamable HTTP</td>
+</tr>
+<tr>
+<td>Authentication</td>
+<td><code>Authorization: Bearer &lt;token&gt;</code></td>
+</tr>
+<tr>
+<td>Session storage</td>
+<td>Redis, so requests can reach any replica of <code>web</code></td>
+</tr>
+<tr>
+<td>Enabled by</td>
+<td><code>MCP_ENABLED</code>, on by default</td>
+</tr>
+<tr>
+<td>Hostnames</td>
+<td><code>MCP_ALLOWED_HOSTS</code>, matched against the <code>Host</code> header</td>
+</tr>
+</tbody>
+</table>
+<h3 id="http-responses">HTTP responses</h3>
+<table>
+<thead>
+<tr>
+<th>Status</th>
+<th>Cause</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>401</code></td>
+<td>Missing, unknown, expired or revoked token, or a disabled owner. Carries <code>WWW-Authenticate: Bearer</code></td>
+</tr>
+<tr>
+<td><code>403</code></td>
+<td>With a valid token: the <code>Host</code> header is not in <code>MCP_ALLOWED_HOSTS</code>, or an <code>Origin</code> header names another origin</td>
+</tr>
+<tr>
+<td><code>404</code></td>
+<td><code>MCP_ENABLED</code> is <code>false</code>, for every HTTP method. The API token pages answer the same way, and their menu entry is hidden</td>
+</tr>
+</tbody>
+</table>
+<p>The <code>Host</code> match ignores case and port. <code>X-Forwarded-Host</code> is not considered.</p>
+<h2 id="api-tokens">API tokens</h2>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Format</td>
+<td><code>msa_</code> followed by 64 hexadecimal characters. Only a SHA-256 hash is stored, and the token is shown once</td>
+</tr>
+<tr>
+<td>Lifetime</td>
+<td>1 day up to <code>MCP_TOKEN_MAX_LIFETIME_DAYS</code>. Mandatory. Lowering the variable does not shorten existing tokens</td>
+</tr>
+<tr>
+<td>Owner</td>
+<td>The user who created it. Nobody can create a token for someone else</td>
+</tr>
+<tr>
+<td>Role</td>
+<td>The owner's role and <code>enabled</code> flag, read from the database on every request</td>
+</tr>
+<tr>
+<td>Revoked</td>
+<td>By hand; automatically when the owner's password changes or the owner is disabled. A revoked token stays revoked if the owner is re-enabled</td>
+</tr>
+<tr>
+<td>Listed</td>
+<td>Users see their own tokens, domain admins those of their domain, admins all. Revoked tokens stay listed until their owner is deleted</td>
+</tr>
+<tr>
+<td>Sender</td>
+<td>Chosen at creation for tokens with <code>mail:send</code> or <code>mail:draft</code>, see <a href="#sender">Sender</a>. Cannot be changed</td>
+</tr>
+</tbody>
+</table>
+<h2 id="scopes">Scopes</h2>
+<p>A call succeeds only if the token carries the scope and the owner's current role allows the action on that object.</p>
+<table>
+<thead>
+<tr>
+<th>Scope</th>
+<th>Allows</th>
+<th>Preselected</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>manage:read</code></td>
+<td>List and read domains, users, aliases, fetchmail accounts, DKIM status; DNS validation</td>
+<td>yes</td>
+</tr>
+<tr>
+<td><code>manage:write</code></td>
+<td>Create, update and delete the same</td>
+<td>no</td>
+</tr>
+<tr>
+<td><code>mail:read</code></td>
+<td>Read the owner's own mailbox</td>
+<td>yes</td>
+</tr>
+<tr>
+<td><code>mail:draft</code></td>
+<td>Save a draft in the owner's Drafts mailbox, never sends</td>
+<td>no</td>
+</tr>
+<tr>
+<td><code>mail:send</code></td>
+<td>Send from an address of the owner, see <a href="#sender">Sender</a></td>
+<td>no</td>
+</tr>
+</tbody>
+</table>
+<h2 id="sender">Sender</h2>
+<p>A token with <code>mail:send</code> or <code>mail:draft</code> has a sender mode, chosen when the token is created. It applies to <code>message_send</code> and <code>message_draft</code> alike, and cannot be changed afterwards. Tokens without either scope always use <code>primary</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Sender mode</th>
+<th>Label in the token form</th>
+<th><code>From</code> and envelope sender</th>
+<th><code>from_address</code> argument</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>primary</code> (default)</td>
+<td>Primary address only</td>
+<td>The owner's address</td>
+<td>Refused</td>
+</tr>
+<tr>
+<td><code>fixed</code></td>
+<td>A fixed address</td>
+<td>The owned address chosen at creation</td>
+<td>Refused, even when it matches</td>
+</tr>
+<tr>
+<td><code>any</code></td>
+<td>Any of my addresses</td>
+<td><code>from_address</code>, or the owner's address without it</td>
+<td>Must be an owned address</td>
+</tr>
+</tbody>
+</table>
+<p>The sender is also used for the domain of the <code>Message-ID</code> and for the Sent copy or the draft.</p>
+<p>Owned addresses, as mailserver-admin counts them:</p>
+<ul>
+<li>The owner's address, and every alias with exactly that address as a destination. An alias with several destinations counts if one of them is the owner's.</li>
+<li>Only addresses stored in lower case. <code>from_address</code> itself is compared without regard to case.</li>
+<li>Not catch-alls, address extensions, chains of aliases or aliases with an external destination, although Postfix accepts some of them on submission.</li>
+<li>The same for every role: admins and domain admins only send from their own addresses, not from others in their domain.</li>
+</ul>
+<p>The sender is checked on every call, before any limit is counted and before anything is sent or saved. When the address of a <code>fixed</code> token is no longer owned, for example because its alias was deleted or changed, the call is refused. The token is not revoked, and works again once the alias is restored. The token list marks it with <strong>No longer owned</strong>.</p>
+<p><code>whoami</code> returns <code>send_as</code> for tokens with <code>mail:send</code> or <code>mail:draft</code>: <code>mode</code>, <code>address</code> for <code>fixed</code>, and <code>addresses</code>, the owned addresses, for <code>any</code>.</p>
+<h2 id="tools">Tools</h2>
+<p>Which role reaches which tools and objects is listed in <a href="../user-roles/#mcp-server-and-api-tokens">User roles</a>. A tool the role does not reach is not listed, and a call is refused.</p>
+<table>
+<thead>
+<tr>
+<th>Tool</th>
+<th>Scope</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>whoami</code></td>
+<td><em>(none)</em></td>
+</tr>
+<tr>
+<td><code>domain_list</code></td>
+<td><code>manage:read</code></td>
+</tr>
+<tr>
+<td><code>domain_create</code>, <code>domain_delete</code></td>
+<td><code>manage:write</code></td>
+</tr>
+<tr>
+<td><code>user_list</code>, <code>user_get</code></td>
+<td><code>manage:read</code></td>
+</tr>
+<tr>
+<td><code>user_create</code>, <code>user_update</code>, <code>user_delete</code></td>
+<td><code>manage:write</code></td>
+</tr>
+<tr>
+<td><code>alias_list</code>, <code>alias_get</code></td>
+<td><code>manage:read</code></td>
+</tr>
+<tr>
+<td><code>alias_create</code>, <code>alias_update</code>, <code>alias_delete</code></td>
+<td><code>manage:write</code></td>
+</tr>
+<tr>
+<td><code>fetchmail_list</code>, <code>fetchmail_get</code></td>
+<td><code>manage:read</code></td>
+</tr>
+<tr>
+<td><code>fetchmail_create</code>, <code>fetchmail_update</code>, <code>fetchmail_delete</code></td>
+<td><code>manage:write</code></td>
+</tr>
+<tr>
+<td><code>dkim_status</code></td>
+<td><code>manage:read</code></td>
+</tr>
+<tr>
+<td><code>dkim_enable</code>, <code>dkim_disable</code>, <code>dkim_recreate_key</code></td>
+<td><code>manage:write</code></td>
+</tr>
+<tr>
+<td><code>dns_validate</code></td>
+<td><code>manage:read</code></td>
+</tr>
+<tr>
+<td><code>mailbox_list</code>, <code>message_search</code>, <code>message_get</code></td>
+<td><code>mail:read</code></td>
+</tr>
+<tr>
+<td><code>message_draft</code></td>
+<td><code>mail:draft</code></td>
+</tr>
+<tr>
+<td><code>message_send</code></td>
+<td><code>mail:send</code></td>
+</tr>
+</tbody>
+</table>
+<p><code>whoami</code> is available to every role. <code>MCP_MAIL_READ_ENABLED</code> and <code>MCP_MAIL_SEND_ENABLED</code> switch off the mail tools, and no mail tool takes a mailbox user as an argument. There is no <code>MCP_MAIL_DRAFT_ENABLED</code>: the scope <code>mail:draft</code> is the only gate of <code>message_draft</code>.</p>
+<h3 id="rules-for-all-tools">Rules for all tools</h3>
+<ul>
+<li><code>tools/list</code> only shows the tools a token can use, given its scopes, its owner's role and the feature flags. Calls are checked the same way.</li>
+<li>Missing scopes, denied objects and objects that do not exist all answer <code>Not found or not allowed.</code>, so other domains cannot be probed.</li>
+<li>Password hashes, passwords, fetchmail passwords and DKIM private keys never appear in tool output.</li>
+<li>Arguments and result fields are named in snake_case.</li>
+<li>Every mail from <code>message_send</code> and <code>message_draft</code> carries the header <code>X-Mailer: mailserver-admin (https://github.com/jeboehm/mailserver-admin)</code>.</li>
+</ul>
+<h3 id="pagination">Pagination</h3>
+<p>A limit or offset out of range is refused rather than corrected.</p>
+<table>
+<thead>
+<tr>
+<th>Tools</th>
+<th>Default limit</th>
+<th>Maximum</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>domain_list</code>, <code>user_list</code>, <code>alias_list</code>, <code>fetchmail_list</code></td>
+<td>50</td>
+<td>100</td>
+</tr>
+<tr>
+<td><code>mailbox_list</code></td>
+<td>50</td>
+<td>100</td>
+</tr>
+<tr>
+<td><code>message_search</code></td>
+<td>20</td>
+<td>100</td>
+</tr>
+<tr>
+<td><code>dns_validate</code>, by <code>next_cursor</code> instead of an offset</td>
+<td>10</td>
+<td>50</td>
+</tr>
+</tbody>
+</table>
+<h3 id="management-tools">Management tools</h3>
+<ul>
+<li><code>domain_create</code> generates a DKIM key and leaves DKIM disabled. <code>domain_delete</code> only works on a domain without users and aliases.</li>
+<li><code>user_create</code> and <code>alias_create</code> default to the domain of the owner. Only admins can choose another domain or set <code>admin</code>.</li>
+<li><code>user_update</code> keeps the role and <code>enabled</code> state of the owner's own user. A changed password revokes that user's tokens, including the calling token if the user is its owner. Disabling a user revokes their tokens.</li>
+<li><code>user_delete</code> refuses the owner's own user.</li>
+<li><code>fetchmail_create</code> and <code>fetchmail_update</code> accept a password that can never be read back.</li>
+<li><code>dkim_enable</code> creates a key if the domain has none. <code>dkim_disable</code> keeps the key. <code>dkim_recreate_key</code> only runs with <code>confirm</code> set to <code>true</code>, because the published DNS record stops matching. All DKIM tools report the published record under a DNS budget of 10 seconds: with <code>timed_out</code> set to <code>true</code>, <code>record_found</code> and <code>record_valid</code> are <code>null</code> and nothing is known about the record.</li>
+<li><code>dns_validate</code> works through the domains in pages, with a budget of 20 seconds per call. Domains listed in <code>timed_out</code> were not checked, so nothing is known about their records.</li>
+</ul>
+<h3 id="mail-read-tools">Mail read tools</h3>
+<ul>
+<li>Each call opens its own IMAP session as the token's owner and closes it again. The tools do not change flags such as <code>\Seen</code>.</li>
+<li><code>message_search</code> returns headers, newest first. <code>message_get</code> returns headers, a text body and a list of attachments without their content. HTML is converted to text, and a body over <code>MCP_MAIL_MESSAGE_MAX_BYTES</code> is cut off and marked with <code>body_truncated</code>.</li>
+<li>Everything the sender controls is under the key <code>untrusted_external_content</code>, with a <code>notice</code> telling the agent to treat it as data. This does not make it safe, see <a href="../../explanation/mcp-server/#prompt-injection">prompt injection</a>.</li>
+<li>Disabled and send-only users are refused.</li>
+<li>There are no tools to move, delete or flag mail, or to download attachments.</li>
+</ul>
+<h3 id="mail-send-tool">Mail send tool</h3>
+<p><code>message_send</code> sends a plain text mail from the <a href="#sender">sender</a> of the token, with Postfix submission as the owner. Attachments are not supported.</p>
+<p>Recipients must be plain addresses such as <code>name@example.com</code>. A non-ASCII character before the <code>@</code> is refused.</p>
+<table>
+<thead>
+<tr>
+<th>Result field</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>sent</code></td>
+<td><code>true</code>: the mail has gone out, whatever the rest says</td>
+</tr>
+<tr>
+<td><code>message_id</code></td>
+<td>The Message-ID of the mail</td>
+</tr>
+<tr>
+<td><code>recipients</code></td>
+<td>All recipients, including <code>bcc</code></td>
+</tr>
+<tr>
+<td><code>sent_copy.status</code></td>
+<td><code>saved</code>, <code>skipped</code> (send-only user, no copy is kept) or <code>failed</code> (the mail still went out)</td>
+</tr>
+</tbody>
+</table>
+<p>A refused or failed send answers with an error message that says whether to retry. After a lost connection the mail may have gone out, and the message says so.</p>
+<h3 id="mail-draft-tool">Mail draft tool</h3>
+<p><code>message_draft</code> saves a plain text mail from the <a href="#sender">sender</a> of the token as a draft, and sends nothing. The mail is saved with the flag <code>\Draft</code> in the owner's Drafts mailbox. A person opens it in their mail client, checks it and sends it from there.</p>
+<ul>
+<li>It takes the same arguments as <code>message_send</code>, including <code>from_address</code>, and the same rules for recipients and the sender apply.</li>
+<li>Every call creates a new draft. There is no tool to update or delete a draft, and no reply threading: a draft is a new mail, not an answer within a conversation.</li>
+<li><code>mail:draft</code> is independent of <code>mail:send</code>. A token with <code>mail:draft</code> alone cannot send.</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>Result field</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>drafted</code></td>
+<td><code>true</code>: the draft exists, so do not call the tool again</td>
+</tr>
+<tr>
+<td><code>message_id</code></td>
+<td>The Message-ID of the draft</td>
+</tr>
+<tr>
+<td><code>recipients</code></td>
+<td>All recipients, including <code>bcc</code></td>
+</tr>
+</tbody>
+</table>
+<p>A failed call answers with an error message that says whether to retry, and no draft has been saved.</p>
+<h2 id="limits">Limits</h2>
+<table>
+<thead>
+<tr>
+<th>Limit</th>
+<th>Variable</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Parallel IMAP sessions per user</td>
+<td><code>MCP_MAIL_MAX_IMAP_SESSIONS</code></td>
+<td><code>5</code></td>
+</tr>
+<tr>
+<td>Body returned by <code>message_get</code></td>
+<td><code>MCP_MAIL_MESSAGE_MAX_BYTES</code></td>
+<td><code>65536</code></td>
+</tr>
+<tr>
+<td>Recipients per mail</td>
+<td><code>MCP_MAIL_SEND_MAX_RECIPIENTS</code></td>
+<td><code>20</code></td>
+</tr>
+<tr>
+<td>Size of a sent message</td>
+<td><code>MCP_MAIL_SEND_MAX_BYTES</code></td>
+<td><code>1048576</code></td>
+</tr>
+<tr>
+<td>Sends per hour, per token</td>
+<td><code>MCP_MAIL_SEND_TOKEN_LIMIT_PER_HOUR</code></td>
+<td><code>30</code></td>
+</tr>
+<tr>
+<td>Sends per hour, per user</td>
+<td><code>MCP_MAIL_SEND_USER_LIMIT_PER_HOUR</code></td>
+<td><code>60</code></td>
+</tr>
+<tr>
+<td>Sends per rolling minute, overall</td>
+<td><code>MCP_MAIL_SEND_GLOBAL_LIMIT_PER_MINUTE</code></td>
+<td><code>15</code></td>
+</tr>
+<tr>
+<td>Drafts per hour, per token</td>
+<td><code>MCP_MAIL_DRAFT_TOKEN_LIMIT_PER_HOUR</code></td>
+<td><code>60</code></td>
+</tr>
+</tbody>
+</table>
+<p>All connections to Dovecot and Postfix come from the address of the <code>web</code> container, which Roundcube shares. Dovecot allows 10 connections per user and address, and Postfix 20 connections per minute and client address. A send or draft over a limit is refused before anything is tried, and the message says when to retry.</p>
+<h2 id="audit-log">Audit log</h2>
+<p>Every tool call writes one JSON record with the message <code>MCP tool call</code> on the channel <code>mcp_audit</code>, to the standard error of the <code>web</code> container.</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Content</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>token_id</code>, <code>user_id</code>, <code>user</code></td>
+<td>The token and its owner</td>
+</tr>
+<tr>
+<td><code>tool</code></td>
+<td>The tool name</td>
+</tr>
+<tr>
+<td><code>target</code></td>
+<td>The object the call names, for example <code>domain:example.com</code>, also on a denied call. Empty if it names none</td>
+</tr>
+<tr>
+<td><code>result</code></td>
+<td><code>ok</code>, <code>denied</code>, <code>failed</code> or <code>error</code></td>
+</tr>
+<tr>
+<td><code>client_ip</code></td>
+<td>The client address, which needs <code>TRUSTED_PROXIES</code> behind a proxy</td>
+</tr>
+<tr>
+<td><code>from</code>, <code>recipients</code>, <code>message_id</code>, <code>sent_copy</code></td>
+<td><code>message_send</code> only</td>
+</tr>
+<tr>
+<td><code>from</code>, <code>recipients</code>, <code>message_id</code>, <code>draft_folder</code></td>
+<td><code>message_draft</code> only</td>
+</tr>
+</tbody>
+</table>
+<p>The audit log never contains mail bodies, passwords or tokens. The error log is a separate matter, see <a href="../../explanation/mcp-server/#failing-calls-can-write-secrets-to-the-error-log">failing calls</a>.</p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../mailserver-admin-config/" class="btn btn-neutral float-left" title="mailserver-admin config"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../local-address-extension/" class="btn btn-neutral float-right" title="Local address extension">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/jeboehm/docker-mailserver" class="fa fa-code-fork" style="color: #fcfcfc"> jeboehm/docker-mailserver</a>
+        </span>
+    
+    
+      <span><a href="../mailserver-admin-config/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../local-address-extension/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../..";</script>
+    <script src="../../js/theme_extra.js"></script>
+    <script src="../../js/theme.js"></script>
+      <script src="../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>
