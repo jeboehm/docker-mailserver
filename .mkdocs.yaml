@@ -12,6 +12,7 @@ markdown_extensions:
   - pymdownx.superfences
 exclude_docs: |
   AGENTS.md
+  CLAUDE.md
   adr/**
   agents/**
   example-configs/**

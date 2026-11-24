@@ -4,6 +4,64 @@ This file gives AI agents and contributors the conventions they need to work on 
 configuration conventions, build and test workflow, CI and Git conventions. Documentation work (everything under `docs/`)
 has its own guide in [`docs/AGENTS.md`](docs/AGENTS.md).
 
+## Development workflow
+
+**Skills.** Install [mattpocock/skills](https://github.com/mattpocock/skills):
+`claude plugin install mattpocock-skills@claude-plugins-official` (Claude Code) or `npx skills@latest add mattpocock/skills`
+(other agents). The "Agent skills" section below and `docs/agents/*` configure them for this repository (issue tracker,
+triage labels, domain docs).
+
+**Full cycle — features and anything with a design decision:**
+
+1. `/grill-me` — interview the requester until goal, scope and edge cases are clear.
+2. `/to-spec` — write the spec as a GitHub issue in this repository.
+3. `/to-tickets` — split it into tracer-bullet sub-issues with blocking links.
+4. `/implement-spec` — implement on a branch in a dedicated Git worktree (never on `main`, never in a checkout another
+   agent uses); conventional commits; `make lint` and `make test` pass (see "Build, run, test").
+5. `/code-review` — review the branch against `main` (standards and spec), fix the findings.
+6. `/pr` — write the body and open the PR against `main` (`next` only for breaking changes).
+
+**Shortcut — bugfixes, chores and minor improvements:** skip steps 1–3 and start at `/implement-spec`; `/code-review`
+and `/pr` still apply. Without a spec issue the PR description carries the context: what was wrong or missing, why this
+change, how it was verified. If the shortcut uncovers a design question, stop and go back to step 1. A minor improvement
+changes no public interface, configuration or data format; anything that does takes the full cycle.
+
+**Definition of done.** An open PR that implements the feature or fixes the bug, with CI green (or failures explained in
+the PR). Then shut down and clean up: `make clean`; `kind delete cluster` if a kind cluster was started;
+`git worktree remove <path>`; delete the local branch (the remote branch stays for the PR).
+
+**Documentation.** The user documentation of docker-mailserver, mailserver-admin and fetchmailmgr lives in `docs/` of this
+repository. A change that affects users goes into the same PR, together with the `.env.dist`/Compose/Kustomize parity rule:
+a new, changed or removed environment variable or default, a new feature, changed behaviour, a breaking change or upgrade
+step, a new port or service. Refactoring, tests, CI and internal dependency bumps do not need docs. The other two
+projects open docs PRs here, cross-linked with their code PR. See `docs/AGENTS.md`.
+
+## Agent skills
+
+### Issue tracker
+
+Issues live in GitHub Issues on `jeboehm/docker-mailserver`, accessed with the `gh` CLI. See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+The five default labels, each named after its role: `needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix`. See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Single-context: one `GLOSSARY.md` and `docs/adr/` at the repository root, created when first needed. See `docs/agents/domain.md`.
+
+## Ground rules
+
+- **Parity:** Compose (`deploy/compose/`) and Kustomize (`deploy/kustomize/`) offer the same capabilities; change both.
+- **New variables:** add them to `.env.dist` and `docs/reference/environment-variables.md`.
+- **Credentials:** a name containing `PASSWORD`, `PASSWD` or `_KEY` goes into the Kubernetes Secret, anything else into
+  the ConfigMap (details under "Deployment parity").
+- **Test images:** keep `.github/images.txt` in sync with `deploy/compose/*.yaml` and `test/k8s/`.
+- **Dependency commits:** `fix(deps)` under `target/**` (published images; `feat(deps)` for majors), `chore(deps)` for CI
+  and test tooling.
+- **Images:** non-root, read-only root filesystem, one `healthcheck.sh` each.
+- **Tests:** every BATS test is self-contained (own mail, polling instead of sleeping).
+
 ## Services
 
 `docker-mailserver` runs one container (Docker Compose) or pod (Kubernetes) per service. Images built from this repository
@@ -123,20 +181,21 @@ pass their arguments to `docker compose` (`bin/test.sh logs -f filter`, `bin/tes
   `060_mda.bats` counts the mails that `040_mta.bats` delivered, and `120_mailbox_credentials.bats` comes last because
   its refused logins delay later ones from the same address (Dovecot's auth penalty).
 - `_helper.bash` is loaded with `load '_helper'` in `setup()`; it loads bats-support and bats-assert itself, so use
-  `assert_success`, `assert_failure [status]` and `assert_output` rather than `[ "$status" -eq 0 ]`. It provides
-  skips (`skip_in_kubernetes`, `skip_in_non_kubernetes`, `skip_without_relayhost`), service access that works on
-  both platforms (`exec_in_service`, `service_logs`, `service_log_count`, `service_logs_contain`; Kubernetes
-  container names differ from the service names, see `kubernetes_container`), polling (`wait_for`, `wait_for_log`,
-  `wait_for_mail`, which prints the file it found), mail inspection (`mail_needle`, `maildir`, `find_mail`,
-  `mail_header` for unfolded header values), mailbox state through doveadm in `mda` (`mailbox_reset`,
-  `quota_percentage`), short-lived login credentials stored in the database (`mailbox_credential`,
-  `mailbox_credentials_clear`), API tokens and calls of the MCP endpoint (`mcp_token`, `mcp_tokens_clear`, `mcp_post`,
-  `mcp_request`, `mcp_tool`) and clients (`send_mail` builds the message and sends it with `curl`, retrying when Postfix's
-  connection rate limit of 20 per minute and client answers `421`; `smtp_ehlo` prints the EHLO capabilities;
-  `mail_count` and `mail_move` are the IMAP/POP3 clients; `db_query` prints rows only, `redis_cli`, `dns_query`
-  against unbound, `tls_connect`, `tls_fingerprint`). Each function documents its arguments in a comment. Tests
-  assert on curl's exit codes: 55 for a rejected MAIL/RCPT/DATA command (with `RCPT failed` in the output), 8 for a
-  rejection after DATA, 67 for a rejected login. `--server host:port` takes the `*_ADDRESS` variables as they are.
+  `assert_success`, `assert_failure [status]` and `assert_output` rather than `[ "$status" -eq 0 ]`. Each function
+  documents its arguments in a comment. Helpers by purpose:
+  - Skips: `skip_in_kubernetes`, `skip_in_non_kubernetes`, `skip_without_relayhost`.
+  - Service access (works on both platforms; Kubernetes container names differ, see `kubernetes_container`):
+    `exec_in_service`, `service_logs`, `service_log_count`, `service_logs_contain`.
+  - Polling: `wait_for`, `wait_for_log`, `wait_for_mail` (prints the file it found).
+  - Mail inspection: `mail_needle`, `maildir`, `find_mail`, `mail_header` (unfolded header values).
+  - Mailbox state through doveadm in `mda`: `mailbox_reset`, `quota_percentage`.
+  - Login credentials stored in the database: `mailbox_credential`, `mailbox_credentials_clear`.
+  - MCP endpoint (API tokens, calls): `mcp_token`, `mcp_tokens_clear`, `mcp_post`, `mcp_request`, `mcp_tool`.
+  - Clients: `send_mail` (builds the message and sends it with `curl`, retrying when Postfix's connection rate limit of 20
+    per minute answers `421`), `smtp_ehlo` (prints the EHLO capabilities), `mail_count` and `mail_move` (IMAP/POP3),
+    `db_query` (rows only), `redis_cli`, `dns_query` (against unbound), `tls_connect`, `tls_fingerprint`.
+  - cURL exit codes the tests assert on: 55 for a rejected MAIL/RCPT/DATA command (with `RCPT failed` in the output), 8 for
+    a rejection after DATA, 67 for a rejected login. `--server host:port` takes the `*_ADDRESS` variables as they are.
 - Put new checks into the topic file, not into a platform file: `070_docker.bats` only holds what needs the Docker
   CLI, everything else runs on both platforms through the helpers.
 - Environment inside the runner: the `*_ADDRESS` variables from the Dockerfile (Compose defaults) or from
@@ -237,17 +296,3 @@ shell scripts.
   `target/mda/rootfs/usr/local/lib/rspamc.sh` to the Rspamd controller (`FILTER_WEB_ADDRESS`, `CONTROLLER_PASSWORD`).
 - **TLS:** `ssl` writes a self-signed certificate for `MAILNAME` into `data-tls`, which `mta`, `mda`, `web` (and mailpit
   in tests) mount read-only. See `docs/how-to/configure-tls.md` for real certificates.
-
-## Agent skills
-
-### Issue tracker
-
-Issues live in GitHub Issues on `jeboehm/docker-mailserver`, accessed with the `gh` CLI. See `docs/agents/issue-tracker.md`.
-
-### Triage labels
-
-The five default labels, each named after its role: `needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix`. See `docs/agents/triage-labels.md`.
-
-### Domain docs
-
-Single-context: one `GLOSSARY.md` and `docs/adr/` at the repository root, created when first needed. See `docs/agents/domain.md`.
