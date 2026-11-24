@@ -92,7 +92,7 @@ Which role reaches which tools and objects is listed in [User roles](user-roles.
 | `message_draft`                                            | `mail:draft`   |
 | `message_send`                                             | `mail:send`    |
 
-`whoami` is available to every role. `MCP_MAIL_READ_ENABLED` and `MCP_MAIL_SEND_ENABLED` switch off the mail tools, and no mail tool takes a mailbox user as an argument. There is no `MCP_MAIL_DRAFT_ENABLED`: the scope `mail:draft` is the only gate of `message_draft`.
+`whoami` is available to every role. No mail tool takes a mailbox user as an argument. `MCP_MAIL_READ_ENABLED` and `MCP_MAIL_SEND_ENABLED` switch off the mail tools. There is no `MCP_MAIL_DRAFT_ENABLED`: the scope `mail:draft` is the only gate of `message_draft`.
 
 ### Rules for all tools
 
@@ -116,7 +116,7 @@ A limit or offset out of range is refused rather than corrected.
 ### Management tools
 
 - `domain_create` generates a DKIM key and leaves DKIM disabled. `domain_delete` only works on a domain without users and aliases.
-- `user_create` and `alias_create` default to the domain of the owner. Only admins can choose another domain or set `admin`.
+- `user_create` and `alias_create` default to the domain of the owner. Only admins can choose another domain or set `admin`. Domain admins cannot change what belongs to an admin, see [Protections for admins](user-roles.md#protections-for-admins).
 - `user_update` keeps the role and `enabled` state of the owner's own user. A changed password revokes that user's tokens, including the calling token if the user is its owner. Disabling a user revokes their tokens.
 - `user_delete` refuses the owner's own user.
 - `fetchmail_create` and `fetchmail_update` accept a password that can never be read back.
@@ -164,16 +164,7 @@ A failed call answers with an error message that says whether to retry, and no d
 
 ## Limits
 
-| Limit                             | Variable                                | Default   |
-| --------------------------------- | --------------------------------------- | --------- |
-| Parallel IMAP sessions per user   | `MCP_MAIL_MAX_IMAP_SESSIONS`            | `5`       |
-| Body returned by `message_get`    | `MCP_MAIL_MESSAGE_MAX_BYTES`            | `65536`   |
-| Recipients per mail               | `MCP_MAIL_SEND_MAX_RECIPIENTS`          | `20`      |
-| Size of a sent message            | `MCP_MAIL_SEND_MAX_BYTES`               | `1048576` |
-| Sends per hour, per token         | `MCP_MAIL_SEND_TOKEN_LIMIT_PER_HOUR`    | `30`      |
-| Sends per hour, per user          | `MCP_MAIL_SEND_USER_LIMIT_PER_HOUR`     | `60`      |
-| Sends per rolling minute, overall | `MCP_MAIL_SEND_GLOBAL_LIMIT_PER_MINUTE` | `15`      |
-| Drafts per hour, per token        | `MCP_MAIL_DRAFT_TOKEN_LIMIT_PER_HOUR`   | `60`      |
+The size, recipient and rate limits are set with `MCP_MAIL_*` variables, listed with their defaults in the [environment variables reference](environment-variables.md#mcp-server).
 
 All connections to Dovecot and Postfix come from the address of the `web` container, which Roundcube shares. Dovecot allows 10 connections per user and address, and Postfix 20 connections per minute and client address. A send or draft over a limit is refused before anything is tried, and the message says when to retry.
 

@@ -22,13 +22,7 @@ Built images are not removed. Use `docker image rm` for that.
 make clean
 ```
 
-**When to use:**
-
-- Before starting fresh development work
-- When switching between different configurations
-- To free up disk space from accumulated Docker data
-- To have a fresh database
-- When encountering persistent issues that might be related to cached data
+Use it for a fresh database and to free the disk space of the volumes.
 
 ### `make up`
 
@@ -42,17 +36,7 @@ Images are not rebuilt; run `make build` first when sources changed. The target 
 make up
 ```
 
-**What it does:**
-
-- Builds MTA, MDA, Web, Filter, SSL, and other service images
-- Configures service networking and dependencies
-- Makes services available for testing and development
-
-**When to use:**
-
-- After making code changes to any service
-- When setting up a new development environment
-- After running `make clean` to rebuild everything
+It runs `bin/production.sh up -d` and publishes the host ports of the [Ports reference](../reference/ports.md).
 
 ### `make test`
 
@@ -75,24 +59,7 @@ make test
 
 `make test` can be repeated against the same stack: `test/fixtures.sh` exits early when the database is already seeded, and the tests reset the state they depend on themselves. bats writes a JUnit report to `test/report/report.xml` (git-ignored), which CI uploads as an artifact.
 
-**Prerequisites:**
-
-- Services must be running (run `make up` first)
-- All services must be healthy and ready
-
-**Test Coverage:**
-
-- TLS certificate generation and validation
-- Database initialization and connectivity
-- Configuration file generation
-- MTA (Postfix) functionality
-- Web interface accessibility
-- MDA (Dovecot) IMAP/POP3 services
-- Docker container health checks
-- Relay host configuration
-- DKIM signing and verification
-- Fetchmail external mail retrieval
-- Unbound DNS resolution
+The target runs `up` and `fixtures` first and builds the test runner image itself.
 
 ### `make lint`
 
@@ -110,20 +77,7 @@ Lints all files in the project to ensure code quality and consistency:
 make lint
 ```
 
-**What it checks:**
-
-- Shell scripts (`.sh` files) using shellcheck
-- YAML files (`.yml`, `.yaml`) for syntax and formatting
-- Dockerfiles for best practices and security issues
-- Configuration files for proper syntax
-- Documentation files for formatting consistency
-
-**When to use:**
-
-- Before committing changes to ensure code quality
-- As part of the development workflow
-- To catch syntax errors and style issues early
-- To maintain consistent code formatting across the project
+Run it before committing. The linters and their configuration are described in the root `AGENTS.md` of the repository.
 
 ### `make trivy-config`
 
@@ -235,7 +189,7 @@ docker exec docker-mailserver-unbound-1 unbound-control list_local_data
 - **Services won't start:** Run `make clean` then `make up`
 - **Tests failing:** Ensure all services are healthy with `bin/test.sh ps`
 - **Build issues:** Check Docker daemon is running and has sufficient resources
-- **Port conflicts:** Ensure ports 25, 110, 143, 587, 993, 995, 81 are available
+- **Port conflicts:** Free the host ports of the [Ports reference](../reference/ports.md)
 
 ## Project Structure
 
@@ -265,13 +219,3 @@ commits of its own and merges `main` into it once it does. If that merge conflic
 workflow opens a pull request from `main` into `next` and fails, so the conflict is resolved
 once, by hand. Base a pull request on `next` when it targets the next major version;
 otherwise base it on `main`. A major version is cut by merging `next` into `main`.
-
-## Contributing
-
-When contributing to the project:
-
-1. Follow the development workflow above
-2. Ensure all tests pass before submitting changes
-3. Update documentation as needed
-4. Test your changes in both Docker Compose and Kubernetes environments
-5. Follow the existing code style and patterns

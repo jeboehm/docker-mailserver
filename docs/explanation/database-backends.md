@@ -29,7 +29,7 @@ Their queries are therefore part of this repository, while the schema belongs to
 
 ## How the Engine Is Selected
 
-`DB_DRIVER` is the only switch, and its value is used verbatim by all four consumers: it is the
+`DB_DRIVER` is the only switch (the other variables are in the [environment variables reference](../reference/environment-variables.md#database)), and its value is used verbatim by all four consumers: it is the
 Postfix lookup table type, Dovecot's `sql_driver`, Roundcube's DSN scheme and Doctrine's DSN
 scheme. No translation table is involved.
 
@@ -88,12 +88,6 @@ grew through the full migration history keeps the foreign key names from the 201
 its `mail_users.domain_admin` carries the default of `0` that the migration adding the column set.
 Fresh databases get the canonical names and no default, because the mapping declares none. Nothing
 writes to these tables outside the ORM, so neither difference is observable at runtime.
-
-## Server Version
-
-`DB_SERVER_VERSION` has to be set to match the server. Doctrine detects the MySQL version by
-itself, but not the PostgreSQL one in this image, and an undetected version aborts the connection
-with `Invalid platform version ""`.
 
 ## Switching Engines
 

@@ -1,6 +1,22 @@
 # Upgrade Changelog
 
-Version-specific upgrade notes. When upgrading, update manifests in `deploy/compose` and `deploy/kustomize` to match the new version (volumes, configuration). Update `.env` for new or changed environment variables.
+Version-specific upgrade notes. For the procedure, see [How to upgrade](../how-to/upgrade.md).
+
+## Next release
+
+This entry applies to the docker-mailserver release that ships the mailserver-admin versions below. Neither the release number nor the mailserver-admin version of the last item exists yet: both are placeholders.
+
+### mailserver-admin: domain admins can no longer change what belongs to an admin
+
+Domain admins lose three things they could do before. The rules are in [Protections for admins](user-roles.md#protections-for-admins).
+
+- **Fetchmail accounts of admins** (mailserver-admin 5.23.2): a domain admin can no longer create, edit, delete or reassign them.
+- **Aliases on an admin's address** (mailserver-admin 5.23.2): a domain admin can no longer create, edit or delete an alias whose address is an admin's address.
+- **Aliases pointing to an admin's address** (mailserver-admin `<version not released yet>`): a domain admin can no longer create, edit or delete an alias whose destination is an admin's address, with or without an address extension.
+
+Nothing is migrated. Existing fetchmail accounts and aliases of these kinds stay as they are and keep working, but domain admins can only read them from now on. An admin has to change or delete them, which includes aliases a domain admin created earlier.
+
+With the default `RECIPIENT_DELIMITER=-`, domain admins are also refused destinations such as `admin-sales@example.com` when `admin@example.com` belongs to an admin.
 
 ## v8.1.0
 
@@ -77,11 +93,7 @@ Old keys do not fail loudly. The containers fall back to their image defaults (`
 
 ### PostgreSQL
 
-Set `DB_DRIVER=pgsql`, `DB_PORT=5432`, and `DB_SERVER_VERSION` to the server major version. `DB_SERVER_VERSION` is required, because Doctrine cannot detect it in this image. `DB_TLS_VERIFY_CERT` has no PostgreSQL counterpart.
-
-Switching engines migrates no data. Lookups are now wrapped in `lower()`, so existing mixed-case domains, mailboxes, and aliases resolve on MySQL but not on PostgreSQL.
-
-See [Database backends](../explanation/database-backends.md) and the [environment variables reference](environment-variables.md).
+Settings: [Using PostgreSQL](environment-variables.md#using-postgresql). Switching engines migrates no data, and mixed-case addresses stop resolving, see [Database backends](../explanation/database-backends.md#case-sensitivity).
 
 ### Schema creation
 

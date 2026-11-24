@@ -23,7 +23,8 @@ The `DB_USER` defaults above are the image defaults, which a Kubernetes deployme
 not set the variable. Every compose service overrides it to `mailserver`.
 
 `DB_SERVER_VERSION` has to match the server, because Doctrine cannot detect the PostgreSQL
-version by itself in this image. Use the major version, for example `18`.
+version by itself in this image, and an undetected version aborts the connection with
+`Invalid platform version ""`. Use the major version, for example `18`.
 
 `DB_TLS_VERIFY_CERT` applies to the MTA and the MDA, and only with `DB_DRIVER=mysql`. The two
 services interpret it slightly differently, because Postfix and Dovecot expose different settings:
@@ -59,35 +60,20 @@ DB_IMAGE=postgres:18-alpine
 DB_DATA_DIR=/var/lib/postgresql
 ```
 
-Switching engines does not migrate any data. Run `make clean` first when using the bundled
-container: PostgreSQL refuses to initialise into a data directory that is not empty.
+See [Database backends](../explanation/database-backends.md#switching-engines) for switching an existing installation.
 
 #### Renamed From MYSQL\_\*
 
-The database variables were renamed from `MYSQL_*` to `DB_*`. Docker Compose deployments keep
-working with the old names, which are used as a fallback.
-
-| Old name                | New name             |
-| ----------------------- | -------------------- |
-| `MYSQL_HOST`            | `DB_HOST`            |
-| `MYSQL_PORT`            | `DB_PORT`            |
-| `MYSQL_DATABASE`        | `DB_NAME`            |
-| `MYSQL_USER`            | `DB_USER`            |
-| `MYSQL_PASSWORD`        | `DB_PASSWORD`        |
-| `MYSQL_TLS_VERIFY_CERT` | `DB_TLS_VERIFY_CERT` |
-| `MYSQL_ROOT_PASSWORD`   | `DB_ROOT_PASSWORD`   |
-
-Kubernetes deployments have no such fallback, because the variables reach the containers straight
-from the generated ConfigMap. Rename them in your `.env` before applying the manifests.
+The `MYSQL_*` database variables were renamed to `DB_*`. See the [upgrade changelog](upgrade-changelog.md#renamed-variables).
 
 ### Mail Server Identity
 
-| Variable              | Default                  | Description                                                       |
-| --------------------- | ------------------------ | ----------------------------------------------------------------- |
-| `MAILNAME`            | `mail.example.com`       | Primary mail server hostname                                      |
-| `POSTMASTER`          | `postmaster@example.com` | Postmaster email address                                          |
-| `RECIPIENT_DELIMITER` | `-`                      | Character used for address extensions (e.g., user-tag@domain.com) |
-| `MYNETWORKS`          | `127.0.0.0/8`            | Networks Postfix relays for without authentication                |
+| Variable              | Default                  | Description                                                         |
+| --------------------- | ------------------------ | ------------------------------------------------------------------- |
+| `MAILNAME`            | `mail.example.com`       | Primary mail server hostname                                        |
+| `POSTMASTER`          | `postmaster@example.com` | Postmaster email address                                            |
+| `RECIPIENT_DELIMITER` | `-`                      | Character used for [address extensions](local-address-extension.md) |
+| `MYNETWORKS`          | `127.0.0.0/8`            | Networks Postfix relays for without authentication                  |
 
 ### Redis
 
@@ -234,7 +220,7 @@ Drafting mail:
 | `PHP_SESSION_SAVE_HANDLER` | `redis`                                                    | `session.save_handler` for Roundcube's PHP side |
 | `PHP_SESSION_SAVE_PATH`    | `tcp://${REDIS_HOST}:${REDIS_PORT}?auth=${REDIS_PASSWORD}` | `session.save_path` for Roundcube's PHP side    |
 
-These variables no longer affect mailserver-admin, only Roundcube's PHP side. Since mailserver-admin 5.20.0, it defines its own session handler and keeps admin logins and MCP sessions in Redis (`REDIS_HOST`, `REDIS_PORT`, `REDIS_PASSWORD`), whatever these variables say. See [How to configure PHP sessions](../how-to/configure-php-sessions.md).
+These variables affect Roundcube's PHP side only. See [How to configure PHP sessions](../how-to/configure-php-sessions.md).
 
 ### Proxy Protocol
 

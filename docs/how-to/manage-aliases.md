@@ -1,6 +1,6 @@
 # How to Manage Aliases
 
-Aliases forward incoming mail from one address to one or more destinations (local users or external addresses). **Admin** can manage all aliases; **Domain Admin** only aliases in their domain; **User** cannot manage aliases.
+Aliases forward incoming mail from one address to a destination (a local user or an external address). Which roles can manage which aliases is listed in the [User roles reference](../reference/user-roles.md); domain admins cannot change aliases on or pointing to an admin's address, see [Protections for admins](../reference/user-roles.md#protections-for-admins).
 
 ## Add an alias
 
@@ -9,10 +9,10 @@ Aliases forward incoming mail from one address to one or more destinations (loca
 3. Click **Add Alias**.
 4. Enter:
    - **Source Address:** Local part + domain (e.g. `info@example.com`). Leave the local part empty for a catch-all alias.
-   - **Destination Address(es):** One or more addresses to forward to.
+   - **Destination Address:** The address to forward to.
 5. Save.
 
-The source must belong to an existing domain. Destinations can be local users or external addresses. You can create multiple aliases with the same source and different destinations to forward to several recipients.
+The source must belong to an existing domain. The destination can be a local user or an external address. An alias has one destination: create one alias per destination with the same source to forward to several recipients.
 
 ![Alias Create](../images/admin/alias_create.png)
 
@@ -20,7 +20,7 @@ The source must belong to an existing domain. Destinations can be local users or
 
 1. Open **Alias** in the menu.
 2. Select the alias.
-3. Change source or destination(s).
+3. Change source or destination.
 4. Save.
 
 ## Delete an alias
@@ -33,8 +33,6 @@ Deleting an alias only removes the forwarding rule; it does not delete user acco
 
 ## Examples
 
-- Generic addresses: `info@example.com` → `team@example.com`; `support@example.com` → `support1@example.com, support2@example.com`.
+- Generic addresses: `info@example.com` → `team@example.com`.
 - Personal: `john.doe@example.com` → `john.doe@gmail.com`.
-- Distribution: `announcements@example.com` → `user1@example.com, user2@example.com`.
-
-For access control, see [User roles reference](../reference/user-roles.md).
+- Distribution: two aliases from `announcements@example.com`, one to `user1@example.com` and one to `user2@example.com`.

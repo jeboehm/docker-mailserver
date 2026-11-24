@@ -7,4 +7,4 @@ Use the feature from the management interface to generate and download the profi
 - [macOS](https://support.apple.com/en-us/guide/mac-help/mh35561/mac)
 - [iOS](https://support.apple.com/en-us/102400)
 
-**Note:** Profile generation uses the same TLS certificate the mailserver presents to clients. To generate profiles, that certificate must be mounted into the web container (see [Upgrade changelog](../reference/upgrade-changelog.md) v7.1).
+**Note:** Profile generation uses the same TLS certificate the mailserver presents to clients, so the `web` container needs it at `/opt/admin/tls`. Compose and Kustomize mount it by default; if you mount your own certificates, see [How to configure TLS certificates](configure-tls.md) and the [volume mounts](../reference/service-architecture.md#volume-mounts-by-service).

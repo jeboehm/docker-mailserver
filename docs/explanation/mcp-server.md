@@ -59,9 +59,7 @@ A local disable is therefore the only thing that ends the tokens of someone who 
 
 ### Mail
 
-- Agents only reach the mailbox of the token's owner, for every role. Admins and domain admins get no access to other people's mail.
-- Sending uses the owner's address or an alias that points to it, as set on the token. Attachments are not supported.
-- Agents cannot move, delete or flag mail, or download attachments.
+Agents only reach the mailbox of the token's owner, for every role ([Mailboxes](../reference/user-roles.md#mailboxes)). Sending is bound to the [sender](../reference/mcp-server.md#sender) of the token. Attachments are not supported, and agents cannot move, delete or flag mail.
 
 ### Connection limits are shared
 

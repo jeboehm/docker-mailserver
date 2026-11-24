@@ -4,4 +4,4 @@ The dashboard is the main page after login. It shows an overview of the mailserv
 
 ![Dashboard](../images/admin/dashboard.png)
 
-From the dashboard you can navigate to domain, user, alias, fetchmail, and DKIM management, and to the DNS Validation Wizard and observability dashboards when available.
+The menu leads to domain, user, alias, fetchmail and DKIM management, the [DNS Validation Wizard](../how-to/validate-dns.md) and the [observability dashboards](../explanation/observability.md). Entries depend on the [role](../reference/user-roles.md) of the logged-in user.
