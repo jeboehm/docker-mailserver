@@ -6,13 +6,13 @@
 
 ## Overview
 
-This project enables you to operate your own email services, providing independence from large email providers. The solution is built on Alpine Linux and vendor base images, keeping container images lightweight while maintaining comprehensive functionality.
+The project runs your own mail services (Postfix, Dovecot, Rspamd) with a web interface (mailserver-admin) and webmail (Roundcube). The container images are built on Alpine Linux or on the upstream images.
 
 ## Documentation structure
 
 The documentation is organised by purpose:
 
-- **[Tutorial: Getting Started](tutorials/getting-started.md)** — A step-by-step lesson to install docker-mailserver with Docker Compose and create your first mailbox.
+- **[Tutorial: Getting Started](tutorials/getting-started.md)** — A step-by-step lesson to install docker-mailserver with Docker Compose and log in to the management interface.
 - **How-to guides** — Task-oriented guides for specific goals: [install with Docker](how-to/install-docker.md), [install on Kubernetes](how-to/install-kubernetes.md), [configure DNS](how-to/configure-dns.md), [configure TLS](how-to/configure-tls.md), [manage users](how-to/manage-users.md), [configure the MCP server](how-to/configure-mcp-server.md), and more.
 - **Reference** — Technical descriptions: [environment variables](reference/environment-variables.md), [DNS records](reference/dns-records.md), [ports](reference/ports.md), [service architecture](reference/service-architecture.md), [user roles](reference/user-roles.md), [MCP server](reference/mcp-server.md), and related topics.
 - **Administration (web UI)** — Working with the management interface: [login](administration/login.md), [dashboard](administration/dashboard.md).
@@ -34,8 +34,7 @@ The documentation is organised by purpose:
 - **Spam training:** Train spam filters by moving emails to or from the junk folder
 - **Real-time protection:** RBL integration for spam prevention
 - **Greylisting:** Selective greylisting for likely spam
-- **Address management:** Catch-all addresses, send-only accounts, local address extension (RFC 5233)
-- **Security:** Sender address restrictions and configurable address extensions
+- **Address management:** Catch-all addresses, send-only accounts, [local address extension](reference/local-address-extension.md) (RFC 5233)
 - **Quota management:** Email quota management with notifications
 - **TLS:** Enforced TLS for secure communication
 - **Full-text search:** FTS support for efficient message searching
@@ -43,26 +42,11 @@ The documentation is organised by purpose:
 
 ## Quick start
 
-1. **[Tutorial: Getting Started](tutorials/getting-started.md)** — Install with Docker Compose and create your first account
-2. **[How to install with Docker](how-to/install-docker.md)** — Docker Compose installation steps
-3. **[How to install on Kubernetes](how-to/install-kubernetes.md)** — Kubernetes deployment steps
-4. **[How to upgrade](how-to/upgrade.md)** — Upgrade procedures and [upgrade changelog](reference/upgrade-changelog.md)
+New to docker-mailserver: start with the [Getting Started tutorial](tutorials/getting-started.md). To install with a known procedure, see [Docker](how-to/install-docker.md) or [Kubernetes](how-to/install-kubernetes.md). To upgrade, see [How to upgrade](how-to/upgrade.md).
 
 ## Service architecture
 
-The mailserver consists of multiple microservices:
-
-- **MTA (Mail Transfer Agent)** — Postfix for SMTP
-- **MDA (Mail Delivery Agent)** — Dovecot for IMAP/POP3
-- **Web** — Admin interface and Roundcube webmail
-- **Filter** — RSpamd for spam filtering
-- **SSL** — Certificate generation and management
-- **Database** — MySQL or PostgreSQL for user and configuration data
-- **Redis** — Caching and session storage
-- **Unbound** — DNS resolver for the filter service
-- **Fetchmail** — External mail retrieval (optional)
-
-See [Service architecture reference](reference/service-architecture.md) for a concise list and [About the service architecture](explanation/architecture.md) for context.
+The services and their roles are listed in the [Service architecture reference](reference/service-architecture.md). [About the service architecture](explanation/architecture.md) explains how they work together.
 
 ## Getting help
 

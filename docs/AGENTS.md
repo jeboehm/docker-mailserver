@@ -39,6 +39,12 @@ The docs are organised by Diátaxis type:
 
 MkDocs config is **`.mkdocs.yaml`**; the `nav` there reflects this structure (Tutorial, How-to guides, Reference, Administration, Explanation, Recipes, Development).
 
+## Content rules
+
+- **Every text must be useful to users or administrators of docker-mailserver.** Cut or rewrite text that is not: background nobody acts on, restated headings, marketing, and notes about the history of the documentation. Developer-only material belongs in `development/`.
+- **Deduplicate and resolve redundancies.** Each fact lives in one place, the page of the matching Diátaxis type: reference for facts (variables, ports, roles, formats), how-to for steps, explanation for reasons. Other pages link to it instead of repeating it. When pages contradict each other, check the code, fix the page that is wrong and delete the copy.
+- Before adding text, search `docs/` for the fact. Examples of single homes: roles and what each may do in `reference/user-roles.md`, variables and defaults in `reference/environment-variables.md`, ports in `reference/ports.md`, per-version upgrade steps in `reference/upgrade-changelog.md`.
+
 ## Documentation writing style
 
 - Use **technical documentation language**, not marketing. Avoid subjective terms (“powerful”, “particularly useful”, “sophisticated”).

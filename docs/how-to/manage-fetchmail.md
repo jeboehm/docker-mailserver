@@ -1,6 +1,6 @@
 # How to Manage Fetchmail Accounts
 
-Fetchmail retrieves mail from external servers (POP3/IMAP) and delivers it to local mailboxes. **Admin** can manage all fetchmail accounts; **Domain Admin** only for users in their domain; **User** only their own accounts.
+Fetchmail retrieves mail from external servers (POP3/IMAP) and delivers it to local mailboxes. Which roles can manage which accounts is listed in the [User roles reference](../reference/user-roles.md); domain admins cannot manage the accounts of an admin, see [Protections for admins](../reference/user-roles.md#protections-for-admins).
 
 ## Add a fetchmail account
 
@@ -35,11 +35,6 @@ The “Last run log” field shows the last transaction with the external server
 
 Deleting stops retrieval; mail already delivered to the local mailbox is not removed.
 
-## Security
+## Polling
 
-- Use strong, unique passwords for external accounts.
-- Enable SSL to protect credentials in transit.
-- Review and disable unused fetchmail accounts.
-- Ensure the mailserver can reach the external servers (firewall, DNS).
-
-Fetchmail runs on a schedule defined at the mailserver level. For access control, see [User roles reference](../reference/user-roles.md).
+Accounts are polled every `FETCHMAIL_INTERVAL` seconds, see the [environment variables reference](../reference/environment-variables.md#fetchmail). Enable **SSL** so the credentials of the external account are encrypted in transit, and make sure the `fetchmail` service can reach the external servers (firewall, DNS).

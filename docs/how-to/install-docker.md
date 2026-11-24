@@ -2,7 +2,7 @@
 
 This guide describes how to install docker-mailserver using Docker Compose.
 
-If you are setting up docker-mailserver for the first time, the [Getting Started tutorial](../tutorials/getting-started.md) provides a step-by-step walkthrough that covers these same steps with more explanation.
+For a first installation with more explanation, see the [Getting Started tutorial](../tutorials/getting-started.md).
 
 ## Prerequisites
 
@@ -51,13 +51,11 @@ Follow the wizard to create your first account and admin user.
 
 - Configure DNS (MX, SPF, DKIM, DMARC). See [How to configure DNS](configure-dns.md) and [DNS records reference](../reference/dns-records.md).
 - Replace self-signed TLS with valid certificates. See [How to configure TLS certificates](configure-tls.md).
-- Configure firewall, backups, and monitoring as needed.
+- Restrict the published ports, see [Binding and exposure](../reference/ports.md#binding-and-exposure), and back up the volumes listed in the [Service architecture reference](../reference/service-architecture.md#persistent-volumes).
 
 ## Troubleshooting
 
-- **Services not starting:** Check logs with `docker-compose logs` or `bin/production.sh logs`.
+- **Services not starting:** Check logs with `bin/production.sh logs`.
 - **Database errors:** Verify `DB_*` and database accessibility.
-- **TLS issues:** Check certificate paths and permissions.
-- **Port conflicts:** Ensure ports 25, 110, 143, 587, 993, 995, 81 are free.
-
-For port details, see [Ports reference](../reference/ports.md).
+- **TLS issues:** See [How to configure TLS certificates](configure-tls.md#requirements).
+- **Port conflicts:** Free the host ports listed in the [Ports reference](../reference/ports.md).

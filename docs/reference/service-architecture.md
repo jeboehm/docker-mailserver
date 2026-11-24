@@ -35,4 +35,4 @@ docker-mailserver consists of the following services:
 - **redis:** `data-redis:/data`
 - **SSL:** `data-tls:/media/tls:rw`
 
-For an overview of how these components work together, see [Architecture](../explanation/architecture.md).
+How the services work together is described in [About the service architecture](../explanation/architecture.md).

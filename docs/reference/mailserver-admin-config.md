@@ -4,24 +4,13 @@ Environment variables for the mailserver-admin (web) application. Set in `.env` 
 
 ## General
 
-| Variable          | Default  | Description                       |
-| ----------------- | -------- | --------------------------------- |
-| `APP_ENV`         | `prod`   | Application environment           |
-| `APP_SECRET`      | (random) | Secret key (e.g. CSRF)            |
-| `CSRF_ENABLED`    | `true`   | Enable CSRF protection            |
-| `TRUSTED_PROXIES` | —        | Comma-separated trusted proxy IPs |
+| Variable       | Default  | Description             |
+| -------------- | -------- | ----------------------- |
+| `APP_ENV`      | `prod`   | Application environment |
+| `APP_SECRET`   | (random) | Secret key (e.g. CSRF)  |
+| `CSRF_ENABLED` | `true`   | Enable CSRF protection  |
 
-## Database
-
-| Variable         | Description       |
-| ---------------- | ----------------- |
-| `DB_USER`        | Database user     |
-| `DB_PASSWORD`    | Database password |
-| `DB_HOST`        | Database host     |
-| `DB_NAME`        | Database name     |
-| `REDIS_HOST`     | Redis host        |
-| `REDIS_PORT`     | Redis port        |
-| `REDIS_PASSWORD` | Redis password    |
+`TRUSTED_PROXIES` ([Proxy Protocol](environment-variables.md#proxy-protocol)), the `DB_*` variables ([Database](environment-variables.md#database)), the `REDIS_*` variables ([Redis](environment-variables.md#redis)) and `RECIPIENT_DELIMITER` ([Mail Server Identity](environment-variables.md#mail-server-identity)) are shared with the other services and are described in the [environment variables reference](environment-variables.md).
 
 ## OAuth2
 

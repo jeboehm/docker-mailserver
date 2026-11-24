@@ -1,6 +1,6 @@
 # How to Manage Domains
 
-Domains define the email namespaces your mailserver handles. All addresses must belong to a configured domain. Only users with **Admin** role can add, edit, or delete domains; Domain Admins and regular users cannot.
+Domains define the email namespaces your mailserver handles. All addresses must belong to a configured domain. Only users with the **Admin** role can add or delete domains, see the [User roles reference](../reference/user-roles.md).
 
 ## Add a domain
 
@@ -25,5 +25,3 @@ Deleting a domain removes all associated users, aliases, and DKIM configuration.
 ## Changing a domain name
 
 Changing the domain name is not supported. To use a different name, delete the domain and add a new one with the new name (and reconfigure users/aliases as needed).
-
-For access control details, see [User roles reference](../reference/user-roles.md).

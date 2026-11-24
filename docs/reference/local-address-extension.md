@@ -4,9 +4,7 @@ Local address extension (RFC 5233 subaddressing) delivers mail to extended addre
 
 ## Configuration
 
-| Variable              | Default | Description         |
-| --------------------- | ------- | ------------------- |
-| `RECIPIENT_DELIMITER` | `-`     | Delimiter character |
+The delimiter is set with `RECIPIENT_DELIMITER`, default `-`, see the [environment variables reference](environment-variables.md#mail-server-identity). Postfix, Dovecot and mailserver-admin read the same variable.
 
 Example with default delimiter `-`:
 

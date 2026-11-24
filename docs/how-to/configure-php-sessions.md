@@ -2,7 +2,7 @@
 
 `PHP_SESSION_SAVE_HANDLER` and `PHP_SESSION_SAVE_PATH` set PHP's session handler for Roundcube's PHP side. You can switch from Redis to file-based or another handler.
 
-These variables do not affect mailserver-admin. Since mailserver-admin 5.20.0, it keeps admin logins and MCP sessions in Redis through its own handler, so you cannot move them with these variables and changing them does not log anyone out of the management interface.
+These variables do not affect mailserver-admin. Since mailserver-admin 5.20.0, it keeps admin logins and MCP sessions in Redis through its own handler (`REDIS_HOST`, `REDIS_PORT`, `REDIS_PASSWORD`), so you cannot move them with these variables.
 
 They set PHP's default handler only. Roundcube keeps its own login sessions as its `session_storage` setting says, which this image leaves at Roundcube's default of `db`.
 
@@ -35,8 +35,6 @@ volumes:
 
 3. Restart the web service.
 
-## After upgrading with custom values
-
-If you had set custom values, users are expected to have to log in to the management interface once after upgrading, because admin logins are now looked up in Redis. This follows from how the session store changed; no upgrade of a running installation has been tested. See [Upgrade changelog](../reference/upgrade-changelog.md).
+To see what changed for installations with custom values, see the [upgrade changelog](../reference/upgrade-changelog.md#mailserver-admin-php_session_-no-longer-apply).
 
 For variable reference, see [Environment variables reference](../reference/environment-variables.md#php-sessions).

@@ -8,7 +8,7 @@ This tutorial walks you through installing docker-mailserver with Docker Compose
 
 - Docker and Docker Compose installed
 - A domain name (for later DNS configuration)
-- Ports 25, 110, 143, 587, 993, 995, 81 available
+- The host ports of the [Ports reference](../reference/ports.md) available
 
 ## Step 1: Obtain the project
 
@@ -19,7 +19,7 @@ git clone https://github.com/jeboehm/docker-mailserver.git
 cd docker-mailserver
 ```
 
-Do not use the `latest` container image tag for production. Use a specific version tag (e.g. `jeboehm/mailserver-mta:6.3`).
+Do not use the `latest` container image tag for production. Use a specific version tag instead.
 
 ## Step 2: Configure environment variables
 
@@ -36,9 +36,7 @@ Edit `.env` and set at least:
 - `CONTROLLER_PASSWORD` (required for Rspamd)
 - `DOVEADM_API_KEY` (required for Dovecot API)
 
-Use strong, unique values for each password — do not leave them empty or use the same value for all. These credentials protect internal service communication.
-
-For a full list of variables, see [Environment variables reference](../reference/environment-variables.md).
+Use strong, unique values for each. For all variables, see the [environment variables reference](../reference/environment-variables.md).
 
 ## Step 3: Pull and start services
 
@@ -75,16 +73,12 @@ Open a browser and go to:
 
 Log in with the admin credentials you set in the wizard. You should see the dashboard.
 
-> **Note:** Port 81 uses plain HTTP. For production, place the mailserver behind a reverse proxy that terminates TLS. See [How to configure a reverse proxy](../how-to/configure-reverse-proxy.md).
+> **Note:** Port 81 uses plain HTTP, see [Binding and exposure](../reference/ports.md#binding-and-exposure).
 
-## Step 6: Check the dashboard
-
-On the dashboard you will see an overview of the mailserver: domains, users, and quick links. From here you can add domains, users, and aliases.
+On the [dashboard](../administration/dashboard.md) you can add domains, users, and aliases.
 
 ## Next steps
 
 - Configure DNS records for your domain so other servers can deliver mail to you. See [DNS records reference](../reference/dns-records.md) and [How to configure DNS](../how-to/configure-dns.md).
 - Replace self-signed TLS certificates with valid certificates. See [How to configure TLS certificates](../how-to/configure-tls.md).
-- Add more users or domains via the management interface. See the [Administration how-to guides](../how-to/manage-domains.md).
-
-For a list of exposed ports and services, see [Ports reference](../reference/ports.md).
+- Add more users or domains via the management interface. See [How to manage domains](../how-to/manage-domains.md) and [How to manage users](../how-to/manage-users.md).

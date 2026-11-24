@@ -14,8 +14,6 @@ DKIM (DomainKeys Identified Mail) signs outgoing mail so receiving servers can v
 
 ![DKIM Edit](../images/admin/dkim_edit.png)
 
-After this, outgoing mail for that domain is signed with the private key. Receiving servers verify using the public key in DNS.
+After this, outgoing mail for that domain is signed.
 
-## Implementation note
-
-Signing is done by the Rspamd DKIM module. Rspamd checks that the domain’s DKIM DNS record is present and valid before signing. For record format and verification, see [DNS records reference](../reference/dns-records.md).
+Rspamd signs only while the published record matches the key, see [DKIM record](../reference/dns-records.md#dkim-record-txt).

@@ -13,8 +13,4 @@ The DNS Validation Wizard in the management interface checks that MX, SPF, DKIM,
 
 The wizard shows which records are correct and which need attention. Fix any failures in your DNS and run the wizard again.
 
-## Propagation
-
-DNS updates can take from a few minutes up to 48 hours to propagate. If the wizard fails immediately after adding or changing records, wait for propagation and run the wizard again.
-
-For required record types and formats, see [DNS records reference](../reference/dns-records.md). For step-by-step DNS setup, see [How to configure DNS for your domain](configure-dns.md).
+If the wizard fails right after you changed records, wait for [propagation](configure-dns.md#verification) and run it again. For record types and formats, see the [DNS records reference](../reference/dns-records.md); for setup, see [How to configure DNS for your domain](configure-dns.md).

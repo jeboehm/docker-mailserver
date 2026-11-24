@@ -1,8 +1,6 @@
 # About Observability
 
-Observability is the ability to infer a system’s internal state from its external outputs. For a mailserver, that means using metrics and dashboards to see how mail and authentication are behaving without logging into each component.
-
-mailserver-admin provides observability by aggregating data from the Rspamd filter and the Dovecot MDA and presenting it in web-based dashboards. This gives operators a single place to check service health, message throughput, spam filtering results, and authentication patterns.
+mailserver-admin aggregates data from the Rspamd filter and the Dovecot MDA and presents it in web-based dashboards, so operators can check service health, message throughput, spam filtering results and authentication patterns in one place.
 
 ## What the dashboards show
 
@@ -12,17 +10,9 @@ mailserver-admin provides observability by aggregating data from the Rspamd filt
 
 Data is collected from consecutive samples; rates are computed as deltas between measurements. The dashboards support different time ranges (day, week, month, year) for throughput and rate charts.
 
-## Why it matters
+The dashboards confirm that Rspamd and Dovecot are reachable, show changes in message volume or filter actions, and show spikes in authentication failures.
 
-With observability you can:
-
-- Confirm that Rspamd and Dovecot are reachable and responding.
-- See whether message volume or filter actions have changed.
-- Identify spikes in authentication failures that might indicate abuse or misconfiguration.
-- Correlate delivery rates with changes in configuration or infrastructure.
-
-For this to work, the web service must be able to reach the Rspamd controller and the Dovecot Doveadm HTTP API. The required environment variables (e.g. `MDA_DOVEADM_ADDRESS`, `DOVEADM_API_KEY`) are described in the [Upgrade changelog](../reference/upgrade-changelog.md) (v7.3) and [Environment variables reference](../reference/environment-variables.md).
-Change at least `DOVEADM_API_KEY` from the default in production.
+The `web` service must be able to reach the Rspamd controller and the Dovecot Doveadm HTTP API. The variables are `FILTER_WEB_ADDRESS`, `CONTROLLER_PASSWORD`, `MDA_DOVEADM_ADDRESS` and `DOVEADM_API_KEY`, see the [environment variables reference](../reference/environment-variables.md).
 
 ![Rspamd Statistics](../images/admin/obs_rspamd.png)
 

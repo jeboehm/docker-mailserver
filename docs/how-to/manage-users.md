@@ -1,6 +1,6 @@
 # How to Manage Users
 
-Users are email accounts that can send and receive mail through the mailserver. Access depends on role: **Admin** can manage all users; **Domain Admin** only users in their domain; **User** can only change their own settings.
+Users are email accounts that can send and receive mail through the mailserver. Which roles can manage which users is listed in the [User roles reference](../reference/user-roles.md).
 
 ## Add a user
 
@@ -43,8 +43,6 @@ Deleting a user removes the account and all mail. This cannot be undone. Back up
 - **Password:** Stored hashed; policies enforced by the mailserver.
 - **Quota:** Mailbox size limit in MB. When exceeded, incoming mail can be rejected and the user cannot send until space is freed; warnings are sent.
 - **Send Only:** User can only send; no IMAP/POP3/webmail.
-- **Admin / Domain Admin:** See [User roles reference](../reference/user-roles.md).
+- **Admin / Domain Admin:** The role of the user, see the [User roles reference](../reference/user-roles.md).
 
-Users access mail via IMAP (143 with TLS), POP3 (110 with TLS), SMTP submission (587 with TLS), and webmail. They log in with full email and password.
-
-For roles and permissions, see [User roles reference](../reference/user-roles.md).
+Users log in with their full email address and password. The ports are listed in the [Ports reference](../reference/ports.md).
