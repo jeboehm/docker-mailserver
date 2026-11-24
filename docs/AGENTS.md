@@ -2,6 +2,10 @@
 
 This file applies to everything under `docs/` and to `.mkdocs.yaml`. Project-wide conventions (services, deployment, tests, CI, Git) are described in the root [`AGENTS.md`](../AGENTS.md).
 
+These docs cover docker-mailserver, [mailserver-admin](https://github.com/jeboehm/mailserver-admin) and [fetchmailmgr](https://github.com/jeboehm/fetchmailmgr). Docs PRs from those two repositories land here, cross-linked with their code PR.
+
+They usually touch `reference/mailserver-admin-config.md`, `development/mailserver-admin.md`, `how-to/manage-*.md`, `reference/environment-variables.md` and `reference/upgrade-changelog.md`; keep these paths valid.
+
 ## Documentation framework: Diátaxis
 
 Documentation follows **[Diátaxis](https://diataxis.fr)** (“A systematic approach to technical documentation authoring”). Diátaxis defines four kinds of documentation, each with a different purpose and style:
@@ -24,23 +28,20 @@ Do not mix the four types in a single doc. When in doubt, use the [Diátaxis com
 
 ## Documentation structure
 
-The docs are organised by Diátaxis type:
+The directory is the Diátaxis type (`tutorials/`, `how-to/`, `reference/`, `explanation/`), and the `nav` in `.mkdocs.yaml` mirrors the directories. List the directories to see the pages instead of relying on a copy here. Non-obvious entries:
 
 - **`README.md`** — Landing page (“Welcome” in the nav).
-- **`tutorials/`** — Learning path (e.g. `getting-started.md`).
-- **`how-to/`** — Task guides: install (Docker/Kubernetes), upgrade, configure (DNS, DKIM, TLS, relay, reverse proxy, OAuth2, database, Roundcube, PHP sessions, MCP server), manage (domains, users, aliases, fetchmail, MCP API tokens), validate DNS, iOS/macOS profile.
-- **`reference/`** — Technical reference: `environment-variables.md`, `ports.md`, `dns-records.md`, `service-architecture.md`, `user-roles.md`, `mailserver-admin-config.md`, `mcp-server.md`, `local-address-extension.md`, `upgrade-changelog.md`.
-- **`explanation/`** — Context: `architecture.md`, `database-backends.md`, `dns-and-email.md`, `observability.md`, `mcp-server.md`.
-- **`administration/`** — Short reference for the web UI: `login.md`, `dashboard.md`; other admin topics live as how-to or reference.
-- **`development/`** — Developer how-to: `development.md` (Make, test, lint), `mailserver-admin.md` (mailserver-admin repository setup).
+- **`administration/`** — Short reference for the web UI; other admin topics live as how-to or reference.
+- **`development/`** — Developer how-to (Make, test, lint; mailserver-admin repository setup).
 - **`example-configs/`** — Ready-to-use Compose and Kustomize recipes. Excluded from the MkDocs build; the “Recipes” nav entries link to them on GitHub.
+- **`adr/`**, **`agents/`**, **`requirements.txt`** — Decision records, agent configuration and pip requirements; excluded from the build, like `AGENTS.md` and `CLAUDE.md`.
 - **`images/`**, **`logo/`** — Screenshots (`images/admin/`) and logos.
-- **`requirements.txt`** — pip requirements for MkDocs (excluded from the build, like this file).
 
 MkDocs config is **`.mkdocs.yaml`**; the `nav` there reflects this structure (Tutorial, How-to guides, Reference, Administration, Explanation, Recipes, Development).
 
 ## Documentation writing style
 
+- Write **British English** (“organised”, “behaviour”).
 - Use **technical documentation language**, not marketing. Avoid subjective terms (“powerful”, “particularly useful”, “sophisticated”).
 - Use **direct, factual** statements about what the software does. Include **technical references** (e.g. RFCs) and **concrete examples** where useful.
 - Focus on **implementation and configuration**; keep prose concise and suitable for technical readers.
