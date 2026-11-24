@@ -14,7 +14,9 @@ Domain admins lose three things they could do before. The rules are in [Protecti
 - **Aliases on an admin's address** (mailserver-admin 5.23.2): a domain admin can no longer create, edit or delete an alias whose address is an admin's address.
 - **Aliases pointing to an admin's address** (mailserver-admin `<version not released yet>`): a domain admin can no longer create, edit or delete an alias whose destination is an admin's address, with or without an address extension.
 
-Nothing is migrated. Existing fetchmail accounts and aliases of these kinds stay as they are and keep working, but domain admins can only read them from now on. An admin has to change or delete them, which includes aliases a domain admin created earlier. With the default `RECIPIENT_DELIMITER=-`, domain admins are also refused destinations such as `admin-sales@example.com` when `admin@example.com` belongs to an admin.
+Nothing is migrated. Existing fetchmail accounts and aliases of these kinds stay as they are and keep working, but domain admins can only read them from now on. An admin has to change or delete them, which includes aliases a domain admin created earlier.
+
+With the default `RECIPIENT_DELIMITER=-`, domain admins are also refused destinations such as `admin-sales@example.com` when `admin@example.com` belongs to an admin.
 
 ## v8.1.0
 
